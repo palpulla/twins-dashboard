@@ -1,8 +1,24 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
+const DEMO_SUPABASE_URL = 'https://demo.supabase.co';
+
+function isDemoMode(): boolean {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  return !url || url === DEMO_SUPABASE_URL || url === 'https://your-project.supabase.co';
+}
+
 export async function updateSession(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({ request });
+  const supabaseResponse = NextResponse.next({ request });
+
+  // In demo mode (no real Supabase credentials), skip auth checks entirely.
+  // The dashboard layout auto-logs in as CEO using seed data.
+  if (isDemoMode()) {
+    return supabaseResponse;
+  }
+
+  // --- Production mode: real Supabase auth ---
+  let response = supabaseResponse;
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -16,9 +32,9 @@ export async function updateSession(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           );
-          supabaseResponse = NextResponse.next({ request });
+          response = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
+            response.cookies.set(name, value, options)
           );
         },
       },
@@ -33,7 +49,7 @@ export async function updateSession(request: NextRequest) {
   const isPublicPath = request.nextUrl.pathname.startsWith('/api/webhooks');
 
   if (isPublicPath) {
-    return supabaseResponse;
+    return response;
   }
 
   if (!user && !isAuthPage) {
@@ -48,5 +64,5 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  return supabaseResponse;
+  return response;
 }
