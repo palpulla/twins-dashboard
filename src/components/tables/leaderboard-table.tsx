@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { formatCurrencyDollars, formatPercentage, formatCount } from '@/lib/utils/format';
 
 interface TechLeaderboardEntry {
@@ -34,107 +33,85 @@ const SORT_OPTIONS: { key: SortKey; label: string }[] = [
   { key: 'protectionPlans', label: 'Protection Plans' },
 ];
 
-function formatValue(key: SortKey, value: number): string {
-  switch (key) {
-    case 'totalRevenue':
-    case 'avgTicket':
-      return formatCurrencyDollars(value);
-    case 'conversionRate':
-      return formatPercentage(value);
-    default:
-      return formatCount(value);
-  }
-}
-
 export function LeaderboardTable({ data, onTechClick }: LeaderboardTableProps) {
   const [sortBy, setSortBy] = useState<SortKey>('totalRevenue');
 
   const sorted = [...data].sort((a, b) => b[sortBy] - a[sortBy]);
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Technician Leaderboard</CardTitle>
-        <div className="flex gap-1">
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="font-headline font-bold text-2xl text-primary">Technician Leaderboard</h2>
+        <div className="flex gap-2">
           {SORT_OPTIONS.map(opt => (
             <button
               key={opt.key}
               onClick={() => setSortBy(opt.key)}
-              className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
+              className={`px-4 py-2 text-xs font-semibold rounded transition-colors ${
                 sortBy === opt.key
-                  ? 'bg-[#012650] text-white'
-                  : 'bg-gray-100 text-[#3B445C] hover:bg-gray-200'
+                  ? 'bg-primary text-white'
+                  : 'bg-surface-container-low text-on-surface hover:bg-surface-container-high'
               }`}
             >
               {opt.label}
             </button>
           ))}
         </div>
-      </CardHeader>
-      <CardContent className="p-0">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[#3B445C] uppercase tracking-wider">Rank</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[#3B445C] uppercase tracking-wider">Technician</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-[#3B445C] uppercase tracking-wider">Revenue</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-[#3B445C] uppercase tracking-wider">Avg Ticket</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-[#3B445C] uppercase tracking-wider">Conv. Rate</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-[#3B445C] uppercase tracking-wider">Doors</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-[#3B445C] uppercase tracking-wider">Reviews</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-[#3B445C] uppercase tracking-wider">Commission</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {sorted.map((tech, index) => (
-                <tr
-                  key={tech.id}
-                  className={onTechClick ? 'cursor-pointer hover:bg-gray-50 transition-colors' : ''}
-                  onClick={onTechClick ? () => onTechClick(tech.id) : undefined}
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${
-                      index === 0 ? 'bg-[#FBBC03] text-[#012650]' :
-                      index === 1 ? 'bg-gray-300 text-gray-700' :
-                      index === 2 ? 'bg-amber-700/20 text-amber-800' :
-                      'bg-gray-100 text-[#3B445C]'
-                    }`}>
-                      {index + 1}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[#012650] flex items-center justify-center text-white text-xs font-medium">
-                        {tech.fullName.split(' ').map(n => n[0]).join('')}
-                      </div>
-                      <span className="font-medium text-[#012650]">{tech.fullName}</span>
+      </div>
+
+      <div className="bg-surface-container-lowest rounded-xl overflow-hidden card-shadow">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-surface-container-low text-on-surface-variant">
+              <th className="p-5 font-bold text-[11px] uppercase tracking-widest">Rank</th>
+              <th className="p-5 font-bold text-[11px] uppercase tracking-widest">Technician</th>
+              <th className="p-5 font-bold text-[11px] uppercase tracking-widest text-center">Jobs</th>
+              <th className="p-5 font-bold text-[11px] uppercase tracking-widest text-right">Revenue</th>
+              <th className="p-5 font-bold text-[11px] uppercase tracking-widest text-right">Avg Ticket</th>
+              <th className="p-5 font-bold text-[11px] uppercase tracking-widest text-right">Conv. Rate</th>
+              <th className="p-5 font-bold text-[11px] uppercase tracking-widest text-right">Reviews</th>
+              <th className="p-5 font-bold text-[11px] uppercase tracking-widest text-right">Commission</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-surface-container">
+            {sorted.map((tech, index) => (
+              <tr
+                key={tech.id}
+                className={`group hover:bg-surface-container-low/50 transition-colors ${onTechClick ? 'cursor-pointer' : ''}`}
+                onClick={onTechClick ? () => onTechClick(tech.id) : undefined}
+              >
+                <td className="p-5">
+                  <span className={`w-8 h-8 rounded-full font-mono font-bold flex items-center justify-center text-xs ${
+                    index === 0 ? 'bg-secondary-container text-on-secondary-container' :
+                    index === 1 ? 'bg-surface-container-high text-on-surface-variant' :
+                    index === 2 ? 'bg-amber-700/20 text-amber-800' :
+                    'bg-surface-container text-on-surface-variant'
+                  }`}>
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                </td>
+                <td className="p-5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold">
+                      {tech.fullName.split(' ').map(n => n[0]).join('')}
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right font-mono font-medium text-[#012650]">
-                    {formatCurrencyDollars(tech.totalRevenue)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right font-mono text-[#3B445C]">
-                    {formatCurrencyDollars(tech.avgTicket)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right font-mono text-[#3B445C]">
-                    {formatPercentage(tech.conversionRate)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right font-mono text-[#3B445C]">
-                    {tech.doorsInstalled}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right font-mono text-[#3B445C]">
-                    {tech.fiveStarReviews}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right font-mono font-medium text-[#22C55E]">
-                    {formatCurrencyDollars(tech.totalCommission)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </CardContent>
-    </Card>
+                    <div>
+                      <p className="font-bold text-primary">{tech.fullName}</p>
+                      <p className="text-xs text-on-surface-variant font-medium">{tech.completedJobs} completed</p>
+                    </div>
+                  </div>
+                </td>
+                <td className="p-5 text-center font-mono font-medium">{tech.totalJobs}</td>
+                <td className="p-5 text-right font-mono font-bold text-primary">{formatCurrencyDollars(tech.totalRevenue)}</td>
+                <td className="p-5 text-right font-mono text-on-surface-variant">{formatCurrencyDollars(tech.avgTicket)}</td>
+                <td className="p-5 text-right font-mono text-on-surface-variant">{formatPercentage(tech.conversionRate)}</td>
+                <td className="p-5 text-right font-mono text-on-surface-variant">{tech.fiveStarReviews}</td>
+                <td className="p-5 text-right font-mono font-bold text-success">{formatCurrencyDollars(tech.totalCommission)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }

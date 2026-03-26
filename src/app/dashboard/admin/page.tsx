@@ -2,75 +2,73 @@
 
 import Link from 'next/link';
 import { Header } from '@/components/layout/header';
-import { Card, CardContent } from '@/components/ui/card';
 
 const ADMIN_SECTIONS = [
   {
     title: 'User Management',
-    description: 'Add/remove team members, assign roles, assign techs to managers',
+    description: 'Control permissions, onboard new staff, and manage organizational hierarchy settings.',
     href: '/dashboard/admin/users',
-    icon: (
-      <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-      </svg>
-    ),
+    icon: 'manage_accounts',
+    iconBg: 'bg-primary-container',
+    iconColor: 'text-white',
   },
   {
     title: 'Commission Config',
-    description: 'Set/change commission tiers, update manager bonus rules',
+    description: 'Set tiers, adjust percentages, and define automated payout schedules for technicians.',
     href: '/dashboard/admin/commissions',
-    icon: (
-      <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
+    icon: 'payments',
+    iconBg: 'bg-secondary-container',
+    iconColor: 'text-on-secondary-container',
   },
   {
     title: 'KPI Definitions',
-    description: 'Add new KPIs, edit formulas, set targets, activate/deactivate',
+    description: 'Add new KPIs, edit formulas, set targets, activate/deactivate metrics.',
     href: '/dashboard/admin/kpis',
-    icon: (
-      <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-      </svg>
-    ),
+    icon: 'monitoring',
+    iconBg: 'bg-primary-container',
+    iconColor: 'text-white',
   },
   {
     title: 'Integration Health',
-    description: 'Monitor webhook status, API connections, error rates',
+    description: 'Monitor webhook status, API connections, error rates across all integrations.',
     href: '/dashboard/admin/integrations',
-    icon: (
-      <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-      </svg>
-    ),
+    icon: 'bolt',
+    iconBg: 'bg-secondary-container',
+    iconColor: 'text-on-secondary-container',
   },
 ];
 
 export default function AdminPage() {
   return (
     <div>
-      <Header title="Admin Panel" subtitle="System configuration & management" showDatePicker={false} />
+      <Header title="Admin Panel" showDatePicker={false} />
 
-      <div className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {ADMIN_SECTIONS.map(section => (
-            <Link key={section.href} href={section.href}>
-              <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-                <CardContent className="p-6 flex items-start gap-4">
-                  <div className="p-3 bg-[#012650]/5 rounded-lg text-[#012650]">
-                    {section.icon}
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-[#012650] mb-1">{section.title}</h3>
-                    <p className="text-sm text-[#3B445C]">{section.description}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
+      <section className="px-6 md:px-12 py-8 bg-surface-container-low">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex flex-col gap-1">
+            <h2 className="text-3xl md:text-4xl font-headline font-bold text-primary tracking-tight">System configuration & management</h2>
+            <p className="text-on-surface-variant">Exclusive access for system owners and high-level administrators.</p>
+          </div>
         </div>
-      </div>
+      </section>
+
+      <section className="px-6 md:px-12 py-10">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {ADMIN_SECTIONS.map(section => (
+              <Link key={section.href} href={section.href}>
+                <button className="group relative flex flex-col items-start p-8 bg-surface-container-lowest rounded-xl card-shadow hover:scale-[0.98] transition-all duration-200 text-left overflow-hidden w-full">
+                  <div className={`w-14 h-14 rounded-full ${section.iconBg} flex items-center justify-center mb-6 shadow-lg`}>
+                    <span className={`material-symbols-outlined ${section.iconColor} text-3xl`}>{section.icon}</span>
+                  </div>
+                  <h3 className="text-xl font-headline font-bold text-primary mb-2">{section.title}</h3>
+                  <p className="text-on-surface-variant text-sm leading-relaxed">{section.description}</p>
+                </button>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

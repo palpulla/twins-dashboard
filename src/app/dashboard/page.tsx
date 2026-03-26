@@ -6,7 +6,6 @@ import { Header } from '@/components/layout/header';
 import { KpiGrid } from '@/components/kpi/kpi-grid';
 import { LeaderboardTable } from '@/components/tables/leaderboard-table';
 import { RevenueChart } from '@/components/charts/revenue-chart';
-import { Card, CardContent } from '@/components/ui/card';
 import { AnimatedNumber } from '@/components/kpi/animated-number';
 import { useCompanyKpis, useLeaderboard } from '@/lib/hooks/use-seed-data';
 import { useAuthStore } from '@/lib/store/auth-store';
@@ -48,8 +47,9 @@ export default function DashboardPage() {
     const totalManagerBonuses = filteredCommissions.reduce((sum, cr) => sum + cr.manager_bonus, 0);
     const totalPayouts = totalCommissions + totalManagerOverrides + totalManagerBonuses;
     const grossProfit = totalRevenue - totalParts - totalPayouts;
+    const margin = totalRevenue > 0 ? (grossProfit / totalRevenue * 100) : 0;
 
-    return { totalRevenue, totalParts, totalPayouts, grossProfit, totalJobs: filteredJobs.length };
+    return { totalRevenue, totalParts, totalPayouts, grossProfit, totalJobs: filteredJobs.length, margin };
   }, [dateRange]);
 
   // Revenue by month chart data
@@ -59,7 +59,6 @@ export default function DashboardPage() {
       if (job.status !== 'completed' || !job.completed_at) return;
       const date = new Date(job.completed_at);
       const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      const monthName = date.toLocaleString('en-US', { month: 'short', year: '2-digit' });
       if (!months[key]) months[key] = { revenue: 0, partsCost: 0 };
       months[key].revenue += job.revenue;
       months[key].partsCost += (job.parts_cost_override ?? job.parts_cost);
@@ -68,56 +67,131 @@ export default function DashboardPage() {
     return Object.entries(months)
       .sort(([a], [b]) => a.localeCompare(b))
       .slice(-6)
-      .map(([key, data]) => {
+      .map(([key]) => {
         const [year, month] = key.split('-');
         const date = new Date(parseInt(year), parseInt(month) - 1);
         return {
           name: date.toLocaleString('en-US', { month: 'short' }),
-          revenue: data.revenue,
-          partsCost: data.partsCost,
+          revenue: months[key].revenue,
+          partsCost: months[key].partsCost,
         };
       });
   }, []);
 
+  const financialCards = [
+    {
+      label: 'Total Revenue',
+      value: financialSummary.totalRevenue,
+      format: 'currency' as const,
+      icon: 'payments',
+      iconColor: 'text-secondary',
+      accent: 'border-b-4 border-secondary-container',
+      trendLabel: `${financialSummary.totalJobs} jobs completed`,
+    },
+    {
+      label: 'Total Jobs',
+      value: financialSummary.totalJobs,
+      format: 'count' as const,
+      icon: 'construction',
+      iconColor: 'text-primary',
+      accent: '',
+      trendLabel: 'In selected period',
+    },
+    {
+      label: 'Parts Cost',
+      value: financialSummary.totalParts,
+      format: 'currency' as const,
+      icon: 'inventory_2',
+      iconColor: 'text-error',
+      accent: '',
+      trendLabel: 'Materials & supplies',
+    },
+    {
+      label: 'Commission',
+      value: financialSummary.totalPayouts,
+      format: 'currency' as const,
+      icon: 'person_celebrate',
+      iconColor: 'text-on-primary-container',
+      accent: '',
+      trendLabel: 'Paid to technicians',
+    },
+    {
+      label: 'Gross Profit',
+      value: financialSummary.grossProfit,
+      format: 'currency' as const,
+      icon: 'account_balance_wallet',
+      iconColor: 'text-secondary-container',
+      accent: 'bg-primary-container text-white',
+      trendLabel: `${financialSummary.margin.toFixed(0)}% Margin`,
+      isHighlighted: true,
+    },
+  ];
+
   return (
     <div>
-      <Header title="Company Dashboard" subtitle="Twins Garage Doors — Madison, WI" />
+      <Header title="Fleet Efficiency" subtitle="Twins Garage Doors — Madison, WI" />
 
-      <div className="p-6 space-y-6">
+      <div className="px-6 md:px-8 space-y-12 max-w-[1600px] mx-auto py-8">
         {/* Financial Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          {[
-            { label: 'Total Revenue', value: financialSummary.totalRevenue, format: 'currency' as const, color: '#012650' },
-            { label: 'Total Jobs', value: financialSummary.totalJobs, format: 'count' as const, color: '#012650' },
-            { label: 'Parts Cost', value: financialSummary.totalParts, format: 'currency' as const, color: '#F59E0B' },
-            { label: 'Commission Payouts', value: financialSummary.totalPayouts, format: 'currency' as const, color: '#EF4444' },
-            { label: 'Gross Profit', value: financialSummary.grossProfit, format: 'currency' as const, color: '#22C55E' },
-          ].map(item => (
-            <Card key={item.label}>
-              <CardContent className="p-5">
-                <p className="text-xs font-medium uppercase tracking-wider text-[#3B445C] mb-1">{item.label}</p>
-                <AnimatedNumber value={item.value} format={item.format} className="text-2xl" />
-              </CardContent>
-            </Card>
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+          {financialCards.map(item => (
+            <div
+              key={item.label}
+              className={`p-6 rounded-xl card-shadow ${
+                item.isHighlighted
+                  ? 'bg-primary-container text-white'
+                  : `bg-surface-container-lowest ${item.accent}`
+              }`}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-xs font-bold tracking-wider uppercase text-on-surface-variant">
+                  {!item.isHighlighted ? item.label : ''}
+                </span>
+                {item.isHighlighted && (
+                  <span className="text-xs font-bold tracking-wider uppercase text-on-primary-container">{item.label}</span>
+                )}
+                <span
+                  className={`material-symbols-outlined ${item.iconColor}`}
+                  style={item.isHighlighted ? { fontVariationSettings: "'FILL' 1" } : {}}
+                >
+                  {item.icon}
+                </span>
+              </div>
+              <AnimatedNumber
+                value={item.value}
+                format={item.format}
+                className={`text-3xl ${item.isHighlighted ? 'text-white' : 'text-primary'}`}
+              />
+              <div className={`flex items-center gap-1 mt-2 text-xs font-medium ${
+                item.isHighlighted ? 'text-secondary-container' : 'text-on-surface-variant'
+              }`}>
+                {item.isHighlighted && (
+                  <span className="material-symbols-outlined text-[14px]">verified</span>
+                )}
+                <span>{item.trendLabel}</span>
+              </div>
+            </div>
           ))}
-        </div>
+        </section>
 
         {/* Company KPIs */}
-        <div>
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-[#3B445C] mb-3">Company-Wide KPIs</h2>
+        <section>
+          <h2 className="font-headline font-bold text-2xl text-primary mb-6">Company-Wide KPIs</h2>
           <KpiGrid kpis={kpis} />
-        </div>
+        </section>
 
         {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
+        <section>
           <RevenueChart data={revenueChartData} title="Monthly Revenue vs Parts Cost" />
-        </div>
+        </section>
 
         {/* Leaderboard */}
-        <LeaderboardTable
-          data={leaderboard}
-          onTechClick={(id) => router.push(`/dashboard/technician/${id}`)}
-        />
+        <section className="pb-12">
+          <LeaderboardTable
+            data={leaderboard}
+            onTechClick={(id) => router.push(`/dashboard/technician/${id}`)}
+          />
+        </section>
       </div>
     </div>
   );

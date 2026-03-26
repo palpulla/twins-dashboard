@@ -17,11 +17,11 @@ const STATUS_BORDER_COLORS = {
 
 export function Card({ children, className = '', statusColor, onClick }: CardProps) {
   const borderClass = statusColor ? `border-l-4 ${STATUS_BORDER_COLORS[statusColor]}` : '';
-  const clickClass = onClick ? 'cursor-pointer hover:shadow-md transition-shadow' : '';
+  const clickClass = onClick ? 'cursor-pointer hover:scale-[0.98] transition-all duration-200' : '';
 
   return (
     <div
-      className={`bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.1)] ${borderClass} ${clickClass} ${className}`}
+      className={`bg-surface-container-lowest rounded-xl card-shadow ${borderClass} ${clickClass} ${className}`}
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
@@ -32,7 +32,7 @@ export function Card({ children, className = '', statusColor, onClick }: CardPro
 }
 
 export function CardHeader({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <div className={`px-6 py-4 border-b border-gray-100 ${className}`}>{children}</div>;
+  return <div className={`px-6 py-4 border-b border-surface-container ${className}`}>{children}</div>;
 }
 
 export function CardContent({ children, className = '' }: { children: ReactNode; className?: string }) {
@@ -40,5 +40,5 @@ export function CardContent({ children, className = '' }: { children: ReactNode;
 }
 
 export function CardTitle({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <h3 className={`text-sm font-medium uppercase tracking-wider text-[#3B445C] ${className}`}>{children}</h3>;
+  return <h3 className={`text-sm font-bold uppercase tracking-wider text-on-surface-variant ${className}`}>{children}</h3>;
 }

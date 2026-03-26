@@ -1,6 +1,5 @@
 'use client';
 
-import { Card } from '@/components/ui/card';
 import { AnimatedNumber } from './animated-number';
 import { Sparkline } from './sparkline';
 import { KpiCardSkeleton } from '@/components/ui/skeleton';
@@ -12,6 +11,12 @@ interface KpiCardProps {
   kpi: KpiValue;
   isLoading?: boolean;
 }
+
+const STATUS_BORDER_COLORS = {
+  success: 'border-l-[#22C55E]',
+  warning: 'border-l-[#F59E0B]',
+  danger: 'border-l-[#EF4444]',
+} as const;
 
 export function KpiCard({ kpi, isLoading }: KpiCardProps) {
   if (isLoading) return <KpiCardSkeleton />;
@@ -33,44 +38,42 @@ export function KpiCard({ kpi, isLoading }: KpiCardProps) {
     : colors.danger;
 
   return (
-    <Card statusColor={status}>
-      <div className="p-5">
-        {/* Label */}
-        <p className="text-xs font-medium uppercase tracking-wider text-[#3B445C] mb-1">
+    <div className={`bg-surface-container-lowest p-6 rounded-xl card-shadow border-l-4 ${STATUS_BORDER_COLORS[status]}`}>
+      {/* Label */}
+      <div className="flex justify-between items-start mb-4">
+        <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">
           {kpi.name}
         </p>
-
-        {/* Value */}
-        <div className="flex items-end justify-between mb-2">
-          <AnimatedNumber
-            value={kpi.value}
-            format={kpi.displayFormat}
-            className="text-3xl text-[#012650]"
-          />
-          {trend !== undefined && (
-            <div className={`flex items-center gap-0.5 text-sm font-medium ${
-              trendIsGood ? 'text-[#22C55E]' : 'text-[#EF4444]'
-            }`}>
-              <svg className={`w-4 h-4 ${!trendIsGood ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-              </svg>
-              {Math.abs(trend).toFixed(1)}%
-            </div>
-          )}
-        </div>
-
-        {/* Target */}
-        <div className="flex items-center justify-between">
-          <p className="text-xs text-[#3B445C]">
-            Target: {formatKpiValue(kpi.target, kpi.displayFormat)}
-          </p>
-          {kpi.sparklineData && kpi.sparklineData.length > 1 && (
-            <div className="w-16">
-              <Sparkline data={kpi.sparklineData} color={sparklineColor} height={24} />
-            </div>
-          )}
-        </div>
+        {kpi.sparklineData && kpi.sparklineData.length > 1 && (
+          <div className="w-16">
+            <Sparkline data={kpi.sparklineData} color={sparklineColor} height={24} />
+          </div>
+        )}
       </div>
-    </Card>
+
+      {/* Value */}
+      <div className="flex items-baseline gap-2">
+        <AnimatedNumber
+          value={kpi.value}
+          format={kpi.displayFormat}
+          className="text-3xl text-primary"
+        />
+        {trend !== undefined && (
+          <span className={`text-sm font-bold flex items-center ${
+            trendIsGood ? 'text-success' : 'text-danger'
+          }`}>
+            <span className="material-symbols-outlined text-[14px]">
+              {trendIsGood ? 'arrow_upward' : 'arrow_downward'}
+            </span>
+            {Math.abs(trend).toFixed(1)}%
+          </span>
+        )}
+      </div>
+
+      {/* Target */}
+      <p className="text-xs text-on-surface-variant mt-2 font-medium">
+        Target: {formatKpiValue(kpi.target, kpi.displayFormat)}
+      </p>
+    </div>
   );
 }

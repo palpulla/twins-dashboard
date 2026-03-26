@@ -14,20 +14,18 @@ export function Header({ title, subtitle, showDatePicker = true, actions }: Head
   const { toggleSidebar } = useDashboardStore();
 
   return (
-    <header className="sticky top-0 z-30 bg-[#F5F6FA]/80 backdrop-blur-sm border-b border-gray-200">
-      <div className="flex items-center justify-between h-16 px-6">
+    <header className="sticky top-0 z-30 bg-[#f8f9fd]/80 backdrop-blur-md border-b border-outline-variant/20">
+      <div className="flex items-center justify-between px-6 md:px-8 py-4">
         <div className="flex items-center gap-4">
           <button
             onClick={toggleSidebar}
-            className="p-2 text-[#3B445C] hover:text-[#012650] hover:bg-white rounded-lg transition-colors lg:hidden"
+            className="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-lg transition-colors lg:hidden"
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            <span className="material-symbols-outlined">menu</span>
           </button>
-          <div>
-            <h1 className="text-xl font-bold text-[#012650]">{title}</h1>
-            {subtitle && <p className="text-sm text-[#3B445C]">{subtitle}</p>}
+          <div className="flex flex-col">
+            <h1 className="font-headline font-bold text-lg md:text-2xl tracking-tight text-primary leading-tight">{title}</h1>
+            {subtitle && <p className="text-sm text-on-surface-variant/70">{subtitle}</p>}
           </div>
         </div>
         <div className="flex items-center gap-4">
