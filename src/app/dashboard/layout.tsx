@@ -17,17 +17,15 @@ export default function DashboardLayout({
   const { user, setUser } = useAuthStore();
   const { sidebarOpen } = useDashboardStore();
 
-  // Auto-login as CEO for demo purposes
+  // Auto-login as CEO
   useEffect(() => {
     if (!user) {
       const ceo = SEED_USERS.find(u => u.role === 'owner');
       if (ceo) {
         setUser(ceo);
-      } else {
-        router.push('/login');
       }
     }
-  }, [user, setUser, router]);
+  }, [user, setUser]);
 
   return (
     <div className="min-h-screen bg-[#F5F6FA]">
