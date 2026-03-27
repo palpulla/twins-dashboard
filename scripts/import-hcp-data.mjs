@@ -6,7 +6,7 @@
  */
 
 import { execSync } from 'child_process';
-import { readFileSync } from 'fs';
+import { readFileSync, writeFileSync, unlinkSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -45,9 +45,8 @@ function curlGet(url, headers = {}) {
 function sbPost(table, rows, onConflict) {
   const url = `${SB_REST}/${table}?on_conflict=${onConflict}`;
   const json = JSON.stringify(rows);
-  // Write body to temp file to avoid shell escaping issues
   const tmpFile = `/tmp/sb_import_${Date.now()}.json`;
-  execSync(`cat > ${tmpFile} << 'JSONEOF'\n${json}\nJSONEOF`);
+  writeFileSync(tmpFile, json);
   try {
     const result = execSync(
       `curl -s -o /dev/null -w "%{http_code}" -X POST "${url}" ` +
@@ -60,22 +59,27 @@ function sbPost(table, rows, onConflict) {
     ).toString().trim();
     return { status: parseInt(result), error: parseInt(result) >= 400 ? result : null };
   } finally {
-    try { execSync(`rm -f ${tmpFile}`); } catch {}
+    try { unlinkSync(tmpFile); } catch {}
   }
 }
 
 function sbPatch(table, data, filterCol, filterVal) {
   const url = `${SB_REST}/${table}?${filterCol}=eq.${filterVal}`;
-  const json = JSON.stringify(data);
-  const result = execSync(
-    `curl -s -o /dev/null -w "%{http_code}" -X PATCH "${url}" ` +
-    `-H "apikey: ${SUPABASE_SERVICE_KEY}" ` +
-    `-H "Authorization: Bearer ${SUPABASE_SERVICE_KEY}" ` +
-    `-H "Content-Type: application/json" ` +
-    `-d '${json.replace(/'/g, "'\\''")}'`,
-    { maxBuffer: 10 * 1024 * 1024 }
-  ).toString().trim();
-  return { status: parseInt(result) };
+  const tmpFile = `/tmp/sb_patch_${Date.now()}.json`;
+  writeFileSync(tmpFile, JSON.stringify(data));
+  try {
+    const result = execSync(
+      `curl -s -o /dev/null -w "%{http_code}" -X PATCH "${url}" ` +
+      `-H "apikey: ${SUPABASE_SERVICE_KEY}" ` +
+      `-H "Authorization: Bearer ${SUPABASE_SERVICE_KEY}" ` +
+      `-H "Content-Type: application/json" ` +
+      `-d @${tmpFile}`,
+      { maxBuffer: 10 * 1024 * 1024 }
+    ).toString().trim();
+    return { status: parseInt(result) };
+  } finally {
+    try { unlinkSync(tmpFile); } catch {}
+  }
 }
 
 function sbSelect(table, select = '*', filter = '') {
@@ -163,7 +167,7 @@ function importJobs(employees) {
   const custMap = new Map(dbCusts.map(c => [c.hcp_id, c.id]));
 
   const chunks = [];
-  for (let i = 0; i < jobs.length; i += 500) chunks.push(jobs.slice(i, i + 500));
+  for (let i = 0; i < jobs.length; i += 100) chunks.push(jobs.slice(i, i + 100));
 
   let ok = 0;
   for (const chunk of chunks) {
