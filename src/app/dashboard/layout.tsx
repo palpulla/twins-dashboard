@@ -28,7 +28,7 @@ export default function DashboardLayout({
   }, [user, setUser]);
 
   return (
-    <div className="min-h-screen bg-[#F5F6FA]">
+    <div className="min-h-screen bg-background">
       <Sidebar />
       <MobileNav />
       <main
