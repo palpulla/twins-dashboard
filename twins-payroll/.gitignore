@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.coverage
+.env
+data/*.db
+data/hcp_cache/*
+!data/hcp_cache/.gitkeep
+output/*.xlsx
+!output/.gitkeep
