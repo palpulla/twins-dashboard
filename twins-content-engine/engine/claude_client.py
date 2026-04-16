@@ -4,7 +4,12 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Optional, Protocol
 
-from anthropic import Anthropic, APIError, RateLimitError
+from anthropic import (
+    Anthropic,
+    APIConnectionError,
+    InternalServerError,
+    RateLimitError,
+)
 from tenacity import (
     retry,
     retry_if_exception_type,
@@ -37,13 +42,14 @@ class ClaudeClient:
     DEFAULT_MODEL = "claude-sonnet-4-6"
 
     def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None) -> None:
-        self._sdk = Anthropic(api_key=api_key) if api_key else Anthropic()
+        # max_retries=0 hands retry policy entirely to tenacity (see @retry below).
+        self._sdk = Anthropic(api_key=api_key, max_retries=0)
         self.model = model or self.DEFAULT_MODEL
 
     @retry(
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=1, min=1, max=10),
-        retry=retry_if_exception_type((RateLimitError, APIError)),
+        retry=retry_if_exception_type((RateLimitError, APIConnectionError, InternalServerError)),
         reraise=True,
     )
     def complete(

@@ -75,3 +75,68 @@ def test_real_client_retries_on_rate_limit(monkeypatch):
     result = client.complete(system="s", user="u")
     assert result.text == "ok"
     assert mock_sdk.messages.create.call_count == 2
+
+
+def test_real_client_reraises_after_exhaustion(monkeypatch):
+    """After 3 consecutive retryable errors, the underlying exception propagates."""
+    from anthropic import RateLimitError
+
+    mock_anthropic_cls = MagicMock()
+    mock_sdk = MagicMock()
+    mock_anthropic_cls.return_value = mock_sdk
+
+    error = RateLimitError(
+        message="still slow",
+        response=MagicMock(status_code=429),
+        body=None,
+    )
+    mock_sdk.messages.create.side_effect = [error, error, error]
+
+    monkeypatch.setattr("engine.claude_client.Anthropic", mock_anthropic_cls)
+
+    client = ClaudeClient(api_key="fake")
+    with pytest.raises(RateLimitError):
+        client.complete(system="s", user="u")
+    assert mock_sdk.messages.create.call_count == 3
+
+
+def test_real_client_does_not_retry_on_auth_error(monkeypatch):
+    """AuthenticationError is a permanent failure; it must NOT be retried."""
+    from anthropic import AuthenticationError
+
+    mock_anthropic_cls = MagicMock()
+    mock_sdk = MagicMock()
+    mock_anthropic_cls.return_value = mock_sdk
+
+    auth_err = AuthenticationError(
+        message="bad key",
+        response=MagicMock(status_code=401),
+        body=None,
+    )
+    mock_sdk.messages.create.side_effect = auth_err
+
+    monkeypatch.setattr("engine.claude_client.Anthropic", mock_anthropic_cls)
+
+    client = ClaudeClient(api_key="fake")
+    with pytest.raises(AuthenticationError):
+        client.complete(system="s", user="u")
+    # Critical: only ONE call, not 3.
+    assert mock_sdk.messages.create.call_count == 1
+
+
+def test_real_client_returns_empty_text_when_response_content_empty(monkeypatch):
+    """Defensive: empty response.content -> CompletionResult.text == ''."""
+    mock_anthropic_cls = MagicMock()
+    mock_sdk = MagicMock()
+    mock_anthropic_cls.return_value = mock_sdk
+    mock_response = MagicMock()
+    mock_response.content = []
+    mock_response.usage = MagicMock(input_tokens=5, output_tokens=0)
+    mock_sdk.messages.create.return_value = mock_response
+
+    monkeypatch.setattr("engine.claude_client.Anthropic", mock_anthropic_cls)
+
+    client = ClaudeClient(api_key="fake")
+    result = client.complete(system="s", user="u")
+    assert result.text == ""
+    assert result.input_tokens == 5
