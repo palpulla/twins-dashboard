@@ -23,6 +23,9 @@ dev = [
 [tool.hatch.build.targets.wheel]
 packages = ["engine"]
 
+[tool.hatch.build.targets.wheel.force-include]
+"engine/schema.sql" = "engine/schema.sql"
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
