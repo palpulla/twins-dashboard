@@ -1,0 +1,33 @@
+primary: madison_wi
+towns:
+  - madison_wi
+  - middleton_wi
+  - sun_prairie_wi
+  - verona_wi
+  - fitchburg_wi
+  - waunakee_wi
+  - mcfarland_wi
+  - stoughton_wi
+  - cottage_grove_wi
+
+town_display_names:
+  madison_wi: Madison
+  middleton_wi: Middleton
+  sun_prairie_wi: Sun Prairie
+  verona_wi: Verona
+  fitchburg_wi: Fitchburg
+  waunakee_wi: Waunakee
+  mcfarland_wi: McFarland
+  stoughton_wi: Stoughton
+  cottage_grove_wi: Cottage Grove
+
+madison_neighborhoods:
+  - Maple Bluff
+  - University Heights
+  - Nakoma
+  - Monroe Street
+  - Westmorland
+  - Shorewood Hills
+  - Middleton Hills
+  - Sherman
+  - Eken Park

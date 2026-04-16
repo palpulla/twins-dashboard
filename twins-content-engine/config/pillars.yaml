@@ -1,0 +1,68 @@
+pillars:
+  emergency_repairs:
+    description: Broken spring, off-track, won't close, door stuck, safety risk
+    funnel_stage: high_intent_problem_aware
+    seed_patterns:
+      - "garage door {symptom} {town}"
+      - "is it safe to {action} with broken {part}"
+      - "emergency garage door {town}"
+    format_bias: [video_script, gbp_post, faq]
+    priority_weight: 1.5
+
+  maintenance_prevention:
+    description: Lubrication, weather prep, lifespan, seasonal checks
+    funnel_stage: low_intent_educational
+    seed_patterns:
+      - "when should I {maintenance_action}"
+      - "how often {part} {lifespan_question}"
+      - "garage door winter prep {town}"
+    format_bias: [caption, faq, blog_snippet]
+    priority_weight: 0.8
+
+  replacement_installation:
+    description: New doors, opener upgrades, insulation, smart openers
+    funnel_stage: mid_intent_considering
+    seed_patterns:
+      - "cost of new garage door {town}"
+      - "best garage door for {climate_context}"
+      - "should I replace or repair {part}"
+    format_bias: [blog_snippet, video_script, caption]
+    priority_weight: 1.2
+
+  pricing_transparency:
+    description: Cost expectations, what affects price, estimate psychology
+    funnel_stage: mid_intent_price_checking
+    seed_patterns:
+      - "how much {service} {town}"
+      - "average cost {part_or_service}"
+      - "why is {service} so expensive"
+    format_bias: [faq, blog_snippet, gbp_post]
+    priority_weight: 1.3
+
+  common_mistakes:
+    description: DIY gone wrong, cheap-repair traps, red-flag contractors
+    funnel_stage: mid_intent_trust_building
+    seed_patterns:
+      - "should I DIY {repair}"
+      - "signs of bad garage door {contractor_or_repair}"
+      - "what not to do when {symptom}"
+    format_bias: [video_script, caption, blog_snippet]
+    priority_weight: 1.0
+
+  comparisons:
+    description: Spring types, door styles, opener brands, insulation levels
+    funnel_stage: mid_intent_deciding
+    seed_patterns:
+      - "{option_a} vs {option_b} garage door"
+      - "best {component} for {context}"
+    format_bias: [blog_snippet, faq]
+    priority_weight: 0.9
+
+  local_authority:
+    description: Madison winters, specific neighborhoods, climate, local stories
+    funnel_stage: trust_and_ranking
+    seed_patterns:
+      - "garage doors in {town} winter"
+      - "{neighborhood} garage door service"
+    format_bias: [gbp_post, blog_snippet, caption]
+    priority_weight: 1.4

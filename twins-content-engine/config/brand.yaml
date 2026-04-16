@@ -1,0 +1,22 @@
+business_name: Twins Garage Doors
+phone: "(608) 555-0199"   # REPLACE with real number before first generation
+primary_service_area: madison_wi
+allow_emojis: false
+voice_terms_to_prefer:
+  - "tech"
+  - "spring"
+  - "opener"
+  - "panel"
+  - "torsion"
+  - "cable"
+voice_terms_to_avoid:
+  - "team member"
+  - "associate"
+  - "specialist"
+  - "experience"
+  - "journey"
+brand_years_in_business: 13
+signature_proof_points:
+  - "13 years serving Dane County"
+  - "Same-day emergency service"
+  - "Torsion spring specialists"
