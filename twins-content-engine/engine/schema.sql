@@ -35,7 +35,8 @@ CREATE TABLE IF NOT EXISTS generated_content (
     format           TEXT NOT NULL,
     content_path     TEXT NOT NULL,
     brief_path       TEXT,
-    status           TEXT NOT NULL DEFAULT 'pending',
+    status           TEXT NOT NULL DEFAULT 'pending'
+                         CHECK (status IN ('pending', 'approved', 'rejected', 'published')),
     model_used       TEXT NOT NULL,
     generated_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     approved_at      DATETIME,

@@ -8,6 +8,8 @@ from typing import Any, Iterator, Optional
 
 _SCHEMA_PATH = Path(__file__).parent / "schema.sql"
 
+_VALID_STATUSES = {"pending", "approved", "rejected", "published"}
+
 
 @contextmanager
 def get_conn(db_path: Path) -> Iterator[sqlite3.Connection]:
@@ -124,7 +126,10 @@ def list_pending_content(db_path: Path) -> list[sqlite3.Row]:
 
 
 def update_content_status(db_path: Path, content_id: int, new_status: str) -> None:
-    assert new_status in {"pending", "approved", "rejected", "published"}
+    if new_status not in _VALID_STATUSES:
+        raise ValueError(
+            f"Invalid status {new_status!r}. Must be one of {sorted(_VALID_STATUSES)}."
+        )
     with get_conn(db_path) as c:
         if new_status == "approved":
             c.execute(

@@ -1,6 +1,7 @@
 """Tests for engine.db."""
 from __future__ import annotations
 
+import sqlite3
 from pathlib import Path
 
 import pytest
@@ -13,6 +14,7 @@ from engine.db import (
     insert_generated_content,
     get_cluster_by_name,
     get_queries_for_cluster,
+    get_cluster_last_used,
     update_content_status,
     list_pending_content,
     list_clusters,
@@ -68,7 +70,7 @@ def test_insert_cluster_duplicate_name_raises(tmp_db_path: Path):
         priority_score=5,
         notes=None,
     )
-    with pytest.raises(Exception):
+    with pytest.raises(sqlite3.IntegrityError):
         insert_cluster(
             tmp_db_path,
             name="broken_spring",
@@ -145,3 +147,32 @@ def test_cascade_delete(tmp_db_path: Path):
     with get_conn(tmp_db_path) as c:
         c.execute("DELETE FROM clusters WHERE id = ?", (c_id,))
     assert get_queries_for_cluster(tmp_db_path, c_id) == []
+
+
+def test_get_cluster_last_used_returns_none_when_no_content(tmp_db_path: Path):
+    init_db(tmp_db_path)
+    cid = insert_cluster(
+        tmp_db_path, name="x", pillar="emergency_repairs",
+        service_type=None, funnel_stage=None, priority_score=5, notes=None,
+    )
+    assert get_cluster_last_used(tmp_db_path, cid) is None
+
+
+def test_get_cluster_last_used_returns_latest_timestamp(tmp_db_path: Path):
+    init_db(tmp_db_path)
+    cid = insert_cluster(
+        tmp_db_path, name="x", pillar="emergency_repairs",
+        service_type=None, funnel_stage=None, priority_score=5, notes=None,
+    )
+    qid = insert_query(
+        tmp_db_path, cluster_id=cid, query_text="q", phrasing_type="raw_seed",
+        geo_modifier=None, source="raw_seed", priority_score=5, notes=None,
+    )
+    insert_generated_content(
+        tmp_db_path, cluster_id=cid, source_query_id=qid, format="caption",
+        content_path="pending/a.md", brief_path=None, status="pending",
+        model_used="claude-sonnet-4-6", notes=None,
+    )
+    ts = get_cluster_last_used(tmp_db_path, cid)
+    assert isinstance(ts, str)
+    assert len(ts) > 0
