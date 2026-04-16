@@ -7,6 +7,8 @@ venv/
 data/content_engine.db
 data/content_engine.db-wal
 data/content_engine.db-shm
+data/harvest_processed/*
+!data/harvest_processed/.gitkeep
 pending/*
 approved/*
 briefs/*
