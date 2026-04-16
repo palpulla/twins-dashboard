@@ -23,7 +23,8 @@ def main() -> None:
     ap = argparse.ArgumentParser(description="Generate content for a single cluster.")
     ap.add_argument("--name", type=str, required=True, help="Cluster name")
     ap.add_argument("--formats", type=str,
-                    help="Comma-separated format list; default: all 5")
+                    help="Comma-separated format list (NOT YET IMPLEMENTED in v1 — "
+                         "always generates all 5; flag reserved for future use)")
     ap.add_argument("--db", type=Path, default=DEFAULT_DB)
     ap.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     ap.add_argument("--pending", type=Path, default=DEFAULT_PENDING)
@@ -32,10 +33,16 @@ def main() -> None:
     args = ap.parse_args()
 
     if args.formats:
+        # v1 always generates all 5 formats. Validate spellings anyway, then warn.
         requested = [f.strip() for f in args.formats.split(",")]
         unknown = set(requested) - set(FORMATS)
         if unknown:
             ap.error(f"Unknown format(s): {sorted(unknown)}. Valid: {FORMATS}")
+        print(
+            f"[warn] --formats {args.formats} is not implemented in v1; "
+            f"generating all 5 formats. Edit the output in pending/ after review.",
+            file=sys.stderr,
+        )
 
     ctx = {
         "brand": load_brand(args.config / "brand.yaml"),
