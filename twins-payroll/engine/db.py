@@ -157,6 +157,16 @@ def insert_commission(
     return int(cur.lastrowid)
 
 
+def update_job_skip_reason(
+    conn: sqlite3.Connection, *, job_id: int, skip_reason: str
+) -> None:
+    conn.execute(
+        "UPDATE jobs SET skip_reason = ? WHERE id = ?",
+        (skip_reason, job_id),
+    )
+    conn.commit()
+
+
 def fetch_jobs_for_run(conn: sqlite3.Connection, run_id: int) -> list[sqlite3.Row]:
     return list(conn.execute(
         "SELECT * FROM jobs WHERE run_id = ? ORDER BY job_date, hcp_job_number",

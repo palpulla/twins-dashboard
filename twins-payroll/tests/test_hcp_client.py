@@ -86,12 +86,13 @@ def test_get_500_exhausts_retries(client):
 
 @respx.mock
 def test_paginate_follows_cursor(client):
-    respx.get("https://api.housecallpro.com/jobs", params={"cursor": None}).respond(
-        200, json={"data": [{"id": "a"}], "next_cursor": "c2"}
-    )
-    respx.get("https://api.housecallpro.com/jobs", params={"cursor": "c2"}).respond(
-        200, json={"data": [{"id": "b"}], "next_cursor": None}
-    )
+    # First call has no cursor param; second call has cursor=c2.
+    import httpx as _httpx
+    responses = iter([
+        _httpx.Response(200, json={"data": [{"id": "a"}], "next_cursor": "c2"}),
+        _httpx.Response(200, json={"data": [{"id": "b"}], "next_cursor": None}),
+    ])
+    respx.get("https://api.housecallpro.com/jobs").mock(side_effect=lambda req: next(responses))
     pages = list(client.paginate("/jobs", cursor_param="cursor",
                                   next_path=["next_cursor"], items_path=["data"]))
     assert [p["id"] for p in pages] == ["a", "b"]

@@ -32,6 +32,7 @@ from engine.db import (
     insert_job,
     insert_job_part,
     set_run_status,
+    update_job_skip_reason,
 )
 from engine.hcp_client import HCPClient
 from engine.hcp_sync import fetch_week_jobs
@@ -189,6 +190,7 @@ def main() -> int:
             return 1
         if user_skip == "user_skip":
             j.skip_reason = "user_skip"
+            update_job_skip_reason(conn, job_id=job_db_id, skip_reason="user_skip")
             continue
 
         for p in parts:

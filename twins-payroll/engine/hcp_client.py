@@ -105,7 +105,8 @@ class HCPClient:
         base_params = dict(params or {})
         while True:
             call_params = dict(base_params)
-            call_params[cursor_param] = cursor
+            if cursor is not None:
+                call_params[cursor_param] = cursor
             page = self.get(path, params=call_params)
             for item in _dig(page, items_path) or []:
                 yield item

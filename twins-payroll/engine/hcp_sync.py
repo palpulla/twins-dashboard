@@ -28,14 +28,23 @@ def fetch_week_jobs(
     list_path = hcp_cfg.endpoints.get("jobs_list", "/jobs")
     detail_tmpl = hcp_cfg.endpoints.get("job_detail", "/jobs/{id}")
     work_status = hcp_cfg.filters.get("work_status", "completed")
+    cursor_param = hcp_cfg.pagination.get("cursor_param", "cursor")
+    page_size = hcp_cfg.pagination.get("page_size", 100)
 
-    list_resp = client.get(list_path, params={
+    list_params = {
         "scheduled_start_min": _iso_day_start(week_start),
         "scheduled_start_max": _iso_day_end(week_end),
         "work_status": work_status,
-        "per_page": hcp_cfg.pagination.get("page_size", 100),
-    })
-    items = list_resp.get("data") or list_resp.get("jobs") or []
+        "per_page": page_size,
+    }
+
+    items = list(client.paginate(
+        list_path,
+        cursor_param=cursor_param,
+        next_path=["next_cursor"],
+        items_path=["data"],
+        params=list_params,
+    ))
 
     jobs: list[Job] = []
     for item in items:

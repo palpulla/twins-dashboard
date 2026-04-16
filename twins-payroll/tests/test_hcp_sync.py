@@ -50,3 +50,36 @@ def test_fetch_week_jobs_pulls_list_then_detail(tmp_path, fixtures_dir, hcp_cfg)
     assert ids == {"job_14404", "job_14411"}
     j404 = next(j for j in jobs if j.hcp_id == "job_14404")
     assert "Replaced 2x .243" in j404.notes_text
+
+
+@respx.mock
+def test_fetch_week_jobs_paginates(tmp_path, fixtures_dir, hcp_cfg):
+    """Jobs across multiple pages are all fetched, not just page 1."""
+    import json as _json
+    import httpx as _httpx
+
+    job_a = _json.loads((fixtures_dir / "hcp_job_detail.json").read_text())
+    job_b = _json.loads((fixtures_dir / "hcp_job_detail_tip_and_discount.json").read_text())
+
+    # Page 1 has job_14404 with a cursor to page 2; page 2 has job_14411.
+    page1 = {"data": [{"id": "job_14404", "invoice_number": "14404"}], "next_cursor": "page2"}
+    page2 = {"data": [{"id": "job_14411", "invoice_number": "14411"}], "next_cursor": None}
+
+    list_responses = iter([
+        _httpx.Response(200, json=page1),
+        _httpx.Response(200, json=page2),
+    ])
+    respx.get("https://api.housecallpro.com/jobs").mock(side_effect=lambda req: next(list_responses))
+    respx.get("https://api.housecallpro.com/jobs/job_14404").respond(200, json=job_a)
+    respx.get("https://api.housecallpro.com/jobs/job_14411").respond(200, json=job_b)
+
+    client = HCPClient(
+        api_key="test", base_url="https://api.housecallpro.com",
+        cache_dir=tmp_path, max_retries=1, backoff_base=0.0,
+    )
+    jobs = fetch_week_jobs(client, hcp_cfg,
+                           week_start=date(2026, 4, 13),
+                           week_end=date(2026, 4, 19))
+    client.close()
+    ids = {j.hcp_id for j in jobs}
+    assert ids == {"job_14404", "job_14411"}
