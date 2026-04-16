@@ -1,0 +1,21 @@
+{
+  "id": "job_14411",
+  "invoice_number": "14411",
+  "scheduled_start": "2026-04-15T14:00:00-05:00",
+  "customer": {"first_name": "Bob", "last_name": "Smith"},
+  "description": "Full install",
+  "line_items": [],
+  "notes": "Used 2220L-7 opener",
+  "service_notes": null,
+  "internal_notes": null,
+  "total_amount": 3248.00,
+  "tip": 25.00,
+  "subtotal": 3398.00,
+  "labor_total": 185.00,
+  "materials_total": 3213.00,
+  "discount": 175.00,
+  "cc_fee": 112.48,
+  "assigned_employees": [
+    {"id": "emp_nicholas", "first_name": "Nicholas", "last_name": "Roccaforte"}
+  ]
+}
