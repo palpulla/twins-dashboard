@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+data/content_engine.db
+data/content_engine.db-wal
+data/content_engine.db-shm
+pending/*
+approved/*
+briefs/*
+!pending/.gitkeep
+!approved/.gitkeep
+!briefs/.gitkeep
+.env
