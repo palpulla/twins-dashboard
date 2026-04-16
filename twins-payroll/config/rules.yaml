@@ -1,0 +1,12 @@
+price_sheet:
+  # Path relative to twins-payroll/. Override for the operator's real file location.
+  path: ../prices/parts.xlsx
+  sheet: Pricing
+
+week:
+  # Week boundary: 'monday' means Mon-Sun; 'sunday' would mean Sun-Sat.
+  start_day: monday
+
+# URL template for the HCP Id -> ticket link in Excel output.
+# {hcp_id} is replaced at write time.
+ticket_url_template: https://pro.housecallpro.com/app/jobs/{hcp_id}

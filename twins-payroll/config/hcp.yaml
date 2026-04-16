@@ -1,0 +1,27 @@
+# Housecall Pro API integration config.
+# Endpoint paths and field names are placeholders to be confirmed against
+# the real API on the first sync. See spec "Open questions for first-run verification".
+endpoints:
+  jobs_list: /jobs
+  job_detail: /jobs/{id}
+  employees: /employees
+
+filters:
+  # Which work_status values represent a payrollable (completed) job
+  work_status: completed
+
+pagination:
+  page_size: 100
+  cursor_param: cursor
+
+# Job-detail fields read for the tech's write-down of parts/sizes.
+# First real run: inspect data/hcp_cache/<run_id>/*.json and narrow this list
+# to whichever field(s) actually carry the notes.
+notes_fields:
+  - notes
+  - service_notes
+  - internal_notes
+
+rate_limit:
+  max_retries: 5
+  backoff_base: 1.0

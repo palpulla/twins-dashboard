@@ -1,0 +1,15 @@
+# Twins Garage Doors payroll roster.
+# hcp_employee_id is populated on first sync (resolved against HCP /employees).
+supervisor: Charles Rue
+techs:
+  - name: Charles Rue
+    hcp_employee_id: null
+    commission_pct: 0.20
+    bonus_tier: step_tiers_charles
+    override_on_others_pct: 0.02
+  - name: Maurice
+    hcp_employee_id: null
+    commission_pct: 0.20
+  - name: Nicholas Roccaforte
+    hcp_employee_id: null
+    commission_pct: 0.18

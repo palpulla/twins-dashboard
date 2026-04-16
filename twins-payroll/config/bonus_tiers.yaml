@@ -1,0 +1,7 @@
+# Charles Rue's per-job step-tier bonus, applied on basis = amount - tip - parts_cost.
+# $400-$499 -> $20, $500-$599 -> $30, ..., nothing below $400.
+step_tiers_charles:
+  band_width: 100
+  band_start: 400
+  bonus_start: 20
+  bonus_step: 10
