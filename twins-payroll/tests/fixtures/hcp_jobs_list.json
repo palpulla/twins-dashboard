@@ -1,0 +1,7 @@
+{
+  "data": [
+    {"id": "job_14404", "invoice_number": "14404", "scheduled_start": "2026-04-14T09:30:00-05:00"},
+    {"id": "job_14411", "invoice_number": "14411", "scheduled_start": "2026-04-15T14:00:00-05:00"}
+  ],
+  "next_cursor": null
+}
