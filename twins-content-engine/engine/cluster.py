@@ -52,7 +52,6 @@ from engine.db import (
     get_conn,
     get_cluster_by_name,
     get_queries_for_cluster,
-    insert_cluster,
     insert_query,
 )
 
@@ -100,9 +99,20 @@ def _build_user_prompt(seed_query: str, pillar_hint: str | None, towns: list[str
 
 
 def _safe_parse(raw: str) -> dict[str, Any] | None:
+    # Strip common LLM-wrapping patterns (markdown fences) before parsing.
+    stripped = raw.strip()
+    if stripped.startswith("```"):
+        stripped = stripped.removeprefix("```json").removeprefix("```").strip()
+        if stripped.endswith("```"):
+            stripped = stripped.removesuffix("```").strip()
     try:
-        return json.loads(raw)
-    except json.JSONDecodeError:
+        return json.loads(stripped)
+    except json.JSONDecodeError as exc:
+        print(
+            f"[warn] _safe_parse: JSON decode failed ({exc}); "
+            f"raw prefix: {raw[:200]!r}",
+            flush=True,
+        )
         return None
 
 
@@ -118,11 +128,17 @@ def expand_seeds_to_clusters(
     with get_conn(db_path) as c:
         rows = list(
             c.execute(
-                "SELECT id, name, pillar FROM clusters WHERE name LIKE '_unclustered_%'"
+                r"SELECT id, name, pillar FROM clusters "
+                r"WHERE name LIKE '\_unclustered\_%' ESCAPE '\'"
             ).fetchall()
         )
 
-    for row in rows:
+    total = len(rows)
+    if total == 0:
+        print("[info] no placeholder clusters to expand.", flush=True)
+        return
+
+    for idx, row in enumerate(rows, start=1):
         placeholder_id = row["id"]
         placeholder_pillar = row["pillar"]
         seed_queries = get_queries_for_cluster(db_path, placeholder_id)
@@ -130,17 +146,31 @@ def expand_seeds_to_clusters(
             continue
         seed_text = seed_queries[0]["query_text"]
 
+        print(
+            f"[{idx}/{total}] expanding seed id={placeholder_id} "
+            f"({seed_text[:40]!r})...",
+            flush=True,
+        )
+
         user_prompt = _build_user_prompt(
             seed_query=seed_text,
             pillar_hint=placeholder_pillar if placeholder_pillar != "unclustered" else None,
             towns=towns,
         )
-        result = client.complete(
-            system=EXPANSION_SYSTEM_PROMPT,
-            user=user_prompt,
-            max_tokens=1500,
-            temperature=0.7,
-        )
+        try:
+            result = client.complete(
+                system=EXPANSION_SYSTEM_PROMPT,
+                user=user_prompt,
+                max_tokens=1500,
+                temperature=0.7,
+            )
+        except Exception as exc:  # noqa: BLE001 — log and continue so other seeds still expand
+            print(
+                f"[warn] seed id={placeholder_id} "
+                f"({seed_text[:40]!r}): API error — {exc}",
+                flush=True,
+            )
+            continue
         payload = _safe_parse(result.text)
         if payload is None:
             # leave placeholder in place; operator can regenerate

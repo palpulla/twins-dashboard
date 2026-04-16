@@ -117,6 +117,12 @@ def test_expand_merges_duplicates(seeded_db: Path):
     # two seeds, same cluster_name — should result in a single real cluster
     assert cluster_names.count("broken_spring") == 1
 
+    # Both original raw_seed queries must have ended up on the merged cluster
+    merged = next(c for c in clusters if c["name"] == "broken_spring")
+    queries = get_queries_for_cluster(seeded_db, merged["id"])
+    raw_seed_queries = [q for q in queries if q["phrasing_type"] == "raw_seed"]
+    assert len(raw_seed_queries) == 2
+
 
 def test_expand_handles_malformed_response(seeded_db: Path):
     """Malformed JSON: skip the seed, continue with the rest."""
