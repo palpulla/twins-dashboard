@@ -239,8 +239,7 @@ def _check_blog_first_sentence(content: str, req: list[str]) -> list[Violation]:
     )]
 
 
-def _check_cta(content: str, funnel_stage: str, rules: RulesConfig,
-               brand: BrandConfig) -> list[Violation]:
+def _check_cta(content: str, funnel_stage: str, rules: RulesConfig) -> list[Violation]:
     violations: list[Violation] = []
     if rules.cta_rules.one_per_piece:
         phone_count = len(_PHONE_RE.findall(content))
@@ -262,10 +261,10 @@ def _check_cta(content: str, funnel_stage: str, rules: RulesConfig,
     return violations
 
 
-def _check_local_embedding(content: str, format: str, rules: RulesConfig,
+def _check_local_embedding(content: str, content_format: str, rules: RulesConfig,
                            service_area: ServiceAreaConfig) -> list[Violation]:
     violations: list[Violation] = []
-    freq = rules.local_embedding.mention_frequency.get(format)
+    freq = rules.local_embedding.mention_frequency.get(content_format)
     if not freq:
         return violations
     lo, hi = freq[0], freq[1]
@@ -274,7 +273,7 @@ def _check_local_embedding(content: str, format: str, rules: RulesConfig,
         violations.append(Violation(
             rule_id="local_embedding:frequency",
             severity="error",
-            message=f"{format} has {count} town mentions; expected {lo}-{hi}.",
+            message=f"{content_format} has {count} town mentions; expected {lo}-{hi}.",
         ))
     if rules.local_embedding.placement_rules.no_consecutive_sentences:
         if _consecutive_sentence_mentions(content, service_area):
@@ -301,14 +300,13 @@ def _check_local_embedding(content: str, format: str, rules: RulesConfig,
 
 def run_rules(
     *,
-    format: str,
+    content_format: str,
     content: str,
     funnel_stage: str,
     ctx: dict[str, Any],
 ) -> RuleReport:
     """Run every applicable rule. Return RuleReport with passed=False if any
     error-severity violation was found."""
-    brand: BrandConfig = ctx["brand"]
     service_area: ServiceAreaConfig = ctx["service_area"]
     rules: RulesConfig = ctx["rules"]
 
@@ -316,16 +314,16 @@ def run_rules(
     violations += _check_blacklist_phrases(content, rules)
     violations += _check_blacklist_structural(content, rules)
     violations += _check_specificity(content, rules, service_area)
-    violations += _check_cta(content, funnel_stage, rules, brand)
-    violations += _check_local_embedding(content, format, rules, service_area)
+    violations += _check_cta(content, funnel_stage, rules)
+    violations += _check_local_embedding(content, content_format, rules, service_area)
 
     hook_reqs = rules.hook_requirements or {}
-    if format == "video_script" and "video_script" in hook_reqs:
+    if content_format == "video_script" and "video_script" in hook_reqs:
         violations += _check_hook_video_script(content, hook_reqs["video_script"])
-    elif format == "gbp_post" and "gbp_post" in hook_reqs:
+    elif content_format == "gbp_post" and "gbp_post" in hook_reqs:
         first_n = int(hook_reqs["gbp_post"].get("first_n_words", 10))
         violations += _check_hook_gbp(content, service_area, first_n)
-    elif format == "blog_snippet" and "blog_snippet" in hook_reqs:
+    elif content_format == "blog_snippet" and "blog_snippet" in hook_reqs:
         req = hook_reqs["blog_snippet"].get("first_sentence_must_contain_one_of", [])
         violations += _check_blog_first_sentence(content, req)
 

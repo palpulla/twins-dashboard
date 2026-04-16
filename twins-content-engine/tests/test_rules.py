@@ -74,7 +74,7 @@ def test_clean_caption_passes(sample_brand_yaml, sample_service_area_yaml, rules
         "Call (608) 555-0199."
     )
     report = run_rules(
-        format="caption",
+        content_format="caption",
         content=content,
         funnel_stage="high_intent_problem_aware",
         ctx=ctx,
@@ -89,7 +89,7 @@ def test_blacklist_phrase_flagged(sample_brand_yaml, sample_service_area_yaml, r
         "service will elevate your garage door experience. Call now."
     )
     report = run_rules(
-        format="caption",
+        content_format="caption",
         content=content,
         funnel_stage="high_intent_problem_aware",
         ctx=ctx,
@@ -110,7 +110,7 @@ def test_video_script_bad_hook_opener_flagged(
         "CTA: Call (608) 555-0199."
     )
     report = run_rules(
-        format="video_script",
+        content_format="video_script",
         content=content,
         funnel_stage="high_intent_problem_aware",
         ctx=ctx,
@@ -131,7 +131,7 @@ def test_gbp_first_words_must_contain_town(
         "Middleton and Sun Prairie too. Call (608) 555-0199 to get back in by tonight."
     )
     report = run_rules(
-        format="gbp_post",
+        content_format="gbp_post",
         content=content,
         funnel_stage="high_intent_problem_aware",
         ctx=ctx,
@@ -149,7 +149,7 @@ def test_specificity_requirement(sample_brand_yaml, sample_service_area_yaml, ru
         "Call us for service."
     )
     report = run_rules(
-        format="caption",
+        content_format="caption",
         content=content,
         funnel_stage="high_intent_problem_aware",
         ctx=ctx,
@@ -170,7 +170,7 @@ def test_local_embedding_frequency(
         "Fixed same-day for $120. Call (608) 555-0199."
     )
     report = run_rules(
-        format="caption",
+        content_format="caption",
         content=zero_mentions,
         funnel_stage="high_intent_problem_aware",
         ctx=ctx,
@@ -188,7 +188,7 @@ def test_cta_one_per_piece(sample_brand_yaml, sample_service_area_yaml, rules_ya
         "Call (608) 555-0199 tonight."
     )
     report = run_rules(
-        format="caption",
+        content_format="caption",
         content=content,
         funnel_stage="high_intent_problem_aware",
         ctx=ctx,
@@ -203,7 +203,7 @@ def test_suggestions_are_populated(
     ctx = _ctx(sample_brand_yaml, sample_service_area_yaml, rules_yaml)
     content = "Whether you're searching, journey into excellence."
     report = run_rules(
-        format="caption",
+        content_format="caption",
         content=content,
         funnel_stage="high_intent_problem_aware",
         ctx=ctx,
@@ -211,3 +211,50 @@ def test_suggestions_are_populated(
     assert not report.passed
     assert report.suggestions, "should have at least one critique line"
     assert all(isinstance(s, str) and s for s in report.suggestions)
+
+
+def test_em_dash_dramatic_pause_flagged(
+    sample_brand_yaml, sample_service_area_yaml, rules_yaml
+):
+    """em-dash pairs used as dramatic asides trigger anti_ai_spam:structural_em_dash_pair."""
+    ctx = _ctx(sample_brand_yaml, sample_service_area_yaml, rules_yaml)
+    # Single content line with a classic AI-tell em-dash pair.
+    # Also includes Madison + $price so specificity + frequency don't fire.
+    content = (
+        "In Madison, your garage door spring snapped — and here's what happens next — "
+        "you can't open it. Torsion springs hold 200 lbs. Typical fix is $250.\n"
+        "Call (608) 555-0199."
+    )
+    report = run_rules(
+        content_format="caption",
+        content=content,
+        funnel_stage="high_intent_problem_aware",
+        ctx=ctx,
+    )
+    rule_ids = {v.rule_id for v in report.violations}
+    assert "anti_ai_spam:structural_em_dash_pair" in rule_ids
+
+
+def test_formulaic_triadic_list_warning(
+    sample_brand_yaml, sample_service_area_yaml, rules_yaml
+):
+    """Title-case three-adjective list triggers the triadic-list warning.
+
+    Note: the structural triadic check only catches Title-case triples
+    (e.g. 'Fast. Reliable. Local.'). Lowercase triples like
+    'fast, reliable, and affordable' are a known false-negative gap.
+    """
+    ctx = _ctx(sample_brand_yaml, sample_service_area_yaml, rules_yaml)
+    # Content must still pass other checks (specificity, CTA, locality)
+    content = (
+        "Your garage door broke in Madison? We handle it same-day. Fast. Reliable. Local.\n"
+        "$250 typical fix. Call (608) 555-0199."
+    )
+    report = run_rules(
+        content_format="caption",
+        content=content,
+        funnel_stage="high_intent_problem_aware",
+        ctx=ctx,
+    )
+    rule_ids = {v.rule_id for v in report.violations}
+    assert "anti_ai_spam:structural_triadic_list" in rule_ids
