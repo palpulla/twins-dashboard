@@ -117,6 +117,9 @@ def load_brand(path: Path) -> BrandConfig:
 
 def load_service_area(path: Path) -> ServiceAreaConfig:
     data = _read_yaml(path)
+    for key in ("primary", "towns"):
+        if key not in data:
+            raise ValueError(f"service_area.yaml missing required field: {key}")
     display_names = data.get("town_display_names", {})
     for town in data["towns"]:
         if town not in display_names:
@@ -131,6 +134,8 @@ def load_service_area(path: Path) -> ServiceAreaConfig:
 
 def load_pillars(path: Path) -> PillarsConfig:
     data = _read_yaml(path)
+    if "pillars" not in data:
+        raise ValueError("pillars.yaml missing required key: pillars")
     pillars: dict[str, Pillar] = {}
     for name, p in data["pillars"].items():
         for fmt in p["format_bias"]:

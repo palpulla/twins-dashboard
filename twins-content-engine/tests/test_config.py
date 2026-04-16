@@ -65,7 +65,26 @@ def test_load_pillars(tmp_path: Path):
     )
     cfg = load_pillars(p)
     assert "emergency_repairs" in cfg.pillars
-    assert cfg.pillars["emergency_repairs"].priority_weight == 1.5
+    pillar = cfg.pillars["emergency_repairs"]
+    assert pillar.priority_weight == 1.5
+    assert pillar.description == "desc"
+    assert pillar.funnel_stage == "high_intent_problem_aware"
+    assert pillar.seed_patterns == ["a", "b"]
+    assert pillar.format_bias == ["video_script"]
+
+
+def test_load_service_area_missing_primary(tmp_path: Path):
+    p = tmp_path / "service_area.yaml"
+    p.write_text("towns: [madison_wi]\ntown_display_names: {madison_wi: Madison}\n")
+    with pytest.raises(ValueError, match="missing required field: primary"):
+        load_service_area(p)
+
+
+def test_load_service_area_missing_towns(tmp_path: Path):
+    p = tmp_path / "service_area.yaml"
+    p.write_text("primary: madison_wi\ntown_display_names: {}\n")
+    with pytest.raises(ValueError, match="missing required field: towns"):
+        load_service_area(p)
 
 
 def test_load_pillars_bad_format_bias(tmp_path: Path):
@@ -80,6 +99,13 @@ def test_load_pillars_bad_format_bias(tmp_path: Path):
         "    priority_weight: 1.0\n"
     )
     with pytest.raises(ValueError, match="invalid format_bias value"):
+        load_pillars(p)
+
+
+def test_load_pillars_missing_top_level(tmp_path: Path):
+    p = tmp_path / "pillars.yaml"
+    p.write_text("something_else: {}\n")
+    with pytest.raises(ValueError, match="missing required key: pillars"):
         load_pillars(p)
 
 
