@@ -158,6 +158,16 @@ def main() -> int:
         if j.amount == 0:
             j.skip_reason = "zero_revenue"
 
+        if j.skip_reason != "zero_revenue":
+            # Tip is not in the HCP API; ask operator manually.
+            tip_raw = io.read(f"  tip for job #{j.hcp_job_number} [0] > ").strip()
+            if tip_raw:
+                try:
+                    j.tip = float(tip_raw)
+                except ValueError:
+                    console.print(f"[yellow]Invalid tip {tip_raw!r}, using 0[/yellow]")
+                    j.tip = 0.0
+
         job_db_id = insert_job(
             conn,
             run_id=run_id,

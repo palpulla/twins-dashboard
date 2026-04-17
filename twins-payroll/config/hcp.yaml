@@ -1,26 +1,19 @@
-# Housecall Pro API integration config.
-# Endpoint paths and field names are placeholders to be confirmed against
-# the real API on the first sync. See spec "Open questions for first-run verification".
+# Housecall Pro API integration config. Pinned to real API on 2026-04-17.
 endpoints:
   jobs_list: /jobs
   job_detail: /jobs/{id}
+  line_items: /jobs/{id}/line_items
+  invoices: /jobs/{id}/invoices
   employees: /employees
 
 filters:
-  # Which work_status values represent a payrollable (completed) job
-  work_status: completed
+  # Work status value for jobs eligible for payroll. HCP uses "complete unrated".
+  work_status: complete unrated
 
 pagination:
-  page_size: 100
-  cursor_param: cursor
-
-# Job-detail fields read for the tech's write-down of parts/sizes.
-# First real run: inspect data/hcp_cache/<run_id>/*.json and narrow this list
-# to whichever field(s) actually carry the notes.
-notes_fields:
-  - notes
-  - service_notes
-  - internal_notes
+  # HCP returns {page, page_size, total_pages, total_items, jobs}
+  # per_page is ignored (always 10). Iterate by incrementing ?page=N until N > total_pages.
+  page_size: 10
 
 rate_limit:
   max_retries: 5

@@ -24,12 +24,19 @@ from engine.report_builder import build_weekly_report
 @respx.mock
 def test_full_pipeline(tmp_path, fixtures_dir):
     # --- HCP mocks ---
-    jobs_list = json.loads((fixtures_dir / "hcp_jobs_list.json").read_text())
+    jobs_list = {"page": 1, "total_pages": 1, "jobs": [
+        {"id": "job_14404", "work_status": "complete unrated"},
+        {"id": "job_14411", "work_status": "complete unrated"},
+    ]}
     job_a = json.loads((fixtures_dir / "hcp_job_detail.json").read_text())
     job_b = json.loads((fixtures_dir / "hcp_job_detail_tip_and_discount.json").read_text())
     respx.get("https://api.housecallpro.com/jobs").respond(200, json=jobs_list)
     respx.get("https://api.housecallpro.com/jobs/job_14404").respond(200, json=job_a)
     respx.get("https://api.housecallpro.com/jobs/job_14411").respond(200, json=job_b)
+    respx.get("https://api.housecallpro.com/jobs/job_14404/line_items").respond(200, json={"data": []})
+    respx.get("https://api.housecallpro.com/jobs/job_14411/line_items").respond(200, json={"data": []})
+    respx.get("https://api.housecallpro.com/jobs/job_14404/invoices").respond(200, json={"invoices": []})
+    respx.get("https://api.housecallpro.com/jobs/job_14411/invoices").respond(200, json={"invoices": []})
 
     # --- Config ---
     techs = TechsConfig(
@@ -37,16 +44,20 @@ def test_full_pipeline(tmp_path, fixtures_dir):
         techs=[
             TechConfig(name="Charles Rue", commission_pct=0.20,
                        bonus_tier="step_tiers_charles", override_on_others_pct=0.02),
-            TechConfig(name="Maurice", commission_pct=0.20),
+            TechConfig(name="Maurice Williams", commission_pct=0.20),
             TechConfig(name="Nicholas Roccaforte", commission_pct=0.18),
         ],
     )
     bonus_tiers = {"step_tiers_charles": StepTierConfig(100, 400, 20, 10)}
     hcp_cfg = HCPConfig(
-        endpoints={"jobs_list": "/jobs", "job_detail": "/jobs/{id}"},
-        filters={"work_status": "completed"},
-        pagination={"page_size": 100, "cursor_param": "cursor"},
-        notes_fields=["notes", "service_notes", "internal_notes"],
+        endpoints={
+            "jobs_list": "/jobs",
+            "job_detail": "/jobs/{id}",
+            "line_items": "/jobs/{id}/line_items",
+            "invoices": "/jobs/{id}/invoices",
+        },
+        filters={"work_status": "complete unrated"},
+        pagination={"page_size": 10},
         rate_limit={},
     )
 
@@ -67,7 +78,7 @@ def test_full_pipeline(tmp_path, fixtures_dir):
     for j in jobs:
         j.owner_tech = resolve_owner(j.raw_techs, techs)
     owners = sorted(j.owner_tech for j in jobs)
-    assert owners == ["Maurice", "Nicholas Roccaforte"]
+    assert owners == ["Maurice Williams", "Nicholas Roccaforte"]
 
     # --- DB init + run ---
     db_path = tmp_path / "payroll.db"
@@ -122,15 +133,14 @@ def test_full_pipeline(tmp_path, fixtures_dir):
     assert out_path.exists()
 
     # --- Assertions on the numbers ---
-    # Job 14404: Maurice primary. basis = 1687 - 0 - (2 * 45.76) = 1595.48
+    # Job 14404: Maurice Williams primary. basis = 1687 - 0 - (2 * 45.76) = 1595.48
     # Maurice pay = 1595.48 * 0.20 = 319.10
     # Charles override = 1595.48 * 0.02 = 31.91
-    # Job 14411: Nicholas primary. basis = 3248 - 25 - 47.96 = 3175.04
+    # Job 14411: Nicholas primary. tip = 0 (not in API). basis = 3223 - 0 - 47.96 = 3175.04
     # Nicholas pay = 3175.04 * 0.18 = 571.51
-    # Tip 25 pass-through to Nicholas
     by_tech = {r.tech: r for r in report.summary}
-    assert by_tech["Maurice"].final_pay == pytest.approx(319.10)
-    assert by_tech["Nicholas Roccaforte"].final_pay == pytest.approx(round(3175.04 * 0.18, 2) + 25.0)
+    assert by_tech["Maurice Williams"].final_pay == pytest.approx(319.10)
+    assert by_tech["Nicholas Roccaforte"].final_pay == pytest.approx(round(3175.04 * 0.18, 2))
     assert by_tech["Charles Rue"].final_pay == pytest.approx(31.91)
 
     # Sanity-check Excel was written with 3 sheets

@@ -80,15 +80,13 @@ def test_load_hcp_config(tmp_path):
 endpoints:
   jobs_list: /jobs
   job_detail: /jobs/{id}
+  line_items: /jobs/{id}/line_items
+  invoices: /jobs/{id}/invoices
   employees: /employees
 filters:
-  work_status: completed
+  work_status: complete unrated
 pagination:
-  page_size: 100
-  cursor_param: cursor
-notes_fields:
-  - notes
-  - service_notes
+  page_size: 10
 rate_limit:
   max_retries: 5
   backoff_base: 1.0
@@ -96,9 +94,8 @@ rate_limit:
     hcp = load_hcp_config(cfg)
     assert isinstance(hcp, HCPConfig)
     assert hcp.endpoints["jobs_list"] == "/jobs"
-    assert hcp.filters["work_status"] == "completed"
-    assert hcp.pagination["page_size"] == 100
-    assert hcp.notes_fields == ["notes", "service_notes"]
+    assert hcp.filters["work_status"] == "complete unrated"
+    assert hcp.pagination["page_size"] == 10
     assert hcp.rate_limit["max_retries"] == 5
 
 

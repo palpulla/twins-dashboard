@@ -64,7 +64,6 @@ class HCPConfig:
     endpoints: dict[str, str]
     filters: dict[str, Any]
     pagination: dict[str, Any]
-    notes_fields: list[str]
     rate_limit: dict[str, Any]
 
 
@@ -74,7 +73,6 @@ def load_hcp_config(path: Path) -> HCPConfig:
         endpoints=data.get("endpoints", {}),
         filters=data.get("filters", {}),
         pagination=data.get("pagination", {}),
-        notes_fields=list(data.get("notes_fields", [])),
         rate_limit=data.get("rate_limit", {}),
     )
 

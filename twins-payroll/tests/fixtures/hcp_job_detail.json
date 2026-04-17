@@ -1,26 +1,18 @@
 {
   "id": "job_14404",
   "invoice_number": "14404",
-  "scheduled_start": "2026-04-14T09:30:00-05:00",
-  "customer": {"first_name": "Sarah", "last_name": "Johnson"},
   "description": "Labor",
-  "line_items": [
-    {"kind": "service", "name": "Labor", "unit_price": 185.00, "quantity": 1},
-    {"kind": "material", "name": "UltraLife Double Spring Replacement (2 Car)", "unit_price": 869.00, "quantity": 1},
-    {"kind": "material", "name": "Roller (Titan Strength)", "unit_price": 350.00, "quantity": 1}
+  "customer": {"first_name": "Sarah", "last_name": "Johnson"},
+  "notes": [
+    {"id": "nte_1", "content": "Replaced 2x .243 #2 30.5\" springs"},
+    {"id": "nte_2", "content": "New 7' cables (pair), 2 drums, 10 long-stem rollers"}
   ],
-  "notes": "Replaced 2x .243 #2 30.5\" springs\nNew 7' cables (pair), 2 drums, 10 long-stem rollers",
-  "service_notes": "",
-  "internal_notes": "",
-  "total_amount": 1687.00,
-  "tip": 0.00,
-  "subtotal": 1404.00,
-  "labor_total": 185.00,
-  "materials_total": 1219.00,
-  "discount": 0.00,
-  "cc_fee": 0.00,
+  "work_status": "complete unrated",
+  "schedule": {"scheduled_start": "2026-04-14T09:30:00-05:00"},
+  "total_amount": 168700,
+  "subtotal": 168700,
   "assigned_employees": [
-    {"id": "emp_charles", "first_name": "Charles", "last_name": "Rue"},
-    {"id": "emp_maurice", "first_name": "Maurice", "last_name": ""}
+    {"id": "pro_105812fc126c412c9980f9def8d49ba0", "first_name": "Charles", "last_name": "Rue"},
+    {"id": "pro_5df7c97afeb640409c1e84eeccd2c511", "first_name": "Maurice", "last_name": "Williams"}
   ]
 }
