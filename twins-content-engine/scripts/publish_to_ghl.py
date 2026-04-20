@@ -45,10 +45,13 @@ GHL_VERSION = "2021-07-28"
 FORMAT_TO_PLATFORMS = {
     "gbp_post": ["google"],
     "caption": ["facebook", "instagram", "linkedin"],
-    "video_script": ["instagram", "tiktok", "youtube"],  # requires mp4 upload first — skipped today
+    "video_script": ["instagram", "youtube"],  # video file attached from twins-media-generator
     "faq": [],          # blog destination TBD
     "blog_snippet": [], # blog destination TBD
 }
+
+# Where twins-media-generator writes the Veo hook clips.
+MEDIA_OUT_DIR = Path("/Users/daniel/twins-dashboard/twins-media-generator")
 
 FILENAME_RE = re.compile(
     r"(?P<date>\d{4}-\d{2}-\d{2})_(?P<cluster>.+)_(?P<format>gbp_post|caption|video_script|faq|blog_snippet)\.md$"
@@ -76,6 +79,45 @@ def read_body(path: Path) -> str:
         if len(parts) == 2:
             raw = parts[1].strip()
     return raw
+
+
+def extract_video_caption(script_path: Path) -> str:
+    """Turn a video_script.md (HOOK/PROBLEM/AUTHORITY/CTA/SHOT LIST) into a social caption."""
+    raw = read_body(script_path)
+    lines = raw.splitlines()
+    out = []
+    for ln in lines:
+        low = ln.strip().lower()
+        if low.startswith("**shot list") or low.startswith("shot list") or low.startswith("---"):
+            break
+        if low.startswith("**") and low.endswith("**"):
+            continue  # section header
+        if ln.strip():
+            out.append(ln.rstrip())
+    text = "\n".join(out).strip()
+    if len(text) > 2000:
+        text = text[:1990] + "…"
+    if "(608) 888-8785" not in text:
+        text += "\n\nCall (608) 888-8785"
+    text += "\n\n#MadisonWI #GarageDoorRepair #DaneCounty #TwinsGarageDoors"
+    return text
+
+
+def upload_video(session: requests.Session, base: str, location_id: str, path: Path) -> str:
+    """Upload an MP4 to GHL Medias; return the hosted URL."""
+    # `files=` triggers multipart; Authorization header stays on the session.
+    with open(path, "rb") as f:
+        r = session.post(
+            f"{base}/medias/upload-file",
+            files={"file": (path.name, f, "video/mp4")},
+            data={"locationId": location_id},
+            # Drop Content-Type: application/json header for multipart.
+            headers={k: v for k, v in session.headers.items() if k.lower() != "content-type"},
+            timeout=180,
+        )
+    if not r.ok:
+        raise RuntimeError(f"GHL media upload {r.status_code}: {r.text}")
+    return r.json()["url"]
 
 
 def ghl_get(session: requests.Session, base: str, path: str, params: dict | None = None) -> dict:
@@ -159,6 +201,7 @@ def schedule_draft(
     when: dt.datetime,
     user_id: str,
     platforms: list[str],
+    media: list[dict] | None = None,
 ) -> dict:
     """Create a scheduled draft post in GHL Social Planner.
 
@@ -174,6 +217,8 @@ def schedule_draft(
         "scheduleDate": when.strftime("%Y-%m-%dT%H:%M:%S.000Z"),
         "status": "draft",
     }
+    if media:
+        payload["media"] = media
     # GBP needs gmbPostDetails; a missing event type is sometimes 422'd.
     if "google" in platforms:
         payload["gmbPostDetails"] = {"gmbEventType": "STANDARD"}
@@ -292,7 +337,6 @@ def main() -> None:
     staged = 0
     skipped = 0
     for i, meta in enumerate(files):
-        body = read_body(meta["path"])
         platforms = FORMAT_TO_PLATFORMS[meta["format"]]
         acct_ids: list[str] = []
         for p in platforms:
@@ -301,8 +345,28 @@ def main() -> None:
             print(f"[skip] {meta['path'].name}: no connected account for {platforms}")
             skipped += 1
             continue
+
+        if meta["format"] == "video_script":
+            # Video flow: caption from script, upload matching mp4, attach as media.
+            mp4 = MEDIA_OUT_DIR / f"{meta['cluster']}_hook.mp4"
+            if not mp4.exists():
+                # Fallback for the earliest test filename.
+                alt = MEDIA_OUT_DIR / f"{meta['cluster']}_hook_veo_test.mp4"
+                if alt.exists():
+                    mp4 = alt
+            if not mp4.exists():
+                print(f"[skip] {meta['path'].name}: no matching .mp4 in {MEDIA_OUT_DIR}")
+                skipped += 1
+                continue
+            body = extract_video_caption(meta["path"])
+            video_url = upload_video(session, base, location_id, mp4)
+            media = [{"url": video_url, "type": "video/mp4"}]
+        else:
+            body = read_body(meta["path"])
+            media = None
+
         when = ts_for(i)
-        resp = schedule_draft(session, base, location_id, acct_ids, body, when, user_id, platforms)
+        resp = schedule_draft(session, base, location_id, acct_ids, body, when, user_id, platforms, media)
         post_id = (resp.get("results") or {}).get("_id") or resp.get("id") or resp.get("_id", "?")
         print(f"[ok]   {meta['path'].name} -> draft {post_id} @ {when.strftime('%Y-%m-%d %H:%M')}")
         staged += 1
