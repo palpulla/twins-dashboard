@@ -775,7 +775,7 @@ import type { OwnerCard, OwnerType } from './types.ts';
 
 interface AttomClientOptions {
   apiKey: string;
-  fetchFn?: typeof fetch;
+  fetchFn?: (url: string, init?: RequestInit) => Promise<Response>;
   baseUrl?: string;
 }
 
