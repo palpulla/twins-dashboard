@@ -70,7 +70,14 @@ Target town to reference: {target_town}{neighborhood_hint}
 Required structure — use this EXACT block layout:
 
 HOOK (0:00-0:02):
-[6-8 words. Must reference a specific symptom, number, or neighborhood. Do NOT start with "Whether", "Are you", "Did you know", "In today's".]
+[MANDATORY: exactly 6 to 8 words. Count them. Not 1-5, not 9+. Must reference a specific symptom, number, or neighborhood. Do NOT start with "Whether", "Are you", "Did you know", "In today's".
+GOOD hooks (count: 7 words each):
+  - "Loud bang then your garage door stops."
+  - "Garage door halfway down, reverses every time."
+  - "Spring snapped overnight. Door will not move."
+BAD hooks (too short, will be REJECTED):
+  - "Broken spring."  (2 words)
+  - "Stuck door."  (2 words)]
 
 PROBLEM (0:02-0:08):
 [3-4 short voiceover lines. No fluff. What's actually happening to the homeowner.]
@@ -96,7 +103,15 @@ Cluster: {cluster_name}
 Pillar: {pillar_name}
 Funnel stage: {funnel_stage} (CTA type: {cta_type})
 Source search query: "{query_text}"
-Target town: {target_town} — must appear in the first 10 words.
+Target town: {target_town} — MANDATORY: must appear in the FIRST 10 WORDS of the post.
+
+GOOD opener examples (town is in the first 1-6 words):
+  - "{target_town} homeowners asking about spring replacement — here's what it runs."
+  - "If your {target_town} garage door just made a loud bang..."
+  - "Live in {target_town}? Here's what winterizing a garage door actually takes."
+BAD openers (will be REJECTED — town too late or absent):
+  - "If your garage door made a loud bang this morning, you probably..."
+  - "Most homeowners don't think about their torsion spring until..."
 
 Constraints:
 - 900–1400 characters total.
@@ -143,11 +158,22 @@ Target town: {target_town}
 
 Structure:
 1. H1 in question form that mirrors the search query.
-2. First paragraph: direct answer in 2–3 sentences. First sentence MUST contain a specific number, timeframe, or price range.
+2. First paragraph: direct answer in 2–3 sentences. MANDATORY — the FIRST SENTENCE after the H1 must START with one of: a specific number, a timeframe, or a price range. If you cannot, revise until you can.
+
+GOOD first sentences (each starts with a number / timeframe / price):
+  - "A torsion spring replacement runs $175–$250 in {target_town} for a standard single-car door."
+  - "Nine out of ten safety-sensor problems in {target_town} garages are dirty lenses or slight misalignment."
+  - "In the first hour after a spring snaps, three things matter..."
+  - "Under a 500-cycle-per-year household, a torsion spring lasts about 14 years."
+BAD first sentences (no number/time/price — will be REJECTED):
+  - "If you heard a loud bang this morning, your spring probably broke."
+  - "{target_town} homeowners know our winters are brutal on garage doors."
+  - "A broken garage door is more than an inconvenience."
+
 3. Three short sections with H2 subheads, 1 paragraph each.
 4. Final paragraph: one CTA matching {cta_type}.
 
-Local mentions: reference {target_town} or "Madison" 3–5 times across the piece (spread out, never consecutive sentences).
+Local mentions: reference {target_town} or "Madison" 3–7 times across the piece (spread out, never consecutive sentences).
 Use these placeholder internal link tags where a link would make sense: [[link:service/<slug>]]
 
 Return ONLY the Markdown body, no YAML frontmatter.
