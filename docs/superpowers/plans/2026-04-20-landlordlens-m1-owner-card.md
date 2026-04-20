@@ -516,6 +516,15 @@ describe('normalizeAddress', () => {
     const once = normalizeAddress('  123 MAIN ST, MADISON, WI  ');
     expect(normalizeAddress(once)).toBe(once);
   });
+
+  it('preserves state names when they appear in street names', () => {
+    expect(normalizeAddress('875 N Michigan Ave, Chicago, IL 60611'))
+      .toBe('875 n michigan ave, chicago, il 60611');
+    expect(normalizeAddress('1600 Pennsylvania Ave, Washington, DC 20500'))
+      .toBe('1600 pennsylvania ave, washington, dc 20500');
+    expect(normalizeAddress('100 Virginia St, Reno, NV 89501'))
+      .toBe('100 virginia st, reno, nv 89501');
+  });
 });
 ```
 
@@ -560,11 +569,20 @@ export function normalizeAddress(input: string): string {
   s = s.replace(/\s+/g, ' ');
   // strip trailing punctuation
   s = s.replace(/[.,;:\s]+$/, '');
-  // expand state names
-  for (const [full, abbr] of Object.entries(STATE_NAMES_TO_ABBR)) {
-    s = s.replace(new RegExp(`\\b${full}\\b`, 'g'), abbr);
+
+  // Split on commas; state-name replacement only affects the final segment
+  // (where state actually lives in US addresses).
+  const segments = s.split(',').map(seg => seg.trim());
+  if (segments.length > 0) {
+    let last = segments[segments.length - 1];
+    for (const [full, abbr] of Object.entries(STATE_NAMES_TO_ABBR)) {
+      last = last.replace(new RegExp(`\\b${full}\\b`, 'g'), abbr);
+    }
+    segments[segments.length - 1] = last;
   }
-  // contract street suffixes
+  s = segments.join(', ');
+
+  // Street suffix contractions apply everywhere (OK because these aren't ambiguous).
   for (const [full, abbr] of Object.entries(STREET_SUFFIX_ABBR)) {
     s = s.replace(new RegExp(`\\b${full}\\b\\.?`, 'g'), abbr);
   }
@@ -582,7 +600,7 @@ export function normalizeAddress(input: string): string {
 npx vitest run src/__tests__/normalize.test.ts
 ```
 
-Expected: all 6 tests pass.
+Expected: all 7 tests pass.
 
 - [ ] **Step 5: Mirror to edge-function shared dir**
 
