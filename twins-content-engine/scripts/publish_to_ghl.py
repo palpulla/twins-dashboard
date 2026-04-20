@@ -104,15 +104,23 @@ def extract_video_caption(script_path: Path) -> str:
 
 
 def upload_video(session: requests.Session, base: str, location_id: str, path: Path) -> str:
-    """Upload an MP4 to GHL Medias; return the hosted URL."""
-    # `files=` triggers multipart; Authorization header stays on the session.
+    """Upload an MP4 to GHL Medias; return the hosted URL.
+
+    Uses a fresh request (not session.post) so the session's
+    Content-Type: application/json doesn't override the multipart boundary
+    that `requests` generates for `files=`.
+    """
+    headers = {
+        "Authorization": session.headers.get("Authorization", ""),
+        "Version": session.headers.get("Version", GHL_VERSION),
+        "Accept": "application/json",
+    }
     with open(path, "rb") as f:
-        r = session.post(
+        r = requests.post(
             f"{base}/medias/upload-file",
+            headers=headers,
             files={"file": (path.name, f, "video/mp4")},
             data={"locationId": location_id},
-            # Drop Content-Type: application/json header for multipart.
-            headers={k: v for k, v in session.headers.items() if k.lower() != "content-type"},
             timeout=180,
         )
     if not r.ok:
