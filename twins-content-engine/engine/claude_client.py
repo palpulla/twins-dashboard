@@ -4,12 +4,16 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Optional, Protocol
 
+from dotenv import load_dotenv
+
 from anthropic import (
     Anthropic,
     APIConnectionError,
     InternalServerError,
     RateLimitError,
 )
+
+load_dotenv(override=True)
 from tenacity import (
     retry,
     retry_if_exception_type,
