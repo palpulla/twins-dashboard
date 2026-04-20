@@ -193,6 +193,9 @@ def main() -> None:
                     help="'daily' spaces posts one per day starting tomorrow; 'now' schedules all for +10 min.")
     ap.add_argument("--account-name-contains", type=str, default=None,
                     help="Only post to accounts whose name contains this substring (case-insensitive).")
+    ap.add_argument("--account-id", type=str, action="append", default=None,
+                    help="Restrict to these specific GHL account id(s). Can pass multiple times. "
+                         "Use this when two accounts share a name (e.g. same-brand GBP in two cities).")
     ap.add_argument("--user-id", type=str, default=None,
                     help="GHL userId to attribute posts to. Auto-discovered from recent posts if omitted.")
     args = ap.parse_args()
@@ -260,6 +263,12 @@ def main() -> None:
         print("ERROR: No social accounts returned. Check token scopes.", file=sys.stderr)
         sys.exit(2)
 
+    if args.account_id:
+        want = set(args.account_id)
+        accounts = [a for a in accounts if a["id"] in want]
+        if not accounts:
+            print(f"ERROR: No accounts match --account-id {args.account_id}.", file=sys.stderr)
+            sys.exit(2)
     if args.account_name_contains:
         needle = args.account_name_contains.lower()
         accounts = [a for a in accounts if needle in (a["name"] or "").lower()]
