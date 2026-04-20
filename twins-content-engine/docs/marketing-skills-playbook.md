@@ -4,14 +4,20 @@ How to pair the `coreyhaines31/marketingskills` plugin (50+ skills) with this co
 
 ## Install (one-time)
 
-In any Claude Code session, run:
+From any terminal (the `/plugin` slash command only works in the Claude Code CLI app, not in web/IDE):
 
-```
-/plugin marketplace add coreyhaines31/marketingskills
-/plugin install marketing-skills
+```bash
+npx -y skills add coreyhaines31/marketingskills --yes --global
 ```
 
-After that, every skill is callable from any session via the `Skill` tool or `/<skill-name>`.
+This clones the repo, installs all 35 skills under `~/.agents/skills/`, and symlinks them into `~/.claude/skills/` so Claude Code picks them up in every session. Installed 2026-04-20.
+
+Useful follow-ups:
+```bash
+npx skills list                              # what's installed
+npx skills update                            # pull newer versions
+npx skills remove                            # uninstall some/all
+```
 
 ## The 10 skills that matter here
 
