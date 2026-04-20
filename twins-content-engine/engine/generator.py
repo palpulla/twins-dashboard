@@ -24,6 +24,23 @@ FORMATS = ["video_script", "caption", "gbp_post", "faq", "blog_snippet"]
 FORMATS_NEEDING_BRIEF = {"video_script", "gbp_post"}
 
 
+# When the Claude Code session has other skills loaded (copywriting, ad-creative,
+# etc.), the model sometimes prefixes its output with a meta-explanation like
+# "Using the X skill's approach, here's the rewrite —\n\n---\n\n<actual content>".
+# Strip those deterministically before writing to disk so the rules gate and
+# downstream publishers see the real first sentence.
+_LEAK_PREAMBLE_RE = re.compile(
+    r"^\s*(?:using the|following the|applying the|based on the)\b.{0,400}?\n---\n+",
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def strip_leaked_preamble(body: str) -> str:
+    """Drop model meta-commentary before the first '---' if it matches known patterns."""
+    cleaned = _LEAK_PREAMBLE_RE.sub("", body, count=1)
+    return cleaned.lstrip()
+
+
 @dataclass
 class GeneratedPiece:
     format: str
@@ -61,7 +78,7 @@ def _write_content_file(
     prefix = "_REJECTED_" if rejected else ""
     filename = f"{prefix}{today}_{_slugify(cluster_name)}_{content_format}.md"
     path = output_dir / filename
-    path.write_text(body)
+    path.write_text(strip_leaked_preamble(body))
     return path
 
 

@@ -310,6 +310,10 @@ def run_rules(
     service_area: ServiceAreaConfig = ctx["service_area"]
     rules: RulesConfig = ctx["rules"]
 
+    # Deferred import so rules.py stays importable without generator side effects.
+    from engine.generator import strip_leaked_preamble
+    content = strip_leaked_preamble(content)
+
     violations: list[Violation] = []
     violations += _check_blacklist_phrases(content, rules)
     violations += _check_blacklist_structural(content, rules)
