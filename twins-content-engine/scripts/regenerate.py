@@ -89,7 +89,14 @@ def main() -> None:
         print("Writing as _REJECTED_; correct manually or rerun.")
 
     target = Path(row["content_path"])
-    if not report.passed and not target.name.startswith("_REJECTED_"):
+    if report.passed and target.name.startswith("_REJECTED_"):
+        # The previous draft was rejected but this regen passed — drop the prefix
+        # so approve.py and the human reviewer see it as a real pending piece.
+        clean = target.with_name(target.name.replace("_REJECTED_", "", 1))
+        if target.exists():
+            target.rename(clean) if not clean.exists() else target.unlink()
+        target = clean
+    elif not report.passed and not target.name.startswith("_REJECTED_"):
         target = target.with_name("_REJECTED_" + target.name)
     target.write_text(new_body)
     with get_conn(args.db) as c:
