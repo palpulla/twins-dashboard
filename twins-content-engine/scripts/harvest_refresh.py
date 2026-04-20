@@ -9,7 +9,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from engine.claude_client import ClaudeClient
+from engine.claude_client import make_client
 from engine.harvest import fold_into_db, parse_harvest_inbox
 
 
@@ -36,7 +36,7 @@ def main() -> None:
         print("Inbox is empty (only comments/blank lines). Nothing to do.")
         return
 
-    client = ClaudeClient(model=args.model)
+    client = make_client(model=args.model)
     fold_into_db(db_path=args.db, entries=entries, client=client)
 
     args.archive.mkdir(parents=True, exist_ok=True)

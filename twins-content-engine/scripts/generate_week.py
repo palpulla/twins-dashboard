@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from engine.claude_client import ClaudeClient
+from engine.claude_client import make_client
 from engine.config import load_brand, load_pillars, load_rules, load_service_area
 from engine.generator import generate_for_cluster
 from engine.sampling import pick_clusters_for_week
@@ -46,7 +46,7 @@ def main() -> None:
         print("No clusters available. Run ingest_seeds and expand_clusters first.")
         sys.exit(1)
 
-    client = ClaudeClient(model=args.model)
+    client = make_client(model=args.model)
     total_accepted = 0
     total_rejected = 0
     for p in picks:

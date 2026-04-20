@@ -67,10 +67,10 @@ cta_rules:
 local_embedding:
   mention_frequency:
     video_script: [1, 2]
-    caption: [1, 1]
+    caption: [1, 3]
     gbp_post: [2, 3]
-    faq: [2, 2]
-    blog_snippet: [3, 5]
+    faq: [2, 4]
+    blog_snippet: [3, 7]
   placement_rules:
     no_consecutive_sentences: true
     require_mention_in_first_pct: 30

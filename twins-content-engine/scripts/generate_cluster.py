@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from engine.claude_client import ClaudeClient
+from engine.claude_client import make_client
 from engine.config import load_brand, load_pillars, load_rules, load_service_area
 from engine.generator import FORMATS, generate_for_cluster
 
@@ -51,7 +51,7 @@ def main() -> None:
         "rules": load_rules(args.config / "rules.yaml"),
     }
 
-    client = ClaudeClient(model=args.model)
+    client = make_client(model=args.model)
     result = generate_for_cluster(
         db_path=args.db,
         cluster_name=args.name,

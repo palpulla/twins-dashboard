@@ -1,6 +1,9 @@
 """Anthropic Claude wrapper with retries, prompt caching, and a test fake."""
 from __future__ import annotations
 
+import json
+import os
+import subprocess
 from dataclasses import dataclass, field
 from typing import Any, Optional, Protocol
 
@@ -83,6 +86,73 @@ class ClaudeClient:
             input_tokens=getattr(response.usage, "input_tokens", 0),
             output_tokens=getattr(response.usage, "output_tokens", 0),
         )
+
+
+_MODEL_ALIAS = {
+    "claude-sonnet-4-6": "sonnet",
+    "claude-haiku-4-5-20251001": "haiku",
+    "claude-opus-4-7": "opus",
+}
+
+
+class CLIClaudeClient:
+    """Fallback client that shells out to the `claude` CLI.
+
+    Used when direct Anthropic API access is blocked (e.g., a new account's
+    credit balance hasn't propagated yet). Costs are covered by the user's
+    Claude Code subscription instead of prepaid API credits.
+    """
+
+    DEFAULT_MODEL = "claude-sonnet-4-6"
+
+    def __init__(self, model: Optional[str] = None) -> None:
+        full = model or self.DEFAULT_MODEL
+        self.model = _MODEL_ALIAS.get(full, full)
+
+    def complete(
+        self,
+        *,
+        system: str,
+        user: str,
+        max_tokens: int = 2048,
+        temperature: float = 0.7,
+    ) -> CompletionResult:
+        env = dict(os.environ)
+        env.pop("ANTHROPIC_API_KEY", None)
+        result = subprocess.run(
+            [
+                "claude",
+                "-p",
+                "--output-format", "json",
+                "--model", self.model,
+                "--system-prompt", system,
+                user,
+            ],
+            capture_output=True,
+            text=True,
+            env=env,
+            timeout=300,
+        )
+        if result.returncode != 0:
+            raise RuntimeError(
+                f"claude CLI exited {result.returncode}: {result.stderr.strip() or result.stdout.strip()}"
+            )
+        payload = json.loads(result.stdout)
+        if payload.get("is_error"):
+            raise RuntimeError(f"claude CLI error: {payload.get('result', payload)}")
+        usage = payload.get("usage", {}) or {}
+        return CompletionResult(
+            text=payload.get("result", ""),
+            input_tokens=int(usage.get("input_tokens", 0)),
+            output_tokens=int(usage.get("output_tokens", 0)),
+        )
+
+
+def make_client(model: Optional[str] = None) -> ClaudeClientProtocol:
+    """Return the right client based on CONTENT_ENGINE_USE_CLI env var."""
+    if os.environ.get("CONTENT_ENGINE_USE_CLI") == "1":
+        return CLIClaudeClient(model=model)
+    return ClaudeClient(model=model)
 
 
 @dataclass

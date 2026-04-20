@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from engine.claude_client import ClaudeClient
+from engine.claude_client import make_client
 from engine.cluster import expand_seeds_to_clusters
 from engine.config import load_service_area
 
@@ -29,7 +29,7 @@ def main() -> None:
         ap.error("--all is required in v1 (partial expansion is a future feature)")
 
     towns = load_service_area(args.service_area).towns
-    client = ClaudeClient(model=args.model)
+    client = make_client(model=args.model)
     expand_seeds_to_clusters(db_path=args.db, client=client, towns=towns)
     print(f"Expansion complete against {args.db}")
 

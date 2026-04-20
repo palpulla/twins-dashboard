@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from engine.claude_client import ClaudeClient
+from engine.claude_client import make_client
 from engine.config import load_brand, load_pillars, load_rules, load_service_area
 from engine.db import get_conn, update_content_status
 from engine.local_embedding import pick_neighborhood, pick_town_for_piece
@@ -74,7 +74,7 @@ def main() -> None:
         ctx=ctx,
     )
 
-    client = ClaudeClient(model=args.model)
+    client = make_client(model=args.model)
     result = client.complete(system=system, user=user, max_tokens=2048, temperature=0.7)
     report = run_rules(
         content_format=row["format"], content=result.text,
