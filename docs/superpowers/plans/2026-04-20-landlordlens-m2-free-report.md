@@ -2,6 +2,27 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+> **SCOPE AMENDMENT 2026-04-20 (mid-execution):** SoS scrapers (Tasks 9–13) and NSOPW scraper (Task 14) are **removed from M2** and consolidated into M3. Reason: real-portal scraping from the current environment hit network and anti-bot walls (WI DNS unreachable, IL HTTP/2 blocks, MN needs full POST flow, NSOPW is JS-rendered). All four portals need either browser-based investigation or a headless-browser-in-edge-function infrastructure which fits better alongside M3's already-planned state court scrapers.
+>
+> **Revised M2 ships:** Auth + email gate + simplified orchestrator (Owner Card + property snapshot + red-flag engine only, with honest "coming soon" placeholders for LLC piercing and SOR) + Report page + Dashboard + Home wire-up + deploy.
+>
+> **Still completed from original plan:** Tasks 1–8 (migrations, types, red-flag engine).
+>
+> **Task renumbering (new sequence):**
+> - Tasks 1–8: unchanged (completed)
+> - **New Task 9**: Simplified orchestrator (skip SoS + NSOPW calls)
+> - **New Task 10**: Free-report HTTP handler + DB persistence + deploy
+> - **New Task 11**: React Router setup
+> - **New Task 12**: Auth helpers
+> - **New Task 13**: EmailGateForm
+> - **New Task 14**: Display components (LlcMembersCard, SorMatchCard, RedFlagSummary, DisclaimerBlock) — LLC and SOR cards render "coming soon" messaging when data is null
+> - **New Task 15**: Report client + Report page + FreeReportSections
+> - **New Task 16**: Dashboard page
+> - **New Task 17**: Home wire-up (email gate + magic-link return)
+> - **New Task 18**: Deploy + E2E smoke + tag v0.2.0-m2
+>
+> Red-flag engine rules remain; the two LLC-piercing rules (succeeded / failed-in-launch-state) can no longer fire under revised scope (llcMembers section always completes with null data). Engine logic does NOT need changes — those rules just don't trigger. The "LLC in non-launch state" rule widens implicitly to cover all LLCs. A new "LLC present — piercing coming soon" copy treatment is rendered by the LlcMembersCard component itself rather than by the engine.
+
 **Goal:** Add Supabase Auth magic-link + Free Report layer (LLC piercing for WI/IL/MN, NSOPW sex-offender check, property snapshot expansion, rules-based red-flag summary) to the live LandlordLens product.
 
 **Architecture:** Extend the existing M1 Supabase + React + Vite stack. Add 3 new edge functions (`sos-piercer`, `nsopw-scraper`, `free-report` orchestrator), 5 new DB tables, and 3 new frontend routes (`/login`, `/report/:id`, `/dashboard`). Red-flag engine is a pure function unit-tested in isolation. Scrapers are fixture-based TDD — capture real HTML once, build against fixture, verify live post-deploy.
