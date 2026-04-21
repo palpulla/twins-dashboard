@@ -106,11 +106,43 @@ If any check fails, revise.
 
 ### Step 6 — Create the Gmail draft
 
+Use BOTH the plain-text `body` AND the rich `htmlBody` parameters. Gmail-created drafts do not auto-insert the user's saved signature (that only works when Compose is clicked in the Gmail web UI), so we embed the signature directly in the HTML.
+
 - `to:` the student's email from the resume
-- `from:` Daniel's connected Gmail
 - `subject:` `Operations Manager role at Twins Garage Doors`
-- `body:` the email body, plain text, ending at the CTA
-- **Do not send.**
+- `body:` (plain text) the email body followed by the plain-text signature:
+
+```
+Daniel
+Co-Founder, Twins Garage Doors
+(608) 888-8785
+daniel@twinsgaragedoors.com
+twinsgaragedoors.com
+```
+
+- `htmlBody:` the email body wrapped in `<p>` tags, followed by the logo and signature block:
+
+```html
+<div style="font-family:Arial,sans-serif;font-size:14px;line-height:1.5;color:#000;">
+<p>[greeting],</p>
+<p>[Twins context paragraph]</p>
+<p>[role paragraph]</p>
+<p>[internship/long-term line]</p>
+<p>[personalization paragraph]</p>
+<p>If this sounds interesting, reply and we'll set up a quick call.</p>
+<br>
+<img src="https://twinsgaragedoors.com/wp-content/uploads/2022/10/Twins-Garage-Doors-logo-1.png" alt="Twins Garage Doors" style="width:220px;height:auto;display:block;margin:0 0 12px 0;border:0;">
+<div>
+<strong>Daniel</strong><br>
+Co-Founder, Twins Garage Doors<br>
+(608) 888-8785<br>
+<a href="mailto:daniel@twinsgaragedoors.com" style="color:#0F4C81;text-decoration:none;">daniel@twinsgaragedoors.com</a><br>
+<a href="https://twinsgaragedoors.com" style="color:#0F4C81;text-decoration:none;">twinsgaragedoors.com</a>
+</div>
+</div>
+```
+
+**Do not send.**
 
 ### Step 7 — Failure handling
 
