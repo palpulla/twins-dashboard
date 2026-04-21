@@ -131,7 +131,7 @@ twinsgaragedoors.com
 <p>[personalization paragraph]</p>
 <p>If this sounds interesting, reply and we'll set up a quick call.</p>
 <br>
-<img src="https://twinsgaragedoors.com/wp-content/uploads/2022/10/Twins-Garage-Doors-logo-1.png" alt="Twins Garage Doors" style="width:220px;height:auto;display:block;margin:0 0 12px 0;border:0;">
+<img src="https://twinsgaragedoors.com/wp-content/uploads/2026/04/twins-logo-text-final.png" alt="Twins Garage Doors" style="width:220px;height:auto;display:block;margin:0 0 12px 0;border:0;">
 <div>
 <strong>Daniel</strong><br>
 Co-Founder, Twins Garage Doors<br>
