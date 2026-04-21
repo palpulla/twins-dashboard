@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-21
 **Count:** 18 drafts created in Daniel's Gmail drafts folder.
-**Subject (all drafts):** `Building the operations layer at Twins Garage Doors`
+**Subject (all drafts):** `Operations Manager role at Twins Garage Doors`
 
 All drafts follow the locked prompt at [../prompts/2026-04-21-brandeis-recruiting-cowork-prompt.md](../prompts/2026-04-21-brandeis-recruiting-cowork-prompt.md). Twins context + role first, personalization second, soft CTA, no sign-off, no em-dashes, no named AI products.
 

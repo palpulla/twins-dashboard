@@ -60,7 +60,7 @@ Rules:
 
 Use this structure. The Twins context and role come first. The personalization to the student comes AFTER, in its own paragraph.
 
-**Subject line:** `Building the operations layer at Twins Garage Doors`
+**Subject line:** `Operations Manager role at Twins Garage Doors`
 
 **Body:**
 
@@ -108,7 +108,7 @@ If any check fails, revise.
 
 - `to:` the student's email from the resume
 - `from:` Daniel's connected Gmail
-- `subject:` `Building the operations layer at Twins Garage Doors`
+- `subject:` `Operations Manager role at Twins Garage Doors`
 - `body:` the email body, plain text, ending at the CTA
 - **Do not send.**
 
