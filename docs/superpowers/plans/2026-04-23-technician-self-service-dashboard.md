@@ -8,11 +8,57 @@
 
 **Tech Stack:** React 18 + TypeScript + Vite 5 + shadcn/ui + TanStack Query + Recharts (existing), Supabase (auth + Postgres + realtime + Edge Functions), HCP webhook (already running).
 
-**Important environment notes:**
-- The dashboard code lives in `palpulla/twins-dash` on GitHub (Lovable-hosted). It is **not cloned locally** at the start of this plan — Phase 0 clones it into `~/twins-dashboard/twins-dash/` as a sibling of the existing payroll engine.
-- The Lovable-owned Supabase project `wxipkiwivadvwcpblahp` is **not accessible via Daniel's Supabase MCP token**. SQL migrations in this plan are **applied by pasting into the Lovable SQL editor** (Lovable → Settings → Supabase → SQL Editor), not via the MCP. Each migration is saved to a file in `supabase/migrations/` so Lovable also picks it up through its migration pipeline.
-- Tests that need to hit the Lovable Supabase run against a seeded scratch schema via an integration test harness that uses the anon key + test user sessions. Never mock Supabase in RLS tests — per Daniel's standing rule, integration tests must hit a real database.
+**Important environment notes (REVISED 2026-04-23 after discovering live state):**
+- The dashboard code lives in `palpulla/twins-dash` on GitHub. Phase 0 clones it into `~/twins-dashboard/twins-dash/`.
+- **Hosting is Vercel, not Lovable** — the Lovable subscription was cancelled. `vercel.json` + `.npmrc` + DNS are all live. Vercel auto-deploys on every push to `main`.
+- **Live Supabase: `jwrpjuqaynownxaoeayi`** (org `jgjaxcukimqaofkguhpt`, name "twins-dash-prod"). Linked locally via `supabase/.temp/linked-project.json`.
+- **Workflow for schema changes:** `npx supabase migration new <slug>` creates `supabase/migrations/<timestamp>_<slug>.sql`; edit the file; `npx supabase db push` applies it to the linked prod project. **No Lovable SQL editor, no manual pasting** — everything is CLI-driven and script-able by subagents.
+- **Workflow for Edge Functions:** `npx supabase functions deploy <name>` deploys to the linked project.
+- Daniel's MCP token does NOT have `jwrpjuqaynownxaoeayi` in its project list (different org). So subagents must use the Supabase CLI (already authed + linked), not the MCP, for this project.
+- Tests that need to hit the live Supabase run against a seeded scratch schema via an integration test harness that uses the anon key + test user sessions. Never mock Supabase in RLS tests — per Daniel's standing rule, integration tests must hit a real database.
 - Daniel's three preferences to respect throughout: (1) fully reversible changes, KPI math immutable; (2) simple, not busy UI; mobile must fit 375×667 without horizontal scroll; (3) no hardcoded placeholder identity (always use real Twins data).
+
+**Live schema correction — the plan body references an imagined schema; the real tables are `payroll_*` prefixed.** Table/column remap to apply throughout every task in this plan:
+
+| Plan-body reference | Real live schema |
+|---|---|
+| `technicians` | `payroll_techs` (SERIAL id, not UUID) |
+| `technicians.hcp_pro_id` | `payroll_techs.hcp_employee_id` |
+| `commission_rules` table | No such table. Rates live on `payroll_techs.commission_pct` + `.bonus_tier_id` + `.override_on_others_pct` + `.is_supervisor`. History of rate changes is a future addition — for v1, the tech dashboard reads current rate from `payroll_techs`. |
+| `jobs` | `payroll_jobs` (IDENTITY int id) |
+| `jobs.owner_technician_id` (UUID FK) | `payroll_jobs.owner_tech` (TEXT — tech's name). Identity key throughout the tech-facing system is the tech's name, not a UUID FK. |
+| `jobs.revenue` | `payroll_jobs.amount` |
+| `jobs.scheduled_date` | `payroll_jobs.job_date` |
+| `jobs.customer_first_name` / `customer_last_initial` | `payroll_jobs.customer_display` (single TEXT — for tech UI, split on display by showing as-is; no PII stripping needed because this is admin-intended data already) |
+| `jobs.hcp_pro_id` | Not stored on payroll_jobs. Tech ownership comes from `sync-hcp-week` which writes `owner_tech` (resolved from HCP assigned_employee_ids via `payroll_techs.hcp_employee_id` match). |
+| `job_parts` | `payroll_job_parts` |
+| `job_parts.pricebook_id` | Does not exist. `payroll_job_parts.part_name TEXT` is used directly. Pricebook lookup is by name. Tech dashboard still enforces "pricebook-only" by validating `part_name` exists in `payroll_parts_prices` before insert. |
+| `job_parts.unit_price` / `total` | Already on `payroll_job_parts.unit_price` + `.total` — column names match; no rename needed. |
+| `parts_pricebook` | `payroll_parts_prices` |
+| `parts_pricebook.unit_price` | `payroll_parts_prices.total_cost` |
+| `parts_pricebook.category` | Does not exist on the table. For the category-chip UX, v1 derives category via a simple client-side keyword classifier (spring → Springs, opener → Openers, etc.); a future migration can add a real `category` column. |
+| `parts_pricebook.one_time` | `payroll_parts_prices.is_one_time` |
+| `runs` | `payroll_runs` |
+| `commissions` | `payroll_commissions` |
+| `commissions.technician_id` | `payroll_commissions.tech_name TEXT` |
+| `commissions.kind` | Same (CHECK 'primary' \| 'override') — no change |
+| `commissions.job_id` | Same, but FKs to `payroll_jobs.id` (INT) |
+
+**Architectural adjustments that follow from the schema shape:**
+
+1. **Identity by name, not UUID.** RLS policies and view filters use `tech_name = (SELECT name FROM payroll_techs WHERE auth_user_id = auth.uid())` and `owner_tech = (SELECT name FROM payroll_techs WHERE auth_user_id = auth.uid())`. The `current_technician_id()` helper in Task 1.3 is replaced with `current_technician_name() RETURNS text`.
+
+2. **`payroll_jobs` is populated by `sync-hcp-week`, not the HCP webhook.** The webhook-enrichment trigger in Task 1.6 is replaced with enrichment inside the existing `sync-hcp-week` Edge Function (look up `owner_tech` from HCP `assigned_employee_ids` against `payroll_techs.hcp_employee_id`). If that function already does this (likely — the admin payroll wizard has to assign ownership), we may need zero changes.
+
+3. **Run lifecycle for tech view.** `payroll_runs.status` already has values `'in_progress' | 'final' | 'superseded'`. The plan's `locked_at` / `reopened_at` columns are still added but the lock state derivation is: locked ⇔ `status = 'final'` AND no superseding in-progress run. This lets us piggyback on the existing payroll wizard's status management.
+
+4. **Opening a week for tech use.** Tech dashboard needs an `in_progress` `payroll_runs` row to attach jobs to during the week (before admin's formal Monday payroll run). When a tech opens their dashboard on Monday morning and no run exists for the current week yet, the `sync-my-hcp-jobs` Edge Function creates an `in_progress` run for that week, then pulls jobs into it. Admin's later payroll run reuses the same row (flips to `final` at end of week).
+
+5. **Column-level hiding stays the same approach.** The `v_my_job_parts` view excludes `unit_price` and `total`; the `payroll_parts_prices` view for techs excludes `total_cost`. RLS does the row filtering; views do the column hiding. Defense-in-depth test (Task 1.10) still applies, just with renamed columns.
+
+6. **Links to HCP and customer display.** Tech UI uses `payroll_jobs.customer_display` verbatim (it's already formatted). HCP deep-link: `https://pro.housecallpro.com/app/jobs/{hcp_id}` — same as the admin payroll wizard.
+
+**Execution sequencing:** Apply the corrections above to every task in Phase 1 as you get to it. Task 1.1 (audit log) has no schema dependencies and is safe to execute as-written. Tasks 1.2 onward need in-flight rewrite using the remap table above. Each implementer subagent will be given the relevant task plus these corrections.
 
 ---
 
@@ -183,9 +229,20 @@ Applies all schema changes, views, RLS, Edge Functions, admin sub-tabs, and webh
 ### Task 1.1: Create the `audit_log` table
 
 **Files:**
-- Create: `~/twins-dashboard/twins-dash/supabase/migrations/20260423_audit_log_table.sql`
+- Create: `~/twins-dashboard/twins-dash/supabase/migrations/<ts>_tech_dashboard_audit_log.sql` where `<ts>` is a fresh 14-digit timestamp greater than the latest existing migration (latest on main is `20260423000300`; use `20260423001000` or later).
 
-- [ ] **Step 1: Write the migration SQL**
+**Note:** `entity_id` is `text` (not `uuid`) because the live schema uses SERIAL INTs on `payroll_*` tables; text stringifies cleanly across all id types.
+
+- [ ] **Step 1: Create the migration file via Supabase CLI**
+
+```bash
+cd ~/twins-dashboard/twins-dash
+npx supabase migration new tech_dashboard_audit_log
+```
+
+This creates `supabase/migrations/<ts>_tech_dashboard_audit_log.sql`. Note the exact timestamp printed.
+
+- [ ] **Step 2: Write the migration SQL into the new file**
 
 ```sql
 CREATE TABLE IF NOT EXISTS public.audit_log (
@@ -194,46 +251,66 @@ CREATE TABLE IF NOT EXISTS public.audit_log (
   actor_role text,
   action text NOT NULL,
   entity_table text NOT NULL,
-  entity_id uuid,
+  entity_id text,
   before jsonb,
   after jsonb,
   reason text,
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_audit_log_entity ON public.audit_log(entity_table, entity_id);
-CREATE INDEX idx_audit_log_created_at ON public.audit_log(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_log_entity ON public.audit_log(entity_table, entity_id);
+CREATE INDEX IF NOT EXISTS idx_audit_log_created_at ON public.audit_log(created_at DESC);
 
 ALTER TABLE public.audit_log ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "admin can select audit log"
-  ON public.audit_log FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.user_roles
-      WHERE user_id = auth.uid() AND role IN ('admin','manager')
-    )
-  );
+-- Admin-only read. Uses the existing `has_role` helper if present.
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace
+             WHERE p.proname='has_role' AND n.nspname='public') THEN
+    EXECUTE $q$
+      CREATE POLICY "admin select audit_log" ON public.audit_log
+        FOR SELECT USING (public.has_role(auth.uid(), 'admin') OR public.has_role(auth.uid(), 'manager'));
+    $q$;
+  ELSE
+    EXECUTE $q$
+      CREATE POLICY "admin select audit_log" ON public.audit_log
+        FOR SELECT USING (
+          EXISTS (SELECT 1 FROM public.user_roles
+                  WHERE user_id = auth.uid() AND role IN ('admin','manager'))
+        );
+    $q$;
+  END IF;
+END $$;
 ```
 
-- [ ] **Step 2: Apply in Lovable SQL editor**
-
-Paste the SQL into Lovable → Settings → Supabase → SQL Editor → Run. Expected: "Success. No rows returned."
-
-- [ ] **Step 3: Verify**
-
-```sql
-SELECT * FROM information_schema.tables WHERE table_name='audit_log';
-```
-
-Expected: 1 row.
-
-- [ ] **Step 4: Commit**
+- [ ] **Step 3: Apply to the live Supabase via the CLI**
 
 ```bash
-git add supabase/migrations/20260423_audit_log_table.sql
+cd ~/twins-dashboard/twins-dash
+npx supabase db push
+```
+
+Expected: "Finished supabase db push." If it prompts for confirmation because it detects remote differences, review the diff before confirming.
+
+- [ ] **Step 4: Verify in the live DB**
+
+```bash
+cd ~/twins-dashboard/twins-dash
+npx supabase db remote list
+# Then run a verification query via the CLI:
+echo "SELECT table_name FROM information_schema.tables WHERE table_name='audit_log';" | npx supabase db execute --stdin
+```
+
+Expected: 1 row. (If `db execute --stdin` doesn't exist in the CLI version, use `psql` with the DATABASE_URL from `supabase/.temp/project-ref`, or just re-check by running a quick SELECT via a tiny Node script that uses the service_role key.)
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add supabase/migrations/*tech_dashboard_audit_log.sql
 git commit -m "feat(tech-dashboard): add audit_log table"
 ```
+
+Do NOT push yet — Phase 1 tasks bundle into one PR at Task 1.18.
 
 ### Task 1.2: Alter existing tables to add tech-dashboard columns
 
