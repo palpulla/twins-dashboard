@@ -115,12 +115,16 @@ Tap/click a job to open a drawer (mobile: full-screen sheet, desktop: right-side
 
 #### "Finish Week" action
 
-- Button sits inside the tracker card, primary style, disabled until:
-  - all jobs in the week have state `Ready` or explicitly `Skipped`, and
-  - there are zero `pending_price` custom parts on any job in the week.
-- If any custom parts are still pending, the button shows "Waiting on pricing for {N} parts" and is disabled.
-- Clicking "Finish Week" opens a confirmation dialog that spells out the finality: "Finishing this week locks your entries. To change anything after this point, submit a modification request and wait for supervisor approval." Confirm or cancel.
-- On confirm: server writes a `tech_week_locks` row with the commission snapshot. Tracker re-renders as the Week Summary (next section).
+Reconciles the spec's per-week model with the existing per-job `submission_status` flow.
+
+- Button sits inside the tracker card, primary style. Label: "Finish Week" on current week, "Locked" on past weeks, "Awaiting admin payroll" when all jobs are `submitted` but run is not yet `locked`.
+- Disabled until:
+  - every non-skipped job in the week has tech-side parts work done (job reaches `Ready` in the tracker UI), and
+  - there are zero open `part_requests` in `pending` status on any job in the week.
+- If any custom parts are still pending price, the button shows "Waiting on pricing for {N} parts" and is disabled.
+- Clicking "Finish Week" opens a confirmation dialog: "Finishing this week locks your entries. To change anything after this point, submit a modification request and wait for supervisor approval." Confirm or cancel.
+- On confirm: client calls an edge function `finish-tech-week(run_id)` that transitions every one of the tech's `draft` jobs in that run to `submitted` in a single transaction. The hard week-level lock (payroll_runs.locked_at) is still set by admin running payroll; once the tech has submitted, their side is done.
+- Mental model for the tech: "Finish Week" = "I am done entering parts for this week." The tracker re-renders as the Week Summary and the submit action is irreversible from the tech's side. Admin is the only role that can reopen a submitted job.
 
 #### Week Summary (post-lock, tech view)
 
@@ -179,66 +183,54 @@ New admin page. Linked from the sidebar Admin section as "Tech Requests" with a 
 
 Tech gets a subtle notification on the scorecard: a dismissable green banner "Your modification request for Job {N} was applied. See details." Links to the resolution note.
 
-## Data model additions
+## Data model (reconciled with existing schema)
 
-All tables in the twins-dash Supabase project (project id: `jwrpj*`, per `reference_external_systems.md`).
+The tech self-service infrastructure landed in migrations `20260423165205` through `20260423172019`. Most of what an earlier draft of this spec proposed as "new tables" already exists under different names in that infrastructure. This section describes what exists and the one table we actually add.
 
-### `tech_part_entries`
+### Reused existing tables
 
-| Column | Type | Notes |
-|--------|------|-------|
-| `id` | bigint, pk | |
-| `technician_id` | uuid, fk to `technicians.id` | |
-| `job_id` | bigint, fk to jobs table | |
-| `week_start` | date | Friday anchor |
-| `part_id` | bigint, fk to `parts`, nullable | null for custom parts |
-| `custom_part_name` | text, nullable | required when `part_id` is null |
-| `quantity` | numeric | |
-| `unit_price` | numeric, nullable | admin fills for custom parts |
-| `status` | text enum | `entered`, `pending_price`, `priced`, `applied` |
-| `notes` | text, nullable | tech or admin notes |
-| `created_at` | timestamptz | |
-| `finalized_at` | timestamptz, nullable | set when week locks |
+- **`payroll_job_parts`** (existed before tech self-service; extended by `20260423165814`):
+  - The tech's parts-entry source. Already has `entered_by` (`tech` | `admin`), `entered_at`, `entered_by_user_id`, `admin_adjusted`.
+  - Cost columns (`unit_price`, `total`) are excluded from the tech-facing view `v_my_job_parts`. Price visibility is already enforced at the database layer.
 
-### `tech_week_locks`
+- **`payroll_jobs.submission_status`** (`20260423165814`): `draft` | `submitted` | `locked`. Per-job readiness state. A tech submits each job; admin-run payroll transitions to `locked`.
+
+- **`payroll_runs.locked_at` / `reopened_at`** (`20260423165814`): the week-level lock. Set when admin runs payroll for the week.
+
+- **`part_requests`** (`20260423165814`): queue for tech-requested custom parts the pricebook does not have. Has `status` (`pending` | `added` | `rejected`), `resolved_by`, `resolved_at`, `resolved_parts_prices_id`, `rejection_reason`. This is the price-request side of the spec's supervisor queue.
+
+### New table added by this spec
+
+- **`modification_requests`**: the post-lock "I need this job changed" request type. `part_requests` cannot serve this because it models a new part addition, not a general change.
 
 | Column | Type | Notes |
 |--------|------|-------|
-| `id` | bigint, pk | |
-| `technician_id` | uuid | |
-| `week_start` | date | Friday anchor |
-| `week_end` | date | Thursday |
-| `locked_at` | timestamptz | |
-| `locked_by` | uuid | user id of locker (tech or admin) |
-| `total_commission` | numeric | snapshot at lock time |
-| `commission_by_job` | jsonb | array of `{job_id, amount}` |
-| `notes` | text, nullable | admin override note if lock was forced |
-
-Unique constraint on (`technician_id`, `week_start`).
-
-### `tech_requests`
-
-| Column | Type | Notes |
-|--------|------|-------|
-| `id` | bigint, pk | |
-| `technician_id` | uuid | |
-| `job_id` | bigint, nullable | null ok for generic tech-level requests; current v1 always has job_id |
-| `week_start` | date | for grouping |
-| `type` | text enum | `price`, `modification` |
-| `reasons` | text[] | for modification, empty for price |
-| `notes` | text | tech-provided detail |
-| `status` | text enum | `open`, `resolved`, `rejected` |
-| `resolved_by` | uuid, nullable | admin who resolved |
+| `id` | uuid, pk, `gen_random_uuid()` | |
+| `requested_by` | uuid, fk `auth.users(id)` | the tech |
+| `technician_id` | int, fk `payroll_techs(id)` | |
+| `job_id` | int, fk `payroll_jobs(id)` | |
+| `run_id` | int, fk `payroll_runs(id)` | for grouping by week |
+| `reasons` | text[], not null | checkbox values: `forgot_parts`, `wrong_part`, `wrong_quantity`, `wrong_job_tag`, `customer_dispute`, `other` |
+| `notes` | text, not null | required free-text detail |
+| `status` | text, default `pending`, check in (`pending`, `resolved`, `rejected`) | |
+| `resolved_by` | uuid, fk `auth.users(id)`, nullable | |
 | `resolved_at` | timestamptz, nullable | |
-| `resolution_notes` | text, nullable | |
-| `unit_price` | numeric, nullable | for price-type resolutions |
-| `created_at` | timestamptz | |
+| `resolution_notes` | text, nullable | admin's note back to tech |
+| `created_at` | timestamptz, default `now()` | |
 
-### RLS
+Indexes mirror `part_requests`: one on (`status`, `created_at DESC`) and one on (`technician_id`, `created_at DESC`).
 
-- `tech_part_entries`: tech can select/insert/update/delete own rows where week is not locked. Admin/supervisor full access.
-- `tech_week_locks`: tech can insert own lock, can select own rows. Admin/supervisor full access (admin can re-lock after applying a modification).
-- `tech_requests`: tech can insert and select own rows. Admin/supervisor full access and are the only role that can resolve.
+### RLS additions
+
+For `modification_requests`:
+- Tech (`current_technician_id()` resolves) may insert rows where `technician_id = current_technician_id()` AND the referenced `payroll_jobs.run_id` is locked. May select own rows.
+- Admin and field supervisor may select and update all rows.
+
+Existing RLS on `part_requests` already gates tech vs admin access. No changes needed.
+
+### Price visibility (already solved)
+
+The spec's "no parts cost to tech" requirement is already enforced by `v_my_job_parts` and the admin-only scope of `payroll_parts_prices`. The UI changes in this spec preserve that boundary by continuing to read from those views.
 
 ## Permissions
 
@@ -323,6 +315,7 @@ Rough set of files the implementation plan will need to touch. Not exhaustive.
 ## Open questions for the implementation plan
 
 - Exact payroll week boundary function to import (`lastPayrollWeekStart` in `Run.tsx` is private; promote to a shared util).
-- Whether to absorb the `/tech/*` sub-app into the new scorecard or keep it as drill-in routes. Leaning keep-as-drill-in to minimize churn.
-- Unit test coverage strategy for RLS policies (pgTAP vs Vitest with service role).
+- Whether to absorb the `/tech/*` sub-app into the new scorecard or keep it as drill-in routes. Decision for this plan: keep as drill-in. `/tech/:id` becomes the hub; per-job parts entry continues to use `TechJobDetail.tsx` as a drawer/route.
+- Unit test coverage strategy for RLS policies (pgTAP vs Vitest with service role). Decision for this plan: Vitest integration tests against a local Supabase instance with service-role client, mirroring the existing pattern.
 - Whether admin can force-lock a tech's week on the tech's behalf if the tech is on vacation (not in v1, flag for future).
+- KPI data source: `jobs` (HCP-synced) vs `payroll_jobs` (ingested into payroll). The 8 scorecard KPIs use `jobs` via the existing `useTechnicianData` hook; the commission tracker uses `payroll_jobs` via `v_my_jobs`. This dual-read is intentional and already used on the admin-facing `TechnicianView.tsx`.
