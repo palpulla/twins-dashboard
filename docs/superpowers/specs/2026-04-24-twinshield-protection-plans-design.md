@@ -46,7 +46,7 @@ These numbers drive every number in the plan. Re-validate before launch:
 
 **Includes:**
 - 1 annual garage door tune-up & 25-point safety inspection (covers up to 2 doors)
-- 10% off all qualifying garage door and opener repairs
+- 5% off all qualifying garage door and opener repairs
 - Priority scheduling within 48 business hours
 - Free lubricant + remote/keypad battery replacement during tune-up
 - Equipment upgrade credit toward qualifying new doors or openers
@@ -67,7 +67,7 @@ The simple, affordable way to maintain your garage door system, reduce future re
 **Price:** **$18.99/mo** or **$199/yr** (annual saves $29 — about 1.5 months free)
 
 **Includes everything in Essential, plus:**
-- 15% off all qualifying repairs (vs. 10%)
+- 10% off all qualifying repairs (vs. 5%)
 - Priority scheduling within 24 business hours
 - **Repair Pricing Lock** — Twins' current repair price book is honored for you as long as your membership is active, even if rates go up
 - Free safety sensor / safety eye replacement if needed during tune-up
@@ -89,7 +89,7 @@ The plan most homeowners pick. Stronger repair savings, faster scheduling, and a
 
 **Includes everything in Priority, plus:**
 - 2 garage door tune-ups & safety inspections per year (spring + fall)
-- 20% off all qualifying repairs
+- 15% off all qualifying repairs
 - Same-day priority scheduling when available
 - **Lifetime spring warranty extension** on Twins-installed springs (active members only)
 - 50% off opener surge protection device + install
@@ -140,11 +140,11 @@ Display all three. Mark Priority "Most Popular." Show Premier on the right (anch
 
 Default opener:
 
-> "We have a protection plan that helps you avoid breakdowns and save on future repairs. The one most homeowners pick is **Priority — $199 a year**. It includes your annual tune-up, 15% off any future repairs, priority scheduling, and a Repair Pricing Lock so your future repair prices are protected even if our rates go up. There's also a **Premier** option if you want two tune-ups a year and the lifetime spring warranty."
+> "We have a protection plan that helps you avoid breakdowns and save on future repairs. The one most homeowners pick is **Priority — $199 a year**. It includes your annual tune-up, 10% off any future repairs, priority scheduling, and a Repair Pricing Lock so your future repair prices are protected even if our rates go up. There's also a **Premier** option if you want two tune-ups a year and the lifetime spring warranty."
 
 Only mention **Essential** if the customer pushes back on price:
 
-> "If $199 is more than you want to spend, we have **Essential at $129** that still gives you the tune-up and 10% off future repairs."
+> "If $199 is more than you want to spend, we have **Essential at $129** that still gives you the tune-up and 5% off future repairs."
 
 **Do NOT** open with "we have three plans, let me walk you through all of them." That tanks conversion.
 
@@ -162,18 +162,15 @@ Assumptions:
 
 | Tier | Annual price | Tune-up cost | Expected repair-discount cost | Expected equipment credit cost | Net margin | Margin % |
 |---|---|---|---|---|---|---|
-| Essential | $129 | $80 | $27.80 | $2.50 | **$18.70** | ~14% |
-| Priority | $199 | $85 | $41.70 | $5.00 | **$67.30** | ~34% |
-| Premier | $279 | $160 | $55.60 | $10.00 | **$48.40** | ~17% |
+| Essential | $129 | $80 | $13.90 (5% × 0.4 × $695) | $2.50 | **$32.60** | ~25% |
+| Priority | $199 | $85 | $27.80 (10% × 0.4 × $695) | $5.00 | **$81.20** | ~41% |
+| Premier | $279 | $160 | $41.70 (15% × 0.4 × $695) | $10.00 | **$67.30** | ~24% |
 
-**Priority is the money tier.** That's the right outcome — it's also your sales-script default.
+**Priority is the money tier** with ~41% gross margin. That's the right outcome — it's also your sales-script default.
 
-**Why Essential's margin is thin (and why that's OK):**
-- Essential exists as a budget fallback to keep customers who'd otherwise say no
-- A $19 margin Essential customer is still better than a $0 walk-away
-- Many Essential members will trade up to Priority at renewal once they see the Repair Pricing Lock benefit at neighbors' homes
+**Essential is the budget fallback** — ~25% margin is healthy enough that any sale is a win, and Essential members tend to trade up to Priority at renewal once they see the Repair Pricing Lock benefit at neighbors' homes.
 
-**Why Premier's margin is acceptable despite 2 tune-ups + 20% off:**
+**Why Premier's margin holds up despite 2 tune-ups + 15% off:**
 - Premier customers have older systems → higher equipment-credit redemption → equipment credit is a loss-leader for $1,100 opener replacements and $5,000 door replacements
 - Premier customers have multi-door homes → using the +$25/door upcharge restores margin
 - Premier exists primarily as the anchor that makes Priority look reasonable
@@ -205,7 +202,7 @@ Each included tune-up covers a standard garage door maintenance and safety inspe
 The tune-up does not include replacement parts, repairs, labor for repairs, new equipment, or correction of existing issues unless separately approved by the customer. Tune-ups for additional doors beyond the included count are billed at the per-door upcharge (see Section 9).
 
 #### 4. Repair Discounts
-Repair discounts apply to qualifying garage door and opener repair work performed by Twins Garage Doors at Essential 10%, Priority 15%, and Premier 20%.
+Repair discounts apply to qualifying garage door and opener repair work performed by Twins Garage Doors at Essential 5%, Priority 10%, and Premier 15%.
 
 Discounts do **not** apply to:
 - New garage door installations
@@ -292,7 +289,7 @@ In Housecall Pro → Settings → Memberships:
 - Billing: offer both monthly ($12.99) and annual ($129)
 - Auto-renew: yes
 - Included visits: 1/year (tune-up)
-- Discount: 10% off labor on qualifying repairs
+- Discount: 5% off qualifying repairs
 - Custom field: `Equipment Credit Balance` (currency, default $0)
 - Custom field: `Equipment Credit Lifetime Cap` ($150)
 
@@ -301,7 +298,7 @@ In Housecall Pro → Settings → Memberships:
 - Billing: monthly ($18.99) or annual ($199)
 - Auto-renew: yes
 - Included visits: 1/year (tune-up)
-- Discount: 15% off labor on qualifying repairs
+- Discount: 10% off qualifying repairs
 - Custom field: `Equipment Credit Balance` ($0)
 - Custom field: `Equipment Credit Lifetime Cap` ($300)
 - Custom field: `Pricing Lock Enrollment Date` (date — captured at signup; combined with the dated price book in your records, this defines what pricing applies)
@@ -311,7 +308,7 @@ In Housecall Pro → Settings → Memberships:
 - Billing: monthly ($27.99) or annual ($279)
 - Auto-renew: yes
 - Included visits: 2/year (tune-ups, ~6 months apart)
-- Discount: 20% off labor on qualifying repairs
+- Discount: 15% off qualifying repairs
 - Custom field: `Equipment Credit Balance` ($0)
 - Custom field: `Equipment Credit Lifetime Cap` ($500)
 - Custom field: `Pricing Lock Enrollment Date` (date)
@@ -353,10 +350,10 @@ Use this as the copy block for the new `/protection-plans` page (or rename the e
 │ or $129/year      │  │ or $199/year         │  │ or $279/year      │
 │                   │  │                      │  │                   │
 │ ✓ Annual tune-up  │  │ Everything in        │  │ Everything in     │
-│ ✓ 10% off repairs │  │ Essential, plus:     │  │ Priority, plus:   │
+│ ✓ 5% off repairs  │  │ Essential, plus:     │  │ Priority, plus:   │
 │ ✓ Priority sched. │  │                      │  │                   │
-│   (48hr)          │  │ ✓ 15% off repairs    │  │ ✓ 2 tune-ups/yr   │
-│ ✓ Free lube +     │  │ ✓ 24-hour priority   │  │ ✓ 20% off repairs │
+│   (48hr)          │  │ ✓ 10% off repairs    │  │ ✓ 2 tune-ups/yr   │
+│ ✓ Free lube +     │  │ ✓ 24-hour priority   │  │ ✓ 15% off repairs │
 │   batteries at    │  │   scheduling         │  │ ✓ Same-day        │
 │   tune-up         │  │ ✓ Repair Pricing     │  │   scheduling      │
 │ ✓ $50 equipment   │  │   LOCK               │  │ ✓ Lifetime spring │
