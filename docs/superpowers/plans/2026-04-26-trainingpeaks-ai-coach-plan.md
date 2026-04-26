@@ -14,10 +14,10 @@
 
 ## File Structure
 
-The new project lives at `~/twins-dashboard/twins-coach/` as its own git repo (per Daniel's repo-layout convention).
+The new project lives at `~/twins-dashboard/coach/` as its own git repo (per Daniel's repo-layout convention).
 
 ```
-twins-coach/
+coach/
 ├── package.json
 ├── tsconfig.json
 ├── vitest.config.ts
@@ -81,7 +81,7 @@ twins-coach/
 │   └── deploy.sh                       # rsync to Oracle VPS
 └── deploy/
     ├── oracle-setup.md                 # VPS provisioning runbook
-    ├── twins-coach.service             # systemd service unit
+    ├── coach.service             # systemd service unit
     ├── sunday-cycle.timer              # Sunday 5pm timer
     ├── sunday-cycle.service            # Sunday cycle one-shot
     ├── daily-check.timer               # Daily 6am timer
@@ -109,17 +109,17 @@ twins-coach/
 ### Task 1: Initialize the repo
 
 **Files:**
-- Create: `~/twins-dashboard/twins-coach/package.json`
-- Create: `~/twins-dashboard/twins-coach/tsconfig.json`
-- Create: `~/twins-dashboard/twins-coach/.gitignore`
-- Create: `~/twins-dashboard/twins-coach/.env.example`
-- Create: `~/twins-dashboard/twins-coach/README.md`
+- Create: `~/twins-dashboard/coach/package.json`
+- Create: `~/twins-dashboard/coach/tsconfig.json`
+- Create: `~/twins-dashboard/coach/.gitignore`
+- Create: `~/twins-dashboard/coach/.env.example`
+- Create: `~/twins-dashboard/coach/README.md`
 
 - [ ] **Step 1: Create the directory and init git**
 
 ```bash
-mkdir -p ~/twins-dashboard/twins-coach
-cd ~/twins-dashboard/twins-coach
+mkdir -p ~/twins-dashboard/coach
+cd ~/twins-dashboard/coach
 git init
 ```
 
@@ -127,7 +127,7 @@ git init
 
 ```json
 {
-  "name": "twins-coach",
+  "name": "coach",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -200,7 +200,7 @@ WHATSAPP_PHONE_NUMBER_ID=
 WHATSAPP_ACCESS_TOKEN=
 WHATSAPP_VERIFY_TOKEN=
 WHATSAPP_RECIPIENT=
-DB_PATH=./twins-coach.db
+DB_PATH=./coach.db
 LOG_LEVEL=info
 TZ=America/Chicago
 ```
@@ -208,7 +208,7 @@ TZ=America/Chicago
 - [ ] **Step 6: Create minimal `README.md`**
 
 ```markdown
-# twins-coach
+# coach
 
 WhatsApp-driven AI triathlon coach. See `../docs/superpowers/specs/2026-04-26-trainingpeaks-ai-coach-design.md`.
 
@@ -234,8 +234,8 @@ Expected: clean install, first commit on `main`.
 ### Task 2: Vitest setup with smoke test
 
 **Files:**
-- Create: `~/twins-dashboard/twins-coach/vitest.config.ts`
-- Create: `~/twins-dashboard/twins-coach/tests/smoke.test.ts`
+- Create: `~/twins-dashboard/coach/vitest.config.ts`
+- Create: `~/twins-dashboard/coach/tests/smoke.test.ts`
 
 - [ ] **Step 1: Create `vitest.config.ts`**
 
@@ -289,7 +289,7 @@ import pino from "pino";
 
 export const logger = pino({
   level: process.env.LOG_LEVEL ?? "info",
-  base: { service: "twins-coach" },
+  base: { service: "coach" },
 });
 ```
 
@@ -480,7 +480,7 @@ export function loadConfig(): Config {
       verifyToken: required("WHATSAPP_VERIFY_TOKEN"),
       recipient: required("WHATSAPP_RECIPIENT"),
     },
-    dbPath: process.env.DB_PATH ?? "./twins-coach.db",
+    dbPath: process.env.DB_PATH ?? "./coach.db",
     athleteProfilePath: path.resolve(process.cwd(), "athlete.md"),
     tz: process.env.TZ ?? "America/Chicago",
   };
@@ -1292,7 +1292,7 @@ main().catch((e) => { logger.error(e); process.exit(1); });
 cp .env.example .env
 # Fill in INTERVALS_ATHLETE_ID and INTERVALS_API_KEY (Daniel grabs these from intervals.icu Settings → Developer)
 npm run bootstrap
-sqlite3 twins-coach.db "SELECT COUNT(*) FROM activities; SELECT COUNT(*) FROM wellness;"
+sqlite3 coach.db "SELECT COUNT(*) FROM activities; SELECT COUNT(*) FROM wellness;"
 ```
 
 Expected: counts > 0 (depends on Daniel's history).
@@ -2080,12 +2080,12 @@ git commit -m "test: phase 0 end-to-end smoke test"
    - SSH key: paste local ~/.ssh/id_ed25519.pub
 3. After provisioning, note the public IP. Add to ~/.ssh/config:
    ```
-   Host twins-coach
+   Host coach
      HostName <PUBLIC_IP>
      User ubuntu
      IdentityFile ~/.ssh/id_ed25519
    ```
-4. SSH in: `ssh twins-coach`
+4. SSH in: `ssh coach`
 5. Open port 8443 (WhatsApp webhook): in OCI Console → Networking → VCN → default subnet → Security List → Ingress: TCP 8443 from 0.0.0.0/0
 6. On the VPS, allow it through the host firewall:
    ```bash
@@ -2106,8 +2106,8 @@ claude  # interactive — log in with Daniel's Pro/Max credentials, then `/quit`
 
 # App user + dir
 sudo useradd -m -s /bin/bash coach
-sudo mkdir -p /opt/twins-coach
-sudo chown coach:coach /opt/twins-coach
+sudo mkdir -p /opt/coach
+sudo chown coach:coach /opt/coach
 
 # Copy SSH key for Claude auth tokens to coach user (token stored in ~/.claude/)
 sudo cp -r ~/.claude /home/coach/
@@ -2217,14 +2217,14 @@ git commit -m "docs: whatsapp cloud api setup runbook"
 
 ```ini
 [Unit]
-Description=twins-coach sunday weekly cycle
+Description=coach sunday weekly cycle
 After=network.target
 
 [Service]
 Type=oneshot
 User=coach
-WorkingDirectory=/opt/twins-coach
-EnvironmentFile=/opt/twins-coach/.env
+WorkingDirectory=/opt/coach
+EnvironmentFile=/opt/coach/.env
 ExecStart=/usr/bin/npx tsx src/cli.ts sunday-cycle
 StandardOutput=journal
 StandardError=journal
@@ -2234,7 +2234,7 @@ StandardError=journal
 
 ```ini
 [Unit]
-Description=Run twins-coach sunday cycle every Sunday at 17:00 local
+Description=Run coach sunday cycle every Sunday at 17:00 local
 
 [Timer]
 OnCalendar=Sun *-*-* 17:00:00
@@ -2249,14 +2249,14 @@ WantedBy=timers.target
 `sync.service`:
 ```ini
 [Unit]
-Description=twins-coach daily incremental data sync
+Description=coach daily incremental data sync
 After=network.target
 
 [Service]
 Type=oneshot
 User=coach
-WorkingDirectory=/opt/twins-coach
-EnvironmentFile=/opt/twins-coach/.env
+WorkingDirectory=/opt/coach
+EnvironmentFile=/opt/coach/.env
 ExecStart=/usr/bin/npx tsx src/cli.ts sync
 StandardOutput=journal
 StandardError=journal
@@ -2265,7 +2265,7 @@ StandardError=journal
 `sync.timer`:
 ```ini
 [Unit]
-Description=Run twins-coach sync daily at 03:00 local
+Description=Run coach sync daily at 03:00 local
 
 [Timer]
 OnCalendar=*-*-* 03:00:00
@@ -2295,8 +2295,8 @@ git commit -m "deploy: systemd units for sunday-cycle + sync"
 #!/usr/bin/env bash
 set -euo pipefail
 
-HOST="${1:-twins-coach}"
-DEST="/opt/twins-coach"
+HOST="${1:-coach}"
+DEST="/opt/coach"
 
 echo "Syncing source to $HOST:$DEST"
 rsync -av --delete \
@@ -2339,14 +2339,14 @@ git commit -m "deploy: rsync + systemd install script"
 - [ ] **Step 4: Create production `.env` on the VPS**
 
 ```bash
-ssh twins-coach "sudo -u coach tee /opt/twins-coach/.env" <<EOF
+ssh coach "sudo -u coach tee /opt/coach/.env" <<EOF
 INTERVALS_ATHLETE_ID=<id>
 INTERVALS_API_KEY=<key>
 WHATSAPP_PHONE_NUMBER_ID=<pid>
 WHATSAPP_ACCESS_TOKEN=<tok>
 WHATSAPP_VERIFY_TOKEN=<vtok>
 WHATSAPP_RECIPIENT=+1<daniel-phone>
-DB_PATH=/opt/twins-coach/twins-coach.db
+DB_PATH=/opt/coach/coach.db
 LOG_LEVEL=info
 TZ=America/Chicago
 COACH_PHASE=0
@@ -2356,16 +2356,16 @@ EOF
 - [ ] **Step 5: Deploy + bootstrap**
 
 ```bash
-./scripts/deploy.sh twins-coach
-ssh twins-coach "cd /opt/twins-coach && sudo -u coach npm run bootstrap"
+./scripts/deploy.sh coach
+ssh coach "cd /opt/coach && sudo -u coach npm run bootstrap"
 ```
 
-Expected: ~12 months of activities + wellness in `twins-coach.db` on the VPS.
+Expected: ~12 months of activities + wellness in `coach.db` on the VPS.
 
 - [ ] **Step 6: Manual sunday-cycle trigger**
 
 ```bash
-ssh twins-coach "sudo systemctl start sunday-cycle.service && sudo journalctl -u sunday-cycle.service -n 50"
+ssh coach "sudo systemctl start sunday-cycle.service && sudo journalctl -u sunday-cycle.service -n 50"
 ```
 
 Expected: WhatsApp arrives on Daniel's phone with observation summary; service exits cleanly.
@@ -2373,7 +2373,7 @@ Expected: WhatsApp arrives on Daniel's phone with observation summary; service e
 - [ ] **Step 7: Verify timers active**
 
 ```bash
-ssh twins-coach "systemctl list-timers"
+ssh coach "systemctl list-timers"
 ```
 
 Expected: `sunday-cycle.timer` shows next Sunday 17:00, `sync.timer` shows tomorrow 03:00.
@@ -2492,7 +2492,7 @@ const app = createWebhookApp({
 });
 
 serve({ fetch: app.fetch, port: 3000 }, (info) => {
-  logger.info({ port: info.port }, "twins-coach server listening");
+  logger.info({ port: info.port }, "coach server listening");
 });
 ```
 
@@ -2698,14 +2698,14 @@ git commit -m "feat: claude agent SDK wrapper + wire to intent classifier"
 
 ```ini
 [Unit]
-Description=twins-coach HTTP server (whatsapp webhook)
+Description=coach HTTP server (whatsapp webhook)
 After=network.target
 
 [Service]
 Type=simple
 User=coach
-WorkingDirectory=/opt/twins-coach
-EnvironmentFile=/opt/twins-coach/.env
+WorkingDirectory=/opt/coach
+EnvironmentFile=/opt/coach/.env
 ExecStart=/usr/bin/npx tsx src/server.ts
 Restart=on-failure
 RestartSec=5
@@ -2726,10 +2726,10 @@ ssh "$HOST" "sudo systemctl enable --now server.service"
 - [ ] **Step 3: Deploy, smoke test**
 
 ```bash
-./scripts/deploy.sh twins-coach
+./scripts/deploy.sh coach
 # Send test message to Daniel's WhatsApp business number
 # Then:
-ssh twins-coach "sudo journalctl -u server.service -n 30"
+ssh coach "sudo journalctl -u server.service -n 30"
 ```
 
 Expected: log shows inbound message stored + classified.
@@ -3379,13 +3379,13 @@ git commit -m "feat: phase 1 shadow mode (claude diff vs coach)"
 - [ ] **Step 1: Update VPS env to flip COACH_PHASE=1 on May 17**
 
 ```bash
-ssh twins-coach "sudo -u coach sed -i 's/COACH_PHASE=0/COACH_PHASE=1/' /opt/twins-coach/.env"
+ssh coach "sudo -u coach sed -i 's/COACH_PHASE=0/COACH_PHASE=1/' /opt/coach/.env"
 ```
 
 - [ ] **Step 2: Manual trigger to verify**
 
 ```bash
-ssh twins-coach "sudo systemctl start sunday-cycle.service && sudo journalctl -u sunday-cycle.service -n 100"
+ssh coach "sudo systemctl start sunday-cycle.service && sudo journalctl -u sunday-cycle.service -n 100"
 ```
 
 Expected: WhatsApp arrives showing the coach-vs-Claude diff.
@@ -3960,14 +3960,14 @@ case "daily-check":
 `deploy/daily-check.service`:
 ```ini
 [Unit]
-Description=twins-coach daily safety check
+Description=coach daily safety check
 After=network.target
 
 [Service]
 Type=oneshot
 User=coach
-WorkingDirectory=/opt/twins-coach
-EnvironmentFile=/opt/twins-coach/.env
+WorkingDirectory=/opt/coach
+EnvironmentFile=/opt/coach/.env
 ExecStart=/usr/bin/npx tsx src/cli.ts daily-check
 StandardOutput=journal
 StandardError=journal
@@ -3976,7 +3976,7 @@ StandardError=journal
 `deploy/daily-check.timer`:
 ```ini
 [Unit]
-Description=Run twins-coach daily check at 06:00 local
+Description=Run coach daily check at 06:00 local
 
 [Timer]
 OnCalendar=*-*-* 06:00:00
@@ -4193,13 +4193,13 @@ case "strength-delivery":
 `deploy/strength-delivery.service`:
 ```ini
 [Unit]
-Description=twins-coach morning strength delivery
+Description=coach morning strength delivery
 
 [Service]
 Type=oneshot
 User=coach
-WorkingDirectory=/opt/twins-coach
-EnvironmentFile=/opt/twins-coach/.env
+WorkingDirectory=/opt/coach
+EnvironmentFile=/opt/coach/.env
 ExecStart=/usr/bin/npx tsx src/cli.ts strength-delivery
 ```
 
@@ -4246,7 +4246,7 @@ import fs from "node:fs";
 export async function runHealthcheck(): Promise<void> {
   const cfg = loadConfig();
   const stamp = new Date().toISOString();
-  const lastSeenPath = "/opt/twins-coach/.last-healthcheck";
+  const lastSeenPath = "/opt/coach/.last-healthcheck";
   fs.writeFileSync(lastSeenPath, stamp);
 
   // Check disk usage
@@ -4277,15 +4277,15 @@ import { logger } from "../lib/logger.js";
 export function runBackup(): void {
   const cfg = loadConfig();
   const date = new Date().toISOString().slice(0, 10);
-  const dest = `/opt/twins-coach/backups/twins-coach-${date}.db`;
-  fs.mkdirSync("/opt/twins-coach/backups", { recursive: true });
+  const dest = `/opt/coach/backups/coach-${date}.db`;
+  fs.mkdirSync("/opt/coach/backups", { recursive: true });
   // Use SQLite's .backup for hot copy
   execSync(`sqlite3 "${cfg.dbPath}" ".backup '${dest}'"`);
   // Keep only last 14
-  const files = fs.readdirSync("/opt/twins-coach/backups").filter((f) => f.endsWith(".db")).sort();
+  const files = fs.readdirSync("/opt/coach/backups").filter((f) => f.endsWith(".db")).sort();
   while (files.length > 14) {
     const f = files.shift()!;
-    fs.unlinkSync(`/opt/twins-coach/backups/${f}`);
+    fs.unlinkSync(`/opt/coach/backups/${f}`);
   }
   logger.info({ dest }, "backup complete");
 }
@@ -4316,7 +4316,7 @@ git commit -m "feat: daily healthcheck + nightly SQLite backup"
 - [ ] **Step 1: Verify all systemd units and Phase 1 has run successfully for at least 2 weeks**
 
 ```bash
-ssh twins-coach "systemctl list-timers && journalctl -u sunday-cycle.service --since '14 days ago' | tail -50"
+ssh coach "systemctl list-timers && journalctl -u sunday-cycle.service --since '14 days ago' | tail -50"
 ```
 
 Expected: 2+ Sunday runs visible, no errors, Daniel has reviewed shadow plans and is comfortable.
@@ -4324,13 +4324,13 @@ Expected: 2+ Sunday runs visible, no errors, Daniel has reviewed shadow plans an
 - [ ] **Step 2: Flip phase to 2**
 
 ```bash
-ssh twins-coach "sudo -u coach sed -i 's/COACH_PHASE=1/COACH_PHASE=2/' /opt/twins-coach/.env"
+ssh coach "sudo -u coach sed -i 's/COACH_PHASE=1/COACH_PHASE=2/' /opt/coach/.env"
 ```
 
 - [ ] **Step 3: Trigger first live sunday cycle manually**
 
 ```bash
-ssh twins-coach "sudo systemctl start sunday-cycle.service && sudo journalctl -u sunday-cycle.service -n 100"
+ssh coach "sudo systemctl start sunday-cycle.service && sudo journalctl -u sunday-cycle.service -n 100"
 ```
 
 Expected: WhatsApp summary saying "Week of [date] published — N hrs total..." and TP shows new events tagged `[claude]`.
@@ -4347,7 +4347,7 @@ In `deploy/oracle-setup.md`, append:
 ## Rollback
 
 If Phase 2 plans are problematic:
-1. SSH: `sudo -u coach sed -i 's/COACH_PHASE=2/COACH_PHASE=1/' /opt/twins-coach/.env`
+1. SSH: `sudo -u coach sed -i 's/COACH_PHASE=2/COACH_PHASE=1/' /opt/coach/.env`
 2. Manually delete the week's `[claude]`-tagged events in intervals.icu (or run `node -e "..."` to call the publish module's delete-only path)
 3. Revert to coach plans / manual planning while debugging
 ```

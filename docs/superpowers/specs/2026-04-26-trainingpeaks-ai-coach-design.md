@@ -200,7 +200,7 @@ Continuously refreshed from activity history. Daniel never edits this directly; 
 
 **WhatsApp via Meta Cloud API directly** (1,000 free service conversations/month, well above expected ~60/month).
 
-**Code:** TypeScript, repo under `~/twins-dashboard/twins-coach/`, GitHub for source.
+**Code:** TypeScript, repo under `~/twins-dashboard/coach/`, GitHub for source.
 
 **Cost:** $0/month marginal. Daniel's existing Claude subscription powers all AI calls.
 
