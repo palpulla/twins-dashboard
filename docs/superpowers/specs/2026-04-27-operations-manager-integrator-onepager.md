@@ -19,19 +19,19 @@ Four priorities, in order:
 1. **PE exit readiness.** Codify the business so a buyer can read it.
 2. **Streamline operations.** Measurable systems, not founder vigilance.
 3. **Team growth and accountability.** Hire, onboard, hold the line.
-4. **Relationships in our markets.** Local presence, lead flow.
+4. **Relationships in our markets.** Remote-first outreach engine that drives local lead flow.
 
 ---
 
 ## The day-to-day, in one paragraph
 
-In the trenches with our technicians, CSRs, and dispatchers. Driving the team against KPIs and SOPs across dispatch, CRM, margin, and field ops. Hiring and onboarding more technicians and dispatchers as we open new locations. Using AI aggressively wherever it removes manual work. Forming local relationships that drive lead flow. Working directly with both founders. Running weekly L10s. Owning the outcome.
+In the trenches with our technicians, CSRs, and dispatchers. Driving the team against KPIs and SOPs across dispatch, CRM, margin, and field ops. Hiring and onboarding more technicians and dispatchers as we open new locations. Using AI aggressively wherever it removes manual work. Building a remote-first partner outreach engine that drives local lead flow (LinkedIn, email, phone, with quarterly Madison visits to close in person). Working directly with both founders. Running weekly L10s. Owning the outcome.
 
 ---
 
 ## What success looks like
 
-**By 90 days:** Team is hitting KPIs (or visibly trending up on the laggards). Each person owns their numbers. Communication and accountability rhythms are tight. Local partner relationships are forming, with 1-2 already producing leads. You have met everyone and ridden along.
+**By 90 days:** Team is hitting KPIs (or visibly trending up on the laggards). Each person owns their numbers. Communication and accountability rhythms are tight. A remote-first partner outreach motion is running, with 1-2 partnerships already producing leads. First Madison in-person blitz is scheduled. You have met everyone and ridden along.
 
 **By 12 months:** Hiring engine repeatable. New location stable. Margin up, manual time down. Partner-driven lead flow is real. PE-ready.
 

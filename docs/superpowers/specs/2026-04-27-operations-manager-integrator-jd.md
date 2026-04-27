@@ -53,8 +53,8 @@ Find the wasted minutes in dispatch, the gaps in CRM data, the manual handoffs i
 ### 3. Team growth and accountability
 Own hiring, onboarding, performance, and accountability for technicians, installers, dispatchers, and CSRs as we scale. Build the metrics and rhythms (scorecards, weekly check-ins, quarterly reviews) that make accountability easy and continuous. Hire 1 to 3 technicians this year, more next year.
 
-### 4. Relationships forming
-Be a presence in the Madison market and in any new markets we enter. Build the relationships with property managers, real estate agents, home builders, BNI groups, and adjacent service businesses that drive sustainable lead flow.
+### 4. Relationships forming (remote-first and creative)
+The role is remote, so building local partner relationships in Madison takes more creativity than showing up to BNI breakfasts. That is the work. Build a remote-first outreach engine: targeted LinkedIn and email outreach to property managers, real estate agents, home builders, and adjacent service businesses; structured phone and video calls; co-marketing partnerships; branded sends. Equip our local technicians to be ambassadors at job sites and at BNI on our behalf. Plan quarterly Madison visits for in-person closing blitzes. Use AI aggressively to scale the outreach motion. The constraint forces creativity, and the systems you build here are what scale into new markets.
 
 ---
 
@@ -66,7 +66,7 @@ Be a presence in the Madison market and in any new markets we enter. Build the r
 - **Run weekly L10s and quarterly rocks reviews** with the team. EOS rhythm.
 - **Work directly with technicians.** Call them, problem-solve with them, ride along when needed. This is hands-on, not a desk job.
 - **Use AI aggressively.** Automate dispatch communications. Build agent workflows that remove manual ops work. Prototype dashboards yourself.
-- **Run the local relationships.** Property managers, agents, builders, BNI, community partnerships.
+- **Build the remote-first partner outreach engine.** Most of it from your desk: targeted LinkedIn and email outreach, phone and video calls, co-marketing partnerships, branded sends. Equip our local techs to convert customer interactions into referral relationships at job sites. Plan quarterly Madison trips for in-person closing blitzes.
 - **Report up to the founders weekly.** Numbers, blockers, rocks status. Tight, structured, no fluff.
 
 ---
@@ -78,7 +78,7 @@ Be a presence in the Madison market and in any new markets we enter. Build the r
 - Each tech, CSR, and dispatcher knows their numbers and reviews them with you weekly. They own their metric, not you.
 - Communication between dispatch, techs, CSRs, and the founders is tight and structured. No more "what happened with that lead?" surprises.
 - One or two previously-lagging KPIs (CSR conversion, tech utilization, margin per job, missed-appointment rate, callback rate) are visibly trending up
-- You have built initial relationships with at least 5 local partners (property managers, agents, builders, BNI), and 1 to 2 are already producing leads or qualified intros
+- A remote-first partner outreach motion is running (LinkedIn, email, phone, video). You have established initial relationships with at least 5 partners (property managers, agents, builders, adjacent services), and 1 to 2 are already producing leads or qualified intros. First Madison in-person blitz is scheduled.
 - You have ridden along with every tech and met every dispatcher and CSR. They know you and what you are for.
 - Weekly L10 and quarterly rock cadence is solid and predictable
 - 3 to 5 SOPs documented for the highest-leverage workflows you have run into
