@@ -48,7 +48,7 @@ The role is undefined by design. We have not had it in this form before. You wil
 Codify SOPs across the business. Build the financial and operational reporting layer that a buyer's diligence team would expect. Document everything that today lives in the founders' heads. The goal is that a PE acquirer can see exactly how the business runs in a week, not a quarter.
 
 ### 2. Streamline operations
-Find the wasted minutes in dispatch, the gaps in CRM data, the manual handoffs in scheduling and follow-up. Replace them with measurable systems. Use AI aggressively wherever it removes manual work. We currently pull data from HouseCall Pro, our CRM, payroll, and spreadsheets. The internal dashboard exists in early form and needs to be made real.
+Find the wasted minutes in dispatch, the gaps in CRM data, the manual handoffs in scheduling and follow-up. Replace them with measurable systems. Use AI aggressively wherever it removes manual work. We currently pull data from HouseCall Pro, our CRM, payroll, and spreadsheets. The internal KPI dashboard is partially rolled out and Daniel is actively iterating on it. You partner where useful, but the bigger job is making sure the team operates against the numbers and that the numbers improve.
 
 ### 3. Team growth and accountability
 Own hiring, onboarding, performance, and accountability for technicians, installers, dispatchers, and CSRs as we scale. Build the metrics and rhythms (scorecards, weekly check-ins, quarterly reviews) that make accountability easy and continuous. Hire 1 to 3 technicians this year, more next year.
@@ -61,7 +61,7 @@ Be a presence in the Madison market and in any new markets we enter. Build the r
 ## What you will actually do, day to day
 
 - **Hire and onboard** new technicians, installers, dispatchers, and CSRs as we grow.
-- **Design and own the KPI scoreboard.** Repair vs install split, opportunity dedup, margin per job, dispatch efficiency, CSR conversion rate, tech utilization. Improve the source data feeding it.
+- **Drive the team against the KPI scoreboard.** The dashboard is partially built and Daniel is actively iterating on it (with your input where useful). Your job is to make sure the numbers are reviewed weekly, every person owns their metric, laggards are coached, and improvements ship. KPIs include repair vs install split, opportunity dedup, margin per job, dispatch efficiency, CSR conversion rate, tech utilization.
 - **Build SOPs** for dispatch, install, callback, complaint handling, vendor management, and hiring.
 - **Run weekly L10s and quarterly rocks reviews** with the team. EOS rhythm.
 - **Work directly with technicians.** Call them, problem-solve with them, ride along when needed. This is hands-on, not a desk job.
@@ -74,16 +74,20 @@ Be a presence in the Madison market and in any new markets we enter. Build the r
 ## What success looks like
 
 ### By 90 days
-- KPI scoreboard is real, weekly, and in the team's hands (not just yours)
-- 5 to 10 SOPs documented for the highest-leverage workflows
-- You have ridden along with each tech and met every dispatcher and CSR
+- The team is hitting agreed weekly KPIs, or showing clear upward movement on the ones still lagging
+- Each tech, CSR, and dispatcher knows their numbers and reviews them with you weekly. They own their metric, not you.
+- Communication between dispatch, techs, CSRs, and the founders is tight and structured. No more "what happened with that lead?" surprises.
+- One or two previously-lagging KPIs (CSR conversion, tech utilization, margin per job, missed-appointment rate, callback rate) are visibly trending up
+- You have built initial relationships with at least 5 local partners (property managers, agents, builders, BNI), and 1 to 2 are already producing leads or qualified intros
+- You have ridden along with every tech and met every dispatcher and CSR. They know you and what you are for.
 - Weekly L10 and quarterly rock cadence is solid and predictable
-- You have built relationships with at least 5 local partners
+- 3 to 5 SOPs documented for the highest-leverage workflows you have run into
 
 ### By 12 months
 - Hiring engine is repeatable. We onboard a new tech in 2 weeks with a documented playbook.
 - The new location is operationally stable.
 - Margin per job is up. Manual ops time is down. AI is a real lever, not a slide.
+- Partner-driven lead flow is producing measurable revenue.
 - A PE diligence team could evaluate the business without us scrambling.
 - You are indispensable.
 

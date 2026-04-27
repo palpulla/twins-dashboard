@@ -25,15 +25,15 @@ Four priorities, in order:
 
 ## The day-to-day, in one paragraph
 
-In the trenches with our technicians, CSRs, and dispatchers. Building KPIs and SOPs across dispatch, CRM, margin, and field ops. Hiring and onboarding more technicians and dispatchers as we open new locations. Using AI aggressively wherever it removes manual work. Working directly with both founders. Running weekly L10s. Reporting numbers, blockers, and rocks status up. Owning the outcome.
+In the trenches with our technicians, CSRs, and dispatchers. Driving the team against KPIs and SOPs across dispatch, CRM, margin, and field ops. Hiring and onboarding more technicians and dispatchers as we open new locations. Using AI aggressively wherever it removes manual work. Forming local relationships that drive lead flow. Working directly with both founders. Running weekly L10s. Owning the outcome.
 
 ---
 
 ## What success looks like
 
-**By 90 days:** KPI scoreboard live in the team's hands. 5 to 10 SOPs documented. You have met everyone and ridden along.
+**By 90 days:** Team is hitting KPIs (or visibly trending up on the laggards). Each person owns their numbers. Communication and accountability rhythms are tight. Local partner relationships are forming, with 1-2 already producing leads. You have met everyone and ridden along.
 
-**By 12 months:** Hiring engine repeatable. New location stable. Margin up, manual time down. PE-ready.
+**By 12 months:** Hiring engine repeatable. New location stable. Margin up, manual time down. Partner-driven lead flow is real. PE-ready.
 
 ---
 
