@@ -12,18 +12,26 @@ Daniel wants this expanded to capture meaningful "wins not just repeat stuff fro
 
 ## Goal
 
-Expand the personal-records system to track:
+Expand the personal-records system to track in **v1** (this spec):
 
 1. **Single-job records** — highest install ticket, highest repair ticket (ever, across all jobs).
 2. **Per-period records for revenue / total_jobs / avg_opportunity** — week (already exists), month (new), quarter (new).
-3. **New per-period records** — best closing %, best memberships %, lowest callbacks % — each week + month + quarter.
-4. **Wins tab UI** — show all records grouped by period (single-job → week → month → quarter), highlight the freshest ones.
+3. **Wins tab UI** — show all records grouped by period (single-job → week → month → quarter), highlight the freshest ones.
 
-Reviews-based stats (most reviews in week/month/quarter) are deferred — see "Out of Scope" below.
+**Deferred to v2** (rate-KPI follow-up spec, after v1 ships):
+
+- Best **closing %** per week / month / quarter
+- Best **memberships %** per week / month / quarter
+- Lowest **callbacks %** per week / month / quarter
+
+Why deferred: the existing `compute_streaks_and_prs()` migration (`20260425170200_compute_streaks_and_prs.sql`) explicitly notes these formulas aren't yet exposed at the DB layer ("Skips PRs for closing_pct / callback_pct / membership_pct (need finer-grained job-level data)"). Adding them requires either a new SQL view that computes these per period (and validates the formulas match what `useMyScorecardWithTiers` shows on the scorecard tile), or a refactor that exposes the scorecard's existing client-side calculation as a server-side aggregate. Both are real but separable work — better to ship v1 first.
+
+**Reviews-based stats** (most reviews per period) are deferred to their own follow-up spec — see "Out of Scope" below.
 
 ## Non-Goals
 
-- **Reviews-based stats are deferred to a separate spec.** Reviews data is not currently ingested anywhere in the system. Adding "most reviews in a quarter" requires a separate ingestion pipeline (HCP review webhook, Google Business Profile API, or manual entry) before any UI can render it. A follow-up spec for reviews ingestion will land first; the Wins tab gains those records once that data arrives.
+- **Rate-KPI records (closing %, memberships %, callbacks %) are deferred to v2.** See above.
+- **Reviews-based stats are deferred to a separate spec.** Reviews data is not currently ingested anywhere in the system. Adding "most reviews in a quarter" requires a separate ingestion pipeline (HCP review webhook, Google Business Profile API, or manual entry) before any UI can render it. A follow-up spec for reviews ingestion lands first; the Wins tab gains those records once that data arrives.
 - **No comparative ("you vs. company best") view.** Daniel's ask was "my own only." The Leaderboard is the company-comparison surface. Wins stays personal.
 - **No edit/admin UI for records.** The records are derived fields, recomputed nightly. No manual override.
 - **No additional streak types.** The 4 existing streaks (above-avg / tier-held / no-callbacks / rev-floor) cover the "longest streak" ask conceptually; this spec doesn't add more streak kinds. If specific new streaks come up later, they're additive and small.
