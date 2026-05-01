@@ -2495,9 +2495,9 @@ curl -s -X POST -H "Authorization: token $TOKEN" -H "Accept: application/vnd.git
 
 Expected: returns a PR URL. Share it with Daniel for review.
 
-- [ ] **Step 7: Lovable deploy verification**
+- [ ] **Step 7: Production verification**
 
-Lovable auto-deploys from `main`. After PR merge, navigate to https://twinsdash.com/marketing-roi on Daniel's phone and verify:
+After PR merge, navigate to https://twinsdash.com/marketing-roi on Daniel's phone and verify:
 
 1. Hero ROI value matches `https://twinsdash.com/marketing-roi?legacy=1` on the same period.
 2. Page is legible at 375 px width.

@@ -202,7 +202,7 @@ Daniel can edit these in the existing admin `company_goals` UI; if not yet wired
 - Filter interaction: changing the period control updates the URL query and refetches all hooks.
 - Legacy gate: visiting `/marketing-roi?legacy=1` renders the old page byte-for-byte.
 
-### Manual smoke (post-deploy on Lovable preview)
+### Manual smoke (post-merge, on twinsdash.com)
 
 1. Open `/marketing-roi`. Verify the stoplight hero renders within 1 second on Daniel's iPhone.
 2. Toggle period through Today / WTD / MTD / Custom. Verify all sections refresh and the URL updates.
