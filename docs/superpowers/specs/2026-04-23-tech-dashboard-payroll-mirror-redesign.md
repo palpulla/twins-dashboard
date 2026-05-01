@@ -240,7 +240,7 @@ SECURITY INVOKER so RLS applies. The function replaces the current `my_scorecard
 - Existing unit tests (`timeframe`, `smart-guard`) remain green — no code-path changes.
 - One new unit-testable boundary: `computeHeroActionState(paystub)` → returns `'enter_parts' | 'caught_up' | 'no_jobs'`. Pure function, 3-4 tests covering the transitions.
 - `my_paystub` function: smoke test via Supabase CLI `db query` after migration — verify it returns the expected shape on a no-data range (all zeros) and a known-data range (Maurice's recent week, values match `payroll_commissions` aggregation).
-- Visual QA: Daniel previews as Maurice (already linked) after Lovable deploy. Charles variant QA deferred until Charles is invited.
+- Visual QA: Daniel previews as Maurice (already linked) after deploy. Charles variant QA deferred until Charles is invited.
 
 ## 11. Rollout
 

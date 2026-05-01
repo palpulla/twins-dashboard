@@ -331,7 +331,7 @@ The existing `useMembershipData` hook already tracks plan name, price, status, r
 
 ---
 
-## 10. Website Copy (drop-in for Lovable)
+## 10. Website Copy (drop-in)
 
 Use this as the copy block for the new `/protection-plans` page (or rename the existing membership page).
 

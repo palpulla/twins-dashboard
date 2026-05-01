@@ -302,7 +302,7 @@ Phased rollout to minimize risk:
 3. **Phase 3 (Nicholas + Charles):** After Maurice pilot passes, roll out to the other two. Charles's Team Override card activated.
 4. **Phase 4 (cutover):** Weekly payroll now officially consumes tech-entered parts as the source of truth. Manual Excel side-process retired.
 
-Each phase is a separate merge to main; Lovable auto-deploys; Daniel hits Publish if needed.
+Each phase is a separate merge to main; Vercel auto-deploys.
 
 ## 12. Reversibility
 
