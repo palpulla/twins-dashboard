@@ -129,7 +129,7 @@ Three small commits, each independently revertable via `git revert`:
 - `src/pages/payroll/Parts.tsx` (not imported in `App.tsx`).
 - `html2canvas` dep (zero references in `src/` or `supabase/`).
 - One of `xlsx` / `exceljs` — keep `exceljs` (xlsx@0.18 has known CVEs). Audit which call-sites use which library, migrate the xlsx ones to exceljs, remove `xlsx` from package.json.
-- Capacitor mobile deps **only if** there's no active iOS/Android build pipeline. Confirm with Daniel before this commit (it's the one open question — see Section 9).
+- Capacitor mobile deps (`@capacitor/android`, `@capacitor/ios`, `@capacitor/cli`, `@capacitor/core`) and `capacitor.config.ts`. Confirmed 2026-05-05: no iOS/Android build planned this year, the dashboard ships as a website only. Removal is reversible later if mobile is revived.
 
 **Additions:**
 - `.worktrees/` added to `eslint.config.js` `ignorePatterns`. Drops the lint `any`-warning count from 2874 to 252.
@@ -175,11 +175,9 @@ Each work item has an item-level verification listed inline. The spec-level veri
 
 Acceptance = all 8 pass. If any fail, revert.
 
-## 9. Open question (one)
+## 9. Open questions
 
-**Capacitor mobile build.** Audit flagged Capacitor deps as candidates for removal because no mobile build pipeline appears active. Removing them shrinks `node_modules` and CI time. Question for Daniel: do you intend to ship the iOS/Android wrapper this year? If yes — keep deps, this work moves to Spec 4 (engineering cleanup). If no — remove now in step 6.5.
-
-Default if unanswered: keep them. Removal is reversible later.
+None. The Capacitor question was resolved 2026-05-05: dashboard is web-only, Capacitor deps removed in step 6.5.
 
 ## 10. Out-of-scope footguns to be aware of during execution
 
