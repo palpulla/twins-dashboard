@@ -4,7 +4,11 @@ import { useQuery } from '@tanstack/react-query';
 import { createClient } from '@/lib/supabase/client';
 import type { Tables } from '@/types/database';
 
-const supabase = createClient();
+let _supabase: ReturnType<typeof createClient> | null = null;
+function supabase() {
+  if (!_supabase) _supabase = createClient();
+  return _supabase;
+}
 
 function isDemo(): boolean {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -16,7 +20,7 @@ export function useSupabaseJobs(from: Date, to: Date, technicianId?: string) {
     queryKey: ['jobs', from.toISOString(), to.toISOString(), technicianId],
     queryFn: async () => {
       if (isDemo()) return null;
-      let query = supabase
+      let query = supabase()
         .from('jobs')
         .select('*')
         .gte('created_at', from.toISOString())
@@ -35,7 +39,7 @@ export function useSupabaseCommissionRecords(from: Date, to: Date, technicianId?
     queryKey: ['commission_records', from.toISOString(), to.toISOString(), technicianId],
     queryFn: async () => {
       if (isDemo()) return null;
-      let query = supabase
+      let query = supabase()
         .from('commission_records')
         .select('*')
         .gte('created_at', from.toISOString())
@@ -54,7 +58,7 @@ export function useSupabaseReviews(from: Date, to: Date, technicianId?: string) 
     queryKey: ['reviews', from.toISOString(), to.toISOString(), technicianId],
     queryFn: async () => {
       if (isDemo()) return null;
-      let query = supabase
+      let query = supabase()
         .from('reviews')
         .select('*')
         .gte('created_at', from.toISOString())
@@ -73,7 +77,7 @@ export function useSupabaseCallRecords(from: Date, to: Date, csrId?: string) {
     queryKey: ['call_records', from.toISOString(), to.toISOString(), csrId],
     queryFn: async () => {
       if (isDemo()) return null;
-      let query = supabase
+      let query = supabase()
         .from('call_records')
         .select('*')
         .gte('created_at', from.toISOString())
@@ -92,7 +96,7 @@ export function useSupabaseMarketingSpend(from: Date, to: Date) {
     queryKey: ['marketing_spend', from.toISOString(), to.toISOString()],
     queryFn: async () => {
       if (isDemo()) return null;
-      const { data, error } = await supabase
+      const { data, error } = await supabase()
         .from('marketing_spend')
         .select('*')
         .gte('created_at', from.toISOString())
@@ -109,7 +113,7 @@ export function useSupabaseUsers() {
     queryKey: ['users'],
     queryFn: async () => {
       if (isDemo()) return null;
-      const { data, error } = await supabase
+      const { data, error } = await supabase()
         .from('users')
         .select('*')
         .eq('is_active', true);
@@ -125,7 +129,7 @@ export function useSupabaseCustomers() {
     queryKey: ['customers'],
     queryFn: async () => {
       if (isDemo()) return null;
-      const { data, error } = await supabase
+      const { data, error } = await supabase()
         .from('customers')
         .select('*');
       if (error) { console.error('Customers query error:', error); return null; }
@@ -140,7 +144,7 @@ export function useSupabaseCommissionTiers() {
     queryKey: ['commission_tiers'],
     queryFn: async () => {
       if (isDemo()) return null;
-      const { data, error } = await supabase
+      const { data, error } = await supabase()
         .from('commission_tiers')
         .select('*');
       if (error) { console.error('Commission tiers query error:', error); return null; }
