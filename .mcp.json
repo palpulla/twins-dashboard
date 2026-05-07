@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "hcp": {
+      "command": "node",
+      "args": ["scripts/hcp-mcp/index.mjs"],
+      "env": {
+        "HCP_API_KEY": "${HCP_API_KEY}"
+      }
+    }
+  }
+}
