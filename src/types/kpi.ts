@@ -1,4 +1,4 @@
-export type DisplayFormat = 'currency' | 'percentage' | 'count';
+export type DisplayFormat = 'currency' | 'percentage' | 'count' | 'decimal';
 
 export interface KpiDefinition {
   id: string;

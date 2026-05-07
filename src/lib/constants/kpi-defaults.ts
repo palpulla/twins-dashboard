@@ -123,4 +123,15 @@ export const DEFAULT_KPI_DEFINITIONS: KpiDefinition[] = [
     invertedStatus: true,
     sortOrder: 11,
   },
+  {
+    id: 'avg_options_per_ticket',
+    name: 'Options / Ticket',
+    description: 'Average HCP estimate options written per ticket (excludes warranty/callbacks). Higher = techs presenting more pricing choices on every opportunity.',
+    formula: 'avg_options_per_ticket',
+    dataSource: 'estimates+jobs',
+    target: 3.0,
+    displayFormat: 'decimal',
+    isActive: true,
+    sortOrder: 12,
+  },
 ];

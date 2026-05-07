@@ -135,6 +135,49 @@ export function useSupabaseCustomers() {
   });
 }
 
+export function useSupabaseEstimates(from: Date, to: Date, technicianId?: string) {
+  return useQuery({
+    queryKey: ['estimates', from.toISOString(), to.toISOString(), technicianId],
+    queryFn: async () => {
+      if (isDemo()) return null;
+      let query = supabase
+        .from('estimates')
+        .select('*')
+        .gte('created_at', from.toISOString())
+        .lte('created_at', to.toISOString());
+      if (technicianId) query = query.eq('technician_id', technicianId);
+      const { data, error } = await query;
+      if (error) { console.error('Estimates query error:', error); return null; }
+      return data as Tables<'estimates'>[] | null;
+    },
+    staleTime: 30_000,
+  });
+}
+
+export function useSupabaseEstimateOptions(from: Date, to: Date, technicianId?: string) {
+  return useQuery({
+    queryKey: ['estimate_options', from.toISOString(), to.toISOString(), technicianId],
+    queryFn: async () => {
+      if (isDemo()) return null;
+      // Filter options by their parent estimate's created_at window so the
+      // KPI is stable across periods. Tech filter joins through estimates.
+      const inner = technicianId
+        ? `estimates!inner(technician_id,created_at)`
+        : `estimates!inner(created_at)`;
+      let query = supabase
+        .from('estimate_options')
+        .select(`*, ${inner}`)
+        .gte('estimates.created_at', from.toISOString())
+        .lte('estimates.created_at', to.toISOString());
+      if (technicianId) query = query.eq('estimates.technician_id', technicianId);
+      const { data, error } = await query;
+      if (error) { console.error('Estimate options query error:', error); return null; }
+      return data as Tables<'estimate_options'>[] | null;
+    },
+    staleTime: 30_000,
+  });
+}
+
 export function useSupabaseCommissionTiers() {
   return useQuery({
     queryKey: ['commission_tiers'],

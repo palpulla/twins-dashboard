@@ -27,6 +27,10 @@ export function formatCount(value: number): string {
   return new Intl.NumberFormat('en-US').format(value);
 }
 
+export function formatDecimal(value: number, places = 1): string {
+  return value.toFixed(places);
+}
+
 export function formatKpiValue(value: number, format: DisplayFormat): string {
   switch (format) {
     case 'currency':
@@ -35,6 +39,8 @@ export function formatKpiValue(value: number, format: DisplayFormat): string {
       return formatPercentage(value);
     case 'count':
       return formatCount(value);
+    case 'decimal':
+      return formatDecimal(value);
   }
 }
 

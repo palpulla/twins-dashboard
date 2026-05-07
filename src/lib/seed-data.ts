@@ -364,3 +364,59 @@ export const SEED_INVOICES: Tables<'invoices'>[] = SEED_JOBS
     created_at: job.created_at,
     updated_at: job.updated_at,
   }));
+
+// ==================== ESTIMATES + OPTIONS ====================
+// Generated to give the Options/Ticket KPI realistic values in local dev.
+// Most non-warranty completed jobs get an estimate with 2-3 options;
+// some get zero estimates (drags the avg down — the metric's whole point).
+function generateEstimatesAndOptions() {
+  const estimates: Tables<'estimates'>[] = [];
+  const options: Tables<'estimate_options'>[] = [];
+  let estimateCount = 1;
+  let optionCount = 1;
+
+  SEED_JOBS.forEach(job => {
+    if (job.job_type === 'Warranty Call') return;
+    if (Math.random() > 0.7) return; // ~30% of tickets have no estimate written
+    const estimateCountForJob = Math.random() > 0.85 ? 2 : 1;
+
+    for (let e = 0; e < estimateCountForJob; e++) {
+      const estimateId = `est-${String(estimateCount).padStart(3, '0')}`;
+      const estimateHcpId = `hcp-est-${String(estimateCount).padStart(3, '0')}`;
+      estimates.push({
+        id: estimateId,
+        hcp_id: estimateHcpId,
+        customer_id: job.customer_id,
+        technician_id: job.technician_id,
+        job_id: job.id,
+        status: 'completed',
+        amount: job.revenue / estimateCountForJob,
+        created_at: job.created_at,
+        updated_at: job.updated_at,
+      });
+
+      const numOptions = randomInt(1, 4);
+      for (let o = 0; o < numOptions; o++) {
+        options.push({
+          id: `eopt-${String(optionCount).padStart(4, '0')}`,
+          hcp_id: `hcp-eopt-${String(optionCount).padStart(4, '0')}`,
+          estimate_hcp_id: estimateHcpId,
+          estimate_id: estimateId,
+          name: ['Good', 'Better', 'Best', 'Premium'][o] || `Option ${o + 1}`,
+          amount: (job.revenue / estimateCountForJob) * (0.7 + o * 0.15),
+          status: o === 0 ? 'approved' : 'created',
+          created_at: job.created_at,
+          updated_at: job.updated_at,
+        });
+        optionCount++;
+      }
+      estimateCount++;
+    }
+  });
+
+  return { estimates, options };
+}
+
+const _estimatesAndOptions = generateEstimatesAndOptions();
+export const SEED_ESTIMATES: Tables<'estimates'>[] = _estimatesAndOptions.estimates;
+export const SEED_ESTIMATE_OPTIONS: Tables<'estimate_options'>[] = _estimatesAndOptions.options;
