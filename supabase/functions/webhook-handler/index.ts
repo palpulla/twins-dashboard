@@ -55,7 +55,12 @@ Deno.serve(async (req: Request) => {
     }
 
     // Route to handler based on event type
-    const [category, action] = payload.event.split('.');
+    // Multi-segment events like 'estimate.option.created' must keep the
+    // full action string ('option.created') so namespace-aware handlers
+    // can dispatch correctly.
+    const parts = payload.event.split('.');
+    const category = parts[0];
+    const action = parts.slice(1).join('.');
 
     switch (category) {
       case 'customer':
@@ -171,13 +176,68 @@ async function handleInvoiceEvent(action: string, data: Record<string, unknown>)
 }
 
 async function handleEstimateEvent(action: string, data: Record<string, unknown>) {
+  if (action.startsWith('option.')) {
+    await handleEstimateOptionEvent(action.slice('option.'.length), data);
+    return;
+  }
+
   const hcpId = data.id as string;
   if (!hcpId) return;
 
-  await supabase.from('estimates').upsert({
+  const estimateData: Record<string, unknown> = {
     hcp_id: hcpId,
     status: action,
     amount: Number(data.total || data.amount || 0),
+  };
+
+  // Resolve parent job FK if HCP attached this estimate to a job.
+  if (data.job_id) {
+    const { data: job } = await supabase.from('jobs')
+      .select('id').eq('hcp_id', data.job_id as string).single();
+    if (job) estimateData.job_id = job.id;
+  }
+
+  await supabase.from('estimates').upsert(estimateData, { onConflict: 'hcp_id' });
+}
+
+async function handleEstimateOptionEvent(action: string, data: Record<string, unknown>) {
+  const hcpId = data.id as string;
+  if (!hcpId) return;
+
+  const nestedEstimate = data.estimate as Record<string, unknown> | undefined;
+  const estimateHcpId = (data.estimate_id as string) || (nestedEstimate?.id as string);
+  if (!estimateHcpId) {
+    console.error('estimate option event missing estimate_id', { hcpId, action });
+    return;
+  }
+
+  // Resolve parent estimate FK if it already exists in our DB.
+  let estimateId: string | null = null;
+  const { data: estimate } = await supabase.from('estimates')
+    .select('id').eq('hcp_id', estimateHcpId).single();
+  if (estimate) estimateId = estimate.id;
+
+  if (action === 'approval_status_changed') {
+    const status = (data.approval_status as string) || 'created';
+    await supabase.from('estimate_options').upsert({
+      hcp_id: hcpId,
+      estimate_hcp_id: estimateHcpId,
+      estimate_id: estimateId,
+      name: (data.name as string) ?? null,
+      amount: Number(data.total || data.amount || 0),
+      status,
+    }, { onConflict: 'hcp_id' });
+    return;
+  }
+
+  // Default: option.created (and any future option.* event we want to capture by default)
+  await supabase.from('estimate_options').upsert({
+    hcp_id: hcpId,
+    estimate_hcp_id: estimateHcpId,
+    estimate_id: estimateId,
+    name: (data.name as string) ?? null,
+    amount: Number(data.total || data.amount || 0),
+    status: 'created',
   }, { onConflict: 'hcp_id' });
 }
 
