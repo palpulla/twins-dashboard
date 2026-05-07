@@ -83,6 +83,7 @@ export interface Database {
           hcp_id: string;
           customer_id: string | null;
           technician_id: string | null;
+          job_id: string | null;
           status: string;
           amount: number;
           created_at: string;
@@ -90,6 +91,21 @@ export interface Database {
         };
         Insert: Omit<Database['public']['Tables']['estimates']['Row'], 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Database['public']['Tables']['estimates']['Insert']>;
+      };
+      estimate_options: {
+        Row: {
+          id: string;
+          hcp_id: string;
+          estimate_hcp_id: string;
+          estimate_id: string | null;
+          name: string | null;
+          amount: number;
+          status: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Omit<Database['public']['Tables']['estimate_options']['Row'], 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Database['public']['Tables']['estimate_options']['Insert']>;
       };
       leads: {
         Row: {
