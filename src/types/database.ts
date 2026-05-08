@@ -870,6 +870,20 @@ export type Database = {
       get_user_id: { Args: never; Returns: string }
       get_user_role: { Args: never; Returns: string }
       manages_user: { Args: { target_user_id: string }; Returns: boolean }
+      past_digests_summary: {
+        Args: { days?: number }
+        Returns: {
+          digest_date: string
+          ignored_count: number
+          issue_count: number
+          resolved_count: number
+          ticket_count: number
+        }[]
+      }
+      reschedule_digest: {
+        Args: { new_cron_expression: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { AlertsTable } from '@/components/notifications/alerts-table'
+import { PastDigestsList } from '@/components/notifications/past-digests-list'
 
 export default async function NotificationsPage() {
   const supabase = await createServerSupabaseClient()
@@ -39,6 +40,14 @@ export default async function NotificationsPage() {
         </div>
         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         <AlertsTable rows={(openAlerts ?? []) as any} />
+      </section>
+
+      <section>
+        <div className="flex items-baseline justify-between mb-3">
+          <h2 className="text-base font-semibold">Past digests</h2>
+          <span className="text-xs text-gray-500">Last 14 days</span>
+        </div>
+        <PastDigestsList />
       </section>
     </div>
   )
