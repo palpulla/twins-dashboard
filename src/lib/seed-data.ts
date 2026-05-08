@@ -163,6 +163,9 @@ function generateJobs(): Tables<'jobs'>[] {
         parts_cost: partsCost,
         parts_cost_override: null,
         protection_plan_sold: protectionPlanSold,
+        started_at: null,
+        invoiced_at: null,
+        work_notes: null,
         created_at: jobDate.toISOString(),
         updated_at: jobDate.toISOString(),
       });
