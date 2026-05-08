@@ -2,6 +2,7 @@
 
 import { useDashboardStore } from '@/lib/store/dashboard-store';
 import { DateRangePicker } from '@/components/ui/date-range-picker';
+import { NotificationsBell } from '@/components/notifications/bell';
 
 interface HeaderProps {
   title: string;
@@ -30,6 +31,7 @@ export function Header({ title, subtitle, showDatePicker = true, actions }: Head
         </div>
         <div className="flex items-center gap-4">
           {actions}
+          <NotificationsBell />
           {showDatePicker && <DateRangePicker />}
         </div>
       </div>
