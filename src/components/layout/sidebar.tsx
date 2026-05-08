@@ -17,6 +17,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Technician', href: '/dashboard/technician', icon: 'engineering', roles: ['owner', 'manager', 'technician'] },
   { label: 'CSR', href: '/dashboard/csr', icon: 'headset_mic', roles: ['owner', 'manager', 'csr'] },
   { label: 'Marketing', href: '/dashboard/marketing', icon: 'campaign', roles: ['owner', 'manager'] },
+  { label: 'Notifications', href: '/dashboard/admin/notifications', icon: 'notifications', roles: ['owner', 'manager'] },
   { label: 'Admin', href: '/dashboard/admin', icon: 'settings', roles: ['owner'] },
 ];
 
