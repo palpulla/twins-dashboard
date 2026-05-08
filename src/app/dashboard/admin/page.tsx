@@ -36,6 +36,14 @@ const ADMIN_SECTIONS = [
     iconBg: 'bg-secondary-container',
     iconColor: 'text-on-secondary-container',
   },
+  {
+    title: 'Parts Library',
+    description: 'Manage the parts catalog. Edit prices individually or in bulk by $ amount or %, scoped by category or selection.',
+    href: '/dashboard/admin/parts',
+    icon: 'category',
+    iconBg: 'bg-primary-container',
+    iconColor: 'text-white',
+  },
 ];
 
 export default function AdminPage() {

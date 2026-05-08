@@ -218,6 +218,21 @@ export interface Database {
         Insert: Omit<Database['public']['Tables']['audit_log']['Row'], 'id' | 'created_at'>;
         Update: Partial<Database['public']['Tables']['audit_log']['Insert']>;
       };
+      parts_catalog: {
+        Row: {
+          id: string;
+          sku: string | null;
+          name: string;
+          category: string;
+          price: number;
+          description: string | null;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Omit<Database['public']['Tables']['parts_catalog']['Row'], 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Database['public']['Tables']['parts_catalog']['Insert']>;
+      };
     };
   };
 }
