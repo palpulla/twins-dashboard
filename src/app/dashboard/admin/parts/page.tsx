@@ -6,9 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Modal } from '@/components/ui/modal';
 import { formatCurrencyDollars } from '@/lib/utils/format';
 import {
-  useParts, useUpsertPart, useDeletePart, useBulkAdjustPrices,
-  type Part,
-} from '@/lib/hooks/use-parts-catalog';
+  useParts, usePartCategories, useUpsertPart, useDeletePart, useBulkAdjustPrices,
+  type Part, type PriceField,
+} from '@/lib/hooks/use-parts';
 
 type BulkMode = 'amount' | 'percent';
 type BulkDirection = 'increase' | 'decrease';
@@ -18,17 +18,17 @@ interface PartFormState {
   sku: string;
   name: string;
   category: string;
-  price: string;
-  description: string;
+  unit_cost: string;
+  retail_price: string;
   is_active: boolean;
 }
 
 const EMPTY_FORM: PartFormState = {
   sku: '',
   name: '',
-  category: '',
-  price: '',
-  description: '',
+  category: 'Hardware',
+  unit_cost: '',
+  retail_price: '',
   is_active: true,
 };
 
@@ -38,14 +38,20 @@ function partToForm(p: Part): PartFormState {
     sku: p.sku ?? '',
     name: p.name,
     category: p.category,
-    price: String(p.price ?? 0),
-    description: p.description ?? '',
+    unit_cost: String(p.unit_cost ?? 0),
+    retail_price: String(p.retail_price ?? 0),
     is_active: p.is_active,
   };
 }
 
+const FIELD_LABEL: Record<PriceField, string> = {
+  retail_price: 'Retail price',
+  unit_cost: 'Unit cost',
+};
+
 export default function PartsLibraryPage() {
   const { data: parts = [], isLoading } = useParts();
+  const { data: categoryRows = [] } = usePartCategories();
   const upsert = useUpsertPart();
   const remove = useDeletePart();
   const bulkAdjust = useBulkAdjustPrices();
@@ -62,17 +68,20 @@ export default function PartsLibraryPage() {
   const [editing, setEditing] = useState<PartFormState | null>(null);
 
   // Bulk controls
+  const [bulkField, setBulkField] = useState<PriceField>('retail_price');
   const [bulkMode, setBulkMode] = useState<BulkMode>('percent');
   const [bulkDirection, setBulkDirection] = useState<BulkDirection>('increase');
   const [bulkValue, setBulkValue] = useState<string>('');
   const [scope, setScope] = useState<'selected' | 'category'>('selected');
   const [bulkCategory, setBulkCategory] = useState<string>('');
 
-  const categories = useMemo(() => {
+  const categoryNames = useMemo(() => {
+    if (categoryRows.length > 0) return categoryRows.map(c => c.name);
+    // Fallback for demo / DB unreachable: derive from rows
     const set = new Set<string>();
     parts.forEach(p => p.category && set.add(p.category));
     return Array.from(set).sort();
-  }, [parts]);
+  }, [categoryRows, parts]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -80,7 +89,7 @@ export default function PartsLibraryPage() {
       if (!showInactive && !p.is_active) return false;
       if (categoryFilter !== 'all' && p.category !== categoryFilter) return false;
       if (q) {
-        const blob = `${p.name} ${p.sku ?? ''} ${p.category} ${p.description ?? ''}`.toLowerCase();
+        const blob = `${p.name} ${p.sku ?? ''} ${p.category}`.toLowerCase();
         if (!blob.includes(q)) return false;
       }
       return true;
@@ -93,11 +102,8 @@ export default function PartsLibraryPage() {
   function toggleAll() {
     setSelectedIds(prev => {
       const next = new Set(prev);
-      if (allFilteredSelected) {
-        filtered.forEach(p => next.delete(p.id));
-      } else {
-        filtered.forEach(p => next.add(p.id));
-      }
+      if (allFilteredSelected) filtered.forEach(p => next.delete(p.id));
+      else filtered.forEach(p => next.add(p.id));
       return next;
     });
   }
@@ -131,12 +137,13 @@ export default function PartsLibraryPage() {
       .filter(p => idSet.has(p.id))
       .slice(0, 8)
       .map(p => {
+        const current = p[bulkField] ?? 0;
         const next = bulkMode === 'amount'
-          ? p.price + delta
-          : p.price * (1 + delta / 100);
-        return { part: p, next: Math.max(0, Math.round(next * 100) / 100) };
+          ? current + delta
+          : current * (1 + delta / 100);
+        return { part: p, current, next: Math.max(0, Math.round(next * 100) / 100) };
       });
-  }, [targetIds, parts, bulkMode, bulkDirection, bulkValue]);
+  }, [targetIds, parts, bulkField, bulkMode, bulkDirection, bulkValue]);
 
   async function applyBulk() {
     const value = parseFloat(bulkValue);
@@ -144,6 +151,7 @@ export default function PartsLibraryPage() {
     const sign = bulkDirection === 'increase' ? 1 : -1;
     await bulkAdjust.mutateAsync({
       ids: targetIds,
+      field: bulkField,
       mode: bulkMode,
       delta: sign * value,
     });
@@ -152,14 +160,15 @@ export default function PartsLibraryPage() {
   }
 
   async function savePart(form: PartFormState) {
-    const price = parseFloat(form.price);
+    const unitCost = parseFloat(form.unit_cost);
+    const retail = parseFloat(form.retail_price);
     await upsert.mutateAsync({
       id: form.id,
       sku: form.sku.trim() || null,
       name: form.name.trim(),
-      category: form.category.trim() || 'Uncategorized',
-      price: Number.isFinite(price) ? Math.max(0, price) : 0,
-      description: form.description.trim() || null,
+      category: form.category.trim() || 'Hardware',
+      unit_cost: Number.isFinite(unitCost) ? Math.max(0, unitCost) : 0,
+      retail_price: Number.isFinite(retail) ? Math.max(0, retail) : 0,
       is_active: form.is_active,
     });
     setEditing(null);
@@ -212,7 +221,7 @@ export default function PartsLibraryPage() {
               className="mt-1 w-full bg-surface-container px-4 py-2 rounded-lg border border-outline-variant/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option value="all">All categories</option>
-              {categories.map(c => (
+              {categoryNames.map(c => (
                 <option key={c} value={c}>{c}</option>
               ))}
             </select>
@@ -243,6 +252,31 @@ export default function PartsLibraryPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+            {/* Which price column */}
+            <div className="md:col-span-3">
+              <label className="text-[11px] uppercase font-bold tracking-wider text-on-surface-variant">Update</label>
+              <div className="mt-1 inline-flex w-full rounded-lg overflow-hidden border border-outline-variant/30">
+                <button
+                  type="button"
+                  onClick={() => setBulkField('retail_price')}
+                  className={`flex-1 px-3 py-2 text-sm font-semibold ${
+                    bulkField === 'retail_price' ? 'bg-primary text-white' : 'bg-surface-container text-on-surface'
+                  }`}
+                >
+                  Retail price
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBulkField('unit_cost')}
+                  className={`flex-1 px-3 py-2 text-sm font-semibold ${
+                    bulkField === 'unit_cost' ? 'bg-primary text-white' : 'bg-surface-container text-on-surface'
+                  }`}
+                >
+                  Unit cost
+                </button>
+              </div>
+            </div>
+
             {/* Scope */}
             <div className="md:col-span-3">
               <label className="text-[11px] uppercase font-bold tracking-wider text-on-surface-variant">Apply to</label>
@@ -278,7 +312,7 @@ export default function PartsLibraryPage() {
                   className="mt-1 w-full bg-surface-container px-4 py-2 rounded-lg border border-outline-variant/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   <option value="">— Pick category —</option>
-                  {categories.map(c => (
+                  {categoryNames.map(c => (
                     <option key={c} value={c}>{c}</option>
                   ))}
                 </select>
@@ -311,7 +345,7 @@ export default function PartsLibraryPage() {
             </div>
 
             {/* Mode */}
-            <div className="md:col-span-2">
+            <div className={scope === 'category' ? 'md:col-span-2' : 'md:col-span-2'}>
               <label className="text-[11px] uppercase font-bold tracking-wider text-on-surface-variant">By</label>
               <div className="mt-1 inline-flex w-full rounded-lg overflow-hidden border border-outline-variant/30">
                 <button
@@ -357,7 +391,7 @@ export default function PartsLibraryPage() {
             </div>
 
             {/* Apply */}
-            <div className="md:col-span-2">
+            <div className={scope === 'category' ? 'md:col-span-12' : 'md:col-span-2'}>
               <Button
                 onClick={applyBulk}
                 disabled={
@@ -368,7 +402,9 @@ export default function PartsLibraryPage() {
                 }
                 className="w-full"
               >
-                {bulkAdjust.isPending ? 'Applying…' : `Apply to ${targetCount}`}
+                {bulkAdjust.isPending
+                  ? 'Applying…'
+                  : `Apply to ${targetCount} ${FIELD_LABEL[bulkField].toLowerCase()}${targetCount === 1 ? '' : 's'}`}
               </Button>
             </div>
           </div>
@@ -377,14 +413,15 @@ export default function PartsLibraryPage() {
           {previewRows.length > 0 && (
             <div className="mt-4 p-3 rounded-lg bg-surface-container border border-outline-variant/20">
               <p className="text-[11px] uppercase font-bold tracking-wider text-on-surface-variant mb-2">
-                Preview {previewRows.length < targetCount && `(first ${previewRows.length} of ${targetCount})`}
+                Preview · {FIELD_LABEL[bulkField]}
+                {previewRows.length < targetCount && ` (first ${previewRows.length} of ${targetCount})`}
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 text-sm">
                 {previewRows.map(row => (
                   <div key={row.part.id} className="flex justify-between gap-3">
                     <span className="truncate text-on-surface">{row.part.name}</span>
                     <span className="font-mono whitespace-nowrap">
-                      <span className="text-on-surface-variant">{formatCurrencyDollars(row.part.price)}</span>
+                      <span className="text-on-surface-variant">{formatCurrencyDollars(row.current)}</span>
                       <span className="text-on-surface-variant mx-1">→</span>
                       <span className="font-bold text-primary">{formatCurrencyDollars(row.next)}</span>
                     </span>
@@ -430,7 +467,8 @@ export default function PartsLibraryPage() {
                   <th className="px-4 py-3 font-bold">SKU</th>
                   <th className="px-4 py-3 font-bold">Name</th>
                   <th className="px-4 py-3 font-bold">Category</th>
-                  <th className="px-4 py-3 font-bold text-right">Price</th>
+                  <th className="px-4 py-3 font-bold text-right">Unit cost</th>
+                  <th className="px-4 py-3 font-bold text-right">Retail price</th>
                   <th className="px-4 py-3 font-bold">Status</th>
                   <th className="px-4 py-3 font-bold text-right">Actions</th>
                 </tr>
@@ -438,11 +476,11 @@ export default function PartsLibraryPage() {
               <tbody className="divide-y divide-outline-variant/20">
                 {isLoading ? (
                   <tr>
-                    <td colSpan={7} className="px-4 py-8 text-center text-on-surface-variant">Loading parts…</td>
+                    <td colSpan={8} className="px-4 py-8 text-center text-on-surface-variant">Loading parts…</td>
                   </tr>
                 ) : filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-4 py-12 text-center">
+                    <td colSpan={8} className="px-4 py-12 text-center">
                       <p className="text-on-surface-variant mb-3">
                         {parts.length === 0
                           ? 'No parts in the library yet.'
@@ -468,8 +506,11 @@ export default function PartsLibraryPage() {
                       <td className="px-4 py-3 font-mono text-xs text-on-surface-variant">{p.sku ?? '—'}</td>
                       <td className="px-4 py-3 font-medium text-on-surface">{p.name}</td>
                       <td className="px-4 py-3 text-on-surface-variant">{p.category}</td>
+                      <td className="px-4 py-3 text-right font-mono text-on-surface">
+                        {formatCurrencyDollars(p.unit_cost)}
+                      </td>
                       <td className="px-4 py-3 text-right font-mono font-semibold text-primary">
-                        {formatCurrencyDollars(p.price)}
+                        {formatCurrencyDollars(p.retail_price)}
                       </td>
                       <td className="px-4 py-3">
                         <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold ${
@@ -505,7 +546,7 @@ export default function PartsLibraryPage() {
           onClose={() => setEditing(null)}
           onSave={savePart}
           saving={upsert.isPending}
-          existingCategories={categories}
+          categoryOptions={categoryNames}
         />
       )}
     </div>
@@ -518,10 +559,10 @@ interface EditModalProps {
   onClose: () => void;
   onSave: (form: PartFormState) => void | Promise<void>;
   saving: boolean;
-  existingCategories: string[];
+  categoryOptions: string[];
 }
 
-function PartEditModal({ form, onChange, onClose, onSave, saving, existingCategories }: EditModalProps) {
+function PartEditModal({ form, onChange, onClose, onSave, saving, categoryOptions }: EditModalProps) {
   const isNew = !form.id;
   return (
     <Modal isOpen onClose={onClose} title={isNew ? 'Add part' : 'Edit part'} size="lg">
@@ -549,39 +590,41 @@ function PartEditModal({ form, onChange, onClose, onSave, saving, existingCatego
             />
           </Field>
           <Field label="Category">
-            <input
-              type="text"
-              list="parts-categories"
+            <select
               value={form.category}
               onChange={(e) => onChange({ ...form, category: e.target.value })}
               className="input"
-              placeholder="e.g. Springs, Openers, Rollers"
-            />
-            <datalist id="parts-categories">
-              {existingCategories.map(c => <option key={c} value={c} />)}
-            </datalist>
+            >
+              {categoryOptions.length === 0 && <option value="Hardware">Hardware</option>}
+              {categoryOptions.map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
           </Field>
-          <Field label="Price (USD)">
+          <div />
+          <Field label="Unit cost (USD)">
             <input
               type="number"
               min={0}
               step="0.01"
-              value={form.price}
-              onChange={(e) => onChange({ ...form, price: e.target.value })}
+              value={form.unit_cost}
+              onChange={(e) => onChange({ ...form, unit_cost: e.target.value })}
+              className="input"
+              placeholder="0.00"
+            />
+          </Field>
+          <Field label="Retail price (USD)">
+            <input
+              type="number"
+              min={0}
+              step="0.01"
+              value={form.retail_price}
+              onChange={(e) => onChange({ ...form, retail_price: e.target.value })}
               className="input"
               placeholder="0.00"
             />
           </Field>
         </div>
-        <Field label="Description">
-          <textarea
-            rows={2}
-            value={form.description}
-            onChange={(e) => onChange({ ...form, description: e.target.value })}
-            className="input"
-            placeholder="Optional notes about this part"
-          />
-        </Field>
         <label className="flex items-center gap-2 text-sm font-medium text-on-surface select-none">
           <input
             type="checkbox"
@@ -600,7 +643,6 @@ function PartEditModal({ form, onChange, onClose, onSave, saving, existingCatego
         <style jsx>{`
           .input {
             width: 100%;
-            background: rgb(var(--surface-container, 245 246 250));
             background-color: #F5F6FA;
             border: 1px solid rgba(0,0,0,0.08);
             border-radius: 8px;
