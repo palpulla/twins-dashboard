@@ -4,6 +4,7 @@ import { use } from 'react';
 import { Header } from '@/components/layout/header';
 import { KpiGrid } from '@/components/kpi/kpi-grid';
 import { JobHistoryTable } from '@/components/tables/job-history-table';
+import { TechnicianTrendsCard } from '@/components/charts/technician-trends-card';
 import { useTechnicianKpis, useTechnicianJobs, SEED_USERS } from '@/lib/hooks/use-seed-data';
 import { SEED_COMMISSION_TIERS } from '@/lib/seed-data';
 import { Badge } from '@/components/ui/badge';
@@ -53,6 +54,9 @@ export default function TechnicianDetailPage({ params }: { params: Promise<{ id:
 
         {/* KPI Grid */}
         <KpiGrid kpis={kpis} />
+
+        {/* Trends — pick KPI + period to see how it moves over time */}
+        <TechnicianTrendsCard technicianId={techId} />
 
         {/* Job History */}
         <JobHistoryTable jobs={jobs} />
