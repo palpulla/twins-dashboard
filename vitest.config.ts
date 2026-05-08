@@ -4,7 +4,7 @@ export default defineConfig({
   test: {
     environment: 'node',
     globals: true,
-    include: ['src/**/__tests__/**/*.test.ts', 'src/**/*.test.ts'],
+    include: ['src/**/__tests__/**/*.test.ts', 'src/**/*.test.ts', 'supabase/functions/**/__test__/**/*.test.ts'],
   },
   resolve: {
     alias: {
