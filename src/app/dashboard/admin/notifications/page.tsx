@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { AlertsTable } from '@/components/notifications/alerts-table'
 import { PastDigestsList } from '@/components/notifications/past-digests-list'
+import { SettingsPanel } from '@/components/notifications/settings-panel'
 
 export default async function NotificationsPage() {
   const supabase = await createServerSupabaseClient()
@@ -11,6 +12,9 @@ export default async function NotificationsPage() {
   const { data: profile } = await supabase
     .from('users').select('role').eq('auth_id', user.id).single()
   if (!profile || !['owner', 'manager'].includes(profile.role)) redirect('/dashboard')
+
+  const { data: settings } = await supabase
+    .from('app_settings').select('*').eq('id', 1).single()
 
   const { data: openAlerts } = await supabase
     .from('supervisor_alerts')
@@ -48,6 +52,11 @@ export default async function NotificationsPage() {
           <span className="text-xs text-gray-500">Last 14 days</span>
         </div>
         <PastDigestsList />
+      </section>
+
+      <section>
+        <h2 className="text-base font-semibold mb-3">Settings</h2>
+        {settings && <SettingsPanel initial={settings} />}
       </section>
     </div>
   )
