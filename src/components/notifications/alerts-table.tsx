@@ -3,6 +3,13 @@ import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { IssuePill } from './issue-pill'
 
+function formatCustomerLabel(fullName: string | null | undefined): string {
+  if (!fullName) return ''
+  const parts = fullName.trim().split(/\s+/)
+  if (parts.length === 1) return parts[0]
+  return `${parts[0][0]}. ${parts[parts.length - 1]}`
+}
+
 interface AlertRow {
   id: string
   alert_type: 'missing_buttons' | 'missing_notes'
@@ -11,7 +18,7 @@ interface AlertRow {
   attributed_tech: { id: string; full_name: string } | null
   jobs: {
     id: string; hcp_id: string | null; job_type: string | null; revenue: number; completed_at: string | null
-    customers: { first_name: string | null; last_name: string | null } | null
+    customers: { name: string | null } | null
     job_technicians: { users: { id: string; full_name: string } }[]
   } | null
 }
@@ -59,7 +66,7 @@ export function AlertsTable({ rows }: { rows: AlertRow[] }) {
               <td className="p-3 align-top">
                 <strong>#{j.hcp_id ?? j.id.slice(0, 6)}</strong>
                 <div className="text-xs text-gray-500">
-                  {j.customers ? `${j.customers.first_name?.[0] ?? ''}. ${j.customers.last_name ?? ''}` : '—'} · {j.job_type ?? 'Job'}
+                  {formatCustomerLabel(j.customers?.name) || '—'} · {j.job_type ?? 'Job'}
                 </div>
               </td>
               <td className="p-3 align-top">

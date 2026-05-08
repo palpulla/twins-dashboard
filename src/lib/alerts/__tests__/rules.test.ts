@@ -5,7 +5,7 @@ import type { JobForAlerting, AppSettingsForAlerting } from '../types'
 
 const baseJob: JobForAlerting = {
   id: 'job-1', hcp_id: '123',
-  customer_first_name: 'Sarah', customer_last_name: 'Jenkins',
+  customer_name: 'Sarah Jenkins',
   job_type: 'service_call', total_amount: 99,
   scheduled_at: '2026-05-08T14:00:00Z', started_at: '2026-05-08T15:00:00Z',
   completed_at: '2026-05-08T16:00:00Z', invoiced_at: '2026-05-08T16:30:00Z',

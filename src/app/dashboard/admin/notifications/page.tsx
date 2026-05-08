@@ -22,7 +22,7 @@ export default async function NotificationsPage() {
       id, alert_type, details, created_at, digest_date,
       attributed_tech:attributed_tech_id ( id, full_name ),
       jobs:job_id ( id, hcp_id, job_type, revenue, completed_at,
-        customers:customer_id (first_name, last_name),
+        customers:customer_id (name),
         job_technicians ( users:technician_id (id, full_name) ) )
     `)
     .is('resolved_at', null)

@@ -34,7 +34,7 @@ Deno.serve(async (_req) => {
       .select(`
         id, hcp_id, job_type, revenue,
         scheduled_at, started_at, completed_at, invoiced_at, work_notes,
-        customers:customer_id ( first_name, last_name ),
+        customers:customer_id ( name ),
         invoices ( id, paid_at ),
         job_technicians ( technician_id, assigned_at, users:technician_id ( id, full_name ) )
       `)
@@ -125,12 +125,19 @@ Deno.serve(async (_req) => {
 
 // --- helpers ---
 
+function formatCustomerLabel(fullName: string | null): string {
+  if (!fullName) return ''
+  const parts = fullName.trim().split(/\s+/)
+  if (parts.length === 0) return ''
+  if (parts.length === 1) return parts[0]
+  return `${parts[0][0]}. ${parts[parts.length - 1]}`
+}
+
 function mapJob(j: any) {
   return {
     id: j.id,
     hcp_id: j.hcp_id,
-    customer_first_name: j.customers?.first_name ?? null,
-    customer_last_name: j.customers?.last_name ?? null,
+    customer_name: j.customers?.name ?? null,
     job_type: j.job_type ?? null,
     total_amount: Number(j.revenue ?? 0),
     scheduled_at: j.scheduled_at ?? null,
@@ -151,7 +158,7 @@ function mapJob(j: any) {
 
 function toRenderTicket(job: ReturnType<typeof mapJob>, _alerts: any[]): RenderTicket {
   const primary = job.assigned_techs[0]?.full_name ?? 'Unassigned'
-  const cust = `${(job.customer_first_name ?? '').slice(0,1)}. ${job.customer_last_name ?? ''}`.trim()
+  const cust = formatCustomerLabel(job.customer_name)
   return {
     job_id: job.id,
     hcp_id: job.hcp_id,
@@ -176,7 +183,7 @@ function groupByJob(rows: any[]): RenderTicket[] {
     return {
       job_id: j.id, hcp_id: j.hcp_id,
       job_summary: j.job_type ?? 'Job',
-      customer_label: `${(j.customers?.first_name ?? '').slice(0,1)}. ${j.customers?.last_name ?? ''}`.trim() || 'Customer',
+      customer_label: formatCustomerLabel(j.customers?.name ?? null) || 'Customer',
       total_amount: Number(j.revenue ?? 0),
       finished_at: j.completed_at ?? new Date().toISOString(),
       primary_tech_name: 'Tech', co_tech_name: null,

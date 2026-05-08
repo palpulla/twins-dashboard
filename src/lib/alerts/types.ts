@@ -6,8 +6,7 @@ export type ButtonCheck =
 export interface JobForAlerting {
   id: string
   hcp_id: string | null
-  customer_first_name: string | null
-  customer_last_name: string | null
+  customer_name: string | null
   job_type: string | null
   total_amount: number              // dollars (post-conversion from HCP cents)
   scheduled_at: string | null       // ISO timestamps throughout
