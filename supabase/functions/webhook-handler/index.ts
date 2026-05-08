@@ -16,6 +16,21 @@ interface WebhookPayload {
   timestamp?: string;
 }
 
+// HCP payload shape for these fields was not verified against a real webhook.
+// If field names differ in production, adjust here. See:
+// docs/superpowers/plans/2026-05-08-supervisor-ticket-discipline-alerts.md
+interface HcpJobData {
+  id?: string;
+  notes?: string | null;
+  assigned_employees?: { id: string; assigned_at?: string }[];
+}
+
+interface HcpInvoiceData {
+  id?: string;
+  job_id?: string;
+  created_at?: string;
+}
+
 // Commission calculation (mirrors src/lib/utils/commission.ts)
 function calculateManagerBonus(netRevenue: number): number {
   if (netRevenue < 400) return 0;
@@ -62,10 +77,10 @@ Deno.serve(async (req: Request) => {
         await handleCustomerEvent(action, payload.data);
         break;
       case 'job':
-        await handleJobEvent(payload.event, payload.data);
+        await handleJobEvent(payload.event, payload.data, payload.timestamp);
         break;
       case 'invoice':
-        await handleInvoiceEvent(action, payload.data);
+        await handleInvoiceEvent(payload.event, action, payload.data, payload.timestamp);
         break;
       case 'estimate':
         await handleEstimateEvent(action, payload.data);
@@ -114,9 +129,14 @@ async function handleCustomerEvent(action: string, data: Record<string, unknown>
   }, { onConflict: 'hcp_id' });
 }
 
-async function handleJobEvent(event: string, data: Record<string, unknown>) {
+async function handleJobEvent(event: string, data: Record<string, unknown>, eventTimestamp?: string) {
   const hcpId = data.id as string;
   if (!hcpId) return;
+
+  // HCP payload shape for these fields was not verified against a real webhook.
+  // If field names differ in production, adjust here. See:
+  // docs/superpowers/plans/2026-05-08-supervisor-ticket-discipline-alerts.md
+  const jobPayload = data as HcpJobData & Record<string, unknown>;
 
   const jobData: Record<string, unknown> = {
     hcp_id: hcpId,
@@ -125,6 +145,16 @@ async function handleJobEvent(event: string, data: Record<string, unknown>) {
     revenue: Number(data.total || data.amount || 0),
     parts_cost: Number(data.parts_cost || 0),
   };
+
+  // work_notes: always reflect latest if present in payload
+  if (jobPayload.notes !== undefined) {
+    jobData.work_notes = jobPayload.notes ?? null;
+  }
+
+  // started_at: only populate on job.started so we don't clobber a previously set value
+  if (event === 'job.started') {
+    jobData.started_at = eventTimestamp ?? new Date().toISOString();
+  }
 
   if (data.customer_id) {
     const { data: customer } = await supabase.from('customers')
@@ -141,15 +171,65 @@ async function handleJobEvent(event: string, data: Record<string, unknown>) {
     .select()
     .single();
 
+  // Populate job_technicians junction from assigned_employees, if provided.
+  // Requires users.hcp_id to map HCP employee ids to internal user ids.
+  // If users.hcp_id does not exist (current schema), gracefully skip and warn.
+  const assignedEmployees = jobPayload.assigned_employees ?? [];
+  if (job && assignedEmployees.length > 0) {
+    try {
+      // NOTE: users.hcp_id does not exist in the current schema. The query below
+      // will fail at runtime with a Postgres error; we catch and log so processing
+      // continues. When users.hcp_id is added, the warning will go away.
+      const { data: techs, error: techsError } = await supabase
+        .from('users')
+        .select('id, hcp_id')
+        .in('hcp_id', assignedEmployees.map((e: { id: string }) => e.id));
+
+      if (techsError) {
+        console.warn('Skipping job_technicians populate (users.hcp_id lookup failed):', techsError.message);
+      } else if (techs && techs.length > 0) {
+        const techRows = techs
+          .map((t: { id: string; hcp_id?: string }) => {
+            const matched = assignedEmployees.find((e) => e.id === t.hcp_id);
+            return matched
+              ? {
+                  job_id: (job as { id: string }).id,
+                  technician_id: t.id,
+                  assigned_at: matched.assigned_at ?? new Date().toISOString(),
+                }
+              : null;
+          })
+          .filter((r): r is { job_id: string; technician_id: string; assigned_at: string } => r !== null);
+
+        if (techRows.length > 0) {
+          // Replace all existing assignments for this job
+          await supabase.from('job_technicians').delete().eq('job_id', (job as { id: string }).id);
+          await supabase.from('job_technicians').insert(techRows);
+        }
+      }
+    } catch (e) {
+      console.warn(`Skipping job_technicians populate for job ${(job as { id: string }).id}:`, e);
+    }
+  }
+
   // Recalculate commission if job completed
   if (event === 'job.completed' && job) {
     await recalculateCommission(job);
   }
 }
 
-async function handleInvoiceEvent(action: string, data: Record<string, unknown>) {
+async function handleInvoiceEvent(
+  event: string,
+  action: string,
+  data: Record<string, unknown>,
+  eventTimestamp?: string,
+) {
   const hcpId = data.id as string;
   if (!hcpId) return;
+
+  // HCP payload shape for these fields was not verified against a real webhook.
+  // If field names differ in production, adjust here.
+  const invoicePayload = data as HcpInvoiceData & Record<string, unknown>;
 
   const invoiceData: Record<string, unknown> = {
     hcp_id: hcpId,
@@ -168,6 +248,16 @@ async function handleInvoiceEvent(action: string, data: Record<string, unknown>)
   }
 
   await supabase.from('invoices').upsert(invoiceData, { onConflict: 'hcp_id' });
+
+  // Stamp jobs.invoiced_at when an invoice is first created. Don't overwrite if already set.
+  if (event === 'invoice.created' && invoicePayload.job_id) {
+    const invoicedAt = invoicePayload.created_at ?? eventTimestamp ?? new Date().toISOString();
+    await supabase
+      .from('jobs')
+      .update({ invoiced_at: invoicedAt })
+      .eq('hcp_id', invoicePayload.job_id)
+      .is('invoiced_at', null);
+  }
 }
 
 async function handleEstimateEvent(action: string, data: Record<string, unknown>) {

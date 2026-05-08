@@ -21,6 +21,25 @@ export interface HcpWebhookPayload {
   timestamp: string;
 }
 
+/**
+ * Shape we expect on `data` for job.* events. Loosely typed; HCP may vary.
+ * Verified field names: TBD against production payload.
+ */
+export interface HcpJobData {
+  id?: string;
+  notes?: string | null;
+  assigned_employees?: { id: string; assigned_at?: string }[];
+}
+
+/**
+ * Shape we expect on `data` for invoice.* events.
+ */
+export interface HcpInvoiceData {
+  id?: string;
+  job_id?: string;
+  created_at?: string;
+}
+
 export type MarketingChannel =
   | 'google_ads'
   | 'google_lsa'
