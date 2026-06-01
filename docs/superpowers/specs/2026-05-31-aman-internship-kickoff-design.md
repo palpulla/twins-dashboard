@@ -25,98 +25,57 @@ and build, and that the strongest early work plays to his finance/PE background.
   Not "write SOPs from scratch."
 - **PE work during internship is research and drafting only. No buyer contact.**
 
-## Comp reconciliation (action for Daniel)
-
-Two existing docs disagree. The Start Call says **$30/hr @ 20 hrs/wk**; the IOM Role
-Description (Cowork `build_aman.js`) says **$25/hr @ 40 hrs/wk**. This package uses
-**$30/hr @ 20 hrs/wk** per Daniel's confirmation. The IOM Role Description doc should be
-updated to match so Aman never sees two numbers.
+Comp is already handled in the offer/start call; it is deliberately kept out of the kickoff
+content. (For the record only: $30/hr @ 20 hrs/wk; the older Cowork IOM Role Description doc
+says $25/40 and can be reconciled separately. Not part of this call.)
 
 ---
 
 ## 1. The 45-minute kickoff agenda
 
-Replaces the looser `Aman_Start_Call`. Same "say-this / [gold blanks] / stage-direction"
-format as the existing doc. Eight blocks, 45 minutes.
+The call is about **what Aman does day to day and exactly what to start on**, not strategy or
+comp. Same "say-this / [gold blanks] / cue" format. Seven blocks, 45 minutes. The doc doubles
+as Aman's reference: it carries his daily loop, weekly rhythm, and a concrete week-1 task list.
 
 | # | Block | Time |
 |---|---|---|
-| 1 | Frame: the seat vs. the internship | 5 min |
-| 2 | How we work + what I need from you | 5 min |
-| 3 | Why PE exit readiness matters (introduced early) | 5 min |
-| 4 | Your first two projects | 12 min |
-| 5 | Cadence, tools, accountability (hand off checklist + EOD form) | 8 min |
-| 6 | Your week-one deliverable | 5 min |
-| 7 | The path: internship to ownership | 3 min |
-| 8 | Gut-check and close | 2 min |
+| 1 | The frame, fast (intern now, senior later) | 3 min |
+| 2 | What your day-to-day looks like | 8 min |
+| 3 | Your weekly rhythm | 4 min |
+| 4 | Your first tasks (the heart of the call) | 15 min |
+| 5 | How you track and report | 8 min |
+| 6 | What you decide vs. what needs me | 4 min |
+| 7 | Gut-check and close | 3 min |
 
-### Block-by-block
+Block 1 reframes intern-vs-senior in two lines and drops the PE/NDA confidentiality note (kept
+brief). Blocks 2-4 are the meat: walk the daily loop, the weekly rhythm, and the task list while
+screen-sharing the Drive folder and task sheet. Block 5 hands off the daily checklist + EOD form.
+Block 6 is the light decision-rights line (act on research/drafting; ask on money/vendors/outside
+contact). Block 7 is the gut-check + next-step dates.
 
-**1. Frame: the seat vs. the internship (5 min)**
-- "The role description you read is the senior seat. That is where this can go. It is not
-  what I am asking you to own this summer."
-- "Right now you are an intern with limited hours. Your job is to get deep on the business,
-  and to do a few high-leverage projects extremely well. Not to run the whole back office."
-- "If this goes well, the path to owning that senior seat is real. We will both know more in
-  90 days."
+### Your day-to-day (reference page in the doc)
 
-**2. How we work + what I need from you (5 min)**
-- "This role did not exist before you. There is no playbook handed to you. I need you
-  creative, resourceful, organized, and proactive. You will hit things with no obvious owner.
-  When you do, bring me a proposed answer, not just the problem."
-- "We run on EOS. Numbers, weekly rhythm, accountability. You will feel that fast."
-- "Default to action on research and drafting. Default to asking me on anything that spends
-  money, touches a vendor, or reaches outside the company."
+Tools: **Google Workspace** (Drive/Docs/Sheets) + text/email. SOPs live in Drive; tasks tracked
+in a Google Sheet. A typical work session: open the Internal Ops Drive folder + task sheet →
+check email/texts from Daniel → pick 1-2 tasks and mark In Progress → do the work, save to Drive
+named clearly → update the sheet/trackers → submit the EOD report.
 
-**3. Why PE exit readiness matters (5 min)**
-- "We are building toward a private equity or strategic sale in 24 to 36 months. Almost
-  everything we do points at that."
-- "For a buyer to pay a strong multiple, the business has to be legible. Documented,
-  measurable, not dependent on what is in my head. That is the work, and it plays directly
-  to your finance and PE background."
-- "Two ground rules. Everything about the exit stays between us and a small group of
-  advisors. And you will sign an NDA before day one. During the internship your PE work is
-  research and drafting only. No contacting buyers. That switch flips later, with me."
+### Your weekly rhythm
 
-**4. Your first two projects (12 min)**
-- "Project one: a PE diligence checklist and buyer research. What does a buyer of a home
-  services company actually want to see in diligence. You build the checklist, then we map
-  what we have and what is missing. Pure research and structure to start. This is your
-  wheelhouse."
-- "Project two: our SOPs. We already have them. They are scattered and uneven. I want you to
-  audit what exists, find what is outdated, missing, or not being followed, and reorganize
-  the library so it is usable for training, for daily accountability, and eventually for
-  diligence. You are not writing them from scratch. You are making them real."
-- "Both of these you can do remotely with the access I give you. Neither needs you to run a
-  meeting or manage a person yet."
-- *(Stage direction: ask which he would attack first and why. His application answer.)*
+~20 hrs/wk on his own schedule (sends Daniel his rough working days) · weekly 30-min 1:1 · EOD
+report each day worked · one improvement idea/week · Friday: skim the task sheet and update the
+tracker.
 
-**5. Cadence, tools, accountability (8 min)**
-- "Access to [systems] will be ready before day one."
-- "Every day you work, you fill out a short end-of-day report. It takes two minutes. It is
-  how I stay in the loop and how we make sure nothing stalls. Here is the link." *(Hand off
-  the EOD Typeform link.)*
-- "Here is your daily checklist. Start of day, during, end of day. Follow it until it is
-  habit." *(Hand off the daily checklist doc.)*
-- "We will do a weekly 1:1, [day/time], 30 minutes, Zoom. Day to day, reach me on [channel].
-  Urgent, just call."
+### Your first tasks, Week 1 (concrete checklist, with "add 3 of your own")
 
-**6. Your week-one deliverable (5 min)**
-- "By the end of your first week I want one page. Two things on it. First, an inventory of
-  every SOP that exists today: name, where it lives, last updated, who owns it. Second, a
-  first rough outline of the PE diligence checklist from your own research. Rough is fine.
-  I want to see how you organize and how you research."
-
-**7. The path: internship to ownership (3 min)**
-- "If the projects land and the fit is there, this converts to the full Internal Operations
-  Manager role, and over a two to three year arc it can grow into a COO-type seat. That is
-  conditional, not promised. The internship is how we both find out."
-
-**8. Gut-check and close (2 min)**
-- "Two honest questions. Is there anything that would make you not start? And what is
-  worrying you most about the first month?" *(Pause. Do not fill the silence.)*
-- Lock next steps and dates: offer/NDA returned, day one date and time, first-week
-  deliverable due date, first 1:1 on the calendar.
+- **Setup:** accept Workspace access; create his task sheet (Task, Project, Status, Notes, Link)
+  + Drive subfolders; 30-min intro call with Charles (FOM).
+- **Project 1, SOP audit:** find every place SOPs/process docs live; build an inventory sheet
+  (name, location, last updated, owner, format); mark current/outdated/unclear + gaps.
+- **Project 2, PE diligence (research only):** research what a home-services buyer wants in
+  diligence (3-4 sources, save links); draft checklist categories; list line items.
+- **Wrap:** put the SOP inventory + diligence checklist v0 on one page (the week-1 deliverable);
+  add at least three tasks of his own.
 
 ---
 
@@ -214,7 +173,7 @@ Plain, warm, no em-dashes. Sent same day.
 >
 > Good talking today. Quick recap so we are aligned.
 >
-> You are starting as a part-time intern, around 20 hours a week, remote, at $30/hour. Day
+> You are starting as a part-time intern, around 20 hours a week, remote, working out of Google Workspace. Day
 > one is [date]. Your first two projects are the PE diligence checklist plus buyer research,
 > and the audit and reorganization of our existing SOPs.
 >

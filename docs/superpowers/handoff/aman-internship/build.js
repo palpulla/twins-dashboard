@@ -1,5 +1,6 @@
 // Builds the Aman internship kickoff package + daily checklist as branded .docx,
 // matching the existing Twins Aman/Ivory/Charles doc set (navy + gold, badge, footer).
+// Focus: what Aman does day to day and a concrete task list. Not comp, not strategy.
 const fs = require("fs");
 const path = require("path");
 const {
@@ -73,6 +74,12 @@ function caption(text) {
 function bullet(text, ref = "bullets") {
   return new Paragraph({ numbering: { reference: ref, level: 0 }, spacing: { after: 60 },
     children: [new TextRun(text)] });
+}
+// a checkbox to-do line
+function todo(text) {
+  return new Paragraph({ spacing: { after: 70 }, indent: { left: 360 },
+    children: [ new TextRun({ text: "☐  ", size: 24, color: NAVY }),
+      new TextRun({ text, size: 22, color: NAVY }) ] });
 }
 // agenda script line: gold-bordered box of what to say, with [blanks] in gold
 function sayLine(parts) {
@@ -150,172 +157,193 @@ function pageHeader(name) {
 }
 
 // =========================================================
-// DOC A: Kickoff Package
+// DOC A: Kickoff Package (day-to-day + tasks focused)
 // =========================================================
 function buildKickoff() {
   const c = [];
   c.push(...headerBand());
-  c.push(...title("Internal Operations Internship", "Kickoff Package  ·  Aman Kharga"));
-  c.push(para("This package runs the kickoff call and sets up Aman's first 30 days. It turns the senior Internal Operations Manager role into a focused, part-time internship starting point (about 20 hours per week, remote, $30 per hour), while keeping the long-term path to ownership and a private equity exit clear. SOPs already exist; the work is to audit, organize, and operationalize them, not write them from scratch.", { after: 160 }));
+  c.push(...title("Internal Operations Internship", "Kickoff Call  ·  Aman Kharga"));
+  c.push(para("This runs the kickoff call and doubles as Aman's reference for how to work. He is a part-time intern, about 20 hours a week, remote, working out of Google Workspace. The call is about one thing: how his day works and exactly what to do first. Keep it practical.", { after: 160 }));
 
   // Agenda
   c.push(section("The 45-Minute Kickoff Agenda"));
-  c.push(para("How to use this: lines in gold-bordered boxes are what you say. Gold [blanks] are yours to fill in. Italic gray lines are stage directions for you, not for him.", { italics: true, color: GREY_TEXT, size: 20 }));
+  c.push(para("How to use this: lines in gold-bordered boxes are what you say. Gold [blanks] are yours to fill in. Italic gray lines are cues for you, not for him. The detail pages (Your Day-to-Day, Your Weekly Rhythm, Your First Tasks) are below; share your screen and walk them.", { italics: true, color: GREY_TEXT, size: 20 }));
   c.push(dataTable([1000, 7280, 2000], ["#", "Block", "Time"], [
-    ["1", "Frame: the seat vs. the internship", "5 min"],
-    ["2", "How we work + what I need from you", "5 min"],
-    ["3", "Why PE exit readiness matters (early)", "5 min"],
-    ["4", "Your first two projects", "12 min"],
-    ["5", "Cadence, tools, accountability", "8 min"],
-    ["6", "Your week-one deliverable", "5 min"],
-    ["7", "The path: internship to ownership", "3 min"],
-    ["8", "Gut-check and close", "2 min"],
+    ["1", "The frame, fast (intern now, senior later)", "3 min"],
+    ["2", "What your day-to-day looks like", "8 min"],
+    ["3", "Your weekly rhythm", "4 min"],
+    ["4", "Your first tasks (the heart of the call)", "15 min"],
+    ["5", "How you track and report", "8 min"],
+    ["6", "What you decide vs. what needs me", "4 min"],
+    ["7", "Gut-check and close", "3 min"],
   ]));
 
-  c.push(blockHeader("1", "Frame: the seat vs. the internship", "5 min"));
-  c.push(stage("Say this first. It takes the pressure off and sets the real expectation."));
-  c.push(sayLine([["“The role description you read is the senior seat. That is where this can go. It is not what I am asking you to own this summer.”"]]));
-  c.push(sayLine([["“Right now you are an intern with limited hours. Your job is to get deep on the business and do a few high-leverage projects extremely well. Not to run the whole back office.”"]]));
-  c.push(sayLine([["“If this goes well, the path to owning that senior seat is real. We will both know a lot more in ninety days.”"]]));
+  c.push(blockHeader("1", "The frame, fast", "3 min"));
+  c.push(stage("Say this, then move on. Do not spend the call here."));
+  c.push(sayLine([["“The role description you read is the senior seat, where this can grow. This summer you are a part-time intern. Your job is to get deep on the business and nail a couple of projects. Not to run the back office.”"]]));
+  c.push(sayLine([["“One thing up front: we are pointing at selling the business in a couple of years, so a lot of your work is making us organized and documented. That stays between us, you will sign an NDA, and it is research and drafting only. You never contact anyone outside the company without me.”"]]));
 
-  c.push(blockHeader("2", "How we work + what I need from you", "5 min"));
-  c.push(stage("Set the bar: creative, resourceful, organized, proactive. The role did not exist before him."));
-  c.push(sayLine([["“This role did not exist before you. There is no playbook handed to you. I need you creative, resourceful, organized, and proactive. You will hit things with no obvious owner. When you do, bring me a proposed answer, not just the problem.”"]]));
-  c.push(sayLine([["“We run on EOS. Numbers, weekly rhythm, accountability. You will feel that fast.”"]]));
-  c.push(sayLine([["“Default to action on research and drafting. Default to asking me on anything that spends money, touches a vendor, or reaches outside the company.”"]]));
+  c.push(blockHeader("2", "What your day-to-day looks like", "8 min"));
+  c.push(stage("Open 'Your Day-to-Day' below and walk it while screen-sharing the Google Drive folder and the task sheet."));
+  c.push(sayLine([["“Every day you work, it is the same loop: check in, pick your tasks, do the work, update your sheet, send your end-of-day report. Let me show you.”"]]));
 
-  c.push(blockHeader("3", "Why PE exit readiness matters", "5 min"));
-  c.push(stage("Introduce the exit early. It is the why behind the work and it plays to his background."));
-  c.push(sayLine([["“We are building toward a private equity or strategic sale in 24 to 36 months. Almost everything we do points at that.”"]]));
-  c.push(sayLine([["“For a buyer to pay a strong multiple, the business has to be legible. Documented, measurable, not dependent on what is in my head. That is the work, and it plays directly to your finance and PE background.”"]]));
-  c.push(sayLine([["“Two ground rules. Everything about the exit stays between us and a small group of advisors. And you will sign an NDA before day one. During the internship your PE work is research and drafting only. No contacting buyers. That switch flips later, with me.”"]]));
+  c.push(blockHeader("3", "Your weekly rhythm", "4 min"));
+  c.push(stage("Walk 'Your Weekly Rhythm' below."));
+  c.push(sayLine([["“You set your own hours, around 20 a week. Just send me your rough working days. We talk live once a week, "], ["[day/time]", { blank: true }], [", 30 minutes.”"]]));
 
-  c.push(blockHeader("4", "Your first two projects", "12 min"));
-  c.push(stage("The heart of the call. Make the two projects concrete. Both are remote and need little access."));
-  c.push(sayLine([["“Project one: a PE diligence checklist and buyer research. What does a buyer of a home services company actually want to see in diligence. You build the checklist, then we map what we have and what is missing. Pure research and structure to start. This is your wheelhouse.”"]]));
-  c.push(sayLine([["“Project two: our SOPs. We already have them. They are scattered and uneven. I want you to audit what exists, find what is outdated, missing, or not being followed, and reorganize the library so it is usable for training, for daily accountability, and eventually for diligence. You are not writing them from scratch. You are making them real.”"]]));
-  c.push(sayLine([["“Both of these you can do remotely with the access I give you. Neither needs you to run a meeting or manage a person yet.”"]]));
-  c.push(ask("Ask", "“Reading both of those, which would you attack first, and why?”"));
+  c.push(blockHeader("4", "Your first tasks", "15 min"));
+  c.push(stage("The heart of the call. Open 'Your First Tasks' and go through every item together."));
+  c.push(sayLine([["“Here is exactly what to do in week one. Setup, plus two project tracks: audit our existing SOPs, and research a buyer-diligence checklist.”"]]));
+  c.push(sayLine([["“Read these, then add at least three of your own. If you spot something I missed, that is exactly the instinct I am hiring for.”"]]));
+  c.push(ask("Ask", "“Looking at this list, what would you add, and what would you start with?”"));
 
-  c.push(blockHeader("5", "Cadence, tools, accountability", "8 min"));
-  c.push(stage("Hand off the daily checklist and the EOD report link live, on the call."));
-  c.push(sayLine([["“Access to "], ["[systems list]", { blank: true }], [" will be ready before day one.”"]]));
-  c.push(sayLine([["“Every day you work, you fill out a short end-of-day report. Two minutes. It is how I stay in the loop and how we make sure nothing stalls. Here is the link.”  "], ["[EOD form link]", { blank: true }]]));
-  c.push(sayLine([["“Here is your daily checklist. Start of day, during, end of day. Follow it until it is habit.”  "], ["[hand off the checklist]", { blank: true }]]));
-  c.push(sayLine([["“We will do a weekly 1:1, "], ["[day/time]", { blank: true }], [", 30 minutes, Zoom. Day to day reach me on "], ["[channel]", { blank: true }], [". Urgent, just call.”"]]));
+  c.push(blockHeader("5", "How you track and report", "8 min"));
+  c.push(stage("Hand off the daily checklist and the end-of-day report link live, on the call."));
+  c.push(sayLine([["“You track everything in your task sheet, with a status on each item. Save your work in the Drive folder, named clearly. Access to "], ["[systems]", { blank: true }], [" will be ready before day one.”"]]));
+  c.push(sayLine([["“End of every day you work, you fill out a two-minute end-of-day report. It is how I stay in the loop. Here is the link.”  "], ["[EOD form link]", { blank: true }]]));
+  c.push(sayLine([["“And here is your daily checklist. Follow it until it is automatic.”  "], ["[hand off the checklist]", { blank: true }]]));
 
-  c.push(blockHeader("6", "Your week-one deliverable", "5 min"));
-  c.push(sayLine([["“By the end of your first week I want one page. Two things on it. First, an inventory of every SOP that exists today: name, where it lives, last updated, who owns it. Second, a first rough outline of the PE diligence checklist from your own research. Rough is fine. I want to see how you organize and how you research.”"]]));
+  c.push(blockHeader("6", "What you decide vs. what needs me", "4 min"));
+  c.push(sayLine([["“Default to action on research, drafting, and organizing. Default to asking me on anything that spends money, touches a vendor, or reaches outside the company. When you hit something with no owner, bring me a proposed answer, not just the problem.”"]]));
 
-  c.push(blockHeader("7", "The path: internship to ownership", "3 min"));
-  c.push(sayLine([["“If the projects land and the fit is there, this converts to the full Internal Operations Manager role, and over a two to three year arc it can grow into a COO-type seat. That is conditional, not promised. The internship is how we both find out.”"]]));
+  c.push(blockHeader("7", "Gut-check and close", "3 min"));
+  c.push(ask("Q1", "“Is anything unclear about what you actually do day to day?”"));
+  c.push(ask("Q2", "“What is worrying you about week one?”"));
+  c.push(sayLine([["“Next steps: day one is "], ["[date/time]", { blank: true }], [", your week-one deliverable is due "], ["[date]", { blank: true }], [", and our first 1:1 is "], ["[date/time]", { blank: true }], [". I will send calendar invites.”"]]));
 
-  c.push(blockHeader("8", "Gut-check and close", "2 min"));
-  c.push(stage("Most important two questions. Ask them, then stop talking."));
-  c.push(ask("Q1", "“Is there anything that would make you not start?”"));
-  c.push(stage("Pause. Do not fill the silence."));
-  c.push(ask("Q2", "“What is worrying you most about the first month?”"));
-  c.push(sayLine([["“Last thing, let me lock our next steps: offer and NDA back by "], ["[date]", { blank: true }], [", day one is "], ["[date/time]", { blank: true }], [", first deliverable due "], ["[date]", { blank: true }], [", and our first 1:1 is "], ["[date/time]", { blank: true }], [".”"]]));
+  // Reference: Day-to-Day
+  c.push(section("Your Day-to-Day"));
+  c.push(caption("Run this loop every day you work. About four hours, on your own schedule."));
+  [
+    "Open the Internal Operations folder in Google Drive and your task sheet.",
+    "Check email and texts from Daniel since you last worked. Reply to the quick ones.",
+    "In your task sheet, pick the one or two tasks you will finish this session. Mark them In Progress.",
+    "Do the work. Save everything in the right Drive folder, named clearly (date plus what it is).",
+    "Update your task sheet and any trackers: Done, In Progress, or Blocked with a note.",
+    "Submit your end-of-day report before you log off.",
+  ].forEach(t => c.push(bullet(t, "nums")));
 
-  // Opening script
-  c.push(section("Opening Script"));
-  c.push(caption("A way to open the call so the intern-vs-senior reframe lands in the first sixty seconds."));
-  c.push(quoteBox([
-    "“Aman, glad we are doing this. Before anything else I want to be clear about one thing, because it matters. The role description you read is the long-term seat, the senior Internal Operations job. That is where this can go. It is not what I am putting on your plate this summer.",
-    "Right now you are an intern with limited hours, and your job is simpler and sharper than that whole document. Get deep on how this business actually runs, and do two or three projects so well that they make a real difference. That is it. Nobody expects you to run the back office on day one.",
-    "If it goes well, the path to that bigger seat is real, and we will both know a lot more in ninety days. Sound good? Then let me walk you through how I want to use our time today.”",
-  ]));
+  // Reference: Weekly Rhythm
+  c.push(section("Your Weekly Rhythm"));
+  [
+    "About 20 hours a week, on your own schedule. Send Daniel your rough working days each week.",
+    "Weekly 1:1 with Daniel, 30 minutes, [day/time].",
+    "End-of-day report every day you work.",
+    "Bring at least one improvement idea each week.",
+    "Friday: skim your task sheet, update your project tracker, flag anything for the 1:1.",
+  ].forEach(t => c.push(bullet(t)));
 
-  // First-week assignment
-  c.push(section("First-Week Assignment"));
-  c.push(para("One page, two artifacts, due end of week one. Keep it to about 20 hours. Inventory and research only, no system changes and no meetings to run."));
-  c.push(bullet("SOP inventory: every SOP that exists today, in a simple table. Name, where it lives, last updated, owner. The point is a complete picture of what we have."));
-  c.push(bullet("PE diligence checklist v0: a rough outline, from his own research, of what a buyer of a home services or trades company expects to see in diligence. Categories and line items. Rough is the goal; it shows how he organizes and researches."));
+  // Reference: First Tasks
+  c.push(section("Your First Tasks  ·  Week 1"));
+  c.push(caption("A starter list. Track each item in your task sheet. Then add at least three of your own."));
+  c.push(subsection("Setup"));
+  c.push(todo("Accept Google Workspace access and confirm you can open the Internal Operations Drive folder."));
+  c.push(todo("Make your task tracker: a simple Google Sheet with columns Task, Project, Status, Notes, Link. Create your working subfolders in Drive."));
+  c.push(todo("30-minute intro call with Charles, the Field Operations Manager. Peer to peer, no Daniel needed."));
+  c.push(subsection("Project 1  ·  SOP audit (organize what we already have)"));
+  c.push(todo("Find every place SOPs and process docs currently live: Drive, Cowork, HouseCall Pro, email, anywhere. List the locations."));
+  c.push(todo("Build an SOP inventory in a sheet: name, where it lives, last updated, owner, format."));
+  c.push(todo("Mark each one: looks current, looks outdated, or can't tell. Note any obvious gaps."));
+  c.push(subsection("Project 2  ·  PE diligence checklist (research only)"));
+  c.push(todo("Research what a buyer of a home-services or trades business wants to see in diligence. Use three or four credible sources and save the links."));
+  c.push(todo("Draft the checklist categories: financials, operations, legal, customers, team and HR, systems, and so on."));
+  c.push(todo("List the line items under each category. Rough is fine."));
+  c.push(subsection("Wrap the week"));
+  c.push(todo("Put the SOP inventory and the diligence checklist v0 on one page. That is your week-one deliverable for Daniel."));
+  c.push(todo("Add at least three tasks of your own that you think belong on this list."));
 
   // 30-day plan
-  c.push(section("30-Day Internship Plan"));
-  c.push(caption("About 20 hours per week, milestone-based. Ladders straight into Phase 1 (Onboard & Listen) of the role description."));
+  c.push(section("Where This Goes  ·  First 30 Days"));
+  c.push(caption("About 20 hours per week, milestone-based. Week 1 is the task list above."));
   c.push(dataTable([1700, 4380, 4200],
     ["Week", "Focus", "Deliverable"],
     [
-      ["Week 1", "Orient + inventory. Read the role description and this doc, get access, skim one vendor call and one CSR call, build the inventory and checklist.", "SOP inventory + diligence checklist v0"],
-      ["Week 2", "Audit pass. Score each existing SOP (exists / outdated / not-followed / missing). Research what buyers want in home-services diligence.", "SOP audit matrix + “what buyers want” brief"],
-      ["Week 3", "Build the trackers. Stand up an exit-readiness tracker (item, owner, priority, timeline), reorganize the SOP library, start a buyer-universe file (no contact).", "Exit-readiness tracker v1 + SOP library index + buyer-universe file"],
-      ["Week 4", "Synthesize + present. Write a one-page State of the Back-Office memo and propose the next 30 days. Present in the monthly 1:1.", "State of the Back-Office memo + next-30-days proposal"],
+      ["Week 1", "Setup, SOP inventory, and a first diligence-checklist draft (the task list above).", "SOP inventory + diligence checklist v0"],
+      ["Week 2", "Score each existing SOP (current / outdated / not-followed / missing). Turn the buyer research into a short brief.", "SOP audit matrix + “what buyers want” brief"],
+      ["Week 3", "Stand up an exit-readiness tracker (item, owner, priority, timeline), reorganize the SOP library, start a buyer-universe file (no contact).", "Exit-readiness tracker v1 + SOP library index"],
+      ["Week 4", "Write a one-page State of the Back-Office memo and propose his own next 30 days. Present it in the 1:1.", "State of the Back-Office memo + next-30-days proposal"],
     ]));
 
-  // Not to delegate
-  c.push(section("What NOT to Delegate Yet"));
-  c.push(caption("Research and drafting on all of these is welcome. Decisions and outside contact are not."));
-  ["Any contact with potential buyers, PE firms, or M&A advisors.",
-   "Vendor termination, renewal, or contract changes.",
-   "Pricing changes of any kind.",
-   "Hiring, firing, or pay decisions.",
-   "Payroll, banking, or money-movement access and approvals.",
-   "Signing or committing on behalf of Twins.",
-   "Customer-facing authority as a Twins decision-maker.",
-   "Running the weekly Level-10 meeting (defer until he has ramped).",
-   "Unsupervised access to sensitive financials beyond what a specific task needs.",
+  // What needs Daniel
+  c.push(section("What You Decide vs. What Needs Daniel"));
+  c.push(para("Do on your own:", { bold: true }));
+  ["Research, drafting, organizing, and reorganizing documents.",
+   "Building inventories, trackers, checklists, and your own task list.",
+   "Booking your intro call with Charles and setting your own working hours.",
+  ].forEach(t => c.push(bullet(t)));
+  c.push(para("Always check with Daniel first:", { bold: true, before: 80 }));
+  ["Anything that spends money or commits Twins to a cost.",
+   "Anything that touches a vendor (marketing, bookkeeping, IT).",
+   "Any contact with someone outside the company, especially anything exit or buyer related.",
+   "Hiring, pay, pricing, or changing how a customer is handled.",
   ].forEach(t => c.push(bullet(t)));
 
   // Questions
-  c.push(section("Questions to Ask in the Call"));
-  ["“When you read the role description, which of the priorities did you want to attack first, and why?” (his application prompt)",
-   "“You have limited hours. If you only had five productive hours this week, what would you spend them on?”",
+  c.push(section("Questions to Ask Him"));
+  ["“Looking at the week-one task list, what would you add, and what would you start with?”",
+   "“If you only had five productive hours this week, where would you spend them?”",
    "“Where have you actually used AI to save real time? Name the tool and the outcome.”",
-   "“Walk me through how you would build a diligence checklist for a business like ours from scratch.”",
    "“When there is no process and no obvious owner, what do you do?”",
    "“How will you keep me from becoming your bottleneck?”",
-   "“What part of this feels least comfortable to you right now?”",
+   "“What part of this feels least comfortable right now?”",
   ].forEach(t => c.push(bullet(t, "nums")));
+
+  // Opening script
+  c.push(section("Opening Script"));
+  c.push(caption("A way to open so the reframe lands fast, then you get into the day-to-day."));
+  c.push(quoteBox([
+    "“Aman, glad we are doing this. Quick frame, then we get practical. The role description you read is the long-term seat. This summer you are a part-time intern, and your job is simpler than that whole document: get deep on how this business runs, and nail a couple of projects.",
+    "Most of today is about what you actually do day to day and exactly what to start on. I will share my screen and walk you through your folder, your task sheet, and your first week. Sound good?”",
+  ]));
 
   // Follow-up
   c.push(section("Follow-Up Message  ·  Send Same Day"));
-  c.push(caption("Plain and warm. Fill the four blanks before sending."));
+  c.push(caption("Plain and practical. Fill the blanks before sending."));
   c.push(quoteBox([
     "Aman,",
-    "Good talking today. Quick recap so we are aligned.",
-    "You are starting as a part-time intern, around 20 hours a week, remote, at $30/hour. Day one is [date]. Your first two projects are the PE diligence checklist plus buyer research, and the audit and reorganization of our existing SOPs.",
-    "By the end of your first week, send me one page: an inventory of every SOP we have today (name, where it lives, last updated, owner), and a rough first outline of the diligence checklist from your research. Rough is fine. I want to see how you organize and research.",
-    "Three things to set up: the role description [link], your daily checklist [link], and your end-of-day report, which you fill out each day you work [link].",
-    "We will do a weekly 1:1 on [day/time]. For day-to-day, reach me at [channel]. If it is urgent, call.",
-    "Reply with your plan for week one by [date]. Looking forward to building this with you.",
+    "Good talking today. Quick recap.",
+    "You start [date], part-time and remote, working out of Google Workspace. Week one is setup plus two tracks: audit and inventory our existing SOPs, and research and draft a buyer-diligence checklist. The full task list is in the doc I shared.",
+    "By Friday, send me one page: the SOP inventory (name, where it lives, last updated, owner) and a rough diligence checklist. And add a few tasks of your own to the list. Rough is fine; I want to see how you organize and research.",
+    "Three links to get going: the role description [link], your daily checklist [link], and your end-of-day report, which you fill out each day you work [link].",
+    "Track your tasks in your sheet, save your work in the Drive folder, and send the end-of-day report each day. Our weekly 1:1 is [day/time]. Day to day, reach me by text or email.",
+    "Reply with your plan for week one by [date]. Looking forward to it.",
     "Daniel",
   ]));
 
   return new Document({ styles: sharedStyles, numbering: numberingConfig, sections: [{
-    properties: sectionPage, headers: { default: pageHeader("Internship Kickoff Package") },
+    properties: sectionPage, headers: { default: pageHeader("Internship Kickoff") },
     footers: { default: pageFooter() }, children: c }] });
 }
 
 // =========================================================
-// DOC B: Daily Checklist
+// DOC B: Daily Checklist (Google Workspace concrete)
 // =========================================================
 function buildChecklist() {
   const c = [];
   c.push(...headerBand());
   c.push(...title("Internal Operations Daily Checklist", "Aman Kharga"));
-  c.push(para("Run this every day you work. It keeps you organized, keeps Daniel in the loop, and makes sure nothing stalls. It should take a few minutes at each end of the day, not more."));
+  c.push(para("Run this every day you work. It keeps you organized, keeps Daniel in the loop, and makes sure nothing stalls. A few minutes at each end of the day."));
 
   c.push(section("Start of Day"));
-  c.push(bullet("Check Daniel's replies and any messages since you last worked."));
-  c.push(bullet("Open your project trackers: the SOP audit matrix and the exit-readiness tracker."));
-  c.push(bullet("Pick the top one or two outcomes you will move today. Write them down."));
+  c.push(todo("Open the Internal Operations folder in Google Drive and your task sheet."));
+  c.push(todo("Check email and texts from Daniel since you last worked. Reply to the quick ones."));
+  c.push(todo("Pick the one or two tasks you will finish today. Mark them In Progress in your sheet."));
 
   c.push(section("During the Day"));
-  c.push(bullet("Log your work as you go. Keep the SOP audit matrix and exit-readiness tracker current."));
-  c.push(bullet("Tag every research source so it is traceable later. A buyer will eventually ask how you know."));
-  c.push(bullet("Research and drafting only on anything PE or vendor related. No outside contact."));
+  c.push(todo("Save everything in the right Drive folder, named clearly (date plus what it is)."));
+  c.push(todo("Keep your task sheet honest: Done, In Progress, or Blocked with a note."));
+  c.push(todo("Tag every research source with its link so it is traceable later."));
+  c.push(todo("Research and drafting only on anything PE or vendor related. No outside contact."));
 
   c.push(section("End of Day  ·  Each Day You Work"));
-  c.push(bullet("Update the trackers with what changed today."));
-  c.push(bullet("Submit your end-of-day report (link in the box below)."));
-  c.push(bullet("Note at least one improvement idea this week."));
+  c.push(todo("Update your task sheet and any trackers with what changed today."));
+  c.push(todo("Submit your end-of-day report (link in the box below)."));
+  c.push(todo("Jot at least one improvement idea this week."));
 
   c.push(section("When You Have Spare Time"));
-  c.push(caption("Downtime playbook. When a project is blocked or you are waiting on Daniel, pick from here."));
+  c.push(caption("When a task is blocked or you are waiting on Daniel, pick from here."));
   c.push(bullet("Advance the buyer-universe research."));
-  c.push(bullet("Clean up and reorganize the SOP and document library."));
+  c.push(bullet("Clean up and reorganize the SOP and document library in Drive."));
   c.push(bullet("Draft or improve one SOP from the existing set."));
   c.push(bullet("Read one diligence or trades-M&A resource and bring back a takeaway."));
 
