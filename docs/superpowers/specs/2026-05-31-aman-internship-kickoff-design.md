@@ -215,27 +215,36 @@ Plain, warm, no em-dashes. Sent same day.
 - Live URL: https://form.typeform.com/to/XcMEqQ1C
 - Workspace: GSEZQk. Theme: iFN1ISoC (same as Ivory's, for visual consistency).
 
-Modeled on Ivory's CSR EOD form (`h3rZTusq`) but project-based instead of call-based.
-Same principles: gated detail (detail appears only when the Yes/No gate is Yes), required =
-actionable, a mood pulse, a manager-alert path on blockers and decisions.
+**v2: router design** (revised per Daniel's feedback). Output-focused, not a diary. The
+priority question routes to one tailored follow-up so the form never asks about areas he
+didn't touch. Required = actionable; manager-alert on blocked + decision. ~8-9 answers on a
+normal day, 3-5 min. Refs/columns updated in the edge function + `internal_ops_eod_reports`.
 
-Fields:
-1. Date worked (date, required)
-2. Your name (dropdown: Aman Kharga, required)
-3. How many hours did you work today? (number, required)
-4. What did you work on today, and what did you produce? (long text, required)
-5. Did you move the SOP audit or documentation work forward today? (Yes/No) → if Yes: what
-   and where it lives (long text)
-6. Did you move the PE exit-readiness research forward today? (Yes/No) → if Yes: what you
-   found/produced + sources (long text)
-7. Anything blocking you, or anything you need from Daniel? (Yes/No) → if Yes: what + urgency
-   (long text) *(manager alert)*
-8. Any decisions or approvals you need from Daniel? (Yes/No) → if Yes: what + options
-   (long text) *(manager alert)*
-9. One thing you noticed that could work better? (long text, optional; aim for 1/week)
-10. Any questions you need answered? (long text, optional)
-11. How did today go? (1-5 scale, required)
-12. Anything you need from Daniel? (long text, optional)
+Fields (refs in parens):
+1. Date worked (`date_work`, date, req)
+2. Your name (`aman_name`, dropdown: Aman Kharga, req)
+3. Hours worked today (`hours_today`, number, req)
+4. What did you produce today? Paste links to docs/sheets/trackers/SOPs/folders updated
+   (`produced`, long text, req)
+5. Which priority did today's work mainly support? (`priority`, dropdown, req) — PE exit
+   readiness · SOP/process audit or improvement · Weekly scorecard/reporting · Field-office
+   coordination · Vendor/process cleanup · Bookkeeping coordination · Other
+   - → if PE: `pe_area` (dropdown: data room/diligence · buyer research · financial/KPI
+     readiness · SOP/process readiness · vendor/contracts cleanup · org chart/accountability ·
+     systems/data cleanup · Other) + `pe_detail` (what you found/produced + links/sources)
+   - → if SOP/process: `sop_detail` (what you audited/improved/organized/documented, what
+     changed, where it lives, next step)
+   - → any other priority: `other_detail` (what moved, where it lives, next step)
+6. Is anything blocked? (`blocked`, yes/no, req) → if Yes: `blocked_detail` (what's blocked,
+   what you need, urgency) *(manager alert)*
+7. Do you need a decision or approval from Daniel? (`decision`, yes/no, req) → if Yes:
+   `decision_detail` (what needs deciding, options, recommendation) *(manager alert)*
+8. What are the top 1-3 things you'll work on next? (`next_steps`, long text, req)
+9. How productive was today? (`productivity`, multiple choice: Very / Somewhat / Not, req)
+   → if Somewhat/Not: `productivity_blocker` (what got in the way)
+10. Anything else for Daniel? questions, ideas, flags (`anything_else`, long text, optional)
+
+Replaced the prior v1 (separate SOP/PE gates, mood pulse, four overlapping Daniel-questions).
 
 ### Notifications / alerts (decision pending)
 
