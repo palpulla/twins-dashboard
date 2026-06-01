@@ -73,9 +73,10 @@ named clearly → update the sheet/trackers → submit the EOD report.
 
 ### Your weekly rhythm
 
-~20 hrs/wk on his own schedule (sends Daniel his rough working days) · weekly 30-min 1:1 · EOD
+~20 hrs/wk on his own schedule (sends Daniel his rough working days) · **Leadership L10
+Wednesdays 8:00 AM CST** · **all-team L10 Thursdays [time] CST** · weekly 30-min 1:1 · EOD
 report each day worked · one improvement idea/week · Friday: skim the task sheet and update the
-tracker.
+tracker. (NDA already signed, so the kickoff just notes confidentiality, no signing step.)
 
 ### Your first tasks, Week 1 (concrete checklist, with "add 3 of your own")
 

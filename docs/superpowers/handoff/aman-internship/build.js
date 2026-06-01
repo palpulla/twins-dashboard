@@ -181,7 +181,7 @@ function buildKickoff() {
   c.push(blockHeader("1", "The frame, fast", "3 min"));
   c.push(stage("Say this, then move on. Do not spend the call here."));
   c.push(sayLine([["“The role description you read is the senior seat, where this can grow. This summer you are a part-time intern. Your job is to get deep on the business and nail a couple of projects. Not to run the back office.”"]]));
-  c.push(sayLine([["“One thing up front: we are pointing at selling the business in a couple of years, so a lot of your work is making us organized and documented. That stays between us, you will sign an NDA, and it is research and drafting only. You never contact anyone outside the company without me.”"]]));
+  c.push(sayLine([["“One thing up front: we are pointing at selling the business in a couple of years, so a lot of your work is making us organized and documented. That stays between us. You already signed the NDA, so we are set there. It is research and drafting only, and you never contact anyone outside the company without me.”"]]));
   c.push(sayLine([["“And I want you shaping this with me. This role did not exist before you. Nothing I lay out today is set in stone. If something does not make sense or you would do it differently, say so. I would rather hear it now.”"]]));
   c.push(ask("Ask", "“After reading the role and talking with us, what is your honest first read? What excites you, and what gives you pause?”"));
 
@@ -192,6 +192,7 @@ function buildKickoff() {
   c.push(blockHeader("3", "Your weekly rhythm", "4 min"));
   c.push(stage("Walk 'Your Weekly Rhythm' below. Let him set the cadence with you."));
   c.push(sayLine([["“You set your own hours, around 20 a week. Just send me your rough working days. We talk live once a week, "], ["[day/time]", { blank: true }], [", 30 minutes.”"]]));
+  c.push(sayLine([["“Two standing meetings to put on your calendar. Leadership L10 is Wednesdays at 8 AM Central, that is you and the leadership team. The all-team L10 is Thursdays "], ["[time]", { blank: true }], [" Central. Plan to join both.”"]]));
   c.push(ask("Ask", "“What working days and rhythm actually fit your schedule? And do you want to talk more or less than once a week, especially early on?”"));
 
   c.push(blockHeader("4", "Your first tasks", "15 min"));
@@ -233,6 +234,8 @@ function buildKickoff() {
   c.push(section("Your Weekly Rhythm"));
   [
     "About 20 hours a week, on your own schedule. Send Daniel your rough working days each week.",
+    "Leadership L10: Wednesdays, 8:00 AM Central. You and the leadership team. Standing meeting.",
+    "All-team L10: Thursdays, [time] Central. The whole team. Plan to join.",
     "Weekly 1:1 with Daniel, 30 minutes, [day/time].",
     "End-of-day report every day you work.",
     "Bring at least one improvement idea each week.",
@@ -322,7 +325,8 @@ function buildKickoff() {
     "I have set up your access to everything you need: Google Workspace and Drive, plus the other platforms. If you hit something you cannot get into, or need access to another tool, just tell me and I will fix it the same day.",
     "Everything is attached or linked: the role description [link], your daily checklist [link], your end-of-day report which you fill out each day you work [link], and a task-sheet template to copy [link]. I will keep sending any other reports or checklists as the work calls for them.",
     "By Friday, send me one page: the SOP inventory (name, where it lives, last updated, owner) and a rough diligence checklist, plus a few tasks of your own. Rough is fine; I want to see how you think.",
-    "Our weekly 1:1 is [day/time]. Day to day, reach me by text or email anytime. Reply with your plan for week one by [date]. Looking forward to it.",
+    "Standing meetings to add to your calendar: Leadership L10 Wednesdays at 8 AM Central, and the all-team L10 Thursdays at [time] Central. Plan to join both. Our weekly 1:1 is [day/time]. Day to day, reach me by text or email anytime.",
+    "Reply with your plan for week one by [date]. Looking forward to it.",
     "Daniel",
   ]));
 
