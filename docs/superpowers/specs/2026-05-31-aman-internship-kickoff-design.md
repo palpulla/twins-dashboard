@@ -53,6 +53,17 @@ screen-sharing the Drive folder and task sheet. Block 5 hands off the daily chec
 Block 6 is the light decision-rights line (act on research/drafting; ask on money/vendors/outside
 contact). Block 7 is the gut-check + next-step dates.
 
+**Collaborative throughout.** The call is two-way, not a download. Each block adds an "Ask"
+prompt for Aman's opinion (his first read on the role, his preferred cadence, whether the two
+projects are the right starting point, what he'd reorder or add). The task list is explicitly
+framed as a starting point he can reshape, so he isn't boxed into something that may not be right.
+
+**Access + delivery commitment.** A reference section "What You'll Get After This Call" makes
+explicit that Daniel provides access to every platform Aman needs (Google Workspace/Drive, CRM,
+scheduling, anything a task requires; same-day on request) and sends all docs (checklist, EOD
+link, role doc, task-sheet template) after the call, plus any further reports/checklists through
+the day and week as needed. The daily checklist repeats the "ask and you'll have it same day" line.
+
 ### Your day-to-day (reference page in the doc)
 
 Tools: **Google Workspace** (Drive/Docs/Sheets) + text/email. SOPs live in Drive; tasks tracked

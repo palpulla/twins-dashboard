@@ -163,7 +163,7 @@ function buildKickoff() {
   const c = [];
   c.push(...headerBand());
   c.push(...title("Internal Operations Internship", "Kickoff Call  ·  Aman Kharga"));
-  c.push(para("This runs the kickoff call and doubles as Aman's reference for how to work. He is a part-time intern, about 20 hours a week, remote, working out of Google Workspace. The call is about one thing: how his day works and exactly what to do first. Keep it practical.", { after: 160 }));
+  c.push(para("This runs the kickoff call and doubles as Aman's reference for how to work. He is a part-time intern, about 20 hours a week, remote, working out of Google Workspace. Keep it practical and collaborative: bring him in, ask his opinions, and treat the first tasks as a starting point he can shape, not a script. The goal is that he leaves clear on how his day works and what to start on, and feeling like he had a hand in it.", { after: 160 }));
 
   // Agenda
   c.push(section("The 45-Minute Kickoff Agenda"));
@@ -182,34 +182,40 @@ function buildKickoff() {
   c.push(stage("Say this, then move on. Do not spend the call here."));
   c.push(sayLine([["“The role description you read is the senior seat, where this can grow. This summer you are a part-time intern. Your job is to get deep on the business and nail a couple of projects. Not to run the back office.”"]]));
   c.push(sayLine([["“One thing up front: we are pointing at selling the business in a couple of years, so a lot of your work is making us organized and documented. That stays between us, you will sign an NDA, and it is research and drafting only. You never contact anyone outside the company without me.”"]]));
+  c.push(sayLine([["“And I want you shaping this with me. This role did not exist before you. Nothing I lay out today is set in stone. If something does not make sense or you would do it differently, say so. I would rather hear it now.”"]]));
+  c.push(ask("Ask", "“After reading the role and talking with us, what is your honest first read? What excites you, and what gives you pause?”"));
 
   c.push(blockHeader("2", "What your day-to-day looks like", "8 min"));
   c.push(stage("Open 'Your Day-to-Day' below and walk it while screen-sharing the Google Drive folder and the task sheet."));
   c.push(sayLine([["“Every day you work, it is the same loop: check in, pick your tasks, do the work, update your sheet, send your end-of-day report. Let me show you.”"]]));
 
   c.push(blockHeader("3", "Your weekly rhythm", "4 min"));
-  c.push(stage("Walk 'Your Weekly Rhythm' below."));
+  c.push(stage("Walk 'Your Weekly Rhythm' below. Let him set the cadence with you."));
   c.push(sayLine([["“You set your own hours, around 20 a week. Just send me your rough working days. We talk live once a week, "], ["[day/time]", { blank: true }], [", 30 minutes.”"]]));
+  c.push(ask("Ask", "“What working days and rhythm actually fit your schedule? And do you want to talk more or less than once a week, especially early on?”"));
 
   c.push(blockHeader("4", "Your first tasks", "15 min"));
-  c.push(stage("The heart of the call. Open 'Your First Tasks' and go through every item together."));
-  c.push(sayLine([["“Here is exactly what to do in week one. Setup, plus two project tracks: audit our existing SOPs, and research a buyer-diligence checklist.”"]]));
+  c.push(stage("The heart of the call. Open 'Your First Tasks' and go through it together as a draft, not a mandate. Let him react to each track."));
+  c.push(sayLine([["“Here is a starting point for week one. I am not trying to box you in, so push on it. Setup, plus two project tracks: audit our existing SOPs, and research a buyer-diligence checklist.”"]]));
   c.push(sayLine([["“Read these, then add at least three of your own. If you spot something I missed, that is exactly the instinct I am hiring for.”"]]));
-  c.push(ask("Ask", "“Looking at this list, what would you add, and what would you start with?”"));
+  c.push(ask("Ask", "“Do these two projects feel like the right place to start? If you were in my seat, what would you put in front of the first hire?”"));
+  c.push(ask("Ask", "“Anything on this list you would drop, reorder, or approach differently?”"));
 
   c.push(blockHeader("5", "How you track and report", "8 min"));
-  c.push(stage("Hand off the daily checklist and the end-of-day report link live, on the call."));
-  c.push(sayLine([["“You track everything in your task sheet, with a status on each item. Save your work in the Drive folder, named clearly. Access to "], ["[systems]", { blank: true }], [" will be ready before day one.”"]]));
-  c.push(sayLine([["“End of every day you work, you fill out a two-minute end-of-day report. It is how I stay in the loop. Here is the link.”  "], ["[EOD form link]", { blank: true }]]));
-  c.push(sayLine([["“And here is your daily checklist. Follow it until it is automatic.”  "], ["[hand off the checklist]", { blank: true }]]));
+  c.push(stage("Walk it, but make clear the docs and access come AFTER the call in writing, not just verbally now."));
+  c.push(sayLine([["“You track everything in your task sheet, with a status on each item, and save your work in the Drive folder, named clearly.”"]]));
+  c.push(sayLine([["“End of every day you work, you fill out a two-minute end-of-day report. It is how I stay in the loop, and it flags anything you need from me.”"]]));
+  c.push(sayLine([["“Right after this call I will send you everything in writing: your daily checklist, the end-of-day report link, the role doc, and a task-sheet template to copy. So do not worry about catching it all now.”"]]));
+  c.push(sayLine([["“And I will get you access to every platform you need, Google Workspace and Drive, our CRM, scheduling, anything a task calls for. If you ever need access to something, just ask and I will set it up that same day. Through the week I will keep sending whatever reports or checklists you need as we go.”"]]));
 
   c.push(blockHeader("6", "What you decide vs. what needs me", "4 min"));
   c.push(sayLine([["“Default to action on research, drafting, and organizing. Default to asking me on anything that spends money, touches a vendor, or reaches outside the company. When you hit something with no owner, bring me a proposed answer, not just the problem.”"]]));
 
   c.push(blockHeader("7", "Gut-check and close", "3 min"));
-  c.push(ask("Q1", "“Is anything unclear about what you actually do day to day?”"));
-  c.push(ask("Q2", "“What is worrying you about week one?”"));
-  c.push(sayLine([["“Next steps: day one is "], ["[date/time]", { blank: true }], [", your week-one deliverable is due "], ["[date]", { blank: true }], [", and our first 1:1 is "], ["[date/time]", { blank: true }], [". I will send calendar invites.”"]]));
+  c.push(ask("Q1", "“Anything we talked about that you would do differently, or any idea you have that I have not thought of?”"));
+  c.push(ask("Q2", "“Is anything unclear about what you actually do day to day, and what is worrying you about week one?”"));
+  c.push(sayLine([["“Here is what happens right after we hang up: I will send you the access to every platform, plus your checklist, the report link, the role doc, and a task-sheet template. Through the day and week I will send anything else you need. You will not be stuck waiting on me for a tool.”"]]));
+  c.push(sayLine([["“Next steps on your side: day one is "], ["[date/time]", { blank: true }], [", your week-one deliverable is due "], ["[date]", { blank: true }], [", and our first 1:1 is "], ["[date/time]", { blank: true }], [". I will send calendar invites.”"]]));
 
   // Reference: Day-to-Day
   c.push(section("Your Day-to-Day"));
@@ -252,6 +258,16 @@ function buildKickoff() {
   c.push(todo("Put the SOP inventory and the diligence checklist v0 on one page. That is your week-one deliverable for Daniel."));
   c.push(todo("Add at least three tasks of your own that you think belong on this list."));
 
+  // What you'll get after the call
+  c.push(section("What You'll Get After This Call"));
+  c.push(caption("Daniel sends all of this in writing right after the call, and keeps it flowing as needed. You never wait on a tool."));
+  c.push(bullet("Access to every platform you need: Google Workspace and Drive, our CRM, scheduling, and anything a specific task calls for. Need something else later? Ask, and it is set up the same day."));
+  c.push(bullet("Your daily checklist (separate doc)."));
+  c.push(bullet("Your end-of-day report link."));
+  c.push(bullet("The role description."));
+  c.push(bullet("A task-sheet template to copy for your own task tracker."));
+  c.push(bullet("Any additional reports or checklists, sent through the day and week as the work calls for them."));
+
   // 30-day plan
   c.push(section("Where This Goes  ·  First 30 Days"));
   c.push(caption("About 20 hours per week, milestone-based. Week 1 is the task list above."));
@@ -293,7 +309,7 @@ function buildKickoff() {
   c.push(caption("A way to open so the reframe lands fast, then you get into the day-to-day."));
   c.push(quoteBox([
     "“Aman, glad we are doing this. Quick frame, then we get practical. The role description you read is the long-term seat. This summer you are a part-time intern, and your job is simpler than that whole document: get deep on how this business runs, and nail a couple of projects.",
-    "Most of today is about what you actually do day to day and exactly what to start on. I will share my screen and walk you through your folder, your task sheet, and your first week. Sound good?”",
+    "Most of today is about what you actually do day to day and where to start, and I want your take on all of it. I will share my screen and walk you through your folder, your task sheet, and your first week, and I want you pushing back and adding your own ideas as we go. None of it is set in stone. Sound good?”",
   ]));
 
   // Follow-up
@@ -301,12 +317,12 @@ function buildKickoff() {
   c.push(caption("Plain and practical. Fill the blanks before sending."));
   c.push(quoteBox([
     "Aman,",
-    "Good talking today. Quick recap.",
-    "You start [date], part-time and remote, working out of Google Workspace. Week one is setup plus two tracks: audit and inventory our existing SOPs, and research and draft a buyer-diligence checklist. The full task list is in the doc I shared.",
-    "By Friday, send me one page: the SOP inventory (name, where it lives, last updated, owner) and a rough diligence checklist. And add a few tasks of your own to the list. Rough is fine; I want to see how you organize and research.",
-    "Three links to get going: the role description [link], your daily checklist [link], and your end-of-day report, which you fill out each day you work [link].",
-    "Track your tasks in your sheet, save your work in the Drive folder, and send the end-of-day report each day. Our weekly 1:1 is [day/time]. Day to day, reach me by text or email.",
-    "Reply with your plan for week one by [date]. Looking forward to it.",
+    "Good talking today, and thanks for the ideas on the call. Quick recap.",
+    "You start [date], part-time and remote, working out of Google Workspace. Week one is setup plus two tracks: audit and inventory our existing SOPs, and research and draft a buyer-diligence checklist. The full task list is in the doc I shared. Treat it as a starting point, not a script. If you would reorder or add to it, do.",
+    "I have set up your access to everything you need: Google Workspace and Drive, plus the other platforms. If you hit something you cannot get into, or need access to another tool, just tell me and I will fix it the same day.",
+    "Everything is attached or linked: the role description [link], your daily checklist [link], your end-of-day report which you fill out each day you work [link], and a task-sheet template to copy [link]. I will keep sending any other reports or checklists as the work calls for them.",
+    "By Friday, send me one page: the SOP inventory (name, where it lives, last updated, owner) and a rough diligence checklist, plus a few tasks of your own. Rough is fine; I want to see how you think.",
+    "Our weekly 1:1 is [day/time]. Day to day, reach me by text or email anytime. Reply with your plan for week one by [date]. Looking forward to it.",
     "Daniel",
   ]));
 
@@ -346,6 +362,8 @@ function buildChecklist() {
   c.push(bullet("Clean up and reorganize the SOP and document library in Drive."));
   c.push(bullet("Draft or improve one SOP from the existing set."));
   c.push(bullet("Read one diligence or trades-M&A resource and bring back a takeaway."));
+
+  c.push(para("Need access to a tool, or another report or checklist? Text or email Daniel. You will have it the same day. Never sit blocked waiting on access.", { before: 160 }));
 
   c.push(new Paragraph({ spacing: { before: 120 }, children: [new TextRun("")] }));
   c.push(calloutBox("Your end-of-day report",
