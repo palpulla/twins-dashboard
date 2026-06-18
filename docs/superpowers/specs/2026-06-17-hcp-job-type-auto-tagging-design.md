@@ -1,8 +1,30 @@
 # HCP Job Type Auto-Tagging — Design
 
 **Date:** 2026-06-17
-**Status:** Approved for planning
+**Status:** Approved for planning; pivoted after spike (see Addendum)
 **Owner:** Daniel (Twins Garage Doors)
+
+## Addendum (2026-06-18) — spike outcome and pivot
+
+The Task 1 live spike proved HCP's public API has **no endpoint to write Job Type**
+(every job-update route returns a route-level 404; only line-items and dispatch are
+writable). The "webhook auto-writes Job Type into HCP" half of this design is therefore
+not buildable as written. Decision (Daniel): ship a **guided worklist** instead — the
+system classifies and records a *proposed* Job Type per job, surfaced in the
+`/admin/job-type-review` tab with a one-click HCP link; Daniel sets it in HCP. No browser
+automation. No HCP writes anywhere. The `setJobType` writer was removed; the orchestrator
+records status `proposed | blank | disagreement | agree` (the worklist shows the first
+three). Classification still runs real-time on the completion webhook (non-fatal) and via
+a one-time backfill, both read-only.
+
+Confirmed during the spike: HCP labels match the six constants exactly; line-item amounts
+are cents with the customer price in `amount` (`total_cost` is null); discounts arrive as
+positive `fixed/percentage discount` lines and are **excluded** (the \$185 test uses the
+**pre-discount subtotal**); gratuity excluded. `part_categories` is seeded from the real
+HCP line-item vocabulary (72 parts). Rulings: Hung/Crashed Door = repair (not install, and
+there is no "section" SKU, which resolves that edge case); Tune Up / Maintenance Plan =
+repair_part so cheap maintenance lands on Service Call. The decision tree itself is
+unchanged.
 
 ## Problem
 
