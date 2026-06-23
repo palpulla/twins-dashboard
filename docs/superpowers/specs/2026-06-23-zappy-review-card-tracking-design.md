@@ -33,7 +33,7 @@ and must never block or delay the redirect.
 - No personally identifying data beyond what the HTTP request already carries
   (user agent, referrer). No raw IP storage in v1.
 
-## Architecture (Approach A: server-side redirect)
+## Architecture (Approach A: server-side log + branded interstitial)
 
 ```
 Zappy card
@@ -43,15 +43,26 @@ twinsgaragedoors.com/review/{tech}        (WordPress)
    │  302 forward (redirect rule)
    ▼
 jwrpj …/functions/v1/review-redirect?tech={tech}   (Supabase edge function)
-   │  1. log click to review_card_clicks  (best-effort)
-   │  2. 302 redirect
+   │  1. log click to review_card_clicks   (best-effort, server-side)
+   │  2. return 200 branded interstitial HTML (tech-personalized)
+   ▼
+branded "Thanks, taking you to Google reviews…" page
+   │  auto-redirect after ~1.5s (JS + meta-refresh), or manual button
    ▼
 g.page/r/CYMu-jkURnx7EAI/review?utm_…={tech}        (Google reviews)
 ```
 
 The branded `twinsgaragedoors.com/review/{tech}` URL is what the customer sees and
 what the card prints. WordPress's only responsibility is to forward that path to
-the Supabase function. The Supabase function owns logging and the final redirect.
+the Supabase function. The Supabase function owns logging, serving the branded
+interstitial, and the final redirect.
+
+Note: because WordPress 302-forwards to the function, during the ~1.5s interstitial
+the address bar briefly shows the `supabase.co` function URL rather than
+`twinsgaragedoors.com`. The page *content* is fully Twins-branded. This is the
+tradeoff for keeping logging fully server-side and reliable. (To keep the branded
+URL in the address bar would require a WordPress reverse proxy or a WP-hosted page
+with client-side logging, both less reliable.)
 
 ## Component 1 — Table `review_card_clicks` (Supabase project `jwrpjuqaynownxaoeayi`)
 
@@ -85,17 +96,38 @@ with no `Authorization` header.
 Behavior on `GET /review-redirect?tech=<value>`:
 
 1. Normalize `tech` (lowercase, trim).
-2. Validate against the allowlist `{ maurice, nick, charles }`.
-   - **Unknown or missing** → 302 to the plain Google review link
-     (`GOOGLE_REVIEW_URL`, no UTMs). Do not insert a row (or insert with
-     `tech = 'unknown'` — decided in plan; default: redirect without logging).
+2. Validate against the allowlist `{ maurice, nick, charles }` (maps to display
+   names Maurice / Nick / Charles).
+   - **Unknown or missing** → `302` to the plain Google review link
+     (`GOOGLE_REVIEW_URL`, no UTMs, no interstitial). Do not insert a row (or
+     insert with `tech = 'unknown'` — decided in plan; default: redirect without
+     logging).
 3. Build the target URL:
    `https://g.page/r/CYMu-jkURnx7EAI/review?utm_source=zappy_card&utm_medium=review_card&utm_campaign=google_reviews&utm_content=<tech>`
 4. **Best-effort** insert a `review_card_clicks` row (tech, user_agent, referrer,
    and the four UTM values). Wrap in `try/catch`; a logging failure must be
    swallowed and must never block step 5.
-5. Respond `302` with `Location: <target>` and `Cache-Control: no-store` so the
-   browser never caches the redirect and every scan is logged.
+5. Respond `200` with the branded interstitial HTML (see Component 2b), with the
+   tech display name and target URL injected, and `Cache-Control: no-store` so the
+   page is never cached and every scan is logged. The page auto-redirects to the
+   target after ~1.5s via JS, with a `<meta http-equiv="refresh">` fallback and a
+   manual "Leave your review" button so the redirect still works with JS disabled.
+
+### Component 2b — Branded interstitial page
+
+A single HTML template the function serves, personalized per tech. Design approved
+via mockup at `2026-06-23-zappy-review-pages/review-interstitial.html` (Twins navy
++ yellow, five-star animation, Anton/Hanken Grotesk type, progress bar, fallback
+button, phone number). The served template replaces these tokens:
+
+- `%%TECH_NAME%%` → `Maurice` | `Nick` | `Charles`
+- `%%REDIRECT_URL%%` → the Google review URL with this tech's UTM params
+- `%%DELAY_MS%%` → auto-redirect delay (default `1500`)
+
+The mockup's preview-only tech switcher and demo JS are removed from the served
+template. The page sets `<meta name="robots" content="noindex">`. Optionally
+pushed to the user's claude.ai/design workspace via DesignSync for visual review
+(requires `/design-login`).
 
 Constants:
 
@@ -142,12 +174,15 @@ initial build; ship once data is flowing.
 
 ## Verification
 
-- `curl -I` the live function URL for each tech returns `302` with a `Location`
-  pointing at the Google review URL carrying the correct `utm_content`.
+- `curl` the live function URL for each tech returns `200` HTML containing the
+  correct tech display name and the Google review URL with the correct
+  `utm_content`.
 - An unknown `tech` returns `302` to the plain Google review URL.
 - After test hits, rows appear in `review_card_clicks` with the correct `tech`.
-- Once WordPress is wired, hitting `twinsgaragedoors.com/review/maurice` lands on
-  the Google review page and produces a logged row.
+- In a browser, the interstitial auto-redirects to the Google review page within
+  ~1.5s and the manual button works.
+- Once WordPress is wired, hitting `twinsgaragedoors.com/review/maurice` shows the
+  branded page, lands on the Google review page, and produces a logged row.
 
 ## Rollout / reversibility
 

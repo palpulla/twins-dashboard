@@ -1,0 +1,290 @@
+<!-- @dsCard group="Review Cards" -->
+<!--
+  Twins Garage Doors — review-card interstitial
+  Served by the `review-redirect` edge function after it logs the click.
+  Template tokens the function fills in:
+    %%TECH_NAME%%    -> "Maurice" | "Nick" | "Charles"
+    %%REDIRECT_URL%% -> Google review URL with this tech's UTM params
+    %%DELAY_MS%%     -> auto-redirect delay in milliseconds (e.g. 1500)
+  This mockup hardcodes demo values + a tech switcher for preview only.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex" />
+<title>Thanks from Twins Garage Doors</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy-900: #081428;
+    --navy-800: #0b1f3a;
+    --navy-700: #122a4d;
+    --yellow:   #ffc400;
+    --yellow-soft: #ffd54a;
+    --ink:      #eaf1ff;
+    --ink-dim:  #9fb2d0;
+    --star:     #ffc400;
+    --star-off: rgba(255,255,255,0.14);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: "Hanken Grotesk", system-ui, sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(255,196,0,0.10), transparent 60%),
+      radial-gradient(900px 500px at 90% 110%, rgba(18,42,77,0.9), transparent 55%),
+      linear-gradient(180deg, var(--navy-800), var(--navy-900));
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Faint garage-door panel lines as background texture */
+  body::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      180deg,
+      transparent 0,
+      transparent 86px,
+      rgba(255,255,255,0.035) 86px,
+      rgba(255,255,255,0.035) 88px
+    );
+    -webkit-mask-image: radial-gradient(circle at 50% 40%, black, transparent 75%);
+            mask-image: radial-gradient(circle at 50% 40%, black, transparent 75%);
+    pointer-events: none;
+  }
+  /* Grain overlay */
+  body::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.04;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .card {
+    position: relative;
+    z-index: 1;
+    width: min(440px, 100%);
+    text-align: center;
+    padding: 44px 32px 36px;
+    border-radius: 24px;
+    background: linear-gradient(180deg, rgba(18,42,77,0.55), rgba(8,20,40,0.35));
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow:
+      0 30px 80px -20px rgba(0,0,0,0.65),
+      inset 0 1px 0 rgba(255,255,255,0.06);
+    backdrop-filter: blur(8px);
+    animation: rise 0.6s cubic-bezier(.2,.8,.2,1) both;
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(16px) scale(0.98); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    letter-spacing: 0.18em;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--yellow);
+    margin-bottom: 22px;
+  }
+  .brand .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--yellow);
+    box-shadow: 0 0 14px var(--yellow);
+  }
+
+  .stars {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+  .stars svg { width: 34px; height: 34px; display: block; }
+  .stars .s {
+    fill: var(--star-off);
+    transform: scale(0.6);
+    opacity: 0;
+    animation: pop 0.45s cubic-bezier(.2,1.4,.4,1) forwards;
+  }
+  .stars .s.lit { fill: var(--star); filter: drop-shadow(0 4px 10px rgba(255,196,0,0.45)); }
+  .stars .s:nth-child(1){ animation-delay: .25s; }
+  .stars .s:nth-child(2){ animation-delay: .40s; }
+  .stars .s:nth-child(3){ animation-delay: .55s; }
+  .stars .s:nth-child(4){ animation-delay: .70s; }
+  .stars .s:nth-child(5){ animation-delay: .85s; }
+
+  @keyframes pop {
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  h1 {
+    font-family: "Anton", sans-serif;
+    font-weight: 400;
+    font-size: clamp(30px, 8vw, 40px);
+    line-height: 0.98;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  h1 .accent { color: var(--yellow); }
+
+  p.lead {
+    color: var(--ink-dim);
+    font-size: 16px;
+    line-height: 1.5;
+    margin: 0 auto 26px;
+    max-width: 32ch;
+  }
+
+  .progress {
+    height: 5px;
+    width: 100%;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.10);
+    overflow: hidden;
+    margin-bottom: 26px;
+  }
+  .progress > i {
+    display: block;
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--yellow-soft), var(--yellow));
+    box-shadow: 0 0 12px rgba(255,196,0,0.5);
+    animation: fill var(--delay,1500ms) linear forwards;
+    animation-delay: 0.3s;
+  }
+  @keyframes fill { to { width: 100%; } }
+
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--navy-900);
+    background: linear-gradient(180deg, var(--yellow-soft), var(--yellow));
+    padding: 14px 26px;
+    border-radius: 999px;
+    box-shadow: 0 12px 30px -8px rgba(255,196,0,0.6);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .cta:hover { transform: translateY(-2px); box-shadow: 0 16px 36px -8px rgba(255,196,0,0.7); }
+  .cta:active { transform: translateY(0); }
+  .cta svg { width: 18px; height: 18px; }
+
+  .foot {
+    margin-top: 22px;
+    font-size: 12.5px;
+    color: var(--ink-dim);
+    letter-spacing: 0.02em;
+  }
+  .foot a { color: var(--ink); text-decoration: none; }
+
+  /* Preview-only tech switcher (NOT part of the served template) */
+  .switch {
+    position: fixed; z-index: 5; left: 50%; bottom: 18px; transform: translateX(-50%);
+    display: flex; gap: 6px; padding: 6px;
+    background: rgba(8,20,40,0.7); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 999px; backdrop-filter: blur(6px);
+  }
+  .switch button {
+    font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
+    color: var(--ink-dim); background: transparent; border: 0;
+    padding: 7px 14px; border-radius: 999px;
+  }
+  .switch button.active { color: var(--navy-900); background: var(--yellow); }
+  .switch .lbl { color: var(--ink-dim); font-size: 11px; align-self: center; padding-left: 6px; letter-spacing:.08em; text-transform:uppercase;}
+
+  @media (prefers-reduced-motion: reduce) {
+    .card, .stars .s, .progress > i { animation: none !important; }
+    .stars .s { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+  <main class="card" role="status" aria-live="polite">
+    <div class="brand"><span class="dot"></span> Twins Garage Doors</div>
+
+    <div class="stars" aria-hidden="true">
+      <svg class="s lit" viewBox="0 0 24 24"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77 5.82 21l1.18-6.88-5-4.87 7.1-1.01z"/></svg>
+      <svg class="s lit" viewBox="0 0 24 24"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77 5.82 21l1.18-6.88-5-4.87 7.1-1.01z"/></svg>
+      <svg class="s lit" viewBox="0 0 24 24"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77 5.82 21l1.18-6.88-5-4.87 7.1-1.01z"/></svg>
+      <svg class="s lit" viewBox="0 0 24 24"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77 5.82 21l1.18-6.88-5-4.87 7.1-1.01z"/></svg>
+      <svg class="s lit" viewBox="0 0 24 24"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77 5.82 21l1.18-6.88-5-4.87 7.1-1.01z"/></svg>
+    </div>
+
+    <h1>Thanks for choosing<br /><span class="accent" id="tech">Maurice</span></h1>
+    <p class="lead">Taking you to Google so you can share how <span id="tech2">Maurice</span> did. It only takes a moment.</p>
+
+    <div class="progress" aria-hidden="true"><i></i></div>
+
+    <a class="cta" id="go" href="#" rel="noopener">
+      Leave your review
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+
+    <div class="foot">Not redirected? <a id="go2" href="#">Tap here</a> &middot; (608) 888-8785</div>
+  </main>
+
+  <!-- Preview-only controls; removed in the served template -->
+  <div class="switch" data-preview>
+    <span class="lbl">Preview</span>
+    <button class="active" data-tech="Maurice">Maurice</button>
+    <button data-tech="Nick">Nick</button>
+    <button data-tech="Charles">Charles</button>
+  </div>
+
+<script>
+  // ---- Served template uses these tokens (no switcher) ----
+  // var TECH = "%%TECH_NAME%%";
+  // var REDIRECT_URL = "%%REDIRECT_URL%%";
+  // var DELAY_MS = %%DELAY_MS%%;
+  // document.documentElement.style.setProperty('--delay', DELAY_MS + 'ms');
+  // setTimeout(function(){ location.replace(REDIRECT_URL); }, DELAY_MS);
+
+  // ---- Preview behavior (mockup only) ----
+  var DEMO_URL = "https://g.page/r/CYMu-jkURnx7EAI/review";
+  function setTech(name){
+    document.getElementById('tech').textContent = name;
+    document.getElementById('tech2').textContent = name;
+    var url = DEMO_URL + "?utm_source=zappy_card&utm_medium=review_card&utm_campaign=google_reviews&utm_content=" + name.toLowerCase();
+    document.getElementById('go').href = url;
+    document.getElementById('go2').href = url;
+  }
+  setTech("Maurice");
+  document.querySelectorAll('.switch button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.switch button').forEach(function(x){x.classList.remove('active');});
+      b.classList.add('active');
+      setTech(b.dataset.tech);
+      // restart animations for a clean preview
+      var card = document.querySelector('.card');
+      card.style.animation = 'none'; void card.offsetWidth; card.style.animation = '';
+    });
+  });
+</script>
+</body>
+</html>
