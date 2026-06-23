@@ -1,7 +1,7 @@
 # Zappy Review-Card Tracking + Redirect — Design
 
 Date: 2026-06-23
-Status: Approved (Components 1–3 in scope; Component 4 fast follow)
+Status: Approved (Components 1–4 all in scope)
 
 ## Problem
 
@@ -165,12 +165,15 @@ Redirection plugin or edit `.htaccess`. Exact copy-paste steps are provided for
 whichever path applies. This is the one step Claude cannot perform directly (no
 repo/credentials for the marketing site).
 
-## Component 4 — Dashboard view (fast follow, separate repo)
+## Component 4 — Dashboard view (in scope)
 
-A small "Review cards" card on the Marketing ROI page in the `twins-dash` repo,
-showing click counts per technician over the selected range, reading
-`review_card_clicks` via the authenticated SELECT policy. Out of scope for the
-initial build; ship once data is flowing.
+A "Review cards · clicks by tech" card on the existing Marketing Source ROI page
+(`/marketing-source-roi`, gated by `view_marketing`) in the `twins-dash` repo,
+showing click counts per technician (Maurice / Nick / Charles) plus a total over
+the page's selected date range. Reads `review_card_clicks` via the authenticated
+SELECT policy, through a `DateRange`-taking hook gated with `enabled: !!session`
+(per the React-Query auth-race convention). Matches the page's existing card
+styling. So the data shows on twinsdash.com, not just in the table.
 
 ## Verification
 

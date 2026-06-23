@@ -548,15 +548,217 @@ Visit `https://twinsgaragedoors.com/review/maurice` (and nick, charles). Expecte
 
 ---
 
-## Out of scope (fast follow, separate plan)
+## Task 8: Dashboard view — "Review cards" card on Marketing ROI (twins-dash Vite app)
 
-**Component 4 — dashboard view.** A "Review cards" card on the Marketing ROI page in `twins-dash` (Vite app) showing clicks per tech over the selected range, reading `review_card_clicks` via the authenticated SELECT policy. Build once data is flowing; not part of this plan.
+Show clicks per tech on twinsdash.com. Lives on the existing Marketing Source ROI
+page (`/marketing-source-roi`, gated by `view_marketing`). Follows the page's
+conventions: a `DateRange`-taking hook with `enabled: !!session`, and a card using
+the same shadcn `bg-card rounded-2xl border border-border` styling as
+`LiveLeadFeed`.
+
+**Files:**
+- Create: `src/hooks/use-review-card-clicks.ts`
+- Test: `src/hooks/__tests__/use-review-card-clicks.test.ts`
+- Create: `src/components/marketing-roi/ReviewCardClicksCard.tsx`
+- Modify: `src/pages/MarketingSourceROI.tsx`
+
+- [ ] **Step 1: Write the failing test for the aggregation helper**
+
+```ts
+// src/hooks/__tests__/use-review-card-clicks.test.ts
+import { describe, it, expect } from "vitest";
+import { aggregateByTech } from "../use-review-card-clicks";
+
+describe("aggregateByTech", () => {
+  it("counts clicks per tech in fixed Maurice/Nick/Charles order", () => {
+    const rows = [
+      { tech: "maurice", clicked_at: "2026-06-20T10:00:00Z" },
+      { tech: "maurice", clicked_at: "2026-06-20T11:00:00Z" },
+      { tech: "charles", clicked_at: "2026-06-20T12:00:00Z" },
+    ];
+    const r = aggregateByTech(rows);
+    expect(r.byTech).toEqual([
+      { slug: "maurice", name: "Maurice", count: 2 },
+      { slug: "nick", name: "Nick", count: 0 },
+      { slug: "charles", name: "Charles", count: 1 },
+    ]);
+    expect(r.total).toBe(3);
+  });
+
+  it("returns zeros for no rows", () => {
+    const r = aggregateByTech([]);
+    expect(r.total).toBe(0);
+    expect(r.byTech.every((t) => t.count === 0)).toBe(true);
+  });
+});
+```
+
+- [ ] **Step 2: Run the test to verify it fails**
+
+Run: `npm test -- src/hooks/__tests__/use-review-card-clicks.test.ts`
+Expected: FAIL (cannot find module `../use-review-card-clicks`).
+
+- [ ] **Step 3: Write the hook**
+
+```ts
+// src/hooks/use-review-card-clicks.ts
+import { useQuery } from "@tanstack/react-query";
+import { DateRange } from "react-day-picker";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+
+export interface ReviewCardRow {
+  tech: string;
+  clicked_at: string;
+}
+
+export interface TechClicks {
+  slug: string;
+  name: string;
+  count: number;
+}
+
+export interface ReviewCardClicksSummary {
+  byTech: TechClicks[];
+  total: number;
+}
+
+// Fixed display order; mirrors the techs with Zappy review cards.
+const TECH_ORDER: { slug: string; name: string }[] = [
+  { slug: "maurice", name: "Maurice" },
+  { slug: "nick", name: "Nick" },
+  { slug: "charles", name: "Charles" },
+];
+
+export function aggregateByTech(rows: ReviewCardRow[]): ReviewCardClicksSummary {
+  const counts = new Map<string, number>();
+  for (const r of rows) counts.set(r.tech, (counts.get(r.tech) ?? 0) + 1);
+  const byTech = TECH_ORDER.map((t) => ({ ...t, count: counts.get(t.slug) ?? 0 }));
+  const total = byTech.reduce((s, t) => s + t.count, 0);
+  return { byTech, total };
+}
+
+export function useReviewCardClicks(
+  dateRange: DateRange,
+): ReviewCardClicksSummary & { isLoading: boolean } {
+  const { session } = useAuth();
+  const fromISO = dateRange.from ? dateRange.from.toISOString() : null;
+  const toISO = dateRange.to ? dateRange.to.toISOString() : null;
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["review-card-clicks", fromISO, toISO],
+    queryFn: async () => {
+      let q = supabase.from("review_card_clicks").select("tech, clicked_at");
+      if (fromISO) q = q.gte("clicked_at", fromISO);
+      if (toISO) q = q.lte("clicked_at", toISO);
+      const { data, error } = await q;
+      if (error) throw error;
+      return (data ?? []) as ReviewCardRow[];
+    },
+    // Gate on session so the first anon-keyed fetch doesn't hit RLS and cache []
+    // forever (see memory feedback_react_query_auth_race).
+    enabled: !!session && !!fromISO && !!toISO,
+    staleTime: 60_000,
+  });
+
+  return { ...aggregateByTech(data ?? []), isLoading };
+}
+```
+
+- [ ] **Step 4: Run the test to verify it passes**
+
+Run: `npm test -- src/hooks/__tests__/use-review-card-clicks.test.ts`
+Expected: PASS (2 tests).
+
+- [ ] **Step 5: Write the card component**
+
+```tsx
+// src/components/marketing-roi/ReviewCardClicksCard.tsx
+import type { ReviewCardClicksSummary } from "@/hooks/use-review-card-clicks";
+
+export interface ReviewCardClicksCardProps {
+  summary: ReviewCardClicksSummary;
+  isLoading: boolean;
+}
+
+export function ReviewCardClicksCard({ summary, isLoading }: ReviewCardClicksCardProps) {
+  return (
+    <div className="bg-card rounded-2xl border border-border p-[18px] shadow-sm">
+      <h3 className="text-[13px] font-extrabold text-primary uppercase tracking-wide mb-3">
+        Review cards · clicks by tech
+      </h3>
+      {isLoading ? (
+        <div className="text-[12px] text-muted-foreground py-6 text-center">Loading…</div>
+      ) : summary.total === 0 ? (
+        <div className="text-[12px] text-muted-foreground py-6 text-center">
+          No review-card clicks in this range.
+        </div>
+      ) : (
+        <div>
+          {summary.byTech.map((t) => (
+            <div
+              key={t.slug}
+              className="flex justify-between items-center py-2 px-1 border-b border-[#eef1f7] last:border-b-0 text-[13px]"
+            >
+              <span className="font-semibold">{t.name}</span>
+              <span className="tabular-nums font-bold text-primary">{t.count}</span>
+            </div>
+          ))}
+          <div className="flex justify-between items-center pt-2.5 mt-1 text-[13px] font-extrabold">
+            <span className="uppercase tracking-wide text-muted-foreground text-[11px]">Total</span>
+            <span className="tabular-nums">{summary.total}</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+- [ ] **Step 6: Wire the card into the Marketing ROI page**
+
+In `src/pages/MarketingSourceROI.tsx`:
+
+Add imports near the other `marketing-roi` component imports and hook imports:
+
+```tsx
+import { ReviewCardClicksCard } from "@/components/marketing-roi/ReviewCardClicksCard";
+import { useReviewCardClicks } from "@/hooks/use-review-card-clicks";
+```
+
+Inside the `MarketingSourceROIv2` component, after `dateRange` is defined, add:
+
+```tsx
+const reviewClicks = useReviewCardClicks(dateRange);
+```
+
+In the JSX, render the card next to the existing `<LiveLeadFeed ... />` (same column/section):
+
+```tsx
+<ReviewCardClicksCard summary={reviewClicks} isLoading={reviewClicks.isLoading} />
+```
+
+- [ ] **Step 7: Type-check and run the page's tests**
+
+Run: `npm run build` (or `npx tsc --noEmit`) and `npm test -- src/pages/__tests__/MarketingSourceROI.reconciliation.test.tsx`
+Expected: type-check passes; existing page tests still pass.
+
+- [ ] **Step 8: Verify in the running app**
+
+Start the dev server and open `/marketing-source-roi`. Expected: the "Review cards · clicks by tech" card renders with Maurice / Nick / Charles and a Total. After the function has logged test clicks (Task 5/6), counts reflect them for a date range covering today. (Counts use UTC day boundaries via `toISOString()`; a future polish item can switch to America/Chicago — see memory `project_marketing_roi_polish_backlog`.)
+
+- [ ] **Step 9: Commit**
+
+```bash
+git add src/hooks/use-review-card-clicks.ts src/hooks/__tests__/use-review-card-clicks.test.ts src/components/marketing-roi/ReviewCardClicksCard.tsx src/pages/MarketingSourceROI.tsx
+git commit -m "feat(reviews): review-card clicks-by-tech card on Marketing ROI"
+```
 
 ---
 
 ## Self-Review Notes
 
-- **Spec coverage:** Component 1 (table) → Task 1; Component 2 (function) → Tasks 2–5; Component 2b (interstitial) → Task 3; Component 3 (WordPress) → Task 7; Component 4 (dashboard) → explicitly deferred. Verification section of spec → Tasks 5–7.
+- **Spec coverage:** Component 1 (table) → Task 1; Component 2 (function) → Tasks 2–5; Component 2b (interstitial) → Task 3; Component 3 (WordPress) → Task 7; Component 4 (dashboard) → Task 8. Verification section of spec → Tasks 5–8.
 - **Unknown-tech decision:** redirect to plain Google URL, no row logged (matches spec default). Implemented in `index.ts` Step 1.
 - **Reliability:** `logClick` swallows all errors and is awaited before render but cannot throw; `Cache-Control: no-store` on both responses; post-deploy gateway curl guards the edge-runtime desync risk.
 - **Type consistency:** `resolveTech` returns `{slug, name}` used identically in `index.ts`; `buildReviewUrl(slug)` and `renderInterstitial({techName, redirectUrl, delayMs})` signatures match across tasks.
