@@ -107,27 +107,42 @@ Behavior on `GET /review-redirect?tech=<value>`:
 4. **Best-effort** insert a `review_card_clicks` row (tech, user_agent, referrer,
    and the four UTM values). Wrap in `try/catch`; a logging failure must be
    swallowed and must never block step 5.
-5. Respond `200` with the branded interstitial HTML (see Component 2b), with the
-   tech display name and target URL injected, and `Cache-Control: no-store` so the
-   page is never cached and every scan is logged. The page auto-redirects to the
-   target after ~1.5s via JS, with a `<meta http-equiv="refresh">` fallback and a
-   manual "Leave your review" button so the redirect still works with JS disabled.
+5. Respond `302` with `Location: <target URL>` and `Cache-Control: no-store` so the
+   browser is never cached and every scan is logged. The customer lands directly on
+   the Google review page.
 
-### Component 2b — Branded interstitial page
+> **Implemented reality (2026-06-23):** the function does **not** serve HTML.
+> Supabase forces `content-type: text/plain` and a `content-security-policy:
+> default-src 'none'; sandbox` header on every `functions/v1` response, so any HTML
+> returned from the function renders as raw source in the browser (anti-phishing
+> protection on the `*.supabase.co` domain). The original plan to serve a branded
+> interstitial from the function (Component 2b below) was therefore dropped in
+> favor of a plain 302. Daniel chose the instant-redirect behavior, with the
+> branded page kept as a documented future option (see Component 2b).
 
-A single HTML template the function serves, personalized per tech. Design approved
-via mockup at `2026-06-23-zappy-review-pages/review-interstitial.html` (Twins navy
-+ yellow, five-star animation, Anton/Hanken Grotesk type, progress bar, fallback
-button, phone number). The served template replaces these tokens:
+### Component 2b — Branded interstitial page (FUTURE OPTION, not live)
 
-- `%%TECH_NAME%%` → `Maurice` | `Nick` | `Charles`
-- `%%REDIRECT_URL%%` → the Google review URL with this tech's UTM params
-- `%%DELAY_MS%%` → auto-redirect delay (default `1500`)
+Approved branded "Thanks" page preserved as the mockup at
+`2026-06-23-zappy-review-pages/review-interstitial.html` (Twins navy + yellow,
+five-star animation, Anton/Hanken Grotesk type, progress bar, fallback button,
+phone number). Tokens: `%%TECH_NAME%%`, `%%REDIRECT_URL%%`, `%%DELAY_MS%%`.
 
-The mockup's preview-only tech switcher and demo JS are removed from the served
-template. The page sets `<meta name="robots" content="noindex">`. Optionally
-pushed to the user's claude.ai/design workspace via DesignSync for visual review
-(requires `/design-login`).
+**How to enable it later (must be hosted on WordPress, NOT the edge function):**
+
+1. In the WPCode snippet "Review card redirects (Zappy → Google)" (snippet 7016),
+   replace the current `wp_redirect(...)` for `/review/{tech}` with code that
+   `echo`s the branded HTML (mockup minus the preview switcher/demo JS) and
+   `exit`s. Inject the tech display name and set the page's redirect target to the
+   function URL `…/review-redirect?tech={tech}` (so logging still happens
+   server-side at the function, which then 302s to Google).
+2. The page auto-redirects via JS after ~1.5s with a `<meta http-equiv="refresh">`
+   fallback and a manual "Leave your review" button (works with JS disabled). Set
+   `<meta name="robots" content="noindex">`.
+
+This keeps `twinsgaragedoors.com` in the address bar the whole time and renders
+correctly (WordPress serves normal HTML). The only cost is one extra step before
+Google. The edge function is unchanged by this — it stays the server-side logger +
+final redirect.
 
 Constants:
 
