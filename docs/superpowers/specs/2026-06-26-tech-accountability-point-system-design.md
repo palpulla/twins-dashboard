@@ -15,11 +15,12 @@ Nothing here disciplines anyone automatically. The system **counts, suggests, an
 
 From Section 10 (Mistake Tracking and Accountability):
 
-**Four mistake categories:**
+**Five mistake categories** (four from Section 10 plus callbacks from Section 9):
 1. `sales_process` — no 3 options, did not present highest-to-lowest, skipped membership, did not call before presenting when required.
 2. `hcp_process` — did not dispatch/start/finish, missing photos, missing forms, wrong materials, no payment status.
 3. `operational` — returned to shop for parts that should have been loaded, ignored job notes, missed special-order items.
 4. `customer_experience` — no gratitude, no time check, did not ask decision-maker question, no review ask.
+5. `recall` — a callback the tech could have prevented (Section 9). Twins calls these "callbacks"; the PDF calls them recalls. Same thing. **Only tech-fault callbacks score** (see "Callbacks" below).
 
 **Escalation ladder (count-based, per the PDF):**
 | Trigger | PDF action | Owner |
@@ -33,11 +34,11 @@ From Section 10 (Mistake Tracking and Accountability):
 
 Nathan's "2 mistakes/day before a manager conversation" is the starting line.
 
-**Out of scope (this iteration):** Recall rate (Section 9) is not folded into the point count. Can be added later.
+**Callbacks / recall rate (Section 9):** Recall rate bands are `< 4%` goal (normal coaching), `4-8%` watch (review each, look for patterns), `> 8%` problem (formal coaching, written-warning path if repeated). A callback is identified by the HCP "Callback" tag (already on jobs as `is_callback`), but the tag does **not** establish fault. Charles classifies each attributed callback as **recall** (tech could have prevented it → 1 point, tech-fault), **warranty** (part/product issue outside tech control → 0 points), or **training_gap** (Twins never trained the standard → 0 points). Per the PDF leadership rule, a first-time training-gap is not the tech's fault: fix it, train the team, document the standard, and only then does it count going forward. No heuristic auto-classification of fault — classification is always Charles's manual call.
 
 ## Decisions locked in brainstorming
 
-- **What counts:** Auto-detected HCP misses (already built) **plus** Charles manually logging the other 3 categories from job checkout.
+- **What counts:** Auto-detected HCP misses (already built), Charles manually logging the other 3 day-to-day categories from job checkout, and tech-fault callbacks (recalls) after Charles classifies them.
 - **Scoring:** 1 point per mistake, flat. Thresholds taken verbatim from the PDF.
 - **Notification:** Daily digest email to Charles + a dashboard flag. No real-time pings.
 - **Ladder behavior:** System suggests the level and flags it; Charles records the action actually taken; suspensions/termination always human-approved.
@@ -50,7 +51,8 @@ Nathan's "2 mistakes/day before a manager conversation" is the starting line.
 
 Reuse the existing alerts table as the single point ledger rather than build a parallel store. New/changed columns:
 
-- `category text` — one of `sales_process | hcp_process | operational | customer_experience`. Backfill: existing `missing_buttons` and `missing_notes` rows → `hcp_process`.
+- `category text` — one of `sales_process | hcp_process | operational | customer_experience | recall`. Backfill: existing `missing_buttons` and `missing_notes` rows → `hcp_process`.
+- `recall_classification text` — `recall | warranty | training_gap`, set only on callback rows. Drives whether the row scores (only `recall` → 1 point) and whether it counts in the recall-rate numerator. Null for non-callback rows.
 - `source text` — `auto` (found by the report) or `manual` (logged by Charles). Backfill existing rows → `auto`.
 - `points int not null default 1` — always 1 today; explicit so the math is visible and future-proof.
 - `job_id` made **nullable** — manual mistakes need not tie to an HCP job.
@@ -64,11 +66,16 @@ Existing columns kept: `attributed_tech_id` (auto rows use the Charles co-tech r
 
 A "Log mistake" action available from the FOM tab (and a quick entry point usable on a phone): pick tech → pick category → optional link to a job → one-line note. Writes a `source='manual'` row with `points=1`, `occurred_on` defaulting to today. This is the only path by which the 3 non-detectable categories ever get counted.
 
+### 2b. Callback classification (Charles)
+
+Jobs flagged `is_callback=true` and attributed to a tech surface on the FOM tab as **callbacks awaiting classification**. They do **not** score until Charles classifies them. Classifying as `recall` writes a `category='recall'`, `source='auto'` (candidate originated automatically), 1-point row; `warranty` and `training_gap` are recorded but score 0. Recall rate per tech reuses the existing `calculateCallbackRate` (callbacks / opportunities) and is displayed against the Section 9 bands.
+
 ### 3. Scoring + escalation engine
 
 A SQL view (e.g. `v_tech_accountability`) and/or RPC computes, per active tech:
 - points today, rolling 7-day, and over the dashboard-selected period;
-- breakdown by the 4 categories;
+- breakdown by the 5 categories;
+- recall/callback rate over the selected period (vs the < 4% / 4-8% / > 8% bands), plus a count of callbacks awaiting classification;
 - a **suggested level** derived from the PDF ladder and the logged-action history:
   - 0-2 today → *Track only*
   - 3+ today → *Same-day conversation*
@@ -96,22 +103,23 @@ No real-time pings, consistent with "build accountability as silent observabilit
 
 Per-tech table, worst-first:
 
-| Tech | Today | 7-day | Period | By category | Suggested level | Last talk | Open actions |
+| Tech | Today | 7-day | Period | By category | Recall rate | Suggested level | Last talk | Open actions |
 
-- Category column shows pills per the 4 categories with counts.
-- Row expands to: the individual mistakes (auto + manual, each with date/job/note) and the full talk/discipline log (dates + notes).
-- Row actions: **Log talk**, **Log discipline**, **Log mistake**.
+- Category column shows pills per the 5 categories with counts.
+- Recall-rate cell is color-banded (< 4% / 4-8% / > 8%) and shows a "N to classify" chip when callbacks await Charles's classification.
+- Row expands to: the individual mistakes (auto + manual, each with date/job/note), the callbacks awaiting classification, and the full talk/discipline log (dates + notes).
+- Row actions: **Log talk**, **Log discipline**, **Log mistake**, **Classify callback**.
 - Period selector reuses the dashboard's existing selector.
 
 ### 7. Access control
 
-`/admin/notifications` is admin-gated today. The new tab is gated to admin **plus a supervisor/FOM permission**, and Charles's account is wired to that permission. The implementation plan must verify Charles's current login/role and the access-control model (roles + RLS + permissions JSON) before exposing the tab.
+`/admin/notifications` is admin-gated today. Charles already logs into the dashboard, so the work is confirming his current role/permission and gating the new tab to admin **plus a supervisor/FOM permission** that his account carries. The implementation plan must check the access-control model (roles + RLS + permissions JSON) and Charles's existing role before exposing the tab.
 
 ## Components and boundaries
 
 - **Migration** — `supervisor_alerts` column additions + backfill; new `accountability_actions` table; RLS for both (admin + FOM read; FOM insert for manual mistakes and actions). Manual INSERT into `schema_migrations` after apply (migration-history desync is known on this DB).
 - **`daily-supervisor-digest` edge function** — set `category`/`source`/`occurred_on` on the rows it already writes; add the Accountability section to the rendered email.
-- **`v_tech_accountability` view / RPC** — the counting + suggested-level engine. Single source of the numbers for both the email and the dashboard.
+- **`v_tech_accountability` view / RPC** — the counting + suggested-level engine, including recall rate (reusing the existing `is_callback` flag and `calculateCallbackRate` formula). Single source of the numbers for both the email and the dashboard.
 - **Dashboard: Tech Accountability tab** — table + row expansion + the three log actions. New React Query hooks gated on session (anon-keyed first fetch returns [] under RLS).
 - **Manual-entry form** — mobile-first, minimal.
 
@@ -134,13 +142,13 @@ Each unit communicates through the view/RPC and the two tables; the dashboard ne
 
 ## Testing
 
-- View/RPC unit tests: per-day, 7-day, period counts; suggested-level transitions including history-aware escalation; Charles co-tech attribution preserved.
+- View/RPC unit tests: per-day, 7-day, period counts; suggested-level transitions including history-aware escalation; recall rate vs the 4%/8% bands; only `recall`-classified callbacks score; Charles co-tech attribution preserved.
 - Email render test extended for the Accountability section (snapshot).
 - `vendored-sync` test still passes (rules duplicated into the edge function stay byte-faithful).
 - Manual-entry happy path + RLS (FOM can insert, non-FOM cannot).
 
 ## Open items for the implementation plan
 
-- Verify Charles's login and the exact permission flag to gate the FOM tab.
+- Confirm Charles's existing role and the exact permission flag to gate the FOM tab (he already logs in).
 - Confirm `supervisor_alerts` current columns/constraints against the live `jwrpj` schema before writing the migration (and the UNIQUE/NULLS-NOT-DISTINCT conflict target after `job_id` goes nullable).
 - Decide the mobile entry point for "Log mistake" (within the tab vs. a lightweight standalone surface).
