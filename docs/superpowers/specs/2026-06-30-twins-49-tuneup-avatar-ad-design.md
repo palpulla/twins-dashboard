@@ -26,7 +26,7 @@ vertical UGC talking-head, ~30–60s, arc = **hook (winter problem) → the offe
 - **Uniform:** yellow Twins polo + cap (iconic) — current team also wears navy Twins hoodies.
 - **Vehicles:** yellow/navy RAM ProMaster van + RAM pickup, both wrapped (cartoon twins, TwinsGarageDoors.com, 833·833·2010). Real photos supplied.
 - **Trust signals:** IDEA-certified techs, 100% Satisfaction Guaranteed, 5-star Google reviews, locally owned Madison, 24/7 / same-day, lifetime spring warranty.
-- **Phone (CTA):** **(608) 888-8785** (Madison local). Note: vehicle wraps show the toll-free **(833) 833-2010** — confirm which to feature on the end card.
+- **Phone (CTA):** **(608) 888-8785** (Madison local) — CONFIRMED. (Vehicle wraps show toll-free (833) 833-2010; do not use it on the end card.)
 
 ## 4. Approach (locked)
 
@@ -39,15 +39,13 @@ AI-avatar spokesperson + branded B-roll + motion-graphics layer. No live filming
 - Real vehicle + team photos (van, pickup, team in navy hoodies) — for animated real B-roll and AI-B-roll brand matching.
 - Logo PNG, palette, tagline, trust signals.
 
-**Need (decisions, not files):**
-- Confirm tune-up checklist accuracy (section 6).
-- Confirm CTA phone number (608 vs 833).
+**Confirmed:** tune-up checklist accurate (section 6); CTA phone = (608) 888-8785. No open items.
 
 ## 6. Script (locked, natural AI male voice, ~30s)
 
 > "It's Wisconsin. Your garage door takes a beating every winter. Worn springs, dry rollers, loose hardware. That's how a door fails at ten below. So right now, Twins Garage Doors is doing a complete forty-nine-dollar tune-up. We tighten the hardware, lube the rollers and springs, balance the door, and test the safety reverse. Top to bottom. Local Madison techs, done right the first time. Book your forty-nine-dollar tune-up. Call us at six-oh-eight, eight-eight-eight, eight-seven-eight-five."
 
-**Confirm:** "tighten hardware, lube rollers + springs, balance door, test safety reverse" = the actual $49 service? Add/remove as needed (this is the only operational claim; do not ship unverified).
+**CONFIRMED** by Daniel: "tighten hardware, lube rollers + springs, balance door, test safety reverse" is the actual $49 service. Accurate to ship.
 
 ## 7. Storyboard (timed, ~30s)
 
