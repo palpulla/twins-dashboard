@@ -31,7 +31,7 @@ Status key: ✅ fixed+verified+merged · ⏳ in progress · ⬜ pending
 | M4 | Medium | DB RPC | Root cause: blanket `GRANT EXECUTE … TO anon` on all SECURITY DEFINER functions; any future unguarded one is exploitable by default | PR-6 |
 | M5 | Medium | Edge fn | ~23 sync/geocode/email/report functions rely solely on default `verify_jwt=true` (public anon key) with no role check | PR-7 |
 | M6 | Medium | XSS | `StreakCard` `whatHtml` interpolates `scorecard_tier_thresholds.display_name` (payroll_access-writable) with zero escaping → stored XSS in every tech + admin-impersonation session | PR-8 (Task 10) |
-| M7 | Medium | Deps | `react-router-dom` 6.30.1 open-redirect/XSS advisory; `Auth.tsx:25` uses the exact `location.state.from` redirect pattern targeted. Fix = patch 6.30.4 | PR-9 |
+| M7 | Medium | Deps | `react-router-dom` 6.30.1 open-redirect/XSS advisory; `Auth.tsx:25` uses the exact `location.state.from` redirect pattern targeted. Fix = patch 6.30.4 | PR-9 | ✅ #299 |
 | M8 | Medium | Edge fn | `review-redirect` click stats trivially forgeable (no dedup/rate-limit) → fabricate per-tech review-card click counts | PR-10 |
 | L1 | Low | Edge fn | 12 ad-hoc `investigate-*`/`debug-*`/revenue-analysis functions unauthenticated → leak revenue/invoice detail. Likely one-off leftovers → delete or guard | PR-10 |
 | L2 | Low | XSS | `SettingsPanel.tsx:190` `document.write(previewHtml)` in app origin; escaped server-side today but fragile (and likely broken by `noopener`) | PR-10 |
