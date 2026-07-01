@@ -11,13 +11,15 @@
 
 ## Ranked findings
 
-| # | Sev | Area | Finding | Fix PR |
-|---|-----|------|---------|--------|
-| C1 | Critical | DB RPC | `invite_user()` anon-executable, no caller check → mint an admin invite + self-signup = account takeover | PR-1 |
-| C2 | Critical | DB RPC | `update_invite()` anon-executable → rewrite a live user's role to admin, cascades to `user_roles` | PR-1 |
-| C3 | Critical | DB RPC | `set_role_permissions()` anon-executable → grant admin/payroll caps to the `technician` role wholesale | PR-1 |
-| H1 | High | DB RPC | `revoke_invite()` / `claim_invite()` anon-executable → invite deletion (onboarding DoS) + bind invite role to attacker-controlled user id | PR-1 |
-| H2 | High | Edge fn | `list-users` + `manage-user` have NO in-code role check; only the public anon key gates them → enumerate all users / create-elevate accounts | PR-2 |
+Status key: ✅ fixed+verified+merged · ⏳ in progress · ⬜ pending
+
+| # | Sev | Area | Finding | Fix PR | Status |
+|---|-----|------|---------|--------|--------|
+| C1 | Critical | DB RPC | `invite_user()` anon-executable, no caller check → mint an admin invite + self-signup = account takeover | PR-1 | ✅ #295 |
+| C2 | Critical | DB RPC | `update_invite()` anon-executable → rewrite a live user's role to admin, cascades to `user_roles` | PR-1 | ✅ #295 |
+| C3 | Critical | DB RPC | `set_role_permissions()` anon-executable → grant admin/payroll caps to the `technician` role wholesale | PR-1 | ✅ #295 |
+| H1 | High | DB RPC | `revoke_invite()` / `claim_invite()` anon-executable → invite deletion (onboarding DoS) + bind invite role to attacker-controlled user id | PR-1 | ✅ #295 |
+| H2 | High | Edge fn | `list-users` + `manage-user` have NO in-code role check; only the public anon key gates them → enumerate all users / create-elevate accounts | PR-2 | ✅ #296 |
 | H3 | High | DB views | 13 `SECURITY DEFINER` views granted to `anon` bypass RLS; `v_jobs_with_parts` etc. leak customer PII (names/phones/addresses) + per-tech revenue to the anonymous internet | PR-3 |
 | H4 | High | Edge fn | `hcp-webhook` unauthenticated; inserts/updates/**deletes** jobs/invoices/estimates/memberships with service role. Signature helper `_shared/verify-hcp-signature.ts` exists but is imported nowhere | PR-5 (Task 8/9) |
 | H5 | High | Edge fn | `ghl-webhook-1` / `ghl-webhook-2` unauthenticated → inject fake jobs/leads with arbitrary revenue into Marketing ROI | PR-5 (Task 8/9) |
