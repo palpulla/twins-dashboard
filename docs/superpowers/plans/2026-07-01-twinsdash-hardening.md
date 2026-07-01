@@ -391,7 +391,120 @@ export function renderBold(text: string): ReactNode[] {
 - [ ] **Step 7: Visual verify** on the preview server: open the dashboard, confirm suggestions and streak cards render with bolding intact.
 - [ ] **Step 8: Commit, PR, merge, verify live.**
 
-*(Findings-driven fix tasks from Task 7 are appended here by severity.)*
+*(Findings-driven fix tasks from Task 7, appended below by severity.)*
+
+---
+
+## Phase 2b — Findings-driven fixes (from 2026-07-01 audit)
+
+Severity order. Each is one branch/PR in `twins-dash`. DB fixes are migrations to
+jwrpj via MCP `apply_migration`; after each, insert the version row into
+`supabase_migrations.schema_migrations` (see Operational facts). Save the
+migration SQL into `twins-dash/supabase/migrations/<timestamp>_<slug>.sql` too so
+the repo and DB stay in sync. **Never** blind-write a function body: fetch the
+current definition first (`select pg_get_functiondef(p.oid) from pg_proc p join
+pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and
+p.proname='<fn>';`) and reapply it verbatim with only the guard added.
+
+### Task F1: PR-1 — Guard critical unauthenticated privilege-escalation RPCs (Critical: C1–C3, H1)
+
+**Branch:** `fix/rpc-auth-guards` | **Migration:** `guard_invite_rpcs`
+
+- [ ] **Step 1: Capture current defs.** For each of `invite_user`, `update_invite`, `set_role_permissions`, `revoke_invite`, `claim_invite`, `check_invite`, `get_invite_role`, run `pg_get_functiondef` and save to scratchpad. These are the ground truth for the CREATE OR REPLACE bodies.
+- [ ] **Step 2: Confirm the guard helper.** Verify `public.has_role(uuid, app_role)` exists and its signature (`select pg_get_functiondef(oid) from pg_proc where proname='has_role';`). The guard pattern: `if not public.has_role(auth.uid(), 'admin') then raise exception 'admin only'; end if;` — for anon, `auth.uid()` is null so it raises. Confirm `set_tier_permissions` uses exactly this (it's the working reference).
+- [ ] **Step 3: Write the migration** (`apply_migration` name `guard_invite_rpcs`): for `invite_user`, `update_invite`, `set_role_permissions` — CREATE OR REPLACE with the captured body, guard inserted as the first statement, keep `security definer` + `set search_path = public, pg_temp`. For `revoke_invite` — same admin guard. For `claim_invite` — replace with a body that enforces `p_user_id = auth.uid()` and that the invite email matches the JWT email (`auth.jwt()->>'email'`), so a user can only claim their own invite. Then:
+  ```sql
+  revoke execute on function public.invite_user(text, text) from anon;
+  revoke execute on function public.update_invite(text, text, jsonb, text) from anon;
+  revoke execute on function public.set_role_permissions(text, jsonb) from anon;
+  revoke execute on function public.revoke_invite(text) from anon;
+  -- claim_invite/check_invite/get_invite_role: keep authenticated, revoke anon
+  revoke execute on function public.claim_invite(uuid, text) from anon;
+  ```
+  (Verify each function's exact argument-type signature from Step 1 before writing the REVOKE — arg types must match exactly.)
+- [ ] **Step 4: Verify signup still works.** Trace the signup/invite flow in the app: does any pre-auth (anon) path call `check_invite`/`claim_invite`? Read `src/integrations/supabase/invite-client.ts`, `AuthContext`, and the accept-invite page. If claim happens post-login (authenticated), the anon revoke is safe. If any legit anon call exists, keep that specific function anon-executable but guarded by the email-match check instead of a blanket revoke. Document the trace result in the PR.
+- [ ] **Step 5: Prove the hole is closed.** After migration, simulate an anon RPC with the anon key only (no user JWT):
+  ```bash
+  curl -s -X POST "$VITE_SUPABASE_URL/rest/v1/rpc/invite_user" \
+    -H "apikey: $VITE_SUPABASE_PUBLISHABLE_KEY" \
+    -H "Content-Type: application/json" \
+    -d '{"p_email":"probe@example.com","p_role":"admin"}'
+  ```
+  Expected: permission-denied / `admin only`, NOT success. Then confirm no `probe@example.com` row exists in `invited_emails`.
+- [ ] **Step 6: Insert schema_migrations version row; save migration SQL into `twins-dash/supabase/migrations/`; commit; PR; merge.**
+- [ ] **Step 7: Live smoke:** load twinsdash.com, confirm login works and the Users admin page still lists/invites (as admin).
+
+### Task F2: PR-2 — requireAdminAuth on list-users + manage-user (High: H2)
+
+**Branch:** `fix/user-admin-auth`
+**Files:** `supabase/functions/list-users/index.ts`, `supabase/functions/manage-user/index.ts`
+
+- [ ] **Step 1:** Read both handlers + `_shared/auth.ts` to confirm the `requireAdminAuth(req)` signature and its return shape (`{ error, user }` or similar).
+- [ ] **Step 2:** Add as the first statement inside each handler (after CORS preflight handling): `const gate = await requireAdminAuth(req); if (gate.error) return gate.error;` (match the real shape from Step 1). Add the import.
+- [ ] **Step 3:** `deno check` both files (or rely on deploy check).
+- [ ] **Step 4:** Deploy both via `deploy_edge_function`. Verify with the admin UI (Users page still works) and an anon-key-only curl (expect 401/403).
+- [ ] **Step 5:** Commit, PR, merge, live smoke.
+
+### Task F3: PR-3 — SECURITY DEFINER views → security_invoker + revoke anon (High: H3)
+
+**Branch:** `fix/definer-views` | **Migration:** `views_security_invoker`
+
+- [ ] **Step 1:** For all 13 views (`tech_job_type_kpi_90d`, `tech_job_type_team_medians_90d`, `v_job_line_item_counts`, `v_my_jobs`, `v_my_job_parts`, `v_my_commissions`, `v_review_clicks_by_tech`, `v_jobs_with_parts`, `v_tech_records_ranked`, `v_ghl_booking_rate_accurate`, `v_reviews_by_tech`, `v_yesterday_recap`, `v_jobs_needing_review`), capture `pg_get_viewdef`.
+- [ ] **Step 2:** Migration: `alter view public.<name> set (security_invoker = true);` for each (PG17 supports this). Then `revoke select on public.<name> from anon;` for every view that is staff-only (all except any genuinely public one — none here are public-facing). Keep `authenticated` grants.
+- [ ] **Step 3: Critical regression check.** With `security_invoker`, each view now runs under the CALLER's RLS. Confirm the app still reads them as an authenticated tech/admin: the base-table policies must permit what the view needs. For each view, identify its caller (grep the frontend + hooks for the view name) and confirm the caller's role has base-table SELECT. If a view breaks (empty where it shouldn't be), the base table needs a matching SELECT policy — add it in the same migration or revert that view to definer with an explicit internal filter. This is the highest-regression-risk fix; test the affected dashboard pages on preview before merge.
+- [ ] **Step 4:** Re-run `get_advisors` security → confirm `security_definer_view` count drops to 0 (or only intentional ones remain).
+- [ ] **Step 5:** schema_migrations row; save SQL to repo; commit; PR; merge; live smoke of the tech scorecard + reviews + line-item pages.
+
+### Task F4: PR-4 — Real secret gates on cron endpoints (High: H6, H7)
+
+**Branch:** `fix/cron-secret-gates`
+**Files:** `supabase/functions/cron-friday-paystub-send/index.ts`, `reconcile-invoices-nightly/index.ts`, `cron-weekly-lowstock/index.ts`
+
+- [ ] **Step 1:** Confirm the existing cron secret. Check function secrets for `EMAIL_CRON_SECRET` (memory notes a possible GUC/secret mismatch — verify the actual name in use). Read how other correctly-gated crons read it.
+- [ ] **Step 2:** Find the pg_cron jobs that invoke these three (`select jobname, command from cron.job;`) and confirm each `http_post` call's headers — the gate must match what cron already sends, or we update both together. **Do not deploy an enforce-gate until the cron caller is confirmed to send the matching secret**, or the real cron breaks (payroll emails, revenue reconcile).
+- [ ] **Step 3:** Add to the top of each handler (after CORS): `if (req.headers.get('authorization') !== 'Bearer ' + Deno.env.get('EMAIL_CRON_SECRET')) return new Response('forbidden', { status: 403 });`. Keep `verify_jwt=false`. Remove the misleading "self-gates" comments.
+- [ ] **Step 4:** Update the corresponding `cron.job` commands (via migration on jwrpj) to send `Authorization: Bearer <secret>` if they don't already. Apply cron update and function deploy together.
+- [ ] **Step 5:** Verify: anon curl without the header → 403; then wait for / manually trigger one real cron cycle and confirm it still runs (check `get_logs` + that paystub/reconcile side effects occur on schedule). **Rollback = redeploy without the gate.**
+- [ ] **Step 6:** Commit, PR, merge, monitor next real cron fire.
+
+### Task F5: PR-6 — Remaining anon-RPC guards + anon EXECUTE sweep (Medium: M1–M4)
+
+**Branch:** `fix/rpc-anon-sweep` | **Migration:** `rpc_anon_execute_sweep`
+
+- [ ] **Step 1:** Add admin/payroll guards (capture-def-then-replace, as Task F1) to `recompute_commission_for_job` (guard `has_payroll_access(auth.uid())`), `set_job_type_callback` + `set_job_type_resolution` (guard admin/manager or `has_accountability_access`).
+- [ ] **Step 2:** `revoke execute` from anon on those five + `check_invite`/`get_invite_role` (if not already done in F1).
+- [ ] **Step 3: The sweep (do carefully).** Build the definitive list of functions anon legitimately needs (from the F1 signup trace + any other pre-auth RPC). Then: `revoke execute on all functions in schema public from anon;` followed by explicit `grant execute` re-grants for that small allowlist, plus `alter default privileges in schema public revoke execute on functions from anon;`. **Before applying, dry-run the impact:** list every function anon currently has EXECUTE on and cross-check against pre-auth app calls. Any uncertainty → keep the targeted per-function revokes from Steps 1–2 and defer the blanket sweep to a follow-up with Daniel's sign-off.
+- [ ] **Step 4:** Re-run advisors → `anon_security_definer_function_executable` count drops sharply. Verify login/signup/anon flows still work on preview.
+- [ ] **Step 5:** schema_migrations row; save SQL; commit; PR; merge; live smoke.
+
+### Task F6: PR-7 — Role checks on verify_jwt-only edge functions (Medium: M5)
+
+**Branch:** `fix/edgefn-role-checks`
+
+- [ ] **Step 1:** For each function in Stream 2's F7 list, classify: admin-facing (add `requireAdminAuth`), tech-facing (add the tech gate), or pg_cron-only (add the `EMAIL_CRON_SECRET` Bearer check + update its cron.job header). Produce the per-function decision list.
+- [ ] **Step 2:** Apply the gate to each (one commit per ~5 functions for reviewability). `deno check` each.
+- [ ] **Step 3:** Deploy in batches; after each batch verify the corresponding UI/cron still works (`get_logs`, spot-check the feature). Any cron-only fn: confirm its cron.job sends the secret before enforcing.
+- [ ] **Step 4:** Commit, PR, merge, monitor.
+
+### Task F7: PR-9 — react-router-dom 6.30.4 (Medium: M7)
+
+**Branch:** `fix/react-router-cve`
+
+- [ ] **Step 1:** `cd twins-dash && npm install react-router-dom@6.30.4` (patch bump within 6.30.x — verify it's non-breaking: `npm ls react-router-dom`).
+- [ ] **Step 2:** `npx vitest run` → green; `npm run build` → succeeds.
+- [ ] **Step 3:** Preview smoke: login redirect (`Auth.tsx` `location.state.from` path), protected-route redirects, deep links all work.
+- [ ] **Step 4:** `npm audit | grep react-router` → advisory gone. Commit, PR, merge.
+
+### Task F8: PR-10 — Low-severity cleanup (M8, L1–L4)
+
+**Branch:** `fix/low-sev-cleanup` (may split if diffs get large)
+
+- [ ] **Step 1: review-redirect rate-limit (M8).** Add the same IP+slug rate-limit the webhooks use, and record a `user_agent`/bot flag on `review_card_clicks`; exclude obvious bots from the dashboard rollup query. Keep the redirect itself open. Deploy, verify a real card click still logs + redirects.
+- [ ] **Step 2: debug functions (L1).** Confirm with `get_logs` that the 12 `investigate-*`/`debug-*`/analysis functions have no recent legitimate invocations, then delete their directories (reversible via git). If any is unexpectedly in use, add `requireAdminAuth` instead.
+- [ ] **Step 3: SettingsPanel document.write (L2).** Replace `document.write(previewHtml)` with a sandboxed preview: render into an `<iframe sandbox srcDoc={previewHtml}>` in a modal, or a Blob URL opened with `noopener`. Preview-verify the digest preview renders.
+- [ ] **Step 4: .env gitignore (L3).** `git rm --cached .env`, add `.env` to `.gitignore`, confirm `.env.example` still tracked. (Values are anon-tier; no rotation needed.)
+- [ ] **Step 5: DB hygiene (L4).** Migration: enable leaked-password protection is an Auth dashboard setting (note it for Daniel — it's a console toggle, not SQL); `alter extension pg_net set schema extensions;` (verify no code references `net.` unqualified first); `alter function ... set search_path = public, pg_temp;` for the 19 flagged functions.
+- [ ] **Step 6:** Tests green, build ok, commit, PR, merge, live smoke.
 
 ---
 
