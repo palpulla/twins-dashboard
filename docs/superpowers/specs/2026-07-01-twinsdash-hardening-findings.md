@@ -21,8 +21,8 @@ Status key: ✅ fixed+verified+merged · ⏳ in progress · ⬜ pending
 | H1 | High | DB RPC | `revoke_invite()` / `claim_invite()` anon-executable → invite deletion (onboarding DoS) + bind invite role to attacker-controlled user id | PR-1 | ✅ #295 |
 | H2 | High | Edge fn | `list-users` + `manage-user` have NO in-code role check; only the public anon key gates them → enumerate all users / create-elevate accounts | PR-2 | ✅ #296 |
 | H3 | High | DB views | 13 `SECURITY DEFINER` views granted to `anon` bypass RLS; `v_jobs_with_parts` etc. leak customer PII (names/phones/addresses) + per-tech revenue to the anonymous internet | PR-3 | ✅ #297 (anon path; definer-for-authed tracked) |
-| H4 | High | Edge fn | `hcp-webhook` unauthenticated; inserts/updates/**deletes** jobs/invoices/estimates/memberships with service role. Signature helper `_shared/verify-hcp-signature.ts` exists but is imported nowhere | PR-5 (Task 8/9) | ⬜ |
-| H5 | High | Edge fn | `ghl-webhook-1` / `ghl-webhook-2` unauthenticated → inject fake jobs/leads with arbitrary revenue into Marketing ROI | PR-5 (Task 8/9) | ⬜ |
+| H4 | High | Edge fn | `hcp-webhook` unauthenticated; inserts/updates/**deletes** jobs/invoices/estimates/memberships with service role. Signature helper `_shared/verify-hcp-signature.ts` exists but is imported nowhere | PR-5 (Task 8/9) | ⏳ #303 log-only live; enforce blocked on `HCP_WEBHOOK_SECRET` + soak |
+| H5 | High | Edge fn | `ghl-webhook-1` / `ghl-webhook-2` unauthenticated → inject fake jobs/leads with arbitrary revenue into Marketing ROI | PR-5 (Task 8/9) | ⏳ #303 log-only live; enforce blocked on `GHL_WEBHOOK_SECRET` + soak |
 | H6 | High | Edge fn | `cron-friday-paystub-send` anon-triggerable; `?force=1&force_send=1` bypasses time + idempotency gates → re-fire real paystub emails to techs on demand | PR-4 | ✅ #298 |
 | H7 | High | Edge fn | `reconcile-invoices-nightly` + `cron-weekly-lowstock` config/comments claim a secret gate that does NOT exist in code → anon can rewrite recognized revenue / spam emails | PR-4 | ✅ #298 |
 | M1 | Medium | DB RPC | `recompute_commission_for_job()` anon-executable → overwrite admin-adjusted payroll commissions | PR-6 |
