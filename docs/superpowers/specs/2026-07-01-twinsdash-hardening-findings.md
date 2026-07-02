@@ -25,19 +25,19 @@ Status key: ✅ fixed+verified+merged · ⏳ in progress · ⬜ pending
 | H5 | High | Edge fn | `ghl-webhook-1` / `ghl-webhook-2` unauthenticated → inject fake jobs/leads with arbitrary revenue into Marketing ROI | PR-5 (Task 8/9) | ⏳ #303 log-only live; enforce blocked on `GHL_WEBHOOK_SECRET` + soak |
 | H6 | High | Edge fn | `cron-friday-paystub-send` anon-triggerable; `?force=1&force_send=1` bypasses time + idempotency gates → re-fire real paystub emails to techs on demand | PR-4 | ✅ #298 |
 | H7 | High | Edge fn | `reconcile-invoices-nightly` + `cron-weekly-lowstock` config/comments claim a secret gate that does NOT exist in code → anon can rewrite recognized revenue / spam emails | PR-4 | ✅ #298 |
-| M1 | Medium | DB RPC | `recompute_commission_for_job()` anon-executable → overwrite admin-adjusted payroll commissions | PR-6 |
-| M2 | Medium | DB RPC | `set_job_type_callback()` / `set_job_type_resolution()` anon-executable → pollute job-type/KPI pipeline | PR-6 |
-| M3 | Medium | DB RPC | `check_invite()` / `get_invite_role()` anon-executable → enumerate pending invites + roles (recon for C1–H1) | PR-6 |
-| M4 | Medium | DB RPC | Root cause: blanket `GRANT EXECUTE … TO anon` on all SECURITY DEFINER functions; any future unguarded one is exploitable by default | PR-6 |
-| M5 | Medium | Edge fn | ~23 sync/geocode/email/report functions rely solely on default `verify_jwt=true` (public anon key) with no role check | PR-7 |
+| M1 | Medium | DB RPC | `recompute_commission_for_job()` anon-executable → overwrite admin-adjusted payroll commissions | PR-6 | ✅ #307 |
+| M2 | Medium | DB RPC | `set_job_type_callback()` / `set_job_type_resolution()` anon-executable → pollute job-type/KPI pipeline | PR-6 | ✅ #307 |
+| M3 | Medium | DB RPC | `check_invite()` / `get_invite_role()` anon-executable → enumerate pending invites + roles | PR-6 | ✅ `get_invite_role` revoked #295; `check_invite` kept anon (signup gate), accepted |
+| M4 | Medium | DB RPC | Root cause: blanket `GRANT EXECUTE … TO anon` on SECURITY DEFINER functions | PR-6 | ◑ dangerous ones revoked (C1-C3/H1/M1-M2); guarded-admin ones accepted; blanket sweep deferred (needs full anon-flow verification) |
+| M5 | Medium | Edge fn | ~23 sync/geocode/email/report functions rely solely on default `verify_jwt=true` (public anon key) with no role check | PR-7 | ◑ email-senders gated #309, orphan HCP dumps removed #308/#310; sync/geocode/dispatch/payroll-UI/dual-gate deferred (low-harm, see below) |
 | M6 | Medium | XSS | `StreakCard` `whatHtml` interpolates `scorecard_tier_thresholds.display_name` (payroll_access-writable) with zero escaping → stored XSS in every tech + admin-impersonation session | PR-8 (Task 10) | ✅ #300 |
 | M7 | Medium | Deps | `react-router-dom` 6.30.1 open-redirect/XSS advisory; `Auth.tsx:25` uses the exact `location.state.from` redirect pattern targeted. Fix = patch 6.30.4 | PR-9 | ✅ #299 |
-| M8 | Medium | Edge fn | `review-redirect` click stats trivially forgeable (no dedup/rate-limit) → fabricate per-tech review-card click counts | PR-10 |
-| L1 | Low | Edge fn | 12 ad-hoc `investigate-*`/`debug-*`/revenue-analysis functions unauthenticated → leak revenue/invoice detail. Likely one-off leftovers → delete or guard | PR-10 |
-| L2 | Low | XSS | `SettingsPanel.tsx:190` `document.write(previewHtml)` in app origin; escaped server-side today but fragile (and likely broken by `noopener`) | PR-10 |
-| L3 | Low | Bundle | `.env` is git-tracked (anon-tier values only today, history verified clean) → invites a future secret commit | PR-10 |
-| L4 | Low | DB | `auth_leaked_password_protection` disabled; `pg_net` in `public`; 19 functions with mutable `search_path` | PR-10 |
-| L5 | Low | DB perf | 149 `auth_rls_initplan` + 62 `multiple_permissive_policies` + 56 unindexed FKs + 26 unused indexes (reliability/cost, no exposure) | PR-11 (opt) |
+| M8 | Medium | Edge fn | `review-redirect` click stats trivially forgeable (no dedup/rate-limit) → fabricate per-tech review-card click counts | PR-10 | ⬜ deferred (low-harm: corrupts a tracking metric only) |
+| L1 | Low | Edge fn | 12 ad-hoc `investigate-*`/`debug-*`/revenue-analysis functions → leak revenue/invoice detail | PR-10 | ✅ #308 (were dead code, none deployed) |
+| L2 | Low | XSS | `SettingsPanel.tsx:190` `document.write(previewHtml)` in app origin; escaped server-side today but fragile | PR-10 | ⬜ deferred (low-harm, likely already inert via noopener) |
+| L3 | Low | Bundle | `.env` is git-tracked (anon-tier values only today) → invites a future secret commit | PR-10 | ⬜ deferred — verify Vercel has the VITE_ vars before `git rm --cached .env` (else the build loses them) |
+| L4 | Low | DB | 19 functions with mutable `search_path`; `pg_net` in `public`; leaked-password protection off | PR-10 | ◑ search_path pinned #311; `pg_net`-in-public + leaked-password toggle (Auth dashboard) deferred |
+| L5 | Low | DB perf | 149 `auth_rls_initplan` + 62 `multiple_permissive_policies` + 56 unindexed FKs + 26 unused indexes (reliability/cost, no exposure) | PR-11 (opt) | ⬜ deferred (perf/cost, no exposure) |
 
 **Verified fine (no action):** All base-table RLS on payroll/user_roles/accountability/streaks — a technician cannot read another tech's pay. The 9 `rls_enabled_no_policy` tables are fail-closed. ~13 edge functions correctly protected by `requireAdminAuth`/tech gate/token. The shipped client bundle contains only the anon key (no service_role), no stray live keys. Admin-named RPCs (`set_payroll_access`, `admin_*`, `list_users_for_impersonation`, `my_paystub`) enforce internal guards despite the anon grant.
 
@@ -90,14 +90,22 @@ Worst-first, one PR per group, each reversible:
 
 **Merged & verified live (7 PRs):** C1–C3, H1 (#295) · H2 (#296) · H3 anon-path (#297) · H6, H7 (#298) · M7 (#299) · M6 (#300) · code-health ratchet CI (#301). Every fix was proven against prod with a live exploit test (401/403) before merge; no KPI/payroll math touched.
 
-**Supabase security advisor delta (coarse structural metric):**
-- `anon_security_definer_function_executable`: 68 → 62 (the invite/role RPCs locked in F1)
-- `security_definer_view` (14) and `authenticated_security_definer_function_executable` (68) largely unchanged — these flag the *structural* definer pattern regardless of grants, so the H3 anon-revoke and the remaining definer-for-authenticated work (tracked follow-up) don't move them. The real anon-PII exposure is closed (verified: anon GET on the views → 401); the advisor stays lit until the views are converted to `security_invoker` per-view.
-- `function_search_path_mutable` (19), `extension_in_public` (1), `auth_leaked_password_protection` (1): unchanged — queued in F8 (L4).
-- Advisor counts understate the improvement: account-takeover, user-admin, PII-leak, and cron exploits are all closed but only partially reflected in these structural lints. Live per-fix verification is the real evidence.
+**14 PRs merged, all verified live pre-merge; no KPI/payroll math touched.**
+C1-C3, H1 (#295) · H2 (#296) · H3 (#297) · H6/H7 (#298) · M7 (#299) · M6 (#300) ·
+CI ratchet (#301) · stale tests (#302) · webhook log-only + token (#303/#306) ·
+M1/M2 (#307) · L1 dead-fns (#308) · M5 email-senders (#309) · orphan HCP dumps (#310) ·
+L4 search_path (#311).
 
-**Remaining (see plan Tasks F5, F6, F8, 8/9, 13):**
-- H4/H5 webhooks — blocked on the HCP + GHL signing secrets (Daniel).
-- M1–M4 anon-RPC sweep, M5 edge-fn role checks — payroll-adjacent; deferred past the active payroll day, then log-only/verify.
-- M8 + L1–L5 lows — cleanup batch.
-- Final after-scorecard: re-run advisors once the above land.
+**Supabase security advisor delta (baseline → after):**
+- Total security items: **179 → 153**.
+- `function_search_path_mutable`: **19 → 0** (L4).
+- `anon_security_definer_function_executable`: **68 → 59** (invite/commission/job-type RPCs revoked).
+- `security_definer_view` (14) + `authenticated_security_definer_function_executable` (68): unchanged — these flag the *structural* definer pattern regardless of grants. The anon-PII exposure is closed (verified anon GET → 401); the lint stays lit until the views are converted to `security_invoker` per-view (tracked). Most anon-executable definer *functions* self-guard (`admin only`) — safe despite the grant.
+- Advisor counts understate the work: account-takeover, user-admin, PII-leak, cron, XSS, and email-blast exploits are all closed but only partly reflected in these structural lints. **Live per-fix 401/403 verification is the real evidence.**
+
+**Deferred remainder (all lower-harm; documented, not blocking):**
+- **H4/H5 webhooks** — enforcement blocked on Daniel: set `HCP_WEBHOOK_TOKEN` + append `?t=` to the HCP webhook URL (GHL likewise). Validation is LIVE in log-only mode; flip `WEBHOOK_VALIDATION_MODE=enforce` after a clean soak.
+- **M5 remainder** (cron sync fns: poll-azuga, meta/google/ghl/lsa syncs, forecast-refresh, backfill-dispatch-ingest → cron-secret + cron-job update; frontend-admin payroll reads sync-hcp-week/list-hcp-week-jobs → requireAdminAuth w/ role caveat; get-drive-times → tech gate; generate-tech-nudge + daily-supervisor-digest → dual cron-secret-OR-admin gate; geocode-tech-home → DB-trigger header edit; geocode-job-address/classify-csr-notes → fn-to-fn header propagation). Full per-function table: `scratchpad/f6-gating-table.md`. Low-harm (idempotent syncs / anon-key-gated reads); deferred to avoid rushing dispatch/payroll-UI/cron changes on payroll day.
+- **M4** blanket anon-EXECUTE sweep — the dangerous functions are individually revoked; the remaining anon-executable definer functions self-guard. Full sweep needs comprehensive pre-auth-flow verification.
+- **M8** review-redirect rate-limit; **L2** SettingsPanel document.write; **L3** .env gitignore (verify Vercel env first); **L5** RLS-perf. All low-harm.
+- **Deno edge tests** — 12 edge-fn tests need a `deno test` job (they can't run under vitest); then wire vitest into CI.
