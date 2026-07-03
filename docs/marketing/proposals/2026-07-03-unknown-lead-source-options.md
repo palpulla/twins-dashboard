@@ -21,4 +21,16 @@ The current HCP source list mixes eras and granularities ("Google" vs "Reserve w
 - Needs from you: nothing yet; it becomes a proposal in a future Monday brief once #6 lands.
 
 ## Recommendation
-A + B this week (both free, both stop the bleeding), C as the follow-on build. Reply which you approve and I'll prepare the exact script line, EOD tweak, and HCP source list for sign-off.
+A + B this week (both free, both stop the bleeding), C as the follow-on build.
+
+---
+
+## EXECUTED 2026-07-03 (Daniel approved "as you recommend")
+
+**B — done.** HCP lead-source list cleaned via the HCP settings UI: 44 → 20 active. Kept: CareFree Club, CSR AI (reserved for call-intake pipeline), Existing Customer, Facebook, Facebook Ads, Google, HCP Chat, HouseCall App, HouseCall Marketplace, Lead Form, Online Booking, Referral, Reserve with Google, Text Campaign, Thumbtack, Toll Free Number, Van, WI Door Sticker, WI Google Ads, WI Google LSA. Removed 24 dead/junk/duplicate entries (son, truck, Zory FB/Google Ads, Google Local Services, Facebook Group/Organic, WI BNI/Business Card/Door Hanger/GBP/ValPak/Yard Sign, AC Doctor, Cold Call, Door Knocking, Legit5, Next Door, Old Site, OnCall Air, Prospex AI, ResponsiBid, TV Ads, Website Builder). HCP-default sources were archived (restorable from the Archived tab); custom ones were deleted (restorable by re-creating the name). Historical job records unchanged (confirmed by HCP's own dialog + jwrpj retains raw strings). No renames, so no downstream mapping was touched.
+
+**A — script ready.** Note for Daniel to forward to Ivory (below). Compliance is tracked automatically: the Monday brief now reports the weekly Unknown% of booked jobs (baseline: 52% of jobs over the prior 180 days).
+
+> Hi Ivory, one new standard starting today: every job we book needs a real lead source in Housecall Pro. When you book, ask "By the way, how did you hear about us?" and pick the matching option from the Lead Source dropdown. I cleaned the list up so it is short now. If the caller is vague, one quick follow-up works: "Was that Google, Facebook, or a referral?" Existing customers get Existing Customer. Please never leave the field empty. We decide our ad budget from these numbers, so this really matters. Thank you!
+
+**C — deferred** until GHL attribution capture (backlog #6) lands, as planned.

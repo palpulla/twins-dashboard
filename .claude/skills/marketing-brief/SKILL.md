@@ -21,6 +21,7 @@ Run the exact queries in `docs/marketing/DATA-SOURCES.md` (read-only, Supabase p
 3. Review velocity (§3 — while the `reviews` table is empty, report card clicks only and flag the gap)
 4. GHL new contacts (§4)
 5. Content output (§5 — count approved drafts + note what shipped)
+6. Source-capture compliance: % of the week's booked jobs with lead_source 'Unknown' or blank (`jobs.created_at` in window). Baseline 52% over the 180 days before 2026-07-03; the CSR intake standard started 2026-07-03, so this number should fall week over week — flag if it doesn't.
 
 If any query returns nothing, write "no data", not a number.
 
