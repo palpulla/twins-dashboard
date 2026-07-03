@@ -628,14 +628,15 @@ In `src/pages/tech/Home.tsx`:
 
 ```ts
   // Month-to-date revenue for the YearRibbon's "July: $X of $Y" line.
-  // Own memoized range (same pattern as ytdRange) so the query key is stable.
-  const mtdRange = useMemo<DateRange>(() => {
-    const today = new Date();
-    return { from: startOfMonth(today), to: today };
-  }, []);
+  // Keyed on useToday() (NOT a frozen useMemo([]) — that serves last month's
+  // revenue under the new month's label on long-lived tabs; see use-today.ts).
+  const today = useToday();
+  const mtdRange = useMemo<DateRange>(() => ({ from: startOfMonth(today), to: today }), [today]);
   const { scorecard: mtdScorecard } = useMyScorecardWithTiers(effectiveUuid, mtdRange);
   const mtdRevenue = Number(mtdScorecard?.revenue?.value ?? 0);
 ```
+
+> **Review amendment (2026-07-03):** the original snippet used `useMemo(..., [])`, repeating the documented stale-day pitfall (PR #250). Code review caught it; the fix (above) also migrates the neighboring pre-existing `ytdRange` to `useToday()`.
 
 (d) Pass the prop on the `<YearRibbon ... />` call (after `daysInYear={daysInYear}`):
 
