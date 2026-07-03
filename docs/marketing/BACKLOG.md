@@ -4,10 +4,10 @@
 
 | # | Initiative | Bucket | Status | Next action | Needs Daniel |
 |---|---|---|---|---|---|
-| 1 | Fix `marketing_spend` sync (google_ads + google_lsa stale since 2026-06-16; meta dead since 2026-02-06) | Measurement | NEW — found 2026-07-03 | Diagnose edge functions (`google-ads-sync`, `sync-google-lsa`, `meta-ads-sync`) | No (read/fix infra, reversible) |
-| 2 | Fix `reviews` ingest (table empty since creation; review velocity unmeasurable) | Measurement | NEW — found 2026-07-03 | Diagnose Places/GBP review ingest; check `places_reviews_interim` | Maybe (API key — Places key had referer restriction issue) |
-| 3 | Attack the "Unknown" lead source (35% of earned revenue, $41,910/30d) | Measurement | NEW — found 2026-07-03 | Options doc: CSR intake script + HCP source hygiene + GHL match; NO heuristic classifiers | Yes — process change touches CSR workflow |
-| 4 | Finish $49 tune-up avatar ad | Capture | Build in progress | Resume Higgsfield build | Yes — creative sign-off before it runs |
+| 1 | Fix `marketing_spend` sync (google_ads + google_lsa stale since 2026-06-16; meta dead since 2026-02-06) | Measurement | **APPROVED 2026-07-03** — in progress | Diagnose edge functions (`google-ads-sync`, `sync-google-lsa`, `meta-ads-sync`) | No (read/fix infra, reversible) |
+| 2 | Fix `reviews` ingest (table empty since creation; review velocity unmeasurable) | Measurement | **APPROVED 2026-07-03** — in progress | Diagnose Places/GBP review ingest; check `places_reviews_interim` | Maybe (API key — Places key had referer restriction issue) |
+| 3 | Attack the "Unknown" lead source (35% of earned revenue, $41,910/30d) | Measurement | **APPROVED 2026-07-03 (spec only)** | Options doc: CSR intake script + HCP source hygiene + GHL match; NO heuristic classifiers | Yes — process change touches CSR workflow |
+| 4 | Finish $49 tune-up avatar ad | Capture | On hold — not approved in 2026-07-03 brief | Await Daniel green light | Yes — creative sign-off before it runs |
 | 5 | Launch GHL messaging Phase 1 (confirm/reminder/thank-you/review/estimate-followup) | Base | Spec approved v3.1 | Build HCP→Supabase→GHL bridge | Yes — copy sign-off before any send |
 | 6 | ROI attribution gaps (GHL attribution, booked semantics, GA4) | Measurement | Polish backlog exists | Spec the GHL attribution piece first (unblocks #3) | No (spec only) |
 | 7 | Open estimates CSR tracker | Base | Spec + plan exist | Schedule build | No (internal tool) |
