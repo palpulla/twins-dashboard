@@ -54,4 +54,4 @@ Standing guardrails: reversible changes only; real data only (never fabricate); 
 
 - **Weekly:** Monday brief in chat (generator: `.claude/skills/marketing-brief/`, data map: [DATA-SOURCES.md](DATA-SOURCES.md)). Contents: what ran, spend, jobs + earned revenue by source, reviews/content, 2–3 proposed moves for approval. No email/SMS/push — chat only.
 - **Monthly:** deeper pass — re-rank channels, revise this document, re-rank [BACKLOG.md](BACKLOG.md).
-- **Mechanism:** scheduled Monday-morning run (see Cadence setup note at bottom); fallback is Daniel typing `/marketing-brief`.
+- **Mechanism (verified 2026-07-03):** local scheduled task `monday-marketing-brief` (stored at `~/.claude/scheduled-tasks/monday-marketing-brief/SKILL.md`), fires Mondays ~8:12 AM machine-local while the Claude desktop app is open — if the app is closed it runs on next launch. First-run tip: click "Run now" once in the Scheduled sidebar to pre-approve the Supabase read tools so future runs don't pause on permission prompts. Fallback any time: type `/marketing-brief`.
