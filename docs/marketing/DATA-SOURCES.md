@@ -73,9 +73,9 @@ SELECT
 
 ```sql
 SELECT COUNT(*) AS new_contacts FROM ghl_contacts
-WHERE created_at >= :from AND created_at < :to_exclusive;
+WHERE contact_created_at >= :from AND contact_created_at < :to_exclusive;
 ```
-(If `created_at` doesn't exist on `ghl_contacts`, check `date_added` — verify before first scheduled run.)
+(Column verified 2026-07-03: `contact_created_at`; sync live, 1,222 total contacts.)
 
 ## 5. Content output
 
@@ -96,3 +96,4 @@ plus a note of what shipped via DUNZO Social Planner.
 2. Meta spend sync dead since 2026-02-06.
 3. GHL → job attribution not wired (ROI polish backlog).
 4. Funnel "booked" semantics + GA4 sync (ROI polish backlog).
+5. `reviews` table is EMPTY (0 rows, verified 2026-07-03) — the Google-review ingest never populated it, so review velocity can only report card clicks until fixed. `places_reviews_interim` exists and may hold partial data.
