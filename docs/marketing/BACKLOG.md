@@ -4,9 +4,10 @@
 
 | # | Initiative | Bucket | Status | Next action | Needs Daniel |
 |---|---|---|---|---|---|
-| 1 | Fix `marketing_spend` sync (google_ads + google_lsa stale since 2026-06-16; meta dead since 2026-02-06) | Measurement | **APPROVED 2026-07-03** — in progress | Diagnose edge functions (`google-ads-sync`, `sync-google-lsa`, `meta-ads-sync`) | No (read/fix infra, reversible) |
-| 2 | Fix `reviews` ingest (table empty since creation; review velocity unmeasurable) | Measurement | **APPROVED 2026-07-03** — in progress | Diagnose Places/GBP review ingest; check `places_reviews_interim` | Maybe (API key — Places key had referer restriction issue) |
-| 3 | Attack the "Unknown" lead source (35% of earned revenue, $41,910/30d) | Measurement | **APPROVED 2026-07-03 (spec only)** | Options doc: CSR intake script + HCP source hygiene + GHL match; NO heuristic classifiers | Yes — process change touches CSR workflow |
+| 1a | ~~Google spend syncs stale~~ | Measurement | **FIXED 2026-07-03** (PR #327) | Root cause: Google Ads API v20 sunset. Bumped to v21, backfilled 6/17–7/3 ($6,915 recovered). Monitor next nightly run | No |
+| 1b | Meta spend sync dead since 2026-02-06 | Measurement | **BLOCKED on Daniel** | Meta access token expired 2026-05-03 (OAuthException 190). Need fresh long-lived token for meta-ads-sync. Also bump Graph API v20.0 while at it | Yes — Meta re-auth |
+| 2 | Fix `reviews` ingest (table empty; velocity unmeasurable) | Measurement | **BLOCKED on Daniel** | Root cause: sync-gbp-reviews exits "no credentials" — GBP_REFRESH_TOKEN/ACCOUNT_ID/LOCATION_ID never set. Need GBP OAuth (business.manage). Places fallback also empty (key referer-restricted) | Yes — GBP OAuth grant |
+| 3 | Attack the "Unknown" lead source (35% of earned revenue, $41,910/30d) | Measurement | **Options doc delivered 2026-07-03** | [proposals/2026-07-03-unknown-lead-source-options.md](proposals/2026-07-03-unknown-lead-source-options.md) — awaiting Daniel's pick (rec: A+B now, C later) | Yes — approve A/B |
 | 4 | Finish $49 tune-up avatar ad | Capture | On hold — not approved in 2026-07-03 brief | Await Daniel green light | Yes — creative sign-off before it runs |
 | 5 | Launch GHL messaging Phase 1 (confirm/reminder/thank-you/review/estimate-followup) | Base | Spec approved v3.1 | Build HCP→Supabase→GHL bridge | Yes — copy sign-off before any send |
 | 6 | ROI attribution gaps (GHL attribution, booked semantics, GA4) | Measurement | Polish backlog exists | Spec the GHL attribution piece first (unblocks #3) | No (spec only) |

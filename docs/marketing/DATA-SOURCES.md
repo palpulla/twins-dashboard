@@ -92,8 +92,8 @@ plus a note of what shipped via DUNZO Social Planner.
 
 ## Known gaps (carried as backlog, not blockers)
 
-1. Spend syncs stale since 2026-06-16 (google_ads, google_lsa) — needs edge-function investigation.
-2. Meta spend sync dead since 2026-02-06.
-3. GHL → job attribution not wired (ROI polish backlog).
+1. ~~Spend syncs stale since 2026-06-16~~ **FIXED 2026-07-03** (Google Ads API v20 sunset; bumped to v21 in PR #327, backfilled through 7/3). Both functions now accept POST `{"daysBack": N}` (1–90, cron-secret-gated) for future backfills.
+2. Meta spend sync dead since 2026-02-06 — access token expired 2026-05-03; blocked on Daniel re-auth. Graph API v20.0 default should be bumped at the same time.
+3. GHL → job attribution not wired (ROI polish backlog) — 186 contacts phone-matched to jobs but 0 carry attribution_source.
 4. Funnel "booked" semantics + GA4 sync (ROI polish backlog).
-5. `reviews` table is EMPTY (0 rows, verified 2026-07-03) — the Google-review ingest never populated it, so review velocity can only report card clicks until fixed. `places_reviews_interim` exists and may hold partial data.
+5. `reviews` table is EMPTY (0 rows, verified 2026-07-03) — `sync-gbp-reviews` runs daily but exits `"skipped": "no credentials"`: GBP_REFRESH_TOKEN/GBP_ACCOUNT_ID/GBP_LOCATION_ID were never configured. Blocked on Daniel granting GBP OAuth (business.manage scope). `places_reviews_interim` is also empty (Places key referer-restricted). Until fixed, review velocity = card clicks only.
