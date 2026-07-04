@@ -55,7 +55,19 @@ Date: 2026-07-04. Prereqs verified against customer 7171993484 via `ads-audit`:
   standing behavior + conversion-action creation are logged in
   `docs/marketing/change-log.md`; per-run history lives in this table.
 
-## Status 2026-07-04 — built + scheduled, first accepted upload blocked on OAuth scope
+## Status 2026-07-04 (evening) — LIVE, first upload accepted
+
+The OAuth unblock below was completed 2026-07-04: Data Manager API enabled on
+GCP project `twins-dashboard-marketing`, refresh token re-minted with both
+scopes (Daniel approved the consent), jwrpj secret rotated. One code fix was
+required after all — the GOOGLE_ADS destination rejects events missing
+`event_source`, so the function now sends `eventSource: "WEB"` per the docs
+(twins-dash commit `ef41cd7` on `feat/ads-audit-fn`, deployed). Verified:
+probe shows both scopes; validateOnly clean; real `{"weeksBack":1}` run
+accepted 26/26 for window 2026-06-26 → 2026-07-03 (run-log row `status: ok`);
+`sync-google-ads` still works. The weekly cron needs no further attention.
+
+## Status 2026-07-04 (morning, superseded) — built + scheduled, first accepted upload blocked on OAuth scope
 
 Everything above is deployed and verified except the final Google handoff. The
 Data Manager API requires the `https://www.googleapis.com/auth/datamanager`
