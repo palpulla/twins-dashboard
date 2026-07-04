@@ -17,4 +17,8 @@ Deliberately NOT changed: tCPA (deferred until conversion data is clean ~2 weeks
 
 ### Meta (act_388398022876424)
 
-_(entries added as Task 9 executes)_
+| # | Change | Detail | Revert |
+|---|---|---|---|
+| M1 | Deactivated pixel 'Lead' event rule | Rule 3986528874925127 fired on the Google Ads thank-you URL (/wi/thank-you-g-ppc-lp/) — cross-channel contamination (CAP §1.1). Set INACTIVE (not deleted; UI-created rules hard-delete). Real per-form Lead rules ship with the form fix | Set status ACTIVE |
+
+Deferred: custom-conversion rule separation — Meta CC rules are immutable (archive+recreate only); recreating now is pointless because the broken forms produce no thank-you URLs. Lands with the form rebuild. CAPI restoration remains blocked on Meta re-auth (token expired 2026-05-03).
