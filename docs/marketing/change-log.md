@@ -22,3 +22,15 @@ Deliberately NOT changed: tCPA (deferred until conversion data is clean ~2 weeks
 | M1 | Deactivated pixel 'Lead' event rule | Rule 3986528874925127 fired on the Google Ads thank-you URL (/wi/thank-you-g-ppc-lp/) — cross-channel contamination (CAP §1.1). Set INACTIVE (not deleted; UI-created rules hard-delete). Real per-form Lead rules ship with the form fix | Set status ACTIVE |
 
 Deferred: custom-conversion rule separation — Meta CC rules are immutable (archive+recreate only); recreating now is pointless because the broken forms produce no thank-you URLs. Lands with the form rebuild. CAPI restoration remains blocked on Meta re-auth (token expired 2026-05-03).
+
+### Website (twinsgaragedoors.com main + /wi, via WPCode/Rank Math)
+
+| # | Change | Detail | Revert |
+|---|---|---|---|
+| W1 | Sticky mobile call bar + viewport zoom fix | WPCode snippet 7044 (main) + 6753 (/wi), site-wide footer. Call (608) 888-8785 + Book Online (HCP booking URL). Also rewrites the viewport meta to re-enable pinch zoom | Deactivate the snippets |
+| W2 | Phone unification | Snippet 6753 addendum rewrites tel:8338332010 links/text to (608) 888-8785 on /wi (the 833 lives in an Elementor header template; ownership still unknown per CAP §2.4) | Remove addendum |
+| W3 | DIY-post CTA blocks | Snippet 7045 (main): "This job goes wrong easily" callout + call/book buttons on 5 DIY posts (genie manual, manually-lift, clopay low-headroom kit, low-headroom systems, clopay wood install) | Deactivate snippet |
+| W4 | LocalBusiness schema | Snippet 7045 (main) + 6754 (/wi): name/phone/Madison-WI/24-7 hours. No aggregateRating (self-serving markup risk), no street address (not verified — add when confirmed) | Deactivate snippets |
+| W5 | Title/meta rewrites (Rank Math) | /wi/garage-door-repair-in-madison-wi/ → "24/7 Garage Door Repair Madison, WI \| 4.9★ on Google \| Twins"; /wi/emergency-garage-door-repair-madison-wi/ → same-day angle; ippt post retitled to garage-scoped phrasing | Restore old titles (in git history of this file's commit context) |
+
+Notes: the orphan /wi/garage-door-installation-lp-ppc/ (California 916 pool numbers, no form) is NOINDEXED — no organic exposure; flagged to Legit5 to kill or rebuild. Hero review-badge and financing surfacing are DEFERRED follow-ups (Elementor content edits). The /go/* paid LPs are Legit5's GHL funnels (foreign infrastructure) — Twins-side snippets cannot reach them; their broken form (401 to foreign GHL location) is the top Legit5 action item.
