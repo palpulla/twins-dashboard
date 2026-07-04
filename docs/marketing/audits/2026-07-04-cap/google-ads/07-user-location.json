@@ -1,0 +1,53 @@
+[{
+  "results": [
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "metrics": {
+        "clicks": "176",
+        "conversions": 25,
+        "costMicros": "4900252555"
+      },
+      "userLocationView": {
+        "resourceName": "customers/7171993484/userLocationViews/2840~true",
+        "countryCriterionId": "2840"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "metrics": {
+        "clicks": "140",
+        "conversions": 5,
+        "costMicros": "2332310758"
+      },
+      "userLocationView": {
+        "resourceName": "customers/7171993484/userLocationViews/2840~true",
+        "countryCriterionId": "2840"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23785515022",
+        "name": "Garage Doors | Performance Max"
+      },
+      "metrics": {
+        "clicks": "202",
+        "conversions": 23,
+        "costMicros": "621905925"
+      },
+      "userLocationView": {
+        "resourceName": "customers/7171993484/userLocationViews/2840~true",
+        "countryCriterionId": "2840"
+      }
+    }
+  ],
+  "fieldMask": "campaign.name,userLocationView.countryCriterionId,metrics.costMicros,metrics.clicks,metrics.conversions",
+  "requestId": "uLOILcGaBz-vh0VIVgVJsA",
+  "queryResourceConsumption": "18018"
+}
+]

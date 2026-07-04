@@ -1,0 +1,233 @@
+[{
+  "results": [
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/15577420971",
+        "name": "Garage Door Repair Service"
+      },
+      "asset": {
+        "resourceName": "customers/7171993484/assets/51191785980",
+        "type": "CALL",
+        "id": "51191785980"
+      },
+      "campaignAsset": {
+        "resourceName": "customers/7171993484/campaignAssets/15577420971~51191785980~CALL",
+        "status": "ENABLED"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/19179134615",
+        "name": "Garage Doors -  WI"
+      },
+      "asset": {
+        "resourceName": "customers/7171993484/assets/64024509593",
+        "type": "CALL",
+        "id": "64024509593"
+      },
+      "campaignAsset": {
+        "resourceName": "customers/7171993484/campaignAssets/19179134615~64024509593~CALL",
+        "status": "PAUSED"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/21274114503",
+        "name": "Garage Door Installation | Search | Leads"
+      },
+      "asset": {
+        "resourceName": "customers/7171993484/assets/64024509593",
+        "type": "CALL",
+        "id": "64024509593"
+      },
+      "campaignAsset": {
+        "resourceName": "customers/7171993484/campaignAssets/21274114503~64024509593~CALL",
+        "status": "PAUSED"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/21747865831",
+        "name": "Search | Emergency Garage Door Service"
+      },
+      "asset": {
+        "resourceName": "customers/7171993484/assets/64024509593",
+        "type": "CALL",
+        "id": "64024509593"
+      },
+      "campaignAsset": {
+        "resourceName": "customers/7171993484/campaignAssets/21747865831~64024509593~CALL",
+        "status": "PAUSED"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/22158212623",
+        "name": "PMAX | Leads"
+      },
+      "asset": {
+        "resourceName": "customers/7171993484/assets/64024509593",
+        "type": "CALL",
+        "id": "64024509593"
+      },
+      "campaignAsset": {
+        "resourceName": "customers/7171993484/campaignAssets/22158212623~64024509593~CALL",
+        "status": "PAUSED"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/22300452231",
+        "name": "1. PPCF - Search - Max Clicks - General Garage Door - 7 March 2025"
+      },
+      "asset": {
+        "resourceName": "customers/7171993484/assets/64024509593",
+        "type": "CALL",
+        "id": "64024509593"
+      },
+      "campaignAsset": {
+        "resourceName": "customers/7171993484/campaignAssets/22300452231~64024509593~CALL",
+        "status": "PAUSED"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/22307123903",
+        "name": "3. PPCF - Search - Max Clicks - Emergency Garage Door - 7 March 2025"
+      },
+      "asset": {
+        "resourceName": "customers/7171993484/assets/64024509593",
+        "type": "CALL",
+        "id": "64024509593"
+      },
+      "campaignAsset": {
+        "resourceName": "customers/7171993484/campaignAssets/22307123903~64024509593~CALL",
+        "status": "PAUSED"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/22307167151",
+        "name": "2. PPCF - Search - Max Clicks - Door Opener & Spring - 7 March 2025"
+      },
+      "asset": {
+        "resourceName": "customers/7171993484/assets/64024509593",
+        "type": "CALL",
+        "id": "64024509593"
+      },
+      "campaignAsset": {
+        "resourceName": "customers/7171993484/campaignAssets/22307167151~64024509593~CALL",
+        "status": "PAUSED"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/20303427293",
+        "name": "Brand - Twins - Wi"
+      },
+      "asset": {
+        "resourceName": "customers/7171993484/assets/89278409823",
+        "type": "CALL",
+        "id": "89278409823"
+      },
+      "campaignAsset": {
+        "resourceName": "customers/7171993484/campaignAssets/20303427293~89278409823~CALL",
+        "status": "PAUSED"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/20308292614",
+        "name": "Performance Max-1"
+      },
+      "asset": {
+        "resourceName": "customers/7171993484/assets/89278409823",
+        "type": "CALL",
+        "id": "89278409823"
+      },
+      "campaignAsset": {
+        "resourceName": "customers/7171993484/campaignAssets/20308292614~89278409823~CALL",
+        "status": "PAUSED"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/22095429060",
+        "name": "Call Only Ads Campaign"
+      },
+      "asset": {
+        "resourceName": "customers/7171993484/assets/193503582561",
+        "type": "CALL",
+        "id": "193503582561"
+      },
+      "campaignAsset": {
+        "resourceName": "customers/7171993484/campaignAssets/22095429060~193503582561~CALL",
+        "status": "PAUSED"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/22435102743",
+        "name": "Search - Twins Garage Doors (Zory)"
+      },
+      "asset": {
+        "resourceName": "customers/7171993484/assets/224606927492",
+        "type": "CALL",
+        "id": "224606927492"
+      },
+      "campaignAsset": {
+        "resourceName": "customers/7171993484/campaignAssets/22435102743~224606927492~CALL",
+        "status": "PAUSED"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "asset": {
+        "resourceName": "customers/7171993484/assets/352210162789",
+        "type": "CALL",
+        "id": "352210162789"
+      },
+      "campaignAsset": {
+        "resourceName": "customers/7171993484/campaignAssets/23209603182~352210162789~CALL",
+        "status": "ENABLED"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "asset": {
+        "resourceName": "customers/7171993484/assets/352210162789",
+        "type": "CALL",
+        "id": "352210162789"
+      },
+      "campaignAsset": {
+        "resourceName": "customers/7171993484/campaignAssets/23209631247~352210162789~CALL",
+        "status": "ENABLED"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23785515022",
+        "name": "Garage Doors | Performance Max"
+      },
+      "asset": {
+        "resourceName": "customers/7171993484/assets/352210162789",
+        "type": "CALL",
+        "id": "352210162789"
+      },
+      "campaignAsset": {
+        "resourceName": "customers/7171993484/campaignAssets/23785515022~352210162789~CALL",
+        "status": "ENABLED"
+      }
+    }
+  ],
+  "fieldMask": "campaign.name,asset.id,asset.type,campaignAsset.status",
+  "requestId": "nG1kG1k-kIZ2SZpaes4mLg",
+  "queryResourceConsumption": "754"
+}
+]

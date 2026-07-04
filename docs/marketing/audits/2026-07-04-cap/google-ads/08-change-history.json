@@ -1,0 +1,6 @@
+[{
+  "fieldMask": "changeEvent.changeDateTime,changeEvent.changeResourceType,changeEvent.changedFields,changeEvent.userEmail,changeEvent.clientType,campaign.name",
+  "requestId": "5JH-3VFHJj_zfUxGBA3GBQ",
+  "queryResourceConsumption": "1543"
+}
+]

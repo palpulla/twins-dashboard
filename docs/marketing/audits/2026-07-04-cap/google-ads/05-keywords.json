@@ -1,0 +1,1667 @@
+[{
+  "results": [
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827104870",
+        "name": "Fix (BROAD)"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827104870~346354944",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "BROAD",
+          "text": "garage door fix"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827104870~346354944"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827104870",
+        "name": "Fix (BROAD)"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827104870~413168713620",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "BROAD",
+          "text": "local garage door fix"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827104870~413168713620"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827104870",
+        "name": "Fix (BROAD)"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827104870~2418244756774",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "BROAD",
+          "text": "fix my grage door"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827104870~2418244756774"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827104910",
+        "name": "Repair (BROAD)"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827104910~10939731",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "BROAD",
+          "text": "garage door repair"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827104910~10939731"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827104910",
+        "name": "Repair (BROAD)"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827104910~21282950",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "BROAD",
+          "text": "garage door company"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827104910~21282950"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827104910",
+        "name": "Repair (BROAD)"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827104910~107960174",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "BROAD",
+          "text": "garage door service"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827104910~107960174"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827104910",
+        "name": "Repair (BROAD)"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827104910~320327002",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "BROAD",
+          "text": "garage door repair service"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827104910~320327002"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827104910",
+        "name": "Repair (BROAD)"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827104910~1743420331",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "BROAD",
+          "text": "garage door service and repair"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827104910~1743420331"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827104910",
+        "name": "Repair (BROAD)"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827104910~1831568088",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "BROAD",
+          "text": "garage door repair company"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827104910~1831568088"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827104910",
+        "name": "Repair (BROAD)"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827104910~39846868521",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "BROAD",
+          "text": "garage door repair near me"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827104910~39846868521"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827104910",
+        "name": "Repair (BROAD)"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827104910~2446629311926",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "BROAD",
+          "text": "garage door repair dane county"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827104910~2446629311926"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827104950",
+        "name": "Fix Garage Door | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827104950~719720718",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door fix"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827104950~719720718"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827104950",
+        "name": "Fix Garage Door | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827104950~334148393641",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "fix garage door near me"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827104950~334148393641"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827104950",
+        "name": "Fix Garage Door | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827104950~661111066965",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "local garage door fix"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827104950~661111066965"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827104950",
+        "name": "Fix Garage Door | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827104950~2422018382141",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "fix my grage door"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827104950~2422018382141"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827105110",
+        "name": "Garage Door Repair | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827105110~63226200",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door repair"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827105110~63226200"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827105110",
+        "name": "Garage Door Repair | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827105110~367750788",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door service"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827105110~367750788"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827105110",
+        "name": "Garage Door Repair | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827105110~426709413",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door company"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827105110~426709413"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827105110",
+        "name": "Garage Door Repair | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827105110~1515051087",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door repair service"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827105110~1515051087"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827105110",
+        "name": "Garage Door Repair | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827105110~1837319688",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door service and repair"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827105110~1837319688"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827105110",
+        "name": "Garage Door Repair | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827105110~2796469390",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door cable repair"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827105110~2796469390"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827105110",
+        "name": "Garage Door Repair | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827105110~2802246208",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "roll up garage door repair"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827105110~2802246208"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827105110",
+        "name": "Garage Door Repair | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827105110~3603758570",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door repair company"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827105110~3603758570"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827105110",
+        "name": "Garage Door Repair | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827105110~4271400890",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "emergency garage door repair"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827105110~4271400890"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827105110",
+        "name": "Garage Door Repair | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827105110~11953693567",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door cable repair services"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827105110~11953693567"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827105110",
+        "name": "Garage Door Repair | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827105110~43673755118",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door repair near me"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827105110~43673755118"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827105110",
+        "name": "Garage Door Repair | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827105110~63059264596",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door company near me"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827105110~63059264596"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827105110",
+        "name": "Garage Door Repair | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827105110~298259265355",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "emergency garage door repair near me"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827105110~298259265355"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827105110",
+        "name": "Garage Door Repair | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827105110~411433959516",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "roll up garage door repair near me"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827105110~411433959516"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827105110",
+        "name": "Garage Door Repair | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827105110~639335027010",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "roll up garage door repair company"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827105110~639335027010"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/191827105110",
+        "name": "Garage Door Repair | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/191827105110~2446629311966",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door repair dane county"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/191827105110~2446629311966"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/197451727804",
+        "name": "Spring Repair & Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/197451727804~289545881",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door extension springs"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/197451727804~289545881"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/197451727804",
+        "name": "Spring Repair & Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/197451727804~289546451",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "fix garage door spring"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/197451727804~289546451"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/197451727804",
+        "name": "Spring Repair & Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/197451727804~348487778",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door torsion spring"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/197451727804~348487778"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/197451727804",
+        "name": "Spring Repair & Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/197451727804~426710643",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "broken garage door spring"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/197451727804~426710643"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/197451727804",
+        "name": "Spring Repair & Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/197451727804~555760432",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door torsion spring replacement"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/197451727804~555760432"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/197451727804",
+        "name": "Spring Repair & Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/197451727804~719721138",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door spring repair"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/197451727804~719721138"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/197451727804",
+        "name": "Spring Repair & Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/197451727804~1844109421",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "broken garage spring"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/197451727804~1844109421"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/197451727804",
+        "name": "Spring Repair & Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/197451727804~2611612310",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage torsion spring"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/197451727804~2611612310"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/197451727804",
+        "name": "Spring Repair & Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/197451727804~2978997950",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage spring repair"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/197451727804~2978997950"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/197451727804",
+        "name": "Spring Repair & Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/197451727804~4653956450",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door spring cost"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/197451727804~4653956450"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/197451727804",
+        "name": "Spring Repair & Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/197451727804~4653956690",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door spring repair cost"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/197451727804~4653956690"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/197451727804",
+        "name": "Spring Repair & Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/197451727804~6315455003",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door torsion spring replacement cost"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/197451727804~6315455003"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/197451727804",
+        "name": "Spring Repair & Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/197451727804~13735563412",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "cost to repair garage door spring"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/197451727804~13735563412"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/197451727804",
+        "name": "Spring Repair & Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/197451727804~299900009650",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door torsion spring near me"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/197451727804~299900009650"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/197451727804",
+        "name": "Spring Repair & Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/197451727804~310716378925",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door spring repair near me"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/197451727804~310716378925"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/197451727804",
+        "name": "Spring Repair & Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/197451727804~324512722987",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage spring repair near me"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/197451727804~324512722987"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/197451727804",
+        "name": "Spring Repair & Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/197451727804~327288790004",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door tension springs"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/197451727804~327288790004"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/197451727804",
+        "name": "Spring Repair & Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/197451727804~391380765819",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door spring replacement cost near me"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/197451727804~391380765819"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/197451727804",
+        "name": "Spring Repair & Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/197451727804~871615975328",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "repair spring garage door"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/197451727804~871615975328"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/197451727844",
+        "name": "Garage Door Opener Repair | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/197451727844~125315025",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door opener repair"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/197451727844~125315025"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/197451727844",
+        "name": "Garage Door Opener Repair | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/197451727844~65599222291",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door opener repair near me"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/197451727844~65599222291"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502644",
+        "name": "Installation (BROAD)"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502644~10939701",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "BROAD",
+          "text": "garage door installation"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502644~10939701"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502644",
+        "name": "Installation (BROAD)"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502644~662303741",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "BROAD",
+          "text": "automatic garage door installation"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502644~662303741"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502644",
+        "name": "Installation (BROAD)"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502644~1637216701",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "BROAD",
+          "text": "garage door installation companies"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502644~1637216701"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502684",
+        "name": "Replacement (BROAD)"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502684~26696593",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "BROAD",
+          "text": "garage door replacement"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502684~26696593"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502684",
+        "name": "Replacement (BROAD)"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502684~1892315975",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "BROAD",
+          "text": "garage door replacement service"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502684~1892315975"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502684",
+        "name": "Replacement (BROAD)"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502684~386610512844",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "BROAD",
+          "text": "local garage door replacement"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502684~386610512844"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502844",
+        "name": "Garage Door Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502844~310284447",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door replacement"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502844~310284447"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502844",
+        "name": "Garage Door Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502844~11527667697",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door replacement service"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502844~11527667697"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502844",
+        "name": "Garage Door Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502844~301400745782",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door replacement near me"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502844~301400745782"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502844",
+        "name": "Garage Door Replacement | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502844~335699326787",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "local garage door replacement"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502844~335699326787"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502884",
+        "name": "Garage Door Installation | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502884~155586113",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door installation"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502884~155586113"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502884",
+        "name": "Garage Door Installation | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502884~2148889698",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door installation cost"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502884~2148889698"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502884",
+        "name": "Garage Door Installation | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502884~2802290728",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "new garage door installation"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502884~2802290728"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502884",
+        "name": "Garage Door Installation | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502884~4856122283",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door installation companies"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502884~4856122283"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502884",
+        "name": "Garage Door Installation | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502884~5180638050",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "automatic garage door installation"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502884~5180638050"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502884",
+        "name": "Garage Door Installation | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502884~75922778775",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door installers near me"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502884~75922778775"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502884",
+        "name": "Garage Door Installation | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502884~133593712825",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door install near me"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502884~133593712825"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502884",
+        "name": "Garage Door Installation | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502884~296756212683",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door installer near me"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502884~296756212683"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502884",
+        "name": "Garage Door Installation | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502884~299299353319",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "new garage door installation near me"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502884~299299353319"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502884",
+        "name": "Garage Door Installation | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502884~306019026410",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door opener installation companies"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502884~306019026410"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502884",
+        "name": "Garage Door Installation | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502884~308823201017",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "new garage door installed"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502884~308823201017"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502884",
+        "name": "Garage Door Installation | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502884~319299761728",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "new garage door install"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502884~319299761728"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502884",
+        "name": "Garage Door Installation | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502884~456603921797",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door installation cost near me"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502884~456603921797"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502884",
+        "name": "Garage Door Installation | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502884~488571292752",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "garage door install cost"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502884~488571292752"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502884",
+        "name": "Garage Door Installation | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502884~518603339483",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "who installs garage doors near me"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502884~518603339483"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502884",
+        "name": "Garage Door Installation | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502884~856908679119",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "new garage door install near me"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502884~856908679119"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "adGroup": {
+        "resourceName": "customers/7171993484/adGroups/189554502884",
+        "name": "Garage Door Installation | Phr"
+      },
+      "adGroupCriterion": {
+        "resourceName": "customers/7171993484/adGroupCriteria/189554502884~2203550990533",
+        "status": "ENABLED",
+        "keyword": {
+          "matchType": "PHRASE",
+          "text": "new garage door installed near me"
+        }
+      },
+      "keywordView": {
+        "resourceName": "customers/7171993484/keywordViews/189554502884~2203550990533"
+      }
+    }
+  ],
+  "fieldMask": "campaign.name,adGroup.name,adGroupCriterion.keyword.text,adGroupCriterion.keyword.matchType,adGroupCriterion.status",
+  "requestId": "76ZFP7lDuQIzRBaZIrcdCg",
+  "queryResourceConsumption": "1860"
+}
+]

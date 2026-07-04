@@ -1,0 +1,476 @@
+[{
+  "results": [
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/628",
+        "status": "ENABLED",
+        "type": "UNKNOWN",
+        "category": "PHONE_CALL_LEAD",
+        "countingType": "MANY_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_ADS_LAST_CLICK"
+        },
+        "id": "628",
+        "name": "local_services_phone_lead",
+        "includeInConversionsMetric": true,
+        "viewThroughLookbackWindowDays": "30",
+        "origin": "UNKNOWN",
+        "primaryForGoal": true
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/827163341",
+        "status": "ENABLED",
+        "type": "SMART_CAMPAIGN_MAP_CLICKS_TO_CALL",
+        "category": "CONTACT",
+        "countingType": "MANY_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_ADS_LAST_CLICK"
+        },
+        "id": "827163341",
+        "name": "Smart campaign map clicks to call",
+        "includeInConversionsMetric": false,
+        "viewThroughLookbackWindowDays": "30",
+        "origin": "GOOGLE_HOSTED",
+        "primaryForGoal": true
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/827163575",
+        "status": "ENABLED",
+        "type": "SMART_CAMPAIGN_AD_CLICKS_TO_CALL",
+        "category": "CONTACT",
+        "countingType": "MANY_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_ADS_LAST_CLICK"
+        },
+        "id": "827163575",
+        "name": "Smart campaign ad clicks to call",
+        "includeInConversionsMetric": false,
+        "viewThroughLookbackWindowDays": "30",
+        "origin": "CALL_FROM_ADS",
+        "primaryForGoal": true
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/827917858",
+        "status": "ENABLED",
+        "type": "SMART_CAMPAIGN_MAP_DIRECTIONS",
+        "category": "GET_DIRECTIONS",
+        "countingType": "MANY_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_ADS_LAST_CLICK"
+        },
+        "id": "827917858",
+        "name": "Smart campaign map directions",
+        "includeInConversionsMetric": false,
+        "viewThroughLookbackWindowDays": "30",
+        "origin": "GOOGLE_HOSTED",
+        "primaryForGoal": true
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/827917861",
+        "status": "ENABLED",
+        "type": "GOOGLE_HOSTED",
+        "category": "GET_DIRECTIONS",
+        "countingType": "MANY_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_ADS_LAST_CLICK"
+        },
+        "id": "827917861",
+        "name": "Local actions - Directions",
+        "includeInConversionsMetric": false,
+        "viewThroughLookbackWindowDays": "7",
+        "origin": "GOOGLE_HOSTED",
+        "primaryForGoal": true
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/827918533",
+        "status": "ENABLED",
+        "type": "SMART_CAMPAIGN_TRACKED_CALLS",
+        "category": "PHONE_CALL_LEAD",
+        "countingType": "ONE_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_ADS_LAST_CLICK"
+        },
+        "id": "827918533",
+        "name": "Calls from Smart Campaign Ads",
+        "includeInConversionsMetric": true,
+        "viewThroughLookbackWindowDays": "30",
+        "origin": "CALL_FROM_ADS",
+        "primaryForGoal": true
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/827954841",
+        "status": "ENABLED",
+        "type": "GOOGLE_HOSTED",
+        "category": "CONTACT",
+        "countingType": "MANY_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_ADS_LAST_CLICK"
+        },
+        "id": "827954841",
+        "name": "Clicks to call",
+        "includeInConversionsMetric": false,
+        "viewThroughLookbackWindowDays": "7",
+        "origin": "GOOGLE_HOSTED",
+        "primaryForGoal": true
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/6451941259",
+        "status": "HIDDEN",
+        "type": "GOOGLE_ANALYTICS_4_PURCHASE",
+        "category": "PURCHASE",
+        "countingType": "MANY_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "UNKNOWN"
+        },
+        "id": "6451941259",
+        "name": "Madison - Twins Garage Doors (web) purchase",
+        "includeInConversionsMetric": false,
+        "viewThroughLookbackWindowDays": "1",
+        "origin": "WEBSITE",
+        "primaryForGoal": false
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/6452130637",
+        "status": "ENABLED",
+        "type": "UNKNOWN",
+        "category": "SUBMIT_LEAD_FORM",
+        "countingType": "ONE_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "UNKNOWN"
+        },
+        "id": "6452130637",
+        "name": "Madison - Twins Garage Doors (web) generate_lead",
+        "includeInConversionsMetric": false,
+        "viewThroughLookbackWindowDays": "1",
+        "origin": "WEBSITE",
+        "primaryForGoal": false
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/6598446845",
+        "status": "HIDDEN",
+        "type": "GOOGLE_ANALYTICS_4_PURCHASE",
+        "category": "PURCHASE",
+        "countingType": "MANY_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_SEARCH_ATTRIBUTION_DATA_DRIVEN"
+        },
+        "id": "6598446845",
+        "name": "Twins Garage Doors (web) purchase",
+        "includeInConversionsMetric": false,
+        "viewThroughLookbackWindowDays": "1",
+        "origin": "WEBSITE",
+        "primaryForGoal": false
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/6598468995",
+        "status": "HIDDEN",
+        "type": "GOOGLE_ANALYTICS_4_PURCHASE",
+        "category": "PURCHASE",
+        "countingType": "MANY_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_SEARCH_ATTRIBUTION_DATA_DRIVEN"
+        },
+        "id": "6598468995",
+        "name": "Lexington - Twings Garage Doors (web) purchase",
+        "includeInConversionsMetric": false,
+        "viewThroughLookbackWindowDays": "1",
+        "origin": "WEBSITE",
+        "primaryForGoal": false
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/6678399596",
+        "status": "HIDDEN",
+        "type": "GOOGLE_ANALYTICS_4_CUSTOM",
+        "category": "PAGE_VIEW",
+        "countingType": "MANY_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_SEARCH_ATTRIBUTION_DATA_DRIVEN"
+        },
+        "id": "6678399596",
+        "name": "Lexington - Twings Garage Doors (web) generate_lead",
+        "includeInConversionsMetric": false,
+        "viewThroughLookbackWindowDays": "1",
+        "origin": "WEBSITE",
+        "primaryForGoal": false
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/6686631059",
+        "status": "ENABLED",
+        "type": "GOOGLE_HOSTED",
+        "category": "ENGAGEMENT",
+        "countingType": "MANY_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_ADS_LAST_CLICK"
+        },
+        "id": "6686631059",
+        "name": "Local actions - Other engagements",
+        "includeInConversionsMetric": false,
+        "viewThroughLookbackWindowDays": "7",
+        "origin": "GOOGLE_HOSTED",
+        "primaryForGoal": true
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/6686635661",
+        "status": "ENABLED",
+        "type": "GOOGLE_HOSTED",
+        "category": "PAGE_VIEW",
+        "countingType": "MANY_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_ADS_LAST_CLICK"
+        },
+        "id": "6686635661",
+        "name": "Local actions - Website visits",
+        "includeInConversionsMetric": false,
+        "viewThroughLookbackWindowDays": "7",
+        "origin": "GOOGLE_HOSTED",
+        "primaryForGoal": true
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/6808164230",
+        "status": "ENABLED",
+        "type": "WEBPAGE",
+        "category": "SUBMIT_LEAD_FORM",
+        "countingType": "ONE_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_SEARCH_ATTRIBUTION_DATA_DRIVEN"
+        },
+        "id": "6808164230",
+        "name": "Get a Free Quote",
+        "includeInConversionsMetric": true,
+        "viewThroughLookbackWindowDays": "30",
+        "origin": "WEBSITE",
+        "primaryForGoal": true
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/6837200352",
+        "status": "ENABLED",
+        "type": "UPLOAD_CLICKS",
+        "category": "CONVERTED_LEAD",
+        "countingType": "ONE_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_SEARCH_ATTRIBUTION_DATA_DRIVEN"
+        },
+        "id": "6837200352",
+        "name": "GHL Website Number Pool Phone Calls",
+        "includeInConversionsMetric": true,
+        "viewThroughLookbackWindowDays": "1",
+        "origin": "WEBSITE",
+        "primaryForGoal": true
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/6837206136",
+        "status": "ENABLED",
+        "type": "UPLOAD_CLICKS",
+        "category": "CONVERTED_LEAD",
+        "countingType": "ONE_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_SEARCH_ATTRIBUTION_DATA_DRIVEN"
+        },
+        "id": "6837206136",
+        "name": "PPC Chat Lead",
+        "includeInConversionsMetric": true,
+        "viewThroughLookbackWindowDays": "1",
+        "origin": "WEBSITE",
+        "primaryForGoal": true
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/7021466111",
+        "status": "ENABLED",
+        "type": "LEAD_FORM_SUBMIT",
+        "category": "SUBMIT_LEAD_FORM",
+        "countingType": "ONE_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_ADS_LAST_CLICK"
+        },
+        "id": "7021466111",
+        "name": "Lead form - Submit",
+        "includeInConversionsMetric": true,
+        "viewThroughLookbackWindowDays": "30",
+        "origin": "GOOGLE_HOSTED",
+        "primaryForGoal": true
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/7365880300",
+        "status": "ENABLED",
+        "type": "AD_CALL",
+        "category": "PHONE_CALL_LEAD",
+        "countingType": "ONE_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_SEARCH_ATTRIBUTION_DATA_DRIVEN"
+        },
+        "id": "7365880300",
+        "name": "Calls from ads - Legit5",
+        "includeInConversionsMetric": true,
+        "viewThroughLookbackWindowDays": "30",
+        "origin": "CALL_FROM_ADS",
+        "primaryForGoal": true
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/7366050606",
+        "status": "ENABLED",
+        "type": "WEBPAGE",
+        "category": "SUBMIT_LEAD_FORM",
+        "countingType": "ONE_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_SEARCH_ATTRIBUTION_DATA_DRIVEN"
+        },
+        "id": "7366050606",
+        "name": "Event Form Completion",
+        "includeInConversionsMetric": true,
+        "viewThroughLookbackWindowDays": "1",
+        "origin": "WEBSITE",
+        "primaryForGoal": true
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/7601588148",
+        "status": "ENABLED",
+        "type": "UPLOAD_CLICKS",
+        "category": "QUALIFIED_LEAD",
+        "countingType": "MANY_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_SEARCH_ATTRIBUTION_DATA_DRIVEN"
+        },
+        "id": "7601588148",
+        "name": "Calls from PPC Pool",
+        "includeInConversionsMetric": true,
+        "viewThroughLookbackWindowDays": "1",
+        "origin": "WEBSITE",
+        "primaryForGoal": true
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/7601613274",
+        "status": "ENABLED",
+        "type": "UPLOAD_CLICKS",
+        "category": "CONVERTED_LEAD",
+        "countingType": "MANY_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_SEARCH_ATTRIBUTION_DATA_DRIVEN"
+        },
+        "id": "7601613274",
+        "name": "Zapier",
+        "includeInConversionsMetric": true,
+        "viewThroughLookbackWindowDays": "1",
+        "origin": "WEBSITE",
+        "primaryForGoal": true
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/7602286979",
+        "status": "ENABLED",
+        "type": "WEBPAGE",
+        "category": "SUBMIT_LEAD_FORM",
+        "countingType": "ONE_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_SEARCH_ATTRIBUTION_DATA_DRIVEN"
+        },
+        "id": "7602286979",
+        "name": "GHL PPC Form Submit",
+        "includeInConversionsMetric": true,
+        "viewThroughLookbackWindowDays": "1",
+        "origin": "WEBSITE",
+        "primaryForGoal": true
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/7635712753",
+        "status": "ENABLED",
+        "type": "WEBPAGE",
+        "category": "SUBMIT_LEAD_FORM",
+        "countingType": "ONE_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_SEARCH_ATTRIBUTION_DATA_DRIVEN"
+        },
+        "id": "7635712753",
+        "name": "New Submit Lead Form",
+        "includeInConversionsMetric": true,
+        "viewThroughLookbackWindowDays": "30",
+        "origin": "WEBSITE",
+        "primaryForGoal": true
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/7635727417",
+        "status": "ENABLED",
+        "type": "CLICK_TO_CALL",
+        "category": "PHONE_CALL_LEAD",
+        "countingType": "ONE_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_SEARCH_ATTRIBUTION_DATA_DRIVEN"
+        },
+        "id": "7635727417",
+        "name": "Click to call",
+        "includeInConversionsMetric": true,
+        "viewThroughLookbackWindowDays": "1",
+        "origin": "CALL_FROM_ADS",
+        "primaryForGoal": true
+      }
+    },
+    {
+      "conversionAction": {
+        "resourceName": "customers/7171993484/conversionActions/7659682777",
+        "status": "ENABLED",
+        "type": "GOOGLE_HOSTED",
+        "category": "PAGE_VIEW",
+        "countingType": "MANY_PER_CLICK",
+        "attributionModelSettings": {
+          "attributionModel": "GOOGLE_ADS_LAST_CLICK"
+        },
+        "id": "7659682777",
+        "name": "Local actions - Menu views",
+        "includeInConversionsMetric": false,
+        "viewThroughLookbackWindowDays": "7",
+        "origin": "GOOGLE_HOSTED",
+        "primaryForGoal": true
+      }
+    }
+  ],
+  "fieldMask": "conversionAction.id,conversionAction.name,conversionAction.category,conversionAction.type,conversionAction.status,conversionAction.origin,conversionAction.primaryForGoal,conversionAction.countingType,conversionAction.includeInConversionsMetric,conversionAction.attributionModelSettings.attributionModel,conversionAction.viewThroughLookbackWindowDays",
+  "requestId": "mw7dtgea7CDnF_79wF72Jg",
+  "queryResourceConsumption": "737"
+}
+]

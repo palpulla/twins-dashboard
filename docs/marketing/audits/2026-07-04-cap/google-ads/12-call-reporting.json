@@ -1,0 +1,17 @@
+[{
+  "results": [
+    {
+      "customer": {
+        "resourceName": "customers/7171993484",
+        "callReportingSetting": {
+          "callReportingEnabled": true,
+          "callConversionReportingEnabled": true
+        }
+      }
+    }
+  ],
+  "fieldMask": "customer.callReportingSetting.callReportingEnabled,customer.callReportingSetting.callConversionReportingEnabled",
+  "requestId": "Qrxva3F4cYA8t2f9XPuQ5Q",
+  "queryResourceConsumption": "40"
+}
+]

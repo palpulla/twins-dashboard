@@ -1,0 +1,359 @@
+[{
+  "results": [
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/15577420971",
+        "status": "PAUSED",
+        "advertisingChannelType": "SMART",
+        "biddingStrategyType": "TARGET_SPEND",
+        "geoTargetTypeSetting": {
+          "positiveGeoTargetType": "PRESENCE",
+          "negativeGeoTargetType": "PRESENCE"
+        },
+        "name": "Garage Door Repair Service",
+        "id": "15577420971"
+      },
+      "campaignBudget": {
+        "resourceName": "customers/7171993484/campaignBudgets/10049355320",
+        "id": "10049355320",
+        "amountMicros": "25400000"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/15828180893",
+        "status": "PAUSED",
+        "advertisingChannelType": "LOCAL_SERVICES",
+        "biddingStrategyType": "MAXIMIZE_CONVERSIONS",
+        "geoTargetTypeSetting": {
+          "positiveGeoTargetType": "SEARCH_INTEREST",
+          "negativeGeoTargetType": "PRESENCE_OR_INTEREST"
+        },
+        "name": "LocalServicesCampaign:SystemGenerated:0005d5358fdad111",
+        "id": "15828180893"
+      },
+      "campaignBudget": {
+        "resourceName": "customers/7171993484/campaignBudgets/10168783847",
+        "id": "10168783847",
+        "amountMicros": "142860000"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/19179134615",
+        "status": "PAUSED",
+        "advertisingChannelType": "SEARCH",
+        "biddingStrategyType": "MAXIMIZE_CONVERSIONS",
+        "maximizeConversions": {
+          "targetCpaMicros": "270000000"
+        },
+        "geoTargetTypeSetting": {
+          "positiveGeoTargetType": "PRESENCE",
+          "negativeGeoTargetType": "PRESENCE"
+        },
+        "name": "Garage Doors -  WI",
+        "id": "19179134615"
+      },
+      "campaignBudget": {
+        "resourceName": "customers/7171993484/campaignBudgets/12097523743",
+        "id": "12097523743",
+        "amountMicros": "100000000"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/20303427293",
+        "status": "PAUSED",
+        "advertisingChannelType": "SEARCH",
+        "biddingStrategyType": "MAXIMIZE_CONVERSIONS",
+        "geoTargetTypeSetting": {
+          "positiveGeoTargetType": "PRESENCE_OR_INTEREST",
+          "negativeGeoTargetType": "PRESENCE"
+        },
+        "name": "Brand - Twins - Wi",
+        "id": "20303427293"
+      },
+      "campaignBudget": {
+        "resourceName": "customers/7171993484/campaignBudgets/12724516009",
+        "id": "12724516009",
+        "amountMicros": "40000000"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/20308292614",
+        "status": "PAUSED",
+        "advertisingChannelType": "PERFORMANCE_MAX",
+        "biddingStrategyType": "MAXIMIZE_CONVERSIONS",
+        "geoTargetTypeSetting": {
+          "positiveGeoTargetType": "PRESENCE_OR_INTEREST",
+          "negativeGeoTargetType": "PRESENCE"
+        },
+        "name": "Performance Max-1",
+        "id": "20308292614"
+      },
+      "campaignBudget": {
+        "resourceName": "customers/7171993484/campaignBudgets/12711082055",
+        "id": "12711082055",
+        "amountMicros": "15000000"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/21274114503",
+        "status": "PAUSED",
+        "advertisingChannelType": "SEARCH",
+        "biddingStrategyType": "MAXIMIZE_CONVERSIONS",
+        "geoTargetTypeSetting": {
+          "positiveGeoTargetType": "PRESENCE",
+          "negativeGeoTargetType": "PRESENCE"
+        },
+        "name": "Garage Door Installation | Search | Leads",
+        "id": "21274114503"
+      },
+      "campaignBudget": {
+        "resourceName": "customers/7171993484/campaignBudgets/13573288491",
+        "id": "13573288491",
+        "amountMicros": "20000000"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/21547836653",
+        "status": "PAUSED",
+        "advertisingChannelType": "SEARCH",
+        "biddingStrategyType": "TARGET_SPEND",
+        "geoTargetTypeSetting": {
+          "positiveGeoTargetType": "PRESENCE",
+          "negativeGeoTargetType": "PRESENCE"
+        },
+        "name": "Emergency Garage Door Repair",
+        "id": "21547836653"
+      },
+      "campaignBudget": {
+        "resourceName": "customers/7171993484/campaignBudgets/13811551888",
+        "id": "13811551888",
+        "amountMicros": "30000000"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/21747865831",
+        "status": "PAUSED",
+        "advertisingChannelType": "SEARCH",
+        "biddingStrategyType": "MAXIMIZE_CONVERSIONS",
+        "maximizeConversions": {
+          "targetCpaMicros": "260000000"
+        },
+        "geoTargetTypeSetting": {
+          "positiveGeoTargetType": "PRESENCE",
+          "negativeGeoTargetType": "PRESENCE"
+        },
+        "name": "Search | Emergency Garage Door Service",
+        "id": "21747865831"
+      },
+      "campaignBudget": {
+        "resourceName": "customers/7171993484/campaignBudgets/13944055847",
+        "id": "13944055847",
+        "amountMicros": "50000000"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/22095429060",
+        "status": "PAUSED",
+        "advertisingChannelType": "SEARCH",
+        "biddingStrategyType": "TARGET_SPEND",
+        "geoTargetTypeSetting": {
+          "positiveGeoTargetType": "PRESENCE",
+          "negativeGeoTargetType": "PRESENCE"
+        },
+        "name": "Call Only Ads Campaign",
+        "id": "22095429060"
+      },
+      "campaignBudget": {
+        "resourceName": "customers/7171993484/campaignBudgets/14231447725",
+        "id": "14231447725",
+        "amountMicros": "120000000"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/22158212623",
+        "status": "PAUSED",
+        "advertisingChannelType": "PERFORMANCE_MAX",
+        "biddingStrategyType": "MAXIMIZE_CONVERSIONS",
+        "maximizeConversions": {
+          "targetCpaMicros": "160000000"
+        },
+        "geoTargetTypeSetting": {
+          "positiveGeoTargetType": "PRESENCE_OR_INTEREST",
+          "negativeGeoTargetType": "PRESENCE"
+        },
+        "name": "PMAX | Leads",
+        "id": "22158212623"
+      },
+      "campaignBudget": {
+        "resourceName": "customers/7171993484/campaignBudgets/14268890599",
+        "id": "14268890599",
+        "amountMicros": "60000000"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/22161596800",
+        "status": "PAUSED",
+        "advertisingChannelType": "DISPLAY",
+        "biddingStrategyType": "MANUAL_CPM",
+        "geoTargetTypeSetting": {
+          "positiveGeoTargetType": "PRESENCE",
+          "negativeGeoTargetType": "PRESENCE"
+        },
+        "name": "Display | Remarketing",
+        "id": "22161596800"
+      },
+      "campaignBudget": {
+        "resourceName": "customers/7171993484/campaignBudgets/14264457747",
+        "id": "14264457747",
+        "amountMicros": "5000000"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/22300452231",
+        "status": "PAUSED",
+        "advertisingChannelType": "SEARCH",
+        "biddingStrategyType": "TARGET_SPEND",
+        "geoTargetTypeSetting": {
+          "positiveGeoTargetType": "PRESENCE",
+          "negativeGeoTargetType": "PRESENCE"
+        },
+        "name": "1. PPCF - Search - Max Clicks - General Garage Door - 7 March 2025",
+        "id": "22300452231"
+      },
+      "campaignBudget": {
+        "resourceName": "customers/7171993484/campaignBudgets/14370649400",
+        "id": "14370649400",
+        "amountMicros": "60000000"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/22307123903",
+        "status": "PAUSED",
+        "advertisingChannelType": "SEARCH",
+        "biddingStrategyType": "TARGET_SPEND",
+        "geoTargetTypeSetting": {
+          "positiveGeoTargetType": "PRESENCE",
+          "negativeGeoTargetType": "PRESENCE"
+        },
+        "name": "3. PPCF - Search - Max Clicks - Emergency Garage Door - 7 March 2025",
+        "id": "22307123903"
+      },
+      "campaignBudget": {
+        "resourceName": "customers/7171993484/campaignBudgets/14383900453",
+        "id": "14383900453",
+        "amountMicros": "60000000"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/22307167151",
+        "status": "PAUSED",
+        "advertisingChannelType": "SEARCH",
+        "biddingStrategyType": "TARGET_SPEND",
+        "geoTargetTypeSetting": {
+          "positiveGeoTargetType": "PRESENCE",
+          "negativeGeoTargetType": "PRESENCE"
+        },
+        "name": "2. PPCF - Search - Max Clicks - Door Opener & Spring - 7 March 2025",
+        "id": "22307167151"
+      },
+      "campaignBudget": {
+        "resourceName": "customers/7171993484/campaignBudgets/14377257048",
+        "id": "14377257048",
+        "amountMicros": "60000000"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/22435102743",
+        "status": "PAUSED",
+        "advertisingChannelType": "SEARCH",
+        "biddingStrategyType": "MAXIMIZE_CONVERSIONS",
+        "geoTargetTypeSetting": {
+          "positiveGeoTargetType": "PRESENCE",
+          "negativeGeoTargetType": "PRESENCE"
+        },
+        "name": "Search - Twins Garage Doors (Zory)",
+        "id": "22435102743"
+      },
+      "campaignBudget": {
+        "resourceName": "customers/7171993484/campaignBudgets/14490731890",
+        "id": "14490731890",
+        "amountMicros": "90000000"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "status": "ENABLED",
+        "advertisingChannelType": "SEARCH",
+        "biddingStrategyType": "MAXIMIZE_CONVERSIONS",
+        "geoTargetTypeSetting": {
+          "positiveGeoTargetType": "PRESENCE",
+          "negativeGeoTargetType": "PRESENCE"
+        },
+        "name": "Garage Door Repair | Search",
+        "id": "23209603182"
+      },
+      "campaignBudget": {
+        "resourceName": "customers/7171993484/campaignBudgets/15103047247",
+        "id": "15103047247",
+        "amountMicros": "80000000"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "status": "ENABLED",
+        "advertisingChannelType": "SEARCH",
+        "biddingStrategyType": "MAXIMIZE_CONVERSIONS",
+        "geoTargetTypeSetting": {
+          "positiveGeoTargetType": "PRESENCE",
+          "negativeGeoTargetType": "PRESENCE"
+        },
+        "name": "Garage Door Installation | Search",
+        "id": "23209631247"
+      },
+      "campaignBudget": {
+        "resourceName": "customers/7171993484/campaignBudgets/15103082338",
+        "id": "15103082338",
+        "amountMicros": "38000000"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23785515022",
+        "status": "ENABLED",
+        "advertisingChannelType": "PERFORMANCE_MAX",
+        "biddingStrategyType": "MAXIMIZE_CONVERSIONS",
+        "geoTargetTypeSetting": {
+          "positiveGeoTargetType": "PRESENCE",
+          "negativeGeoTargetType": "PRESENCE"
+        },
+        "name": "Garage Doors | Performance Max",
+        "id": "23785515022"
+      },
+      "campaignBudget": {
+        "resourceName": "customers/7171993484/campaignBudgets/15525525084",
+        "id": "15525525084",
+        "amountMicros": "10000000"
+      }
+    }
+  ],
+  "fieldMask": "campaign.id,campaign.name,campaign.status,campaign.advertisingChannelType,campaign.biddingStrategyType,campaign.maximizeConversions.targetCpaMicros,campaign.geoTargetTypeSetting.positiveGeoTargetType,campaign.geoTargetTypeSetting.negativeGeoTargetType,campaignBudget.id,campaignBudget.amountMicros",
+  "requestId": "b7yhtYOvmPNSErHLWzRguA",
+  "queryResourceConsumption": "186"
+}
+]

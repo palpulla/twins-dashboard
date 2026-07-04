@@ -1,0 +1,610 @@
+[{
+  "results": [
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 4
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "Calls from PPC Pool"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "metrics": {
+        "conversions": 10,
+        "allConversions": 10
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "Calls from ads - Legit5"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 4
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "Clicks to call"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "metrics": {
+        "conversions": 1,
+        "allConversions": 1
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "GDML | TGD | Primary Lead Form"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 1
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "GHL Ad Call Extensions Phone Call"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "metrics": {
+        "conversions": 2,
+        "allConversions": 2
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "GHL PPC Form Submit"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "metrics": {
+        "conversions": 1,
+        "allConversions": 1
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "GHL Website Number Pool Phone Calls"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 11
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "Local actions - Directions"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 13
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "Local actions - Other engagements"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 5
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "Local actions - Website visits"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 1
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "Madison - Twins Garage Doors (web) generate_lead"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 1
+      },
+      "segments": {
+        "month": "2026-06-01",
+        "conversionActionName": "Calls from PPC Pool"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "metrics": {
+        "conversions": 10,
+        "allConversions": 10
+      },
+      "segments": {
+        "month": "2026-06-01",
+        "conversionActionName": "Calls from ads - Legit5"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 2
+      },
+      "segments": {
+        "month": "2026-06-01",
+        "conversionActionName": "Clicks to call"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "metrics": {
+        "conversions": 1,
+        "allConversions": 1
+      },
+      "segments": {
+        "month": "2026-06-01",
+        "conversionActionName": "GHL Website Number Pool Phone Calls"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 3
+      },
+      "segments": {
+        "month": "2026-06-01",
+        "conversionActionName": "Local actions - Directions"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 4
+      },
+      "segments": {
+        "month": "2026-06-01",
+        "conversionActionName": "Local actions - Other engagements"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 7
+      },
+      "segments": {
+        "month": "2026-06-01",
+        "conversionActionName": "Local actions - Website visits"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "metrics": {
+        "conversions": 2,
+        "allConversions": 2
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "Calls from ads - Legit5"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "metrics": {
+        "conversions": 1,
+        "allConversions": 1
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "GHL PPC Form Submit"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "metrics": {
+        "conversions": 2,
+        "allConversions": 2
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "GHL Website Number Pool Phone Calls"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 13
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "Local actions - Other engagements"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 4
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "Local actions - Website visits"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 1
+      },
+      "segments": {
+        "month": "2026-06-01",
+        "conversionActionName": "Calls from PPC Pool"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 1
+      },
+      "segments": {
+        "month": "2026-06-01",
+        "conversionActionName": "Local actions - Directions"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 4
+      },
+      "segments": {
+        "month": "2026-06-01",
+        "conversionActionName": "Local actions - Other engagements"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 6
+      },
+      "segments": {
+        "month": "2026-06-01",
+        "conversionActionName": "Local actions - Website visits"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23785515022",
+        "name": "Garage Doors | Performance Max"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 1
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "Calls from PPC Pool"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23785515022",
+        "name": "Garage Doors | Performance Max"
+      },
+      "metrics": {
+        "conversions": 8,
+        "allConversions": 8
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "Calls from ads - Legit5"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23785515022",
+        "name": "Garage Doors | Performance Max"
+      },
+      "metrics": {
+        "conversions": 5,
+        "allConversions": 5
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "Clicks to call"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23785515022",
+        "name": "Garage Doors | Performance Max"
+      },
+      "metrics": {
+        "conversions": 1,
+        "allConversions": 1
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "GHL PPC Form Submit"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23785515022",
+        "name": "Garage Doors | Performance Max"
+      },
+      "metrics": {
+        "conversions": 1,
+        "allConversions": 1
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "GHL Website Number Pool Phone Calls"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23785515022",
+        "name": "Garage Doors | Performance Max"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 8
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "Local actions - Directions"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23785515022",
+        "name": "Garage Doors | Performance Max"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 10
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "Local actions - Other engagements"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23785515022",
+        "name": "Garage Doors | Performance Max"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 9
+      },
+      "segments": {
+        "month": "2026-05-01",
+        "conversionActionName": "Local actions - Website visits"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23785515022",
+        "name": "Garage Doors | Performance Max"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 8
+      },
+      "segments": {
+        "month": "2026-06-01",
+        "conversionActionName": "Calls from PPC Pool"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23785515022",
+        "name": "Garage Doors | Performance Max"
+      },
+      "metrics": {
+        "conversions": 5,
+        "allConversions": 5
+      },
+      "segments": {
+        "month": "2026-06-01",
+        "conversionActionName": "Calls from ads - Legit5"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23785515022",
+        "name": "Garage Doors | Performance Max"
+      },
+      "metrics": {
+        "conversions": 2,
+        "allConversions": 2
+      },
+      "segments": {
+        "month": "2026-06-01",
+        "conversionActionName": "Clicks to call"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23785515022",
+        "name": "Garage Doors | Performance Max"
+      },
+      "metrics": {
+        "conversions": 1,
+        "allConversions": 1
+      },
+      "segments": {
+        "month": "2026-06-01",
+        "conversionActionName": "GHL Website Number Pool Phone Calls"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23785515022",
+        "name": "Garage Doors | Performance Max"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 4
+      },
+      "segments": {
+        "month": "2026-06-01",
+        "conversionActionName": "Local actions - Directions"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23785515022",
+        "name": "Garage Doors | Performance Max"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 1
+      },
+      "segments": {
+        "month": "2026-06-01",
+        "conversionActionName": "Local actions - Menu views"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23785515022",
+        "name": "Garage Doors | Performance Max"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 29
+      },
+      "segments": {
+        "month": "2026-06-01",
+        "conversionActionName": "Local actions - Other engagements"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23785515022",
+        "name": "Garage Doors | Performance Max"
+      },
+      "metrics": {
+        "conversions": 0,
+        "allConversions": 5
+      },
+      "segments": {
+        "month": "2026-06-01",
+        "conversionActionName": "Local actions - Website visits"
+      }
+    }
+  ],
+  "fieldMask": "campaign.name,segments.conversionActionName,segments.month,metrics.conversions,metrics.allConversions",
+  "requestId": "5BlhW7BJGRMIMlcNTOnMNw",
+  "queryResourceConsumption": "1504"
+}
+]

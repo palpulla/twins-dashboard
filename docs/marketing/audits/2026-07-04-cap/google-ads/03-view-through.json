@@ -1,0 +1,110 @@
+[{
+  "results": [
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "metrics": {
+        "clicks": "95",
+        "viewThroughConversions": "0",
+        "conversions": 14,
+        "costMicros": "2323260397",
+        "allConversions": 53,
+        "interactions": "95"
+      },
+      "segments": {
+        "month": "2026-05-01"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209603182",
+        "name": "Garage Door Repair | Search"
+      },
+      "metrics": {
+        "clicks": "81",
+        "viewThroughConversions": "0",
+        "conversions": 11,
+        "costMicros": "2576992158",
+        "allConversions": 28,
+        "interactions": "81"
+      },
+      "segments": {
+        "month": "2026-06-01"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "metrics": {
+        "clicks": "75",
+        "viewThroughConversions": "0",
+        "conversions": 5,
+        "costMicros": "1140619868",
+        "allConversions": 22,
+        "interactions": "75"
+      },
+      "segments": {
+        "month": "2026-05-01"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23209631247",
+        "name": "Garage Door Installation | Search"
+      },
+      "metrics": {
+        "clicks": "65",
+        "viewThroughConversions": "0",
+        "conversions": 0,
+        "costMicros": "1191690890",
+        "allConversions": 12,
+        "interactions": "65"
+      },
+      "segments": {
+        "month": "2026-06-01"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23785515022",
+        "name": "Garage Doors | Performance Max"
+      },
+      "metrics": {
+        "clicks": "105",
+        "viewThroughConversions": "0",
+        "conversions": 15,
+        "costMicros": "298917759",
+        "allConversions": 43,
+        "interactions": "4175"
+      },
+      "segments": {
+        "month": "2026-05-01"
+      }
+    },
+    {
+      "campaign": {
+        "resourceName": "customers/7171993484/campaigns/23785515022",
+        "name": "Garage Doors | Performance Max"
+      },
+      "metrics": {
+        "clicks": "97",
+        "viewThroughConversions": "0",
+        "conversions": 8,
+        "costMicros": "322988166",
+        "allConversions": 55,
+        "interactions": "3046"
+      },
+      "segments": {
+        "month": "2026-06-01"
+      }
+    }
+  ],
+  "fieldMask": "campaign.name,segments.month,metrics.viewThroughConversions,metrics.conversions,metrics.allConversions,metrics.clicks,metrics.interactions,metrics.costMicros",
+  "requestId": "XWoN8eLiykK_7FzoThfvVA",
+  "queryResourceConsumption": "898"
+}
+]
