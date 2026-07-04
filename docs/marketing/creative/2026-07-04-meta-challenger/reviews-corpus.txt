@@ -1,0 +1,143 @@
+Twins Garage Doors — GBP review capture, 2026-07-04
+Source: live Google reviews dialog (google.com/search #lrd overlay) for the
+GBP listing "Twins Garage Doors", 2921 Landmark Pl #206, Madison WI 53713.
+Listing stats at capture time: 4.9 stars, 698 reviews.
+Method: claude-in-chrome scroll + DOM text capture. Sanitizer stripped some
+punctuation (colons in times, quote marks); ellipses marked More = truncation
+point of Google's preview, not the review's end. Owner responses included as
+captured (blocks split on "Hover to react", so some blocks start with the
+owner reply to the PREVIOUS review).
+
+USED ON CARDS (verbatim, punctuation restored):
+1. Saundra Brown ("saundra brown 3 reviews·2 photos a year ago"):
+   "I was most impressed when Twins responded to my request at 2:00am. We set
+   up a time for them to come out to solve my garage issue and believe it or
+   not they came 30 minutes ear[ly...]" — card uses first sentence only.
+2. Tasha Heaton (Local Guide·41 reviews·127 photos, a year ago):
+   "This company responded to my inquiry for service within 30 minutes even
+   though I sent them an email around 7:00PM. Chris and Tyler were able to get
+   out to our house and perform the needed repairs the following day."
+   — card uses first sentence.
+3. Shirley Berry (2 reviews, a month ago, 5 stars):
+   "A Google search lead me to Twins Garage Door. The 5 star rating and the
+   fact you serve Deerfield made the decision. Maurice called to determine the
+   best time to arrive and drove in the yard at exactly that time."
+   — card uses second sentence; town Deerfield stated by reviewer.
+4. Elaine (4 reviews, 7 months ago, 5 stars, "Great price"):
+   "Honestly, they deserve more than 5 stars. Super responsive, prompt and
+   very fair pricing. Honesty and kindness is super important to me - Charles
+   was great and I highly recommend."
+   — card uses first two sentences.
+5. Sean Michael Dargan (Local Guide·25 reviews·7 photos, edited a year ago):
+   "The best customer service I've received in years… Charles and Nick worked
+   quickly, did the job well, and exceeded my already high expectations. Would
+   highly recommend to anyone!" — card uses first two sentences (ellipsis is
+   in the original).
+
+OTHER CAPTURED REVIEWS (raw, sanitized, dedupe of 66 scraped blocks):
+- George Wollaeger (4 reviews·1 photo, a month ago): "My garage door spring
+  broke and I scheduled an appointment online right away the next morning.
+  Super simple scheduling, my tech Maurice showed up on time and gave a call
+  to let me know when he would be there, and he repaired it quickly. He also
+  showed me some preventative maintenance I should be doing..."
+- Jennifer L (10 reviews, 3 weeks ago): "Our garage door stopped working this
+  week and we couldn't figure out why. I called Twins Garage Doors following a
+  general Google search. A technical was available within hours. Maurice was
+  highly professional and courteous, not to mention extremely knowledgeable
+  and skilled..."
+- Kirsten (via owner reply, Local Guide·4 reviews, 7 months ago): "Nicholas
+  came out and fixed my spring, door bracket, cables, and the rollers for my
+  garage door on a Saturday so my car wasn't locked in the garage all
+  weekend!"
+- Vivian Schiffman (5 reviews, a month ago): "Maurice came out to give us an
+  estimate to replace our garage doors. He did a thorough evaluation and a
+  detailed explan[ation...]"
+- Liz Buske (3 reviews·1 photo, 8 months ago): "We had used Twins Garage Doors
+  in the past and decided to go with them again. They are great to work with!
+  Charles arrived at the time they planned... He was upfront with the costs
+  before the work was performed so I was not surprised at the end."
+- Matthew Patterson (2 reviews, 9 months ago): "We had a great experience with
+  Twin Garage Doors. We called and they were able to come early the next day
+  and fix everything within a couple hours."
+- Jacki Adams (9 reviews, 3 months ago): "Our garage door broke and we were
+  locked out of our garage altogether..."
+- Marsha Stewart (12 reviews, edited 8 months ago): "The spring on our garage
+  broke and it was impossible to raise the door. Charles came and within 2
+  minutes he saw the problem... He was EXCELLENT. LOVE HIM."
+- Colton Woyak (5 reviews, 3 months ago): "Amazing customer service. Nicholas
+  helped explain wh[at...]"
+- Aneesh Abraham (Local Guide·24 reviews, 9 months ago): "I had an excellent
+  experience working with Twins Garage Doors recently. From the initial quote
+  to the completion of the work, the entire process was smooth and
+  hassle-free. Nick was punctual..."
+- Jennifer E (Local Guide·53 reviews, a year ago): "We were thrilled with our
+  experience... their fast and friendly service made the repair process feel
+  smooth and easy."
+- Francis Young (3 reviews, 3 months ago): "yearly garage door adjustment,
+  oiled bearings, motor apparatus work well. very satis[fied]"
+- Chris Hubbuch (7 reviews·1 photo, a year ago): "Charles did a great job. He
+  was very professional and prompt. The doors look great."
+- Susan Mayer (2 reviews, 9 months ago): "After having three separate
+  companies come to our home to discuss replacing our garage door--Charlie
+  stoo[d out...]"
+- Connor Belanger (2 reviews, 10 months ago): "Charles was able to come right
+  away to fix a broken garage door."
+- John Burmaster (7 reviews, a year ago): "Would highly recommend Twins Garage
+  Doors. Contacted them on a Monday and work was complete by Tuesday."
+- Ronko Plus (2 reviews, 11 months ago): "In contact with me quickly and kept
+  clear communication. Arrived exactly as I was told. Offered simple clear
+  options then performed [the work]."
+- Cathy Barker (3 reviews·1 photo, a year ago): "We are very happy with our
+  garage door opener installation."
+- John Keenan (Local Guide·20 reviews, a year ago): "I had a fantastic
+  experience with twin g[arage doors...]"
+- Kara Maguire (2 reviews, a year ago): "The initial service call was for a
+  failing garage door opener, but the service provided went above the
+  diagnostics and replaceme[nt...]"
+- Shannon Siirila (9 reviews·6 photos, edited a year ago): "The technicians
+  did an excellent job. They definitely know what they are talking about and
+  definitely specialized in garage door safety."
+- Carol M (4 reviews, 3 months ago, 4 stars): "Very dependable and we were
+  happy with the job completed. I would definitely recommend the company."
+- Ryan Colvin (Local Guide·19 reviews, 8 months ago): "Charles at Twins Garage
+  Doors is first class. Super helpful and knowledgeable. On time and..."
+- Maggie O'Meara (3 reviews, 3 years ago): "Great experience- I highly
+  recommend! Our garage door wasn't closing well, got stuck often and we
+  didn't want to keep worrying that it wouldn't shut at all. Charles came out,
+  explained the problem clearly and options for repair..."
+- Asia Miller (Local Guide·102 reviews, a year ago): "The fact that they were
+  able to program my garage door opener super fast... Simple fix, fast
+  solution. Thank you for the great service!"
+- Lisa Welter (6 reviews·6 photos, a year ago): "Wonderful customer service!
+  Initially called and received a quote the next day."
+- Tasha Heaton — see USED #2.
+- shari zeldin (9 reviews, a year ago): "Reviewed websites and Twins stood
+  out- called and got an appointment the next day. Charles came out on the
+  Wednesday before July 4 and assessed the situation and explained all our
+  options. We decided on a new garage door and opener..."
+- Aimee Schneider-Collins (14 reviews·3 photos, a year ago): "Charles was
+  wonderful. He came out on a Saturday and did an excellent job. We love the
+  new garage opener and spring system. Highly recommend."
+- Rick Martingilio (4 reviews·1 photo, 9 months ago): "A very good experience
+  throughout the entire process. Our CLASSIC STEEL PREMIUM looks fantastic and
+  very quiet too. Charles was great to work with from initial contact through
+  replacement of the door."
+- Jeffrey Bond (5 reviews, a month ago): "Maurice was knowledgeable,
+  professional, patient, clear, and friendly. Would absolutely recommend Twins
+  without hesitation or qualification"
+- Tim York (4 reviews, 7 months ago): "I had a spring break in the morning on
+  the day before [holiday...]"
+- Mary Wang (1 review, 3 months ago): "They got me on the [schedule same
+  day...]" (via owner reply: scheduled same day, wrapped in a few hours,
+  Nicholas explained clearly, no upsell)
+- blue badger (Local Guide·15 reviews, edited 9 months ago): "They came out
+  the next day and gave us options. We chose one and they did the work that
+  day to our sat[isfaction]." (4-ish stars; pricing gripe on remote/keypad —
+  owner replied)
+- Brent Mavis Ransom (Local Guide·15 reviews·1 photo, 3 months ago):
+  "Our guy did [...]" (positive per owner reply)
+- Michael Foget (8 reviews·2 photos, 3 years ago): [install praise per owner
+  reply — custom-sized door, same-day installation]
+- Sonja (4 months ago, via owner reply): Maurice professional and honest.
+- Dian, Duke, Tina, Kyle, Dee, Alex, Jon, Rose, Shah Family 9195, Kara, Asia —
+  positive reviews evidenced via owner replies in capture.
