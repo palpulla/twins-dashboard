@@ -33,14 +33,20 @@ If any query returns nothing, write "no data", not a number.
 ## What ran
 <content published, campaigns live, sends — bullets>
 
-## Spend
-<table: source, spend, last_data_day; flag stale syncs>
+## Funnel by channel
+<table per channel: Spend → Leads → Qualified leads → Booked jobs → Completed jobs → Earned revenue.
+KPI definitions are docs/marketing/KPI-DEFINITIONS.md, reused verbatim every week.
+Stages with no data source yet (qualified tagging, call tracking) print "not yet measured" — never a guess.
+Leads = jobs created with that lead_source (proxy until form/call tracking lands; say so in a footnote).>
 
-## Booked & earned by source
-<table: source, jobs, earned revenue, sold-unpaid; totals; vs prior week>
+## Spend detail
+<table: source, spend, last_data_day; flag stale syncs>
 
 ## Reviews & leads
 <card clicks, GHL contacts, review gap status>
+
+## Appendix — traffic metrics
+<clicks, impressions, CPC, CTR — demoted here per CAP 2026-07; never in the headline tables>
 
 ## Proposed moves (need your call)
 1. <move> — cost $X, expected effect, kill criterion. Approve?
