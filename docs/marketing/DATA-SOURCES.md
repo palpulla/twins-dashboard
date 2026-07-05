@@ -57,14 +57,18 @@ GROUP BY 1 ORDER BY earned_revenue DESC NULLS LAST;
 
 ## 3. Review velocity
 
-**Tables:** `reviews` (`review_at`, `rating`, `tech_id`), `review_card_clicks` (`clicked_at`, `tech`, utm columns). Views `v_reviews_by_tech`, `v_review_clicks_by_tech` exist for per-tech cuts.
+**Live source (2026-07-05):** `places_reviews_interim` — the ~5 most-recent Google reviews via Places API (New), refreshed daily by the `sync-places-reviews` edge function (cron `places-reviews-daily`, 7:35 AM). Columns: `author_name`, `rating`, `review_text`, `published_at`, `est_tech_slug`/`est_technician_id` (correlated to review-card clicks, display-only estimate). Plus `review_card_clicks` (`clicked_at`, `tech`) for the click leading-indicator, and the `google-review-stats` edge function for the live aggregate rating + total count.
+
+Because Places returns only the recent ~5, `new_reviews` from this table is reliable only at low review volume (currently accurate for Twins). For the true running total use `google-review-stats`.
 
 ```sql
 SELECT
-  (SELECT COUNT(*) FROM reviews WHERE review_at >= :from AND review_at < :to_exclusive) AS new_reviews,
-  (SELECT ROUND(AVG(rating),2) FROM reviews WHERE review_at >= :from AND review_at < :to_exclusive) AS avg_rating,
+  (SELECT COUNT(*) FROM places_reviews_interim WHERE published_at >= :from AND published_at < :to_exclusive) AS new_reviews_recent,
+  (SELECT ROUND(AVG(rating),2) FROM places_reviews_interim) AS avg_rating_recent5,
   (SELECT COUNT(*) FROM review_card_clicks WHERE clicked_at >= :from AND clicked_at < :to_exclusive) AS card_clicks;
 ```
+
+The `reviews` table (GBP v4 full archive) stays empty until the legacy GBP API access request is approved — low priority; the Places feed covers the brief's needs.
 
 ## 4. GHL lead summary
 
@@ -96,4 +100,4 @@ plus a note of what shipped via DUNZO Social Planner.
 2. Meta spend sync dead since 2026-02-06 — access token expired 2026-05-03; blocked on Daniel re-auth. Graph API v20.0 default should be bumped at the same time.
 3. GHL → job attribution not wired (ROI polish backlog) — 186 contacts phone-matched to jobs but 0 carry attribution_source.
 4. Funnel "booked" semantics + GA4 sync (ROI polish backlog).
-5. `reviews` table is EMPTY (0 rows, verified 2026-07-03) — `sync-gbp-reviews` runs daily but exits `"skipped": "no credentials"`: GBP_REFRESH_TOKEN/GBP_ACCOUNT_ID/GBP_LOCATION_ID were never configured. Blocked on Daniel granting GBP OAuth (business.manage scope). `places_reviews_interim` is also empty (Places key referer-restricted). Until fixed, review velocity = card clicks only.
+5. ~~`reviews` table empty / no review data~~ **RESOLVED 2026-07-05** via Places API (New): `sync-places-reviews` now populates `places_reviews_interim` daily with recent Google reviews (rating + text + author). The legacy GBP `reviews` full-archive table stays empty pending the gated GBP API access request (low priority).

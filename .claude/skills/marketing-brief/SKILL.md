@@ -18,7 +18,7 @@ Produce the Monday brief in chat. Never send it by email/SMS/push. Never execute
 Run the exact queries in `docs/marketing/DATA-SOURCES.md` (read-only, Supabase project `jwrpjuqaynownxaoeayi`) for:
 1. Spend by canonical channel (§1)
 2. Completed jobs + earned revenue by lead source (§2 — earned = `outstanding_balance = 0`, estimates excluded, "Unknown"/blank stays Unattributed; never classify by guesswork)
-3. Review velocity (§3 — while the `reviews` table is empty, report card clicks only and flag the gap)
+3. Review velocity (§3 — recent Google reviews from `places_reviews_interim` (rating + text), plus review-card clicks and the `google-review-stats` aggregate)
 4. GHL new contacts (§4)
 5. Content output (§5 — count approved drafts + note what shipped)
 6. Source-capture compliance: % of the week's booked jobs with lead_source 'Unknown' or blank (`jobs.created_at` in window). Baseline 52% over the 180 days before 2026-07-03; the CSR intake standard started 2026-07-03, so this number should fall week over week — flag if it doesn't.
