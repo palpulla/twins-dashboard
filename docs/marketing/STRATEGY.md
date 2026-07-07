@@ -34,6 +34,8 @@ Family-owned, twin-brothers garage door company in Madison, WI. Real local techn
 4. **Facebook — unproven, cheap signal.** $4,894 earned FB-tagged in 30 days on $0 spend. Pilot candidate with a test cap, using media-generator creative.
 5. **Unknown — 35% of earned revenue ($41,910/30d).** Not a channel; a measurement failure to fix at the CSR intake + HCP level.
 
+**Compound channel — AI search (AEO/GEO):** getting recommended by ChatGPT/Perplexity/Gemini/AI Overviews for Madison garage-door queries. Baseline 2026-07-07: site is AI-crawlable + has LocalBusiness schema, but Twins is absent on cost/how-to queries and out-detailed by competitors who publish specifics. Program spec: [ai-search-reddit-program](../superpowers/specs/2026-07-07-ai-search-reddit-program-design.md). Paired with a Reddit credibility program (monitor + human-posted, disclosed, never automated).
+
 ## Budget rule
 
 ROI-driven, no fixed cap. Every new paid initiative launches with (a) a test cap in dollars, (b) a kill/scale criterion, (c) Daniel's explicit approval. Losers die at the cap; winners scale in increments Daniel approves in the Monday brief.

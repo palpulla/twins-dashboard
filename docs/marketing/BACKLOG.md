@@ -14,5 +14,7 @@
 | 7 | Open estimates CSR tracker | Base | Spec + plan exist | Schedule build | No (internal tool) |
 | 8 | Google Ads pilot (separate from LSA, measurable) | Capture | New idea | Proposal w/ test cap after #1 and #3 land | Yes — budget |
 | 9 | Meta ads pilot w/ media-generator creative | Capture | New idea | Proposal w/ test cap; FB shows organic signal ($4,894/30d on $0) | Yes — budget |
+| 10 | AI search (AEO/GEO) program | Compound | **Spec written 2026-07-07** | [spec](../superpowers/specs/2026-07-07-ai-search-reddit-program-design.md). Phase 1: llms.txt + Service/FAQ schema + 5 extractable money pages + monthly AI-visibility scoreboard. Baseline: crawlable + LocalBusiness schema, but absent on cost/how-to queries, out-detailed by competitors | Publish to WP needs go |
+| 11 | Reddit credibility program | Compound | **Spec written 2026-07-07** | Monitor r/madisonwi + r/HomeImprovement, Claude drafts disclosed helpful replies, HUMAN posts from real account. Never auto-post. Surface in Monday brief | Human posts each reply |
 
 **Ranking logic:** measurement first (1–3) because the budget rule is ROI-driven. As of 2026-07-05 all three measurement gauges are fixed (Google spend, Meta spend, Google reviews) and lead-source hygiene is done — so the ROI picture is now trustworthy and the paid-pilot items (8, 9) are unblocked to propose with test caps in an upcoming Monday brief. Revenue-adjacent builds already specced (4–5) run in parallel as they're approved.

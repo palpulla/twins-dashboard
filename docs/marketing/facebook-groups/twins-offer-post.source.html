@@ -1,0 +1,105 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+  :root{--navy:#1E2B47;--navy-dark:#141d30;--gold:#F5B324;--white:#ffffff;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:1080px;height:1080px;}
+  .canvas{position:relative;width:1080px;height:1080px;overflow:hidden;
+    font-family:'Helvetica Neue',Arial,sans-serif;background:#e7ddcf;}
+
+  /* ---------- garage door scene ---------- */
+  .photo{position:absolute;left:0;top:0;width:1080px;height:456px;overflow:hidden;
+    background:repeating-linear-gradient(180deg,#e9dfd0 0 22px,#e4dac9 22px 44px);}
+  .wall{position:absolute;inset:0;background:linear-gradient(180deg,#e7ddcf 0%,#ddd2c1 55%,#d2c6b4 100%);}
+  .light{position:absolute;inset:0;mix-blend-mode:screen;
+    background:radial-gradient(100% 80% at 50% 3%,rgba(255,255,255,.30),rgba(255,255,255,0) 55%);}
+  .driveway{position:absolute;left:0;bottom:0;width:1080px;height:60px;
+    background:linear-gradient(180deg,#b9bcc0 0%,#a7abb0 60%,#9a9ea3 100%);box-shadow:inset 0 6px 14px rgba(0,0,0,.18);}
+  .frame{position:absolute;left:180px;top:24px;width:720px;height:340px;
+    border:12px solid #f4f2ee;border-radius:6px;box-shadow:0 10px 26px rgba(20,29,48,.20);}
+  .door{position:absolute;left:198px;top:42px;width:684px;height:304px;
+    background:linear-gradient(180deg,#fbfbfb 0%,#eef0f2 100%);border:6px solid #cfd3d8;border-radius:4px;
+    box-shadow:0 26px 48px rgba(20,29,48,.30),inset 0 0 0 2px rgba(255,255,255,.5);}
+  .row{position:absolute;left:0;width:100%;height:25%;
+    box-shadow:inset 0 -6px 10px rgba(0,0,0,.05),inset 0 6px 8px rgba(255,255,255,.6);border-bottom:2px solid rgba(30,43,71,.14);}
+  .r1{top:0;}.r2{top:25%;}.r3{top:50%;}.r4{top:75%;border-bottom:none;}
+  .cols{position:absolute;inset:0;display:flex;}
+  .cell{flex:1;margin:12px 10px;border-radius:3px;background:linear-gradient(180deg,#ffffff,#e9ebee);
+    box-shadow:inset 0 0 0 2px rgba(30,43,71,.06),inset 0 3px 6px rgba(255,255,255,.7),inset 0 -3px 7px rgba(0,0,0,.06);}
+  .r1 .cell{background:linear-gradient(180deg,#dfe9f2 0%,#c3d5e6 100%);
+    box-shadow:inset 0 0 0 3px #eef1f4,inset 0 0 0 5px rgba(30,43,71,.18);position:relative;}
+  .glint{position:absolute;inset:0;border-radius:3px;
+    background:linear-gradient(180deg,rgba(255,255,255,.40) 0%,rgba(255,255,255,.06) 48%,rgba(255,255,255,0) 100%);}
+
+  /* ---------- QR in scene top-right ---------- */
+  .qr{position:absolute;right:34px;top:34px;display:flex;flex-direction:column;align-items:center;gap:7px;z-index:4;}
+  .qr .card{background:#fff;padding:9px;border-radius:14px;box-shadow:0 8px 18px rgba(20,29,48,.28);border:3px solid var(--navy);}
+  .qr .card img{width:118px;height:118px;display:block;}
+  .qr .lbl{background:var(--navy);color:var(--white);font-size:15px;font-weight:800;letter-spacing:.4px;
+    padding:5px 12px;border-radius:20px;text-transform:uppercase;white-space:nowrap;}
+
+  /* ---------- offer panel ---------- */
+  .panel{position:absolute;left:0;top:456px;width:1080px;height:624px;
+    background:linear-gradient(180deg,var(--navy) 0%,var(--navy-dark) 100%);border-top:8px solid var(--gold);}
+  .slash{position:absolute;top:456px;right:0;width:0;height:0;border-top:66px solid var(--gold);border-left:66px solid transparent;opacity:.9;}
+
+  .logo{position:absolute;left:50%;top:338px;transform:translateX(-50%);width:378px;z-index:6;filter:drop-shadow(0 10px 20px rgba(20,29,48,.45));}
+  .logo img{width:100%;display:block;}
+
+  .headline{position:absolute;top:520px;left:0;width:1080px;text-align:center;color:var(--white);
+    font-weight:800;font-size:62px;line-height:1;letter-spacing:-.5px;text-shadow:0 2px 10px rgba(0,0,0,.35);}
+  .headline .g{color:var(--gold);}
+  .subhead{position:absolute;top:598px;left:0;width:1080px;text-align:center;color:#d7deea;font-size:25px;font-weight:500;}
+
+  .offers{position:absolute;left:70px;top:664px;width:940px;display:grid;grid-template-columns:1fr 1fr;gap:20px 30px;}
+  .offer{display:flex;align-items:center;gap:14px;color:var(--white);font-size:25px;font-weight:600;line-height:1.1;}
+  .check{flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:var(--gold);position:relative;box-shadow:0 3px 8px rgba(0,0,0,.3);}
+  .check::after{content:"";position:absolute;left:14px;top:8px;width:10px;height:19px;border:solid var(--navy-dark);border-width:0 5px 5px 0;transform:rotate(42deg);}
+
+  .crew{position:absolute;right:20px;bottom:60px;width:400px;z-index:5;filter:drop-shadow(0 8px 16px rgba(0,0,0,.35));}
+  .crew img{width:100%;display:block;}
+
+  .footer{position:absolute;left:0;bottom:0;width:1080px;height:66px;background:var(--gold);
+    display:flex;align-items:center;justify-content:center;gap:18px;color:var(--navy-dark);font-size:27px;font-weight:800;letter-spacing:.3px;z-index:7;}
+  .footer .dot{width:8px;height:8px;border-radius:50%;background:var(--navy-dark);display:inline-block;}
+</style></head>
+<body>
+  <div class="canvas">
+    <div class="photo">
+      <div class="wall"></div><div class="light"></div>
+      <div class="frame"></div>
+      <div class="door">
+        <div class="row r1"><div class="cols">
+          <div class="cell"><div class="glint"></div></div><div class="cell"><div class="glint"></div></div>
+          <div class="cell"><div class="glint"></div></div><div class="cell"><div class="glint"></div></div>
+        </div></div>
+        <div class="row r2"><div class="cols"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div></div>
+        <div class="row r3"><div class="cols"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div></div>
+        <div class="row r4"><div class="cols"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div></div>
+      </div>
+      <div class="driveway"></div>
+    </div>
+
+    <div class="qr">
+      <div class="card"><img src="qr-book.png" alt="Book online QR"></div>
+      <div class="lbl">Scan to book</div>
+    </div>
+
+    <div class="panel"></div>
+    <div class="slash"></div>
+
+    <div class="logo"><img src="logo-shield.png" alt="Twins Garage Doors"></div>
+
+    <div class="headline">Garage door <span class="g">acting up?</span></div>
+    <div class="subhead">Local, family-run garage door repair serving the Madison area</div>
+
+    <div class="offers">
+      <div class="offer"><span class="check"></span><span>Free service call ($0 to diagnose)</span></div>
+      <div class="offer"><span class="check"></span><span>$49 tune-up special</span></div>
+      <div class="offer"><span class="check"></span><span>Financing available on new doors</span></div>
+      <div class="offer"><span class="check"></span><span>Same-day service</span></div>
+    </div>
+
+    <div class="crew"><img src="twins-people.png" alt="Twins technicians"></div>
+
+    <div class="footer"><span>twinsgaragedoors.com/wi</span><span class="dot"></span><span>(608) 688-9109</span></div>
+  </div>
+</body></html>

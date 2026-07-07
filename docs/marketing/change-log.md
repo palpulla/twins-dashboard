@@ -2,6 +2,18 @@
 
 Standing rule (CAP doc §8): no conversion action, pixel rule, or bid-strategy change ships without an entry here.
 
+## 2026-07-06 — Claude, Monday-brief data fix (Daniel-approved)
+
+`marketing_spend` KPI-data cleanup. Full backup taken first: `marketing_spend_backup_googleads_20260706` (1,680 rows, all `Google Ads`/`google_ads` label rows). Fully reversible by re-inserting from that table.
+
+| # | Change | Detail | Revert |
+|---|---|---|---|
+| S1 | Removed duplicate legacy `Google Ads` rows for 2026-03-05..2026-07-03 | 253 rows / $11,877.82 deleted. Root cause: two platform labels (`Google Ads` legacy + `google_ads` new v21/v23 sync) both wrote the same spend after the PR #327 sync switch, double-counting Google Ads in every brief. Verified `google_ads` (API-sourced, authoritative) covers every overlap date to the cent (112/113 exact, 1 date off $0.05); zero LSA-pollution rows in this range. Corrected brief-week Google Ads = **$964.27** (was $1,928.59) | `INSERT INTO marketing_spend SELECT * FROM marketing_spend_backup_googleads_20260706 WHERE platform='Google Ads' AND date BETWEEN '2026-03-05' AND '2026-07-03'` |
+
+**Verified correct, NOT changed:** LSA week 6/26–7/2 = $2,144.15 is right — matches Google's own LSA report to the cent for July MTD ($704.99); the week just straddles late June (LSA spent ~$1,566 6/26–6/30, then collapsed to ~$705 all July). Single `google_lsa` label, no duplication.
+
+**Deferred to a separate spec (Phase 2, not touched):** (a) Feb 1–Mar 4 legacy `Google Ads` still double-counts (internal duplicate repair-campaign rows, e.g. `Garage Door Repair | Search` + `GDML | TGD | Repair` = same spend twice); (b) **$34,947 of LSA spend misfiled as `LocalServicesCampaign` rows inside the `Google Ads` platform** across 417 dates through 2026-03-04 — on 276 of those dates it's the only record of that LSA spend, so it must be relabeled to `google_lsa` (reconciling against existing LSA rows on the 141 overlap dates), not deleted. Mostly 2025 history; corrupts historical Google-Ads-vs-LSA split. Needs its own careful cleanup + hook hardening.
+
 ## 2026-07-04 — Claude, per approved corrective-action plan (spec 2026-07-04)
 
 ### Google Ads (customer 7171993484, via ads-audit edge fn)
