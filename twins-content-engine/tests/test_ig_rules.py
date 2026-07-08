@@ -61,3 +61,13 @@ def test_two_dollar_amounts_one_caption():
     unapproved = [v for v in report.violations if v.rule_id == "ig:unapproved_offer"]
     assert len(unapproved) == 1
     assert "$4" in unapproved[0].message
+
+
+def test_single_decimal_dollar_is_blocked():
+    report = check_instagram_caption("Special: $49.5 off your repair.", CFG)
+    assert "ig:unapproved_offer" in _ids(report)
+
+
+def test_trailing_comma_on_approved_offer_passes():
+    report = check_instagram_caption("Only $49, book now before winter.", CFG)
+    assert "ig:unapproved_offer" not in _ids(report)

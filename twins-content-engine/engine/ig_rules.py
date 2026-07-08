@@ -11,8 +11,17 @@ _EMOJI_RE = re.compile(
     flags=re.UNICODE,
 )
 _OUT_OF_STATE_RE = re.compile(r"\b(kentucky|lexington|ky)\b", re.IGNORECASE)
-_DOLLAR_RE = re.compile(r"\$\d[\d,]*(?:\.\d{2})?")
+_DOLLAR_RE = re.compile(r"\$\d{1,3}(?:,\d{3})*(?:\.\d+)?")
 # Note: same-day service is a permitted, owner-confirmed claim, so it is NOT blocked.
+
+
+def _dollar_values(text: str) -> list[tuple[str, float]]:
+    """Return (matched_token, numeric_value) for each currency amount in text."""
+    out = []
+    for m in _DOLLAR_RE.finditer(text):
+        tok = m.group(0)
+        out.append((tok, float(tok.replace("$", "").replace(",", ""))))
+    return out
 
 
 def check_instagram_caption(text: str, cfg: InstagramConfig) -> RuleReport:
@@ -33,16 +42,12 @@ def check_instagram_caption(text: str, cfg: InstagramConfig) -> RuleReport:
         if tag.lower() in lowered:
             violations.append(Violation("ig:banned_hashtag", "error", f"Banned hashtag: {tag}"))
 
-    # Dollar strings must exactly match a dollar amount that appears in an
-    # approved offer (substring matching would let e.g. "$4" slip through as
-    # a false-positive match against "$49 tune-up").
-    approved_dollars = {
-        m.group(0) for offer in cfg.approved_offers for m in _DOLLAR_RE.finditer(offer)
-    }
-    for m in _DOLLAR_RE.finditer(text):
-        dollar = m.group(0)
-        if dollar not in approved_dollars:
+    # Compare dollar amounts by numeric value so decimals/thousands/trailing
+    # punctuation don't create false matches or false positives.
+    approved_values = {value for _, value in _dollar_values(" ".join(cfg.approved_offers))}
+    for tok, value in _dollar_values(text):
+        if value not in approved_values:
             violations.append(Violation("ig:unapproved_offer", "error",
-                                        f"Dollar amount {dollar} is not an approved offer."))
+                                        f"Dollar amount {tok} is not an approved offer."))
 
     return RuleReport(passed=len(violations) == 0, violations=violations)
