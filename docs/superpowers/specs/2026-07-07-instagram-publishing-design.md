@@ -207,7 +207,6 @@ optimize primarily for likes or follower growth.
 ## Automation safeguard checklist
 
 Every draft is checked against all of these; any violation holds the draft:
-- No same-day service promise
 - No invented offer, customer, review, location, or job details
 - No fake completed work
 - No commercial garage door content
@@ -219,8 +218,9 @@ Every draft is checked against all of these; any violation holds the draft:
 - No publishing without human approval
 
 Only these offers may be used: $0 service call, $49 tune-up, GoodLeap financing.
-Any offer wording, conditions, or exclusions are flagged for confirmation
-before publishing.
+Same-day service is a permitted, accurate claim and may be used. Any offer
+wording, conditions, or exclusions (including any conditions on same-day) are
+flagged for confirmation before publishing.
 
 ## System architecture (components)
 
@@ -254,13 +254,14 @@ before publishing.
 
 ## Open items to confirm before go-live
 
-1. **Same-day claim:** the content engine `brand.yaml` currently asserts
-   "same-day emergency service," which contradicts the no-same-day rule. Update
-   `brand.yaml` and confirm the correct promise before any offer post.
-2. **Public phone number:** confirm the single correct public number to show in
+1. **Public phone number:** confirm the single correct public number to show in
    bio and posts (multiple numbers exist across assets).
-3. **Booking link:** confirm the exact profile booking link/destination.
-4. **Hiring status:** confirm current hiring status so the flex slot logic knows
+2. **Booking link:** confirm the exact profile booking link/destination.
+3. **Hiring status:** confirm current hiring status so the flex slot logic knows
    whether recruiting is active.
-5. **Offer fine print:** confirm any conditions/exclusions for $0 service call,
-   $49 tune-up, and GoodLeap financing.
+4. **Offer fine print:** confirm any conditions/exclusions for $0 service call,
+   $49 tune-up, GoodLeap financing, and same-day service.
+
+Note: same-day service is confirmed as an accurate, permitted claim (owner
+confirmed 2026-07-07), so `brand.yaml`'s "same-day emergency service" line is
+correct and needs no change.

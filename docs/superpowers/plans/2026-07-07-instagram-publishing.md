@@ -373,7 +373,7 @@ git commit -m "feat(ig): visual resolver with proof fallback + AI cap"
 - Create: `twins-content-engine/engine/ig_rules.py`
 - Test: `twins-content-engine/tests/test_ig_rules.py`
 
-Reuse `engine.rules.RuleReport` and `Violation`. Rules: same-day promise (reuse `_TIMEFRAME_RE` from `engine/rules.py`), emojis, banned corporate terms, Kentucky/Lexington, banned hashtags, and dollar-offer strings not in the approved list. Each violation is severity `error` (holds the draft). A dollar amount that is not an approved offer becomes an error naming the string, so the human confirms wording.
+Reuse `engine.rules.RuleReport` and `Violation`. Rules: emojis, banned corporate terms, Kentucky/Lexington, banned hashtags, and dollar-offer strings not in the approved list. Each violation is severity `error` (holds the draft). A dollar amount that is not an approved offer becomes an error naming the string, so the human confirms wording. Note: same-day service is a PERMITTED claim (owner-confirmed) and is NOT blocked.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -396,10 +396,9 @@ def test_clean_caption_passes():
     assert report.passed, report.violations
 
 
-def test_same_day_is_blocked():
+def test_same_day_is_allowed():
     report = check_instagram_caption("We offer same-day garage door service.", CFG)
-    assert not report.passed
-    assert "ig:same_day" in _ids(report)
+    assert report.passed, report.violations
 
 
 def test_emoji_is_blocked():
@@ -442,7 +441,6 @@ import re
 
 from engine.config import InstagramConfig
 from engine.rules import RuleReport, Violation
-from engine.rules import _TIMEFRAME_RE  # same-day / timeframe detection
 
 _EMOJI_RE = re.compile(
     "[" "\U0001F300-\U0001FAFF" "\U00002600-\U000027BF" "\U0001F1E6-\U0001F1FF" "]",
@@ -450,14 +448,11 @@ _EMOJI_RE = re.compile(
 )
 _OUT_OF_STATE_RE = re.compile(r"\b(kentucky|lexington|ky)\b", re.IGNORECASE)
 _DOLLAR_RE = re.compile(r"\$\d[\d,]*")
-_SAME_DAY_RE = re.compile(r"\bsame[- ]day\b", re.IGNORECASE)
+# Note: same-day service is a permitted, owner-confirmed claim, so it is NOT blocked.
 
 
 def check_instagram_caption(text: str, cfg: InstagramConfig) -> RuleReport:
     violations: list[Violation] = []
-
-    if _SAME_DAY_RE.search(text):
-        violations.append(Violation("ig:same_day", "error", "Same-day promise is not allowed."))
 
     if _EMOJI_RE.search(text):
         violations.append(Violation("ig:emoji", "error", "Emojis are not allowed."))
@@ -632,7 +627,7 @@ CFG = load_instagram_config(Path(__file__).resolve().parents[1] / "config" / "in
 def test_generates_three_drafts_split_pass_and_held(tmp_path):
     def caption_fn(slot):
         if slot.slot == "offer":
-            return "Get $25 off today, same-day service."  # will be held
+            return "Get $25 off any repair."  # will be held: $25 not an approved offer
         return f"Recent repair in Verona. {slot.slot}."
 
     def assets_fn(slot):
@@ -646,7 +641,7 @@ def test_generates_three_drafts_split_pass_and_held(tmp_path):
     passed = list((tmp_path).glob("*.md"))
     held = list((tmp_path / "held").glob("*.md"))
     assert len(passed) == 2      # proof + value
-    assert len(held) == 1        # offer caption violated two rules
+    assert len(held) == 1        # offer caption held: $25 not an approved offer
     assert written["held"][0].endswith(".md")
 ```
 
@@ -771,5 +766,5 @@ git commit -m "feat(ig): weekly draft orchestration with preflight gating"
 - **Spec coverage:** posting structure + rotation (Task 2), monthly-mix config (Task 1, consumed by Plan 2 scheduler), proof fallback hierarchy + AI cap (Task 3), safeguard checklist (Task 4), draft source record (Task 5), approval queue via `pending/instagram/` + `held/` (Task 6). Publishing workflow steps 4 (Composio publish) and the monthly performance loop are explicitly deferred to Plans 2 and 3.
 - **Deferred to Plan 2 (publishing):** wiring `engine.generator` for real captions, scanning a real job drop-folder into `RealAsset`s, generating AI graphics via the media generator, and Composio scheduled publishing on Central time. `_real_caption_fn` and the CLI `assets_fn` are stubbed here on purpose.
 - **Deferred to Plan 3 (analytics):** the monthly performance loop (Composio insights + jwrpj attribution).
-- **Open items from the spec** (same-day claim in `brand.yaml`, public phone number, booking link, hiring status, offer fine print) must be resolved before Plan 2 publishes anything live.
+- **Open items from the spec** (public phone number, booking link, hiring status, offer fine print) must be resolved before Plan 2 publishes anything live. Same-day service is owner-confirmed as permitted, so it is NOT blocked and `brand.yaml` needs no change.
 ```
