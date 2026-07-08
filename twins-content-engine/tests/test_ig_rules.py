@@ -71,3 +71,8 @@ def test_single_decimal_dollar_is_blocked():
 def test_trailing_comma_on_approved_offer_passes():
     report = check_instagram_caption("Only $49, book now before winter.", CFG)
     assert "ig:unapproved_offer" not in _ids(report)
+
+
+def test_singular_corporate_term_is_blocked():
+    report = check_instagram_caption("We offer a garage door solution.", CFG)
+    assert "ig:corporate_term" in _ids(report)
