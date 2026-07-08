@@ -147,6 +147,31 @@ Clopay API v2 guide, `~/Downloads/INST-API_EN (2).pdf`, pages 27-30.)
 - All changes reversible (deactivate the snippet/shortcode; the prior static
   Elementor content is restorable from revisions).
 
+## 2026-07-08 build revision — AUGMENT, not replace (approved by Daniel)
+
+Discovered during the live build: the three existing Clopay pages
+(/clopay-modern-steel, /clopay-gallery-steel, /clopay-classic-collection on each
+site) are NOT thin static product pages. They are rich, unique-content,
+review-style SEO pages (H1 per door, plus "What We Like", "What can be improved",
+"Quick Verdict", "Unboxing", "Documentation/User Guide", FAQ, local CTAs) with
+titles like "BEST Clopay … Near You". Wholesale-replacing that content with the
+generic Clopay API copy every dealer pulls would risk their rankings.
+
+Decision (Daniel chose "Augment"): keep all existing unique content and ADD a
+live Clopay section to each page. The shortcode gains a `mode` attribute:
+`[clopay_product id="170" mode="specs"]` renders only the auto-updating, additive
+value — official **Available Colors** swatches, the **photo-gallery iframe**,
+**Brochures & Documents** (brochures + install/care), and the **Where-To-Buy
+dealer-lock CTA** — and deliberately OMITS Clopay's generic Overview/Construction
+prose so the page's unique content stays primary. `mode="full"` remains available
+for any future standalone page.
+
+Live state as of this revision: WPCode PHP snippet **"Twins x Clopay Product API"
+(snippet ID 7050)** is created and **active on the main site** (Auto Insert / Run
+Everywhere). Verified: the shortcode renders live Clopay data server-side on a
+Twins-branded page (title, overview, construction, gallery carousel, color
+swatches, brochures). Snippet then upgraded to add `mode="specs"` + swatch CSS.
+
 ## Risks
 
 - **Clopay "recommends linking, not cloning" caveat (guide p.2).** We are

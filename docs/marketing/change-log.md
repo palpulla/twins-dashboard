@@ -2,6 +2,20 @@
 
 Standing rule (CAP doc §8): no conversion action, pixel rule, or bid-strategy change ships without an entry here.
 
+## 2026-07-08 — Claude, Clopay Product API v2 augment on product pages (Daniel-approved)
+
+Spec: `docs/superpowers/specs/2026-07-08-clopay-product-api-pages-design.md`. Adds live, auto-updating Clopay content (official colors, photo-gallery iframe, brochures/docs, and a "Where To Buy" CTA) to the existing rich, ranking product pages. Decision: **augment, not replace** — all unique review content, H1s, and FAQs are preserved (wholesale replacement would have risked rankings). Rendered **server-side** (SEO-safe).
+
+| # | Change | Detail | Revert |
+|---|---|---|---|
+| C1 | WPCode snippet "Twins x Clopay Product API (fetch+cache+shortcode)" — **main site ID 7050**, **/ky site ID 6369** | PHP, Auto Insert / Run Everywhere, Active. Registers `[clopay_product id="{id}" mode="specs|full"]`. Fetches `clopaydoor.com/api/v2/GetProductDetails/GetProductData` (public, no key, CORS `*`), 24h transient cache + durable last-good fallback + daily `twins_clopay_refresh` cron (warms 170/12/13). Prints swatch CSS once via `wp_head`. Code auto-prepends `<?php` in WPCode (snippet body omits its own tag). | Deactivate the snippet on each site → shortcode goes inert (pages keep all original content) |
+| C2 | Added a "specs" section before the FAQ on 4 Elementor pages | Shortcode widget inserted at section index 7 via Elementor JS API (`document/elements/create`). main **Modern Steel** (page 6090, id 170), main **Gallery Steel** (6065, id 12), main **Classic** (6034, id 13), **/ky Classic** (6198, id 13). Verified server-side render: colors (24/19/14), gallery iframe, docs, CTA; H1 + "What We Like/Quick Verdict" + FAQ all preserved; main phone (833) 833-2010 intact (snippet 6753 did not clobber). WP Rocket auto-cleared on save (canonical URLs already serve it). | In each page's Elementor editor, delete the "Official Clopay Specs, Colors & Gallery" shortcode section |
+
+**Pending / not yet done:**
+- **Dealer prop ID** for the "be the only dealer in Where-To-Buy" lock: add `define( 'TWINS_CLOPAY_PROPID', '<id>' );` to each snippet once Clopay provides it. Until then the CTA links to the generic Where-To-Buy page.
+- **/wi has NO Clopay product pages** and **/ky has only Classic** — creating new product pages there is a separate scope (needs unique content), not done.
+- **EZDoor "Design Your Door" lead funnel** (workstream 1, spec `2026-07-08-clopay-door-builder-landing-design.md`) — NOT built yet; awaiting go-ahead + dealer-branded EZDoor links.
+
 ## 2026-07-06 — Claude, Monday-brief data fix (Daniel-approved)
 
 `marketing_spend` KPI-data cleanup. Full backup taken first: `marketing_spend_backup_googleads_20260706` (1,680 rows, all `Google Ads`/`google_ads` label rows). Fully reversible by re-inserting from that table.
