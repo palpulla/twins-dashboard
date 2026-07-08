@@ -204,8 +204,7 @@ class InstagramConfig:
 
 
 def load_instagram_config(path: Path) -> InstagramConfig:
-    with open(path) as f:
-        raw = yaml.safe_load(f)
+    raw = _read_yaml(path)
     return InstagramConfig(
         cycle_anchor=raw["cycle_anchor"],
         approved_offers=list(raw["approved_offers"]),
