@@ -219,22 +219,33 @@ git commit -m "feat(hcp): shared mapHcpJobToRow + fetchHcpJobById helper"
 
 ---
 
+> **IMPORTANT — test placement (applies to Tasks 2 & 3):** Vitest is configured
+> to EXCLUDE edge-function tests that import Deno/esm.sh modules, and its `include`
+> globs only pick up `src/**`, `supabase/functions/_shared/**/__tests__/**`, and
+> `supabase/functions/sync-gbp-reviews/__tests__/**`. `hcp-webhook/index.ts` imports
+> `https://esm.sh/...` and uses the `Deno` global, so a vitest test that imports from
+> it fails at collection AND would not be discovered anyway. Therefore all testable
+> logic for Tasks 2 & 3 lives under `supabase/functions/_shared/hcp/` (pure, no Deno
+> imports, inside the include glob). The `hcp-webhook/index.ts` change is thin wiring,
+> verified by the reviewer reading code + the live check in Task 4/10.
+
 ## Task 2: On sale, ingest the child door job if it is missing
 
-Extend `handleEstimateSold` so a freshly-sold door's child job is fetched and upserted (not just back-linked). This is the going-forward capture.
+Add a tested `ingestChildJobIfMissing` helper in `_shared/hcp/`, then call it from `handleEstimateSold` so a freshly-sold door's child job is fetched and upserted (not just back-linked). This is the going-forward capture.
 
 **Files:**
+- Create: `supabase/functions/_shared/hcp/ingest.ts`
+- Test: `supabase/functions/_shared/hcp/__tests__/ingest.test.ts`
 - Modify: `supabase/functions/hcp-webhook/index.ts` (`handleEstimateSold`, ~line 954)
-- Test: `supabase/functions/hcp-webhook/__tests__/handle-estimate-sold.test.ts` (create)
 
 - [ ] **Step 1: Write the failing test**
 
-Model on existing webhook tests if present; otherwise this stands alone. Inject a fake supabase + fake fetcher so no network is hit.
+Inject a fake supabase + fake fetcher so no network is hit.
 
 ```ts
-// supabase/functions/hcp-webhook/__tests__/handle-estimate-sold.test.ts
+// supabase/functions/_shared/hcp/__tests__/ingest.test.ts
 import { describe, it, expect, vi } from "vitest";
-import { ingestChildJobIfMissing } from "../index.ts";
+import { ingestChildJobIfMissing } from "../ingest.ts";
 
 function fakeSupabase(existingRowForJob: string | null) {
   const calls: any[] = [];
@@ -282,20 +293,15 @@ describe("ingestChildJobIfMissing", () => {
 
 - [ ] **Step 2: Run the test to verify it fails**
 
-Run: `cd twins-dash && npx vitest run supabase/functions/hcp-webhook/__tests__/handle-estimate-sold.test.ts`
-Expected: FAIL — `ingestChildJobIfMissing` not exported.
+Run: `cd twins-dash && npx vitest run supabase/functions/_shared/hcp/__tests__/ingest.test.ts`
+Expected: FAIL — cannot find `../ingest.ts`.
 
-- [ ] **Step 3: Implement + wire it in**
-
-Add the import at the top of `hcp-webhook/index.ts`:
+- [ ] **Step 3: Implement `ingest.ts`**
 
 ```ts
-import { fetchHcpJobById, mapHcpJobToRow } from "../_shared/hcp/fetch-job.ts";
-```
+// supabase/functions/_shared/hcp/ingest.ts
+import { fetchHcpJobById, mapHcpJobToRow } from "./fetch-job.ts";
 
-Add this exported helper (near the other job handlers):
-
-```ts
 /** If the child job created from a sold estimate is not yet in our DB
  *  (common for "needs scheduling" installs the periodic sync never fetches),
  *  fetch it from HCP and upsert a typed row so pending doors are visible.
@@ -321,26 +327,28 @@ export async function ingestChildJobIfMissing(
 }
 ```
 
-In `handleEstimateSold`, after the existing back-link block, call it:
-
-```ts
-  const convertedJobId: string | null = data?.copied_to_job_id || null;
-  if (convertedJobId) {
-    // ... existing back-link update stays as-is ...
-    const apiKey = Deno.env.get("HOUSECALL_PRO_API_KEY") ?? "";
-    await ingestChildJobIfMissing(supabase, convertedJobId, apiKey);
-  }
-```
-
 - [ ] **Step 4: Run the test to verify it passes**
 
-Run: `cd twins-dash && npx vitest run supabase/functions/hcp-webhook/__tests__/handle-estimate-sold.test.ts`
+Run: `cd twins-dash && npx vitest run supabase/functions/_shared/hcp/__tests__/ingest.test.ts`
 Expected: PASS (2 tests).
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 5: Wire it into the webhook (thin, untested-by-vitest)**
+
+Add the import at the top of `hcp-webhook/index.ts`:
+```ts
+import { ingestChildJobIfMissing } from "../_shared/hcp/ingest.ts";
+```
+In `handleEstimateSold`, inside the existing `if (convertedJobId) { ... }` block, after the back-link update, add:
+```ts
+    const apiKey = Deno.env.get("HOUSECALL_PRO_API_KEY") ?? "";
+    await ingestChildJobIfMissing(supabase, convertedJobId, apiKey);
+```
+Do NOT add a vitest test that imports `hcp-webhook/index.ts` (it imports Deno/esm.sh and is excluded from vitest). Verify the wiring by `deno check` if available, otherwise by reviewer code inspection.
+
+- [ ] **Step 6: Commit**
 
 ```bash
-git add supabase/functions/hcp-webhook/index.ts supabase/functions/hcp-webhook/__tests__/handle-estimate-sold.test.ts
+git add supabase/functions/_shared/hcp/ingest.ts supabase/functions/_shared/hcp/__tests__/ingest.test.ts supabase/functions/hcp-webhook/index.ts
 git commit -m "feat(hcp-webhook): ingest pending child door job on sale when missing"
 ```
 
@@ -348,74 +356,68 @@ git commit -m "feat(hcp-webhook): ingest pending child door job on sale when mis
 
 ## Task 3: Keep `job_type`/`status` current on job updates
 
-`handleJobUpdated` currently does NOT refresh `job_type` or `status`, so a door typed after creation stays mislabeled `Service` while pending. Refresh both (HCP payload is source of truth), matching how `handleJobCompleted` already re-extracts type.
+`handleJobUpdated` currently does NOT refresh `job_type` or `status`, so a door typed after creation stays mislabeled `Service` while pending. Add a tiny tested pure helper and spread it into the update patch (and the scheduled patch). HCP payload is source of truth, matching how `handleJobCompleted` already re-extracts type.
 
 **Files:**
+- Modify: `supabase/functions/_shared/hcp/fetch-job.ts` (add `jobTypeStatusPatch`)
+- Test: `supabase/functions/_shared/hcp/__tests__/map-hcp-job.test.ts` (append a case)
 - Modify: `supabase/functions/hcp-webhook/index.ts` (`handleJobUpdated` ~663; `handleJobScheduled` ~771)
-- Test: `supabase/functions/hcp-webhook/__tests__/job-updated-refreshes-type.test.ts` (create)
 
-- [ ] **Step 1: Write the failing test**
+- [ ] **Step 1: Write the failing test (append to the existing map test file)**
 
 ```ts
-// supabase/functions/hcp-webhook/__tests__/job-updated-refreshes-type.test.ts
-import { describe, it, expect } from "vitest";
-import { buildJobUpdatePatch } from "../index.ts";
+// append to supabase/functions/_shared/hcp/__tests__/map-hcp-job.test.ts
+import { jobTypeStatusPatch } from "../fetch-job.ts";
 
-describe("buildJobUpdatePatch", () => {
-  it("includes refreshed job_type and status from the payload", () => {
-    const patch = buildJobUpdatePatch({
-      id: "job_1", work_status: "scheduled",
+describe("jobTypeStatusPatch", () => {
+  it("returns refreshed job_type and mapped status from the payload", () => {
+    const patch = jobTypeStatusPatch({
+      work_status: "scheduled",
       job_fields: { job_type: { name: "Door Install" } },
     });
-    expect(patch.job_type).toBe("Door Install");
-    expect(patch.status).toBe("scheduled");
+    expect(patch).toEqual({ job_type: "Door Install", status: "scheduled" });
   });
 });
 ```
 
 - [ ] **Step 2: Run the test to verify it fails**
 
-Run: `cd twins-dash && npx vitest run supabase/functions/hcp-webhook/__tests__/job-updated-refreshes-type.test.ts`
-Expected: FAIL — `buildJobUpdatePatch` not exported.
+Run: `cd twins-dash && npx vitest run supabase/functions/_shared/hcp/__tests__/map-hcp-job.test.ts`
+Expected: FAIL — `jobTypeStatusPatch` not exported.
 
-- [ ] **Step 3: Implement**
-
-Add import (if not already present from Task 2): `import { extractJobType, mapWorkStatus } from "../_shared/hcp/fetch-job.ts";`
-
-Extract the patch builder and add the two fields:
+- [ ] **Step 3: Implement the helper in `fetch-job.ts`**
 
 ```ts
-export function buildJobUpdatePatch(data: any): Record<string, unknown> {
-  const patch: Record<string, unknown> = {
-    job_type: extractJobType(data),          // NEW — keep type current pre-completion
-    status: mapWorkStatus(data.work_status), // NEW — keep status current
-    revenue_amount: extractRevenue(data),
-    parts_cost: extractPartsCost(data),
-    is_opportunity: isOpportunity(data),
-    is_callback: isCallback(data),
-    hcp_data: data,
-    updated_at: new Date().toISOString(),
-    work_notes: extractWorkNotes(data),
-  };
-  const omw = extractOmwAt(data);
-  if (omw) patch.omw_at = omw;
-  const invoicedAt = extractInvoicedAt(data);
-  if (invoicedAt) patch.invoiced_at = invoicedAt;
-  return patch;
+/** The two fields job.updated / job.scheduled must refresh but currently
+ *  don't. Reuses the already-tested extractors so a door typed after
+ *  creation stays correctly typed while still pending. */
+export function jobTypeStatusPatch(data: any): { job_type: string; status: string } {
+  return { job_type: extractJobType(data), status: mapWorkStatus(data.work_status) };
 }
 ```
 
-In `handleJobUpdated`, replace the inline `updatePatch` object with `const updatePatch = buildJobUpdatePatch(data);` (keep the rest of the function). Do the same status/type refresh in `handleJobScheduled` if it does not already set them.
-
 - [ ] **Step 4: Run the test to verify it passes**
 
-Run: `cd twins-dash && npx vitest run supabase/functions/hcp-webhook/__tests__/job-updated-refreshes-type.test.ts`
-Expected: PASS.
+Run: `cd twins-dash && npx vitest run supabase/functions/_shared/hcp/__tests__/map-hcp-job.test.ts`
+Expected: PASS (all cases).
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 5: Wire into the webhook (thin, untested-by-vitest)**
+
+Add import to `hcp-webhook/index.ts`: `import { jobTypeStatusPatch } from "../_shared/hcp/fetch-job.ts";`
+In `handleJobUpdated`, add the two fields to the existing `updatePatch` object literal (spread at the top so completion-time values still win elsewhere):
+```ts
+  const updatePatch: Record<string, unknown> = {
+    ...jobTypeStatusPatch(data),   // NEW — keep type + status current pre-completion
+    revenue_amount: extractRevenue(data),
+    // ... rest of the existing patch unchanged ...
+  };
+```
+In `handleJobScheduled`, if it does not already set `job_type` and `status`, add `...jobTypeStatusPatch(data)` to its update object the same way. Do NOT add a vitest test importing `hcp-webhook/index.ts`.
+
+- [ ] **Step 6: Commit**
 
 ```bash
-git add supabase/functions/hcp-webhook/index.ts supabase/functions/hcp-webhook/__tests__/job-updated-refreshes-type.test.ts
+git add supabase/functions/_shared/hcp/fetch-job.ts supabase/functions/_shared/hcp/__tests__/map-hcp-job.test.ts supabase/functions/hcp-webhook/index.ts
 git commit -m "fix(hcp-webhook): refresh job_type + status on job.updated"
 ```
 
