@@ -25,4 +25,21 @@ def test_draft_serializes_with_source_record():
     assert post["city"] == "Verona"
     assert post["source"]["asset_source"] == "real_photo"
     assert post["source"]["needs_approval"] == ["confirm city spelling"]
-    assert "Broken spring repair in Verona." in post.content
+    assert post.content == "Broken spring repair in Verona."
+
+
+def test_draft_serializes_with_none_optionals():
+    slot = SlotSpec(date="2026-07-08", week=1, slot="value",
+                    format_target="reel", allow_recruiting=False)
+    visual = VisualPlan(kind="ai", asset_path=None, ai_spec="educational_graphic",
+                        fallback_level=5, needs_approval=False)
+    source = SourceRecord(asset_source="ai_graphic", job_folder=None,
+                          review_verified=None, confirmed_city=None,
+                          offer_used=None, needs_approval=[])
+    draft = Draft(slot=slot, caption="How a broken spring behaves.",
+                  cta="", city=None, hashtags=[], visual=visual, source=source)
+    post = frontmatter.loads(draft_to_markdown(draft))
+    assert post["city"] is None
+    assert post["source"]["job_folder"] is None
+    assert post["hashtags"] == []
+    assert post.content == draft.caption

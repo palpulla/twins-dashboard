@@ -10,7 +10,7 @@ from engine.ig_planner import SlotSpec
 from engine.ig_visuals import VisualPlan
 
 
-@dataclass
+@dataclass(frozen=True)
 class SourceRecord:
     asset_source: str                       # real_photo | real_video | verified_review | ai_graphic
     job_folder: Optional[str]
@@ -20,7 +20,7 @@ class SourceRecord:
     needs_approval: list[str] = field(default_factory=list)
 
 
-@dataclass
+@dataclass(frozen=True)
 class Draft:
     slot: SlotSpec
     caption: str
