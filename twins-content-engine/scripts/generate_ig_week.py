@@ -17,10 +17,14 @@ from engine.ig_draft import Draft, SourceRecord, draft_to_markdown
 CaptionFn = Callable[[SlotSpec], str]
 AssetsFn = Callable[[SlotSpec], list[RealAsset]]
 
+ROOT = Path(__file__).resolve().parent.parent
+
 
 def generate_week(monday: dt.date, cfg: InstagramConfig, out_dir: Path, hiring: bool,
                   caption_fn: CaptionFn, assets_fn: AssetsFn,
                   month_ai_used: int, month_total_posts: int) -> dict:
+    if monday.weekday() != 0:
+        raise ValueError(f"{monday} is not a Monday; generate_week expects the week's Monday")
     out_dir.mkdir(parents=True, exist_ok=True)
     held_dir = out_dir / "held"
     held_dir.mkdir(parents=True, exist_ok=True)
@@ -51,14 +55,18 @@ def generate_week(monday: dt.date, cfg: InstagramConfig, out_dir: Path, hiring: 
         md = draft_to_markdown(draft)
         fname = f"{slot.date}_{slot.slot}.md"
         if report.passed:
+            (held_dir / fname).unlink(missing_ok=True)
             (out_dir / fname).write_text(md)
             written["passed"].append(str(out_dir / fname))
         else:
             post = frontmatter.loads(md)
             post["_held_reason"] = [v.message for v in report.violations]
+            (out_dir / fname).unlink(missing_ok=True)
             (held_dir / fname).write_text(frontmatter.dumps(post))
             written["held"].append(str(held_dir / fname))
 
+    written["ai_used"] = ai_used
+    written["total"] = total
     return written
 
 
@@ -74,7 +82,7 @@ def main() -> None:
     parser.add_argument("--out", default="pending/instagram")
     parser.add_argument("--hiring", action="store_true")
     args = parser.parse_args()
-    cfg = load_instagram_config(Path("config/instagram.yaml"))
+    cfg = load_instagram_config(ROOT / "config" / "instagram.yaml")
     result = generate_week(
         monday=dt.date.fromisoformat(args.monday), cfg=cfg, out_dir=Path(args.out),
         hiring=args.hiring, caption_fn=_real_caption_fn, assets_fn=lambda s: [],
