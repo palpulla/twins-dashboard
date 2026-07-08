@@ -11,7 +11,7 @@ _EMOJI_RE = re.compile(
     flags=re.UNICODE,
 )
 _OUT_OF_STATE_RE = re.compile(r"\b(kentucky|lexington|ky)\b", re.IGNORECASE)
-_DOLLAR_RE = re.compile(r"\$\d[\d,]*")
+_DOLLAR_RE = re.compile(r"\$\d[\d,]*(?:\.\d{2})?")
 # Note: same-day service is a permitted, owner-confirmed claim, so it is NOT blocked.
 
 
@@ -26,7 +26,7 @@ def check_instagram_caption(text: str, cfg: InstagramConfig) -> RuleReport:
 
     lowered = text.lower()
     for term in cfg.banned_corporate_terms:
-        if re.search(rf"\b{re.escape(term)}\b", lowered):
+        if re.search(rf"\b{re.escape(term)}(?:s|es)?\b", lowered):
             violations.append(Violation("ig:corporate_term", "error", f"Corporate term not allowed: {term!r}"))
 
     for tag in cfg.banned_hashtags:

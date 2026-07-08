@@ -43,3 +43,21 @@ def test_unapproved_dollar_offer_is_blocked():
 def test_approved_offer_passes():
     report = check_instagram_caption("Book the $49 tune-up before winter.", CFG)
     assert "ig:unapproved_offer" not in _ids(report)
+
+
+def test_decimal_dollar_is_blocked():
+    report = check_instagram_caption("Book the $49.99 tune-up today.", CFG)
+    assert "ig:unapproved_offer" in _ids(report)
+
+
+def test_plural_corporate_term_is_blocked():
+    report = check_instagram_caption("Our specialists will call you back.", CFG)
+    assert "ig:corporate_term" in _ids(report)
+
+
+def test_two_dollar_amounts_one_caption():
+    # $4 is not approved and must be flagged even though $49 (approved) is present.
+    report = check_instagram_caption("Get $4 off before the $49 tune-up ends.", CFG)
+    unapproved = [v for v in report.violations if v.rule_id == "ig:unapproved_offer"]
+    assert len(unapproved) == 1
+    assert "$4" in unapproved[0].message
