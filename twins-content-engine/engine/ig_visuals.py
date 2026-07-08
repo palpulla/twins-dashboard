@@ -10,13 +10,13 @@ _LEVEL = {"completed_job": 1, "before_after": 2, "verified_review": 3,
           "truck": 4, "tools": 4, "parts": 4, "wip": 4}
 
 
-@dataclass
+@dataclass(frozen=True)
 class RealAsset:
     kind: str      # completed_job | before_after | verified_review | truck | tools | parts | wip
     path: str
 
 
-@dataclass
+@dataclass(frozen=True)
 class VisualPlan:
     kind: str                    # "real" | "ai"
     asset_path: Optional[str]
