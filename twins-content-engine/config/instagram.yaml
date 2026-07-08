@@ -1,0 +1,34 @@
+# Cycle anchor: a Monday that defines "Week 1" of the 2-week rotation.
+cycle_anchor: "2026-07-06"
+approved_offers:
+  - "$0 service call"
+  - "$49 tune-up"
+  - "GoodLeap financing"
+banned_corporate_terms:
+  - specialist
+  - journey
+  - transformation
+  - solutions
+  - experience
+banned_hashtags:
+  - "#viral"
+  - "#fyp"
+  - "#explorepage"
+approved_cta:
+  - "Call or book through the link in our profile"
+  - "Send us a photo of the spring and opener label"
+  - "Tell us what the door is doing and what city you are in"
+  - "Request a new-door estimate"
+  - "Book the $49 tune-up"
+  - "Ask about GoodLeap financing"
+  - "Save this post before winter"
+  - "Send this to someone whose garage door is stuck"
+max_ai_fraction: 0.34
+format_targets: [reel, carousel, static]
+monthly_mix:
+  real_job: 4
+  educational: 3
+  offer: 2
+  pricing_comparison: 1
+  company_local: 1
+  recruiting: 1

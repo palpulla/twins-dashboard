@@ -189,3 +189,30 @@ def load_rules(path: Path) -> RulesConfig:
             ),
         ),
     )
+
+
+@dataclass
+class InstagramConfig:
+    cycle_anchor: str
+    approved_offers: list[str]
+    banned_corporate_terms: list[str]
+    banned_hashtags: list[str]
+    approved_cta: list[str]
+    max_ai_fraction: float
+    format_targets: list[str]
+    monthly_mix: dict[str, int]
+
+
+def load_instagram_config(path: Path) -> InstagramConfig:
+    with open(path) as f:
+        raw = yaml.safe_load(f)
+    return InstagramConfig(
+        cycle_anchor=raw["cycle_anchor"],
+        approved_offers=list(raw["approved_offers"]),
+        banned_corporate_terms=list(raw["banned_corporate_terms"]),
+        banned_hashtags=list(raw["banned_hashtags"]),
+        approved_cta=list(raw["approved_cta"]),
+        max_ai_fraction=float(raw["max_ai_fraction"]),
+        format_targets=list(raw["format_targets"]),
+        monthly_mix=dict(raw["monthly_mix"]),
+    )
