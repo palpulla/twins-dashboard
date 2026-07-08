@@ -30,3 +30,11 @@ def test_week2_friday_is_flex_and_recruiting_gated_by_hiring():
 def test_non_posting_day_raises():
     with pytest.raises(ValueError):
         plan_slot(dt.date(2026, 7, 7), ANCHOR, hiring=False)  # Tuesday
+
+
+def test_week2_monday_is_proof():
+    # 2026-07-13 is the Monday of week 2 (7 days after the anchor)
+    spec = plan_slot(dt.date(2026, 7, 13), ANCHOR, hiring=False)
+    assert spec.week == 2
+    assert spec.slot == "proof"
+    assert spec.format_target == "carousel"

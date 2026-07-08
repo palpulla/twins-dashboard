@@ -8,7 +8,7 @@ _WEEKDAY_SLOT = {0: "proof", 2: "value", 4: "friday"}   # Mon, Wed, Fri
 _WEEKDAY_FORMAT = {0: "carousel", 2: "reel", 4: "static"}
 
 
-@dataclass
+@dataclass(frozen=True)
 class SlotSpec:
     date: str
     week: int              # 1 or 2 within the cycle
