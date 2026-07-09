@@ -7,7 +7,9 @@ from pathlib import Path
 
 from engine.ig_visuals import RealAsset
 
-_IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".mp4", ".mov"}
+# Images only — the IG program is photo-first (reels are Plan 3); videos in
+# the inbox are ignored so they can never reach the image-post publish path.
+_IMAGE_EXTS = {".jpg", ".jpeg", ".png"}
 _KIND_MAP = {
     "completed": "completed_job",
     "before_after": "before_after",

@@ -33,3 +33,14 @@ def test_city_normalizes_to_canonical_spelling(tmp_path):
     found = scan_inbox(tmp_path, known_cities=["McFarland", "Sun Prairie"])
     cities = {a.city for a in found}
     assert cities == {"McFarland", "Sun Prairie"}
+
+
+def test_videos_are_ignored(tmp_path):
+    # Photo-first program: reels are Plan 3, so inbox videos must never
+    # become RealAssets (they'd otherwise reach the image-post publish path).
+    (tmp_path / "completed_verona_clip.mp4").write_bytes(b"x")
+    (tmp_path / "truck_madison_pan.mov").write_bytes(b"x")
+    (tmp_path / "completed_verona_photo.jpg").write_bytes(b"x")
+    found = scan_inbox(tmp_path)
+    assert len(found) == 1
+    assert found[0].asset.path.endswith("completed_verona_photo.jpg")
