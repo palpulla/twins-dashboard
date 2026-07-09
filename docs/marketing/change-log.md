@@ -2,6 +2,26 @@
 
 Standing rule (CAP doc §8): no conversion action, pixel rule, or bid-strategy change ships without an entry here.
 
+## 2026-07-08/09 — Claude, full rebuild: Clopay collection pages + Design Your Door funnel (Daniel: "finish it, then review")
+
+Spec: `docs/superpowers/specs/2026-07-08-twins-web-redesign-clopay-ezdoor-design.md`. Brand tokens extracted from live CSS (navy #022751, deep #010D38, yellow #FBBD04, Montserrat) into a shared `.twx-` stylesheet. All pages built natively per subsite with class-based styling (immune to the cross-site kit problem).
+
+| # | Change | Detail | Revert |
+|---|---|---|---|
+| R1 | Twins UI stylesheet + redesigned Clopay API section | Rewrote the Clopay snippet (main 7050, /ky 6369, NEW /wi 6755 — all Active, Auto Insert). Section is now branded 2-col: gallery card + circular color swatches w/ "Show all N" expander + brochure pills + dealer-locator link (propId 100841). Same wp_head block carries the `.twx-` design tokens used by all rebuilt pages. Added `rocket_rucss_inline_content_exclusions` filter so WP Rocket Remove-Unused-CSS never strips the twx styles (it gutted them at first). | Deactivate the snippet per site |
+| R2 | Rebuilt 4 collection pages in place | main Modern Steel (6090), Gallery (6065), Classic (6034), /ky Classic (6198). New 7-section template: hero (Clopay showcase bg, H1 keyword-identical, quote + tel CTAs), yellow "Design this door" band → /design-your-door, Clopay live section, 3 why-Twins cards, condensed benefits/considerations copy, 5-item FAQ (details/summary), navy CTA band. Same URLs + Rank Math meta untouched. Pre-rebuild HTML snapshots committed to `docs/superpowers/backups/2026-07-08-clopay-pages/`; Elementor revisions retained. | Restore Elementor revision per page (or rebuild from backup snapshot) |
+| R3 | NEW /ky product pages | /ky Modern Steel (6378, id 170) + /ky Gallery Steel (6379, id 12), same template, KY phone (859) 440-2227, Lexington Rank Math titles/meta. Renders correctly cross-checked (class-based styling avoids the kit-CSS failure from the earlier clone attempt). | Unpublish pages |
+| R4 | Design Your Door funnel LIVE on 3 sites | `/design-your-door/` on main (7073), /wi (6756), /ky (6386). One-screen hero: pitch + white form card (name/phone/email/zip + honeypot), 3 how-it-works steps, navy CTA band. Region phones: main 833-833-2010 / wi 608-888-8785 / ky 859-440-2227. Astra page-title disabled via `site-post-title` meta (single H1). | Unpublish pages |
+| R5 | Lead endpoint (replaces planned GHL forms) | WPCode snippet **7072** (main): `POST /wp-json/twins/v1/door-builder` → email to contact@twinsgaragedoors.com with region-tagged subject, honeypot spam guard; all 3 sites post to it; page JS then redirects the visitor to ezdoor.clopay.com. Followed existing snippet-7028 pattern instead of GHL forms (simpler, matches Daniel's original "email the lead" decision; no GHL CRM record in v1). E2E verified live: browser submit → 200 → redirect landed on ezdoor.clopay.com. | Deactivate snippet 7072 |
+
+**Verified:** all 9 pages (6 collection + 3 funnel) render for anonymous visitors with correct region phones, single H1, live Clopay data, propId dealer-lock; funnel submits end-to-end.
+
+**Deferred / open:**
+- **Nav menu items** for /design-your-door: headers are Elementor Theme Builder menus; placement (top-level vs under GARAGE DOORS dropdown) is a taste call for Daniel — the 6 collection-page bands are the live entry points meanwhile.
+- **Dealer-branded EZDoor links** still pending from Clopay (redirect uses generic ezdoor.clopay.com; swap in the funnel pages' JS when provided).
+- **GHL leftovers to tidy:** unused contact custom field `lead_region`; possible stray unsaved form "Door Builder - Main" in Sites → Forms.
+- Mobile responsive rules are in the stylesheet but Daniel should eyeball the pages on his phone during review.
+
 ## 2026-07-08 — Claude, Clopay Product API v2 augment on product pages (Daniel-approved)
 
 Spec: `docs/superpowers/specs/2026-07-08-clopay-product-api-pages-design.md`. Adds live, auto-updating Clopay content (official colors, photo-gallery iframe, brochures/docs, and a "Where To Buy" CTA) to the existing rich, ranking product pages. Decision: **augment, not replace** — all unique review content, H1s, and FAQs are preserved (wholesale replacement would have risked rankings). Rendered **server-side** (SEO-safe).
