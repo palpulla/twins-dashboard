@@ -16,10 +16,16 @@ def test_load_instagram_config():
 def test_plan2_config_fields():
     cfg = load_instagram_config(CONFIG_DIR / "instagram.yaml")
     assert cfg.timezone == "America/Chicago"
-    assert cfg.publish_tools["verified"] is False
+    assert cfg.publish_tools["verified"] is True
     assert "illinois" in cfg.banned_place_terms
     assert "commercial garage door" in cfg.commercial_terms
     assert "$49 tune-up" in cfg.approved_offer_phrases
     assert cfg.city_hashtags["Verona"] == "#VeronaWI"
     assert "proof" in cfg.slot_topics and len(cfg.slot_topics["value"]) >= 5
     assert cfg.slot_cta["offer"] == "Call or book through the link in our profile"
+
+
+def test_hosting_config_fields():
+    cfg = load_instagram_config(CONFIG_DIR / "instagram.yaml")
+    assert cfg.hosting["bucket"] == "ig-media"
+    assert cfg.hosting["key_var"] == "NEW_SUPABASE_SERVICE_ROLE_KEY"

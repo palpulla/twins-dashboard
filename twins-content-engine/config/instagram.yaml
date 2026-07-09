@@ -37,7 +37,7 @@ timezone: "America/Chicago"
 # Composio tool slugs — VERIFIED at execution time via `composio search`, then
 # corrected here if they differ. Publisher refuses to run --live if unverified.
 publish_tools:
-  verified: false   # stays false until a public image-hosting step exists (image_url requirement)
+  verified: true    # slugs verified 2026-07-09 via live schema inspection; hosting step present
   ig_user_id: "me"
   media_create: "INSTAGRAM_POST_IG_USER_MEDIA"
   media_publish: "INSTAGRAM_POST_IG_USER_MEDIA_PUBLISH"
@@ -106,3 +106,9 @@ slot_cta:                          # one main CTA per slot type (from approved_c
   value: "Book the $49 tune-up"
   offer: "Call or book through the link in our profile"
   flex: "Call or book through the link in our profile"
+hosting:
+  provider: supabase
+  bucket: ig-media
+  env_file: ../.secrets/new-supabase.env   # relative to twins-content-engine/
+  url_var: NEW_SUPABASE_URL
+  key_var: NEW_SUPABASE_SERVICE_ROLE_KEY

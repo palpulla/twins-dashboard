@@ -24,9 +24,19 @@ first create a media container (``INSTAGRAM_POST_IG_USER_MEDIA``) from a
 call returns. Instagram will not fetch a local file path, so a draft can only
 be published once its frontmatter carries a public ``image_url`` — the local
 ``visual.asset_path`` proof asset is still required to exist (when
-``visual.kind == "real"``) but is no longer what gets posted. Until an
-image-hosting step exists to populate ``image_url``, ``publish_tools.verified``
-stays ``false`` and drafts without a public URL are skipped as unsafe.
+``visual.kind == "real"``) but is no longer what gets posted.
+
+Image hosting: a due draft with ``visual.kind == "real"``, an existing local
+asset, but no public ``image_url`` yet is uploaded to Supabase storage
+(``engine.ig_hosting.upload_image``) before publishing. In dry-run this is
+only previewed (counted under ``would_upload``, nothing is uploaded). In
+live mode the upload happens BEFORE the mark-then-post sequence, and the
+returned URL is written into the draft's frontmatter and saved in
+``approved/`` immediately — so if the process dies before the post itself,
+a rerun reuses the same hosted URL instead of re-uploading. A failed upload
+leaves the draft untouched in ``approved/`` (never marked attempted) and is
+counted under ``failed``. AI-kind drafts without an ``image_url`` are still
+skipped as unsafe — no AI graphic generation step exists yet.
 """
 from __future__ import annotations
 
@@ -126,7 +136,7 @@ def publish_due(approved_dir: Path, published_dir: Path, state_path: Path,
             "verified: true in config/instagram.yaml before --live."
         )
     result = {"due": 0, "published": 0, "skipped_unsafe": 0,
-              "failed": 0, "skipped_invalid": 0}
+              "failed": 0, "skipped_invalid": 0, "would_upload": 0}
     _warn_unconfirmed_attempts(published_dir)
     state = load_month_state(state_path, today) if live else None
     files = sorted(approved_dir.glob("*.md")) if approved_dir.exists() else []
@@ -157,7 +167,34 @@ def publish_due(approved_dir: Path, published_dir: Path, state_path: Path,
             print(f"UNSAFE (skipped): {f.name}: {[v.message for v in report.violations]}")
             continue
         image_url = post.get("image_url")
-        if not (isinstance(image_url, str) and image_url.startswith("http")):
+        has_url = isinstance(image_url, str) and image_url.startswith("http")
+        visual = post.get("visual", {})
+        kind = visual.get("kind")
+        asset_path = visual.get("asset_path")
+        asset_on_disk = bool(asset_path) and Path(asset_path).exists()
+
+        if not has_url and kind == "real" and asset_on_disk:
+            # No public URL yet, but a real local asset exists to host.
+            if not live:
+                result["would_upload"] += 1
+                print(f"DRY-RUN would upload {Path(asset_path).name} to hosting, "
+                      f"then publish: {f.name}")
+                continue
+            from engine.ig_hosting import upload_image  # lazy: only needed on this path
+            try:
+                image_url = upload_image(Path(asset_path), cfg, ROOT)
+            except Exception as e:
+                result["failed"] += 1
+                print(f"FAILED: {f.name}: image upload failed: {e} — "
+                      "draft left in approved/; check hosting credentials and retry.")
+                continue
+            # Persist the hosted URL BEFORE mark-then-post so a crash between
+            # here and the post itself doesn't force a re-upload on rerun.
+            post["image_url"] = image_url
+            f.write_text(frontmatter.dumps(post))
+            has_url = True
+
+        if not has_url:
             result["skipped_unsafe"] += 1
             reason = "no public image_url (hosting step pending)"
             if live:
@@ -165,10 +202,7 @@ def publish_due(approved_dir: Path, published_dir: Path, state_path: Path,
             else:
                 print(f"DRY-RUN would skip (missing image_url): {f.name}: {reason}")
             continue
-        asset_path = post.get("visual", {}).get("asset_path")
-        if post.get("visual", {}).get("kind") == "real" and (
-            not asset_path or not Path(asset_path).exists()
-        ):
+        if kind == "real" and not asset_on_disk:
             result["skipped_unsafe"] += 1
             if live:
                 print(f"UNSAFE (skipped): {f.name}: missing image (not on disk): {asset_path!r}")

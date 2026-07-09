@@ -18,6 +18,12 @@ def _verified_cfg():
     return cfg
 
 
+def _unverified_cfg():
+    cfg = load_instagram_config(CFG_PATH)
+    cfg.publish_tools["verified"] = False
+    return cfg
+
+
 def _approved(dirp, name, date,
               caption="Broken spring repair in Verona.\n\nCall or book through the link in our profile",
               asset_path=_CREATE, hashtags=None, image_url="https://example.com/x.jpg"):
@@ -72,7 +78,7 @@ def test_live_refuses_unverified_tools(tmp_path, mocker):
     _approved(approved, "2026-07-06_proof.md", "2026-07-06")
     with pytest.raises(RuntimeError, match="verified"):
         publish_due(approved, tmp_path / "published", tmp_path / "state.json",
-                    CFG, today=dt.date(2026, 7, 6), live=True)
+                    _unverified_cfg(), today=dt.date(2026, 7, 6), live=True)
 
 
 def test_live_publishes_and_stamps(tmp_path, mocker):
@@ -224,13 +230,16 @@ def test_poison_date_skipped(tmp_path, mocker):
 
 
 def test_missing_image_url_skipped_unsafe(tmp_path, mocker):
+    # No image_url AND no real asset on disk to upload instead -> still unsafe.
     run_tool = mocker.patch("scripts.publish_ig.run_tool")
+    upload_image = mocker.patch("engine.ig_hosting.upload_image")
     approved = tmp_path / "approved"
-    _approved(approved, "2026-07-06_proof.md", "2026-07-06", image_url=None)
+    _approved(approved, "2026-07-06_proof.md", "2026-07-06", image_url=None, asset_path=None)
     result = publish_due(approved, tmp_path / "published", tmp_path / "state.json",
                          _verified_cfg(), today=dt.date(2026, 7, 6), live=True)
     assert result["published"] == 0 and result["skipped_unsafe"] == 1
     run_tool.assert_not_called()
+    upload_image.assert_not_called()
     assert not list((tmp_path / "published").glob("*.md"))
 
 
@@ -274,3 +283,60 @@ def test_publish_step_failure_marked_failed(tmp_path, mocker, capsys):
     publish_due(approved, tmp_path / "published", tmp_path / "state.json",
                 cfg, today=dt.date(2026, 7, 6), live=True)
     assert "manual check" in capsys.readouterr().out
+
+
+def test_dry_run_previews_upload_for_real_asset_without_url(tmp_path, mocker):
+    run_tool = mocker.patch("scripts.publish_ig.run_tool")
+    upload_image = mocker.patch("engine.ig_hosting.upload_image")
+    approved = tmp_path / "approved"
+    _approved(approved, "2026-07-06_proof.md", "2026-07-06", image_url=None)
+    result = publish_due(approved, tmp_path / "published", tmp_path / "state.json",
+                         CFG, today=dt.date(2026, 7, 6), live=False)
+    assert result["would_upload"] == 1
+    assert result["skipped_unsafe"] == 0
+    assert result["published"] == 0
+    upload_image.assert_not_called()
+    run_tool.assert_not_called()
+
+
+def test_live_uploads_then_publishes(tmp_path, mocker):
+    run_tool = mocker.patch("scripts.publish_ig.run_tool", side_effect=_composio_success)
+    approved = tmp_path / "approved"
+    draft_path = _approved(approved, "2026-07-06_proof.md", "2026-07-06", image_url=None)
+
+    def _fake_upload(local_path, cfg, root):
+        # By the time upload_image is called, the draft must still be
+        # sitting in approved/ with no image_url yet (upload precedes save).
+        pre = frontmatter.loads(draft_path.read_text())
+        assert not pre.get("image_url")
+        return "https://example.supabase.co/storage/v1/object/public/ig-media/2026-07/x.jpg"
+
+    upload_image = mocker.patch("engine.ig_hosting.upload_image", side_effect=_fake_upload)
+    result = publish_due(approved, tmp_path / "published", tmp_path / "state.json",
+                         _verified_cfg(), today=dt.date(2026, 7, 6), live=True)
+    upload_image.assert_called_once()
+    assert result["published"] == 1 and result["failed"] == 0
+    assert run_tool.call_count == 2
+    published = list((tmp_path / "published").glob("*.md"))
+    assert len(published) == 1
+    post = frontmatter.loads(published[0].read_text())
+    assert post.get("image_url", "").startswith("https://example.supabase.co/")
+    assert post.get("published_at")
+
+
+def test_upload_failure_leaves_draft_in_approved(tmp_path, mocker):
+    run_tool = mocker.patch("scripts.publish_ig.run_tool", side_effect=_composio_success)
+    upload_image = mocker.patch("engine.ig_hosting.upload_image",
+                                side_effect=RuntimeError("Supabase upload failed: status 403: nope"))
+    approved = tmp_path / "approved"
+    _approved(approved, "2026-07-06_proof.md", "2026-07-06", image_url=None)
+    result = publish_due(approved, tmp_path / "published", tmp_path / "state.json",
+                         _verified_cfg(), today=dt.date(2026, 7, 6), live=True)
+    upload_image.assert_called_once()
+    assert result["failed"] == 1 and result["published"] == 0
+    run_tool.assert_not_called()
+    remaining = list((tmp_path / "approved").glob("*.md"))
+    assert len(remaining) == 1
+    post = frontmatter.loads(remaining[0].read_text())
+    assert not post.get("publish_attempted_at")
+    assert not list((tmp_path / "published").glob("*.md"))

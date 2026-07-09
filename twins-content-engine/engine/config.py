@@ -211,6 +211,7 @@ class InstagramConfig:
     city_hashtags: dict[str, str] = field(default_factory=dict)
     slot_topics: dict[str, list[str]] = field(default_factory=dict)
     slot_cta: dict[str, str] = field(default_factory=dict)
+    hosting: dict[str, Any] = field(default_factory=dict)
 
 
 def load_instagram_config(path: Path) -> InstagramConfig:
@@ -234,4 +235,5 @@ def load_instagram_config(path: Path) -> InstagramConfig:
         city_hashtags=dict(raw.get("city_hashtags", {})),
         slot_topics={k: list(v) for k, v in raw.get("slot_topics", {}).items()},
         slot_cta=dict(raw.get("slot_cta", {})),
+        hosting=dict(raw.get("hosting", {})),
     )
