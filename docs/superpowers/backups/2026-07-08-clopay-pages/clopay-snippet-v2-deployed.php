@@ -184,6 +184,11 @@ add_action( 'wp_head', function () {
 .twx-clopay-side .twx-h3{margin-top:18px}
 .twx-clopay-side .twx-h3:first-child{margin-top:0}
 .twx-rich{color:var(--tw-text);line-height:1.65}
+/* P1 accents */
+.twx-card{border-top:4px solid var(--tw-yellow)}
+.twx-step{border-top:4px solid var(--tw-yellow)}
+.twx-card .twx-ico{background:var(--tw-soft)}
+.twx-card .twx-ico img{width:30px;height:30px;object-fit:contain;display:block}
 /* mobile */
 @media(max-width:900px){
 .twx-clopay-grid,.twx-cols2{grid-template-columns:1fr}
