@@ -23,6 +23,7 @@ class VisualPlan:
     ai_spec: Optional[str]       # e.g. "educational_graphic" when kind == "ai"
     fallback_level: int          # 1..5
     needs_approval: bool = False
+    original_photo: Optional[str] = None  # raw inbox photo before branded-card compositing
 
 
 def _would_exceed_cap(ai_used: int, total_posts: int, max_ai_fraction: float) -> bool:

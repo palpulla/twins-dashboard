@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+from dataclasses import replace as replace_fields
 from pathlib import Path
 from typing import Callable
 
@@ -11,6 +12,7 @@ import frontmatter
 from engine.config import InstagramConfig, load_brand, load_instagram_config
 from engine.ig_assets import InboxAsset, scan_inbox
 from engine.ig_captions import generate_caption, pick_topic
+from engine.ig_design import render_card
 from engine.ig_planner import SlotSpec, plan_slot
 from engine.ig_state import load_month_state, save_month_state
 from engine.ig_visuals import RealAsset, resolve_visual
@@ -119,6 +121,21 @@ def generate_week_wired(monday: dt.date, cfg: InstagramConfig, out_dir: Path, hi
         chosen = _pop_matching_asset(pool, visual.asset_path) if visual.kind == "real" else None
         city = chosen.city if chosen else None
 
+        # Every published post must be a branded card, never the raw inbox
+        # photo. Render it here; a render failure holds the draft for manual
+        # review instead of crashing the whole week's run.
+        render_error: str | None = None
+        job_folder = str(Path(chosen.asset.path).parent) if chosen is not None else None
+        if chosen is not None:
+            headline = cfg.design["kind_headline"][chosen.asset.kind]
+            kicker = cfg.design["slot_kicker"][slot.slot]
+            try:
+                card_path = render_card(Path(chosen.asset.path), headline, kicker, cfg, ROOT)
+                visual = replace_fields(visual, asset_path=str(card_path),
+                                        original_photo=chosen.asset.path)
+            except RuntimeError as e:
+                render_error = f"branded card render failed: {e}"
+
         if visual.kind == "ai":
             ai_used += 1
         total += 1
@@ -137,7 +154,7 @@ def generate_week_wired(monday: dt.date, cfg: InstagramConfig, out_dir: Path, hi
 
         source = SourceRecord(
             asset_source=asset_source,
-            job_folder=str(Path(visual.asset_path).parent) if visual.kind == "real" else None,
+            job_folder=job_folder,
             review_verified=True if asset_source == "verified_review" else None,
             confirmed_city=city,
             offer_used=topic if slot.slot == "offer" else None,
@@ -149,13 +166,16 @@ def generate_week_wired(monday: dt.date, cfg: InstagramConfig, out_dir: Path, hi
         report = check_instagram_draft(caption, cta, cfg)
         md = draft_to_markdown(draft)
         fname = f"{slot.date}_{slot.slot}.md"
-        if report.passed:
+        if report.passed and render_error is None:
             (held_dir / fname).unlink(missing_ok=True)
             (out_dir / fname).write_text(md)
             written["passed"].append(str(out_dir / fname))
         else:
             post = frontmatter.loads(md)
-            post["_held_reason"] = [v.message for v in report.violations]
+            reasons = [v.message for v in report.violations]
+            if render_error:
+                reasons.append(render_error)
+            post["_held_reason"] = reasons
             (out_dir / fname).unlink(missing_ok=True)
             (held_dir / fname).write_text(frontmatter.dumps(post))
             written["held"].append(str(held_dir / fname))

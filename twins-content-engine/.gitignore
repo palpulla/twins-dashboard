@@ -17,3 +17,5 @@ briefs/*
 !briefs/.gitkeep
 .env
 logs/
+assets/instagram/rendered/*
+!assets/instagram/rendered/.gitkeep

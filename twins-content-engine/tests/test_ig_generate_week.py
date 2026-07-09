@@ -77,3 +77,52 @@ def test_wired_generation_populates_cta_city_hashtags(tmp_path, mocker):
     assert post["city"] == "Verona"
     assert any(h == "#VeronaWI" for h in post["hashtags"])
     assert post["source"]["job_folder"] and post["source"]["asset_source"] == "real_photo"
+
+
+def test_wired_generation_renders_branded_card_and_keeps_original_photo(tmp_path, mocker):
+    mocker.patch("scripts.generate_ig_week.generate_caption",
+                 return_value="Broken spring repair in Verona.\n\nTell us what the door is doing and what city you are in")
+    fake_card = tmp_path / "fake_card.png"
+    fake_card.write_bytes(b"card")
+    mocker.patch("scripts.generate_ig_week.render_card", return_value=fake_card)
+
+    inbox = tmp_path / "inbox"
+    inbox.mkdir()
+    original_photo = inbox / "completed_verona_done.jpg"
+    original_photo.write_bytes(b"x")
+
+    written = generate_week_wired(
+        monday=dt.date(2026, 7, 6), cfg=CFG, out_dir=tmp_path / "pending",
+        hiring=False, inbox=inbox, state_path=tmp_path / "state.json",
+    )
+    assert len(written["passed"]) == 3
+    post = frontmatter.loads(Path(written["passed"][0]).read_text())
+    assert post["visual"]["asset_path"] == str(fake_card)
+    assert post["visual"]["original_photo"] == str(original_photo)
+    assert post["source"]["job_folder"] == str(inbox)
+    assert post["source"]["asset_source"] == "real_photo"
+
+
+def test_wired_generation_holds_draft_when_card_render_fails(tmp_path, mocker):
+    mocker.patch("scripts.generate_ig_week.generate_caption",
+                 return_value="Broken spring repair in Verona.\n\nTell us what the door is doing and what city you are in")
+    mocker.patch("scripts.generate_ig_week.render_card",
+                 side_effect=RuntimeError("chrome exploded"))
+
+    inbox = tmp_path / "inbox"
+    inbox.mkdir()
+    (inbox / "completed_verona_done.jpg").write_bytes(b"x")
+
+    written = generate_week_wired(
+        monday=dt.date(2026, 7, 6), cfg=CFG, out_dir=tmp_path / "pending",
+        hiring=False, inbox=inbox, state_path=tmp_path / "state.json",
+    )
+    # The one slot holding the real photo is held for the render failure; the
+    # run continues and the other two (AI-visual) slots still pass through.
+    assert len(written["held"]) == 1
+    assert len(written["passed"]) == 2
+    held_post = frontmatter.loads(Path(written["held"][0]).read_text())
+    assert any("chrome exploded" in reason for reason in held_post["_held_reason"])
+    # The raw photo must never be promoted to a publishable draft on failure.
+    assert held_post["visual"]["asset_path"] == str(inbox / "completed_verona_done.jpg")
+    assert held_post["visual"]["original_photo"] is None

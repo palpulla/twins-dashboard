@@ -112,3 +112,20 @@ hosting:
   env_file: ../.secrets/new-supabase.env   # relative to twins-content-engine/
   url_var: NEW_SUPABASE_URL
   key_var: NEW_SUPABASE_SERVICE_ROLE_KEY
+design:
+  template: assets/instagram/brand/post_template.html
+  out_dir: assets/instagram/rendered
+  chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+  slot_kicker:
+    proof: "Recent Work"
+    value: "Good To Know"
+    offer: "Current Offer"
+    flex: "The Twins Crew"
+  kind_headline:
+    completed_job: "New Garage Door Install"
+    before_after: "Before & After"
+    verified_review: "5-Star Review"
+    truck: "Ready To Roll"
+    tools: "The Right Tools"
+    parts: "Quality Parts"
+    wip: "On The Job"
