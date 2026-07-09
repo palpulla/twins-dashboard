@@ -1,4 +1,5 @@
 import frontmatter
+import pytest
 from scripts.approve_ig import approve_draft, reject_draft
 
 
@@ -25,3 +26,13 @@ def test_reject_records_reason(tmp_path):
     assert not f.exists() and out.exists()
     post = frontmatter.loads(out.read_text())
     assert post["rejected_reason"] == "wrong city"
+
+
+def test_approve_refuses_overwrite(tmp_path):
+    pending = tmp_path / "pending"; pending.mkdir()
+    approved = tmp_path / "approved"; approved.mkdir()
+    (approved / "2026-07-06_proof.md").write_text("---\nslot: proof\n---\nAlready approved.")
+    f = _mk(pending)
+    with pytest.raises(FileExistsError):
+        approve_draft(f, approved)
+    assert f.exists()  # pending draft untouched
