@@ -16,3 +16,4 @@ briefs/*
 !approved/.gitkeep
 !briefs/.gitkeep
 .env
+logs/
