@@ -20,7 +20,7 @@ def _verified_cfg():
 
 def _approved(dirp, name, date,
               caption="Broken spring repair in Verona.\n\nCall or book through the link in our profile",
-              asset_path=_CREATE):
+              asset_path=_CREATE, hashtags=None):
     dirp.mkdir(parents=True, exist_ok=True)
     if asset_path is _CREATE:
         asset = dirp / f"{name}.jpg"
@@ -31,6 +31,8 @@ def _approved(dirp, name, date,
     post["date"] = date; post["slot"] = "proof"; post["approved"] = True
     post["cta"] = "Call or book through the link in our profile"
     post["visual"] = {"kind": "real", "asset_path": asset_path, "ai_spec": None, "fallback_level": 1, "needs_approval": False}
+    if hashtags is not None:
+        post["hashtags"] = hashtags
     p.write_text(frontmatter.dumps(post))
     return p
 
@@ -172,6 +174,27 @@ def test_dry_run_previews_missing_image_skip(tmp_path, mocker, capsys):
                          today=dt.date(2026, 7, 6), live=False)
     assert result["skipped_unsafe"] == 1 and result["published"] == 0
     assert "missing image" in capsys.readouterr().out.lower()
+
+
+def test_hashtags_are_appended_to_posted_caption(tmp_path, mocker):
+    run_tool = mocker.patch("scripts.publish_ig.run_tool", return_value={"successful": True})
+    cfg = _verified_cfg()
+    approved = tmp_path / "approved"
+    _approved(approved, "2026-07-06_proof.md", "2026-07-06", hashtags=["#VeronaWI", "#GarageDoorRepair"])
+    publish_due(approved, tmp_path / "published", tmp_path / "state.json", cfg,
+                today=dt.date(2026, 7, 6), live=True)
+    sent = run_tool.call_args[0][1]["caption"]
+    assert sent.endswith("#VeronaWI #GarageDoorRepair")
+
+
+def test_banned_hashtag_caught_at_publish_time(tmp_path, mocker):
+    run_tool = mocker.patch("scripts.publish_ig.run_tool", return_value={"successful": True})
+    approved = tmp_path / "approved"
+    _approved(approved, "2026-07-06_proof.md", "2026-07-06", hashtags=["#fyp"])
+    result = publish_due(approved, tmp_path / "published", tmp_path / "state.json",
+                         _verified_cfg(), today=dt.date(2026, 7, 6), live=True)
+    assert result["published"] == 0 and result["skipped_unsafe"] == 1
+    run_tool.assert_not_called()
 
 
 def test_poison_date_skipped(tmp_path, mocker):

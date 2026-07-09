@@ -34,6 +34,15 @@ from engine.ig_state import load_month_state, save_month_state
 ROOT = Path(__file__).resolve().parent.parent
 
 
+def _posted_caption(post) -> str:
+    """Caption exactly as it will be posted: body + frontmatter hashtags."""
+    caption = post.content.strip()
+    tags = [t for t in (post.get("hashtags") or []) if t]
+    if tags:
+        caption = f"{caption}\n\n{' '.join(tags)}"
+    return caption
+
+
 def _warn_unconfirmed_attempts(published_dir: Path) -> None:
     """Flag files whose publish was attempted but never confirmed successful."""
     if not published_dir.exists():
@@ -81,7 +90,9 @@ def publish_due(approved_dir: Path, published_dir: Path, state_path: Path,
             print(f"INVALID (skipped): {f.name}: {e}")
             continue
         result["due"] += 1
-        caption = post.content.strip()
+        # Validate the caption AS POSTED (body + hashtags) so the banned-hashtag
+        # rule protects the publish path too.
+        caption = _posted_caption(post)
         report = check_instagram_draft(caption, str(post.get("cta", "")), cfg)
         if not report.passed:
             result["skipped_unsafe"] += 1
@@ -106,6 +117,8 @@ def publish_due(approved_dir: Path, published_dir: Path, state_path: Path,
         f.unlink()
         error = None
         try:
+            # Caption body already ends with the CTA line (appended by
+            # ig_captions.generate_caption) — do NOT concatenate post["cta"] again.
             resp = run_tool(cfg.publish_tools["image_post"], {
                 "caption": caption,
                 "image_path": asset_path,
