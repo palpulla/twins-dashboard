@@ -39,6 +39,10 @@ def _parse_city(slug: str | None, known_cities: list[str] | None = None) -> str 
         for city in known_cities:
             if _normalize(city) == target:
                 return city
+        # A known-cities whitelist was provided and the token isn't in it:
+        # treat it as a description, NOT a location. A caption must never
+        # name an invented city (e.g. completed_frontdoor.jpg -> "Frontdoor").
+        return None
     return " ".join(w.capitalize() for w in slug.split("-"))
 
 

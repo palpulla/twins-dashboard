@@ -44,3 +44,12 @@ def test_videos_are_ignored(tmp_path):
     found = scan_inbox(tmp_path)
     assert len(found) == 1
     assert found[0].asset.path.endswith("completed_verona_photo.jpg")
+
+
+def test_unknown_token_is_not_a_city_when_whitelist_given(tmp_path):
+    (tmp_path / "completed_frontdoor_x.jpg").write_bytes(b"x")
+    (tmp_path / "completed_verona_y.jpg").write_bytes(b"x")
+    found = scan_inbox(tmp_path, known_cities=["Verona", "McFarland"])
+    by_path = {a.asset.path.split("/")[-1]: a.city for a in found}
+    assert by_path["completed_frontdoor_x.jpg"] is None   # junk token != city
+    assert by_path["completed_verona_y.jpg"] == "Verona"
