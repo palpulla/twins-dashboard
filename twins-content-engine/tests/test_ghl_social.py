@@ -89,7 +89,9 @@ def test_create_social_post_success(tmp_path, mocker):
     assert body["summary"] == "Caption text"
     assert body["status"] == "published"
     assert body["userId"] == "loc-xyz"
-    assert body["media"] == [{"url": "https://example.com/x.jpg"}]
+    # media type + tags are REQUIRED: GHL's publish-now path 400s without them
+    assert body["media"] == [{"url": "https://example.com/x.jpg", "type": "image/jpeg"}]
+    assert body["tags"] == []
     assert body["type"] == "post"
 
 

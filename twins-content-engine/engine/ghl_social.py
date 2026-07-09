@@ -99,6 +99,15 @@ def get_social_accounts(env_file: Path) -> list[dict]:
     return out
 
 
+
+def _mime_for(url: str) -> str:
+    lowered = url.lower().split("?")[0]
+    if lowered.endswith(".png"):
+        return "image/png"
+    if lowered.endswith((".jpg", ".jpeg")):
+        return "image/jpeg"
+    return "image/png"
+
 def create_social_post(
     env_file: Path,
     account_ids: list[str],
@@ -121,7 +130,11 @@ def create_social_post(
         "type": "post",
         "status": status,
         "userId": location,
-        "media": [{"url": image_url}],
+        # GHL's publish-now path reads media type and tags server-side
+        # (undefined.includes crashes with a 400 when either is absent;
+        # draft status never hits that path). Always send both.
+        "media": [{"url": image_url, "type": _mime_for(image_url)}],
+        "tags": [],
     }
     resp = requests.post(url, headers=_headers(token), json=body, timeout=_TIMEOUT)
     if not resp.ok:
