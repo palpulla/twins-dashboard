@@ -1,8 +1,11 @@
 import datetime as dt
 from pathlib import Path
+
+import frontmatter
+
 from engine.config import load_instagram_config
 from engine.ig_visuals import RealAsset
-from scripts.generate_ig_week import generate_week
+from scripts.generate_ig_week import generate_week, generate_week_wired
 
 CFG = load_instagram_config(Path(__file__).resolve().parents[1] / "config" / "instagram.yaml")
 
@@ -56,3 +59,21 @@ def test_non_monday_monday_raises(tmp_path):
         generate_week(monday=dt.date(2026, 7, 7), cfg=CFG, out_dir=tmp_path,
                       hiring=False, caption_fn=lambda s: "Recent repair in Verona.",
                       assets_fn=lambda s: [], month_ai_used=0, month_total_posts=0)
+
+
+def test_wired_generation_populates_cta_city_hashtags(tmp_path, mocker):
+    mocker.patch("scripts.generate_ig_week.generate_caption",
+                 return_value="Broken spring repair in Verona.\n\nTell us what the door is doing and what city you are in")
+    inbox = tmp_path / "inbox"
+    inbox.mkdir()
+    (inbox / "completed_verona_done.jpg").write_bytes(b"x")
+    written = generate_week_wired(
+        monday=dt.date(2026, 7, 6), cfg=CFG, out_dir=tmp_path / "pending",
+        hiring=False, inbox=inbox, state_path=tmp_path / "state.json",
+    )
+    assert len(written["passed"]) == 3
+    post = frontmatter.loads(Path(written["passed"][0]).read_text())
+    assert post["cta"] in CFG.approved_cta
+    assert post["city"] == "Verona"
+    assert any(h == "#VeronaWI" for h in post["hashtags"])
+    assert post["source"]["job_folder"] and post["source"]["asset_source"] == "real_photo"
