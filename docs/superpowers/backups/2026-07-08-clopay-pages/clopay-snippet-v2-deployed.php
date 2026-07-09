@@ -189,6 +189,7 @@ add_action( 'wp_head', function () {
 .twx-step{border-top:4px solid var(--tw-yellow)}
 .twx-card .twx-ico{background:var(--tw-soft)}
 .twx-card .twx-ico img{width:30px;height:30px;object-fit:contain;display:block}
+[style*="text-align:center"] .twx-underline:after{margin-left:auto;margin-right:auto}
 /* mobile */
 @media(max-width:900px){
 .twx-clopay-grid,.twx-cols2{grid-template-columns:1fr}
