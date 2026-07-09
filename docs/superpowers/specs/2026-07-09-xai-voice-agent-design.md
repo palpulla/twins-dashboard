@@ -152,6 +152,11 @@ Supersedes the "no HCP writes" and "no outbound pinging" items below for THIS pi
 3. **New capture fields:** caller email (optional, spelled back) and address split into street/city/state/zip (the agent structures what it heard; state defaults to WI and is flagged VERIFY when defaulted).
 4. Email/HCP failures never fail the webhook response; they are recorded on the audit row for silent review. GHL write failures still return 500 (xAI retries).
 
+## Amendment 2 (2026-07-09, Daniel, explicit): availability windows + recording emails
+
+1. **Availability tool.** New token-gated edge fn `voice-agent-availability` on jwrpj reads the synced `jobs` schedule (HCP mirror, timezone America/Chicago) and returns the next open arrival windows. Business rules (Daniel 2026-07-09): Mon-Fri windows 8-10am, 9am-12pm, 11am-2pm, 2-5pm; Saturday windows 8-10am, 10am-12pm, 12-2pm offered ONLY on the guaranteed second Saturday of each month (other Saturdays are TBD and never offered). Capacity: a window is full at 2 scheduled jobs (2 techs, one job each per window); a day is full at 8. The overflow tech is Ivory's manual call, never auto-offered. The agent's `check_availability` tool offers 2-3 open windows; the caller's pick goes into preferred_window; the agent still never books and still says a team member confirms; drafts stay unscheduled. Conservative counting: a job whose scheduled start falls inside two overlapping windows counts against both.
+2. **Recording follow-up email.** Production calls flow through GHL forwarding, so GHL records the full call. A cron (every 5 min) scans captures with status 'created' missing a recording email, finds the call recording on the capture's GHL contact conversation (recordings lag the call by minutes; 2h retry budget then give up with a recorded error), and sends a second email to the same two recipients with the audio attached (skip attachment above ~20MB, link instead). Direct calls to the agent number bypass GHL and only have the xAI-console copy (30-day retention, playable + downloadable there).
+
 ## Out of scope
 
 - Direct calendar booking or any GHL → HCP sync.
