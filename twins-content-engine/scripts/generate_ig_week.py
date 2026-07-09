@@ -115,6 +115,20 @@ def generate_week_wired(monday: dt.date, cfg: InstagramConfig, out_dir: Path, hi
         day = monday + dt.timedelta(days=offset)
         slot = plan_slot(day, cfg.cycle_anchor, hiring=hiring)
 
+        # Never regenerate a slot that is already approved, published, or
+        # pending — re-running mid-week (or Sunday's run targeting the current
+        # week) must not clobber or duplicate work Daniel already acted on.
+        # approved/ and published/ are siblings of the pending tree
+        # (<base>/pending/instagram -> <base>/approved/instagram).
+        base = out_dir.parent.parent
+        fname = f"{slot.date}_{slot.slot}.md"
+        existing = [base / "approved" / "instagram" / fname,
+                    base / "published" / "instagram" / fname,
+                    out_dir / fname]
+        if any(p.exists() for p in existing):
+            written.setdefault("skipped_existing", []).append(fname)
+            continue
+
         candidate_assets = [item.asset for item in pool]
         visual = resolve_visual(slot.slot, candidate_assets, ai_used, total, cfg.max_ai_fraction)
 

@@ -126,3 +126,19 @@ def test_wired_generation_holds_draft_when_card_render_fails(tmp_path, mocker):
     # The raw photo must never be promoted to a publishable draft on failure.
     assert held_post["visual"]["asset_path"] == str(inbox / "completed_verona_done.jpg")
     assert held_post["visual"]["original_photo"] is None
+
+
+def test_wired_generation_skips_already_approved_slots(tmp_path, mocker):
+    mocker.patch("scripts.generate_ig_week.generate_caption",
+                 return_value="Recent repair in Verona.\n\nTell us what the door is doing and what city you are in")
+    approved = tmp_path / "approved" / "instagram"
+    approved.mkdir(parents=True)
+    (approved / "2026-07-15_value.md").write_text("---\nslot: value\n---\nAlready approved.")
+    inbox = tmp_path / "inbox"; inbox.mkdir()
+    written = generate_week_wired(
+        monday=dt.date(2026, 7, 13), cfg=CFG, out_dir=tmp_path / "pending" / "instagram",
+        hiring=False, inbox=inbox, state_path=tmp_path / "state.json",
+    )
+    assert "2026-07-15_value.md" in written.get("skipped_existing", [])
+    assert len(written["passed"]) == 2  # Mon + Fri generated, Wed skipped
+    assert (approved / "2026-07-15_value.md").read_text().endswith("Already approved.")
