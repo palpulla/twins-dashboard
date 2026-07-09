@@ -201,6 +201,16 @@ class InstagramConfig:
     max_ai_fraction: float
     format_targets: list[str]
     monthly_mix: dict[str, int]
+    post_time_local: str = "12:00"
+    timezone: str = "America/Chicago"
+    publish_tools: dict[str, Any] = field(default_factory=dict)
+    banned_place_terms: list[str] = field(default_factory=list)
+    commercial_terms: list[str] = field(default_factory=list)
+    approved_offer_phrases: list[str] = field(default_factory=list)
+    hashtags_base: list[str] = field(default_factory=list)
+    city_hashtags: dict[str, str] = field(default_factory=dict)
+    slot_topics: dict[str, list[str]] = field(default_factory=dict)
+    slot_cta: dict[str, str] = field(default_factory=dict)
 
 
 def load_instagram_config(path: Path) -> InstagramConfig:
@@ -214,4 +224,14 @@ def load_instagram_config(path: Path) -> InstagramConfig:
         max_ai_fraction=float(raw["max_ai_fraction"]),
         format_targets=list(raw["format_targets"]),
         monthly_mix=dict(raw["monthly_mix"]),
+        post_time_local=raw.get("post_time_local", "12:00"),
+        timezone=raw.get("timezone", "America/Chicago"),
+        publish_tools=dict(raw.get("publish_tools", {})),
+        banned_place_terms=list(raw.get("banned_place_terms", [])),
+        commercial_terms=list(raw.get("commercial_terms", [])),
+        approved_offer_phrases=list(raw.get("approved_offer_phrases", [])),
+        hashtags_base=list(raw.get("hashtags_base", [])),
+        city_hashtags=dict(raw.get("city_hashtags", {})),
+        slot_topics={k: list(v) for k, v in raw.get("slot_topics", {}).items()},
+        slot_cta=dict(raw.get("slot_cta", {})),
     )

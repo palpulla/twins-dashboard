@@ -32,3 +32,74 @@ monthly_mix:
   pricing_comparison: 1
   company_local: 1
   recruiting: 1
+post_time_local: "12:00"          # America/Chicago
+timezone: "America/Chicago"
+# Composio tool slugs — VERIFIED at execution time via `composio search`, then
+# corrected here if they differ. Publisher refuses to run --live if unverified.
+publish_tools:
+  verified: false
+  image_post: "INSTAGRAM_CREATE_POST"
+banned_place_terms:               # non-WI markets that must never appear
+  - kentucky
+  - lexington
+  - illinois
+  - chicago
+  - rockford
+  - minnesota
+  - iowa
+commercial_terms:                 # commercial (non-residential) content markers
+  - commercial garage door
+  - loading dock
+  - roll-up door
+  - warehouse door
+  - overhead coiling
+approved_offer_phrases:           # exact allowed phrasings around approved dollar amounts
+  - "$0 service call"
+  - "$49 tune-up"
+  - "$49 tune up"
+hashtags_base: ["#GarageDoorRepair", "#MadisonWI", "#DaneCountyWI"]
+city_hashtags:
+  Madison: "#MadisonWI"
+  Middleton: "#MiddletonWI"
+  Verona: "#VeronaWI"
+  Fitchburg: "#FitchburgWI"
+  "Sun Prairie": "#SunPrairieWI"
+  Waunakee: "#WaunakeeWI"
+  DeForest: "#DeForestWI"
+  "Cottage Grove": "#CottageGroveWI"
+  McFarland: "#McFarlandWI"
+  Monona: "#MononaWI"
+  Oregon: "#OregonWI"
+  Stoughton: "#StoughtonWI"
+  "Mount Horeb": "#MountHorebWI"
+  "Cross Plains": "#CrossPlainsWI"
+slot_topics:
+  proof:
+    - "Broken spring repair"
+    - "New garage door installation"
+    - "Off-track door repair"
+    - "Opener replacement"
+  value:
+    - "Door opens a few inches and stops - what it usually means"
+    - "A loud bang from the garage - what just broke"
+    - "The door suddenly feels heavy - why that is unsafe"
+    - "Opener runs but the door does not move"
+    - "The door reverses for no clear reason"
+    - "Repair versus replacement - how to decide"
+    - "Should both springs be replaced at once"
+    - "When should an opener be replaced"
+    - "What the $49 tune-up includes"
+    - "What affects the cost of a new garage door"
+  offer:
+    - "$0 service call"
+    - "$49 tune-up"
+    - "GoodLeap financing"
+  flex:
+    - "Recent garage door jobs across Madison, Middleton, Verona, and Fitchburg"
+    - "What a normal day looks like for a Twins tech"
+    - "The trucks and tools we bring to every job"
+slot_cta:                          # one main CTA per slot type (from approved_cta)
+  proof: "Tell us what the door is doing and what city you are in"
+  value: "Book the $49 tune-up"
+  offer: "Call or book through the link in our profile"
+  flex: "Call or book through the link in our profile"
