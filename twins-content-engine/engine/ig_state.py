@@ -13,7 +13,12 @@ def _month_key(day: dt.date) -> str:
 def load_month_state(path: Path, today: dt.date) -> dict:
     key = _month_key(today)
     if path.exists():
-        state = json.loads(path.read_text())
+        try:
+            state = json.loads(path.read_text())
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Corrupt month-state file {path}: {e}") from e
+        if not isinstance(state, dict):
+            raise ValueError(f"Corrupt month-state file {path}: expected an object")
         if state.get("month") == key:
             return state
     return {"month": key, "ai_used": 0, "total": 0}
