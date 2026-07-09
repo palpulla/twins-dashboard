@@ -143,10 +143,19 @@ Until a value is provided, the agent's instructions force the safe fallback ("a 
 
 Phase 0 verifications → facts intake → agent built in Builder → edge fn deployed → GHL forwarding configured → test calls (success criteria above) → **1-week supervised window** (Daniel/Ivory skim xAI transcripts + GHL captures each morning; tune KB and instructions from real calls) → trust it.
 
+## Amendment 2026-07-09 (Daniel, explicit): HCP drafts + email notifications
+
+Supersedes the "no HCP writes" and "no outbound pinging" items below for THIS pipeline only. The shelved call-intake poller stays shelved; its proven modules are reused inside the voice-agent webhook.
+
+1. **HCP draft creation.** When a capture is a real service request (problem present AND street + city + zip present), the webhook creates an UNSCHEDULED HCP draft: dedupe by phone first (mirror + live-HCP backstop; existing customers never duplicated), then customer → address → unscheduled job → note. Resumable: per-step HCP ids persist on the capture row so retries never double-create. Message-only or address-less captures stay GHL-note-only. The agent still never books; Ivory confirms and schedules the draft.
+2. **Email notification on every capture** to daniel@twinsgaragedoors.com and ivory@twinsgaragedoors.com via the repo's existing Resend pipeline: first/last name, email, phone, address, issue description, preferred window, emergency flag, uncertainty list, the agent's conversation recap (xAI exposes no post-call transcript API, so the agent submits a detailed recap; the email links to the full transcript in the xAI console), plus GHL contact and HCP draft links. Ivory's live surface remains the Dunzo desktop app (tag + smart list); email is the record.
+3. **New capture fields:** caller email (optional, spelled back) and address split into street/city/state/zip (the agent structures what it heard; state defaults to WI and is flagged VERIFY when defaulted).
+4. Email/HCP failures never fail the webhook response; they are recorded on the audit row for silent review. GHL write failures still return 500 (xAI retries).
+
 ## Out of scope
 
 - Direct calendar booking or any GHL → HCP sync.
-- HCP writes of any kind (call-intake pipeline stays shelved).
+- HCP writes beyond the Amendment above (call-intake pipeline stays shelved).
 - Daytime first-ring call handling (agent is overflow only).
 - Website chat + SMS (Conversation AI); a later phase can reuse the same KB content.
 - Custom transcript pipelines into twins-dash.
