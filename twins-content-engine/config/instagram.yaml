@@ -23,6 +23,8 @@ approved_cta:
   - "Ask about GoodLeap financing"
   - "Save this post before winter"
   - "Send this to someone whose garage door is stuck"
+  - "Send us a photo of your current door and your city, or book an estimate through the link in our profile"
+  - "Call or book online for garage door opener service in the Madison or Milwaukee area"
 max_ai_fraction: 0.34
 format_targets: [reel, carousel, static]
 monthly_mix:
@@ -60,7 +62,7 @@ approved_offer_phrases:           # exact allowed phrasings around approved doll
   - "$0 service call"
   - "$49 tune-up"
   - "$49 tune up"
-hashtags_base: ["#GarageDoorRepair", "#MadisonWI", "#DaneCountyWI"]
+hashtags_base: ["#GarageDoorRepair", "#GarageDoorInstallation", "#MadisonWI", "#MilwaukeeWI"]
 city_hashtags:
   Madison: "#MadisonWI"
   Middleton: "#MiddletonWI"

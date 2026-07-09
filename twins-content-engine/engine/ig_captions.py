@@ -51,12 +51,14 @@ def build_prompt(slot: SlotSpec, topic: str, city: str | None,
             # Unknown job location: never pin the job to a specific city.
             proof_rules += (
                 " The job's exact city is unknown: do NOT name a specific city "
-                "for this job. If you mention location at all, say 'the Madison "
-                "area' only."
+                "for this job. Say 'a local homeowner' or 'the Madison and "
+                "Milwaukee areas' if you mention location at all."
             )
     return (
         f"Write a short Instagram caption for {brand.business_name}, a residential "
-        f"garage door company serving Madison and Dane County, Wisconsin.\n"
+        f"garage door company serving homeowners throughout the Madison and "
+        f"Milwaukee areas of Wisconsin. Never position the company as serving "
+        f"only Madison or Dane County.\n"
         f"Post type: {slot.slot}. Topic: {topic}{place}.\n"
         f"Rules: plain trade language, no emojis, no hashtags, no exclamation streaks, "
         f"avoid these words: {avoid}. 2-4 sentences. If a city is given, name it in the "
