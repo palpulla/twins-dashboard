@@ -2,7 +2,7 @@
 
 Standing rule (CAP doc §8): no conversion action, pixel rule, or bid-strategy change ships without an entry here.
 
-## 2026-07-09 — Claude, Phase 1a: Clopay gallery iframe fix (Daniel-approved spec)
+## 2026-07-09 — Claude, Phase 1: Clopay gallery iframe fix + twx polish (Daniel-approved spec)
 
 Spec: `docs/superpowers/specs/2026-07-09-phase1-gallery-fix-twx-polish-design.md`.
 
@@ -10,6 +10,8 @@ Spec: `docs/superpowers/specs/2026-07-09-phase1-gallery-fix-twx-polish-design.md
 |---|---|---|---|
 | G1 | Gallery iframe un-lazied | WP Rocket rewrote the Clopay gallery iframe to `about:blank` (conflict with the iframe's own `loading="lazy"`). Snippets 7050/6369/6755: removed `loading="lazy"`, added `data-no-lazy="1"`. Rocket caches purged (main + /ky). Verified anon HTML shows direct clopaydoor.com src. | Re-add `loading="lazy"`, remove `data-no-lazy` (repo backup holds prior text) |
 | G2 | Atomic Edge Cache cleared (main) | Anonymous traffic on main is fronted by the host's a8c edge CDN (`x-ac` header), which kept serving the pre-fix HTML after the Rocket purge. One-time "Clear Edge Cache" on main's Settings → Edge Cache page. No settings changed (cache left enabled); /ky pages revalidated on their own after the Rocket purge. | Nothing to revert — one-time cache clear |
+| P1 | Brand accents on twx pages | Yellow top-borders on cards/steps + `.twx-ico` chip sizing (30px, icons are wide 200x105) added to snippets 7050/6369/6755; yellow heading underlines + 3 Media Library icons per why-cards section patched into 6 collection pages; underlines on 3 funnel pages. Icons are pre-existing library assets only (see `docs/superpowers/backups/2026-07-09-phase1/icon-map.md`); /ky pages use /ky's own sites/3 copies. | CSS: remove the `/* P1 accents */` block per snippet. Pages: restore Elementor revision per page |
+| P2 | Firewall unblock NOT done (verification fallback) | This machine's IP (50.170.77.66) is still 403-blocked for anonymous requests by the BlogVault firewall ("Blocked because of Malicious Activities", ref 2893084716a4fa5da9dd88) after a prior agent's rapid curls. The firewall is not a WP plugin on this multisite (checked site, network, mu-plugins, drop-ins — only Migrate Guru by the same vendor); it runs upstream and is managed only from app.blogvault.net, where no session exists — unblocking needs Daniel to log in there (Firewall → blocked IPs / whitelist) or the block to age out. Nothing was changed in WP. Origin content + rendered pages verified via logged-in browser instead; **anonymous cached-output verification for the P1 batch is PENDING** until the IP is cleared (G1/G2's earlier anon verification predates the block). | Nothing to revert — no change made. Optional: remove the whitelist entry if Daniel adds one |
 
 ## 2026-07-08/09 — Claude, full rebuild: Clopay collection pages + Design Your Door funnel (Daniel: "finish it, then review")
 
