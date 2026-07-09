@@ -43,6 +43,8 @@ publish_tools:
   ig_user_id: "me"
   media_create: "INSTAGRAM_POST_IG_USER_MEDIA"
   media_publish: "INSTAGRAM_POST_IG_USER_MEDIA_PUBLISH"
+  rail: ghl                              # ghl (Social Planner, FB+IG simultaneous) | composio (legacy fallback)
+  ghl_platforms: ["facebook", "instagram"]  # extend with "google" / "linkedin" here only
 banned_place_terms:               # non-WI markets that must never appear
   - kentucky
   - lexington

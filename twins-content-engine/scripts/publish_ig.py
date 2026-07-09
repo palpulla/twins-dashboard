@@ -49,6 +49,7 @@ import yaml
 
 from engine.composio_client import run_tool
 from engine.config import InstagramConfig, load_instagram_config
+from engine.ghl_social import create_social_post, get_social_accounts
 from engine.ig_rules import check_instagram_draft
 from engine.ig_state import load_month_state, save_month_state
 
@@ -109,6 +110,30 @@ def _publish_via_composio(cfg: InstagramConfig, caption: str, image_url: str) ->
     })
     if not isinstance(publish_resp, dict) or publish_resp.get("successful") is not True:
         raise RuntimeError(f"composio media publish not successful: {publish_resp!r}")
+
+
+def _publish_via_ghl(cfg: InstagramConfig, caption: str, image_url: str) -> None:
+    """Publish via the GHL Social Planner rail: FB + IG (extensible) simultaneous post.
+
+    Resolves target account ids fresh each run (never cached) so a
+    reconnected/disconnected account is picked up without a config change.
+    Raises RuntimeError listing any configured platform with no active
+    (non-expired) account — that run's draft takes the existing
+    publish_error failure path, consistent with the composio rail.
+    """
+    pt = cfg.publish_tools
+    platforms = pt.get("ghl_platforms") or ["facebook", "instagram"]
+    env_file = ROOT / ".env"
+    accounts = get_social_accounts(env_file)
+    by_platform: dict[str, list[str]] = {}
+    for acc in accounts:
+        if not acc.get("isExpired"):
+            by_platform.setdefault(acc.get("platform"), []).append(acc.get("id"))
+    missing = [p for p in platforms if not by_platform.get(p)]
+    if missing:
+        raise RuntimeError(f"GHL rail: no active account for platform(s): {missing}")
+    account_ids = [aid for p in platforms for aid in by_platform[p]]
+    create_social_post(env_file, account_ids, caption, image_url, status="published")
 
 
 def _warn_unconfirmed_attempts(published_dir: Path) -> None:
@@ -222,7 +247,11 @@ def publish_due(approved_dir: Path, published_dir: Path, state_path: Path,
         try:
             # Caption body already ends with the CTA line (appended by
             # ig_captions.generate_caption) — do NOT concatenate post["cta"] again.
-            _publish_via_composio(cfg, caption, image_url)
+            rail = cfg.publish_tools.get("rail", "composio")
+            if rail == "ghl":
+                _publish_via_ghl(cfg, caption, image_url)
+            else:
+                _publish_via_composio(cfg, caption, image_url)
         except Exception as e:
             error = str(e)
         if error:

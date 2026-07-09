@@ -17,6 +17,8 @@ def test_plan2_config_fields():
     cfg = load_instagram_config(CONFIG_DIR / "instagram.yaml")
     assert cfg.timezone == "America/Chicago"
     assert cfg.publish_tools["verified"] is True
+    assert cfg.publish_tools["rail"] == "ghl"
+    assert cfg.publish_tools["ghl_platforms"] == ["facebook", "instagram"]
     assert "illinois" in cfg.banned_place_terms
     assert "commercial garage door" in cfg.commercial_terms
     assert "$49 tune-up" in cfg.approved_offer_phrases

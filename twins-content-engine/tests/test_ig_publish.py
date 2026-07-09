@@ -13,15 +13,33 @@ _CREATE = object()  # sentinel: helper creates a real image file on disk
 
 
 def _verified_cfg():
+    """Verified config pinned to the composio rail (this test family mocks run_tool)."""
     cfg = load_instagram_config(CFG_PATH)
     cfg.publish_tools["verified"] = True
+    cfg.publish_tools["rail"] = "composio"
     return cfg
 
 
 def _unverified_cfg():
     cfg = load_instagram_config(CFG_PATH)
     cfg.publish_tools["verified"] = False
+    cfg.publish_tools["rail"] = "composio"
     return cfg
+
+
+def _verified_ghl_cfg():
+    """Verified config pinned to the ghl rail (this test family mocks the ghl client)."""
+    cfg = load_instagram_config(CFG_PATH)
+    cfg.publish_tools["verified"] = True
+    cfg.publish_tools["rail"] = "ghl"
+    cfg.publish_tools["ghl_platforms"] = ["facebook", "instagram"]
+    return cfg
+
+
+_GHL_ACCOUNTS = [
+    {"id": "acct-fb", "platform": "facebook", "name": "Twins FB", "isExpired": False},
+    {"id": "acct-ig", "platform": "instagram", "name": "Twins IG", "isExpired": False},
+]
 
 
 def _approved(dirp, name, date,
@@ -340,3 +358,80 @@ def test_upload_failure_leaves_draft_in_approved(tmp_path, mocker):
     post = frontmatter.loads(remaining[0].read_text())
     assert not post.get("publish_attempted_at")
     assert not list((tmp_path / "published").glob("*.md"))
+
+
+# --- GHL Social Planner rail ------------------------------------------------
+
+def test_ghl_rail_publishes_to_both_accounts_and_stamps(tmp_path, mocker):
+    get_accounts = mocker.patch("scripts.publish_ig.get_social_accounts", return_value=_GHL_ACCOUNTS)
+    create_post = mocker.patch("scripts.publish_ig.create_social_post", return_value={"success": True})
+    approved = tmp_path / "approved"
+    _approved(approved, "2026-07-06_proof.md", "2026-07-06", hashtags=["#VeronaWI"])
+    result = publish_due(approved, tmp_path / "published", tmp_path / "state.json",
+                         _verified_ghl_cfg(), today=dt.date(2026, 7, 6), live=True)
+    assert result["published"] == 1 and result["failed"] == 0
+    get_accounts.assert_called_once()
+    create_post.assert_called_once()
+    args, kwargs = create_post.call_args
+    account_ids = args[1] if len(args) > 1 else kwargs["account_ids"]
+    assert set(account_ids) == {"acct-fb", "acct-ig"}
+    caption = args[2] if len(args) > 2 else kwargs["caption"]
+    assert caption.endswith("#VeronaWI")
+    published = list((tmp_path / "published").glob("*.md"))
+    assert len(published) == 1
+    post = frontmatter.loads(published[0].read_text())
+    assert post.get("published_at")
+    assert not post.get("publish_error")
+
+
+def test_ghl_rail_expired_account_treated_as_missing(tmp_path, mocker):
+    get_accounts = mocker.patch(
+        "scripts.publish_ig.get_social_accounts",
+        return_value=[
+            {"id": "acct-fb", "platform": "facebook", "name": "Twins FB", "isExpired": False},
+            {"id": "acct-ig", "platform": "instagram", "name": "Twins IG", "isExpired": True},
+        ],
+    )
+    create_post = mocker.patch("scripts.publish_ig.create_social_post")
+    approved = tmp_path / "approved"
+    _approved(approved, "2026-07-06_proof.md", "2026-07-06")
+    result = publish_due(approved, tmp_path / "published", tmp_path / "state.json",
+                         _verified_ghl_cfg(), today=dt.date(2026, 7, 6), live=True)
+    assert result["published"] == 0 and result["failed"] == 1
+    create_post.assert_not_called()
+    published = list((tmp_path / "published").glob("*.md"))
+    assert len(published) == 1
+    post = frontmatter.loads(published[0].read_text())
+    assert post.get("publish_error")
+    assert "instagram" in post.get("publish_error")
+    assert not post.get("published_at")
+
+
+def test_ghl_rail_missing_platform_account_marked_failed(tmp_path, mocker):
+    get_accounts = mocker.patch(
+        "scripts.publish_ig.get_social_accounts",
+        return_value=[{"id": "acct-fb", "platform": "facebook", "name": "Twins FB", "isExpired": False}],
+    )
+    create_post = mocker.patch("scripts.publish_ig.create_social_post")
+    approved = tmp_path / "approved"
+    _approved(approved, "2026-07-06_proof.md", "2026-07-06")
+    result = publish_due(approved, tmp_path / "published", tmp_path / "state.json",
+                         _verified_ghl_cfg(), today=dt.date(2026, 7, 6), live=True)
+    assert result["published"] == 0 and result["failed"] == 1
+    create_post.assert_not_called()
+    post = frontmatter.loads(list((tmp_path / "published").glob("*.md"))[0].read_text())
+    assert "instagram" in post.get("publish_error")
+
+
+def test_ghl_rail_dry_run_calls_neither_ghl_function(tmp_path, mocker):
+    get_accounts = mocker.patch("scripts.publish_ig.get_social_accounts")
+    create_post = mocker.patch("scripts.publish_ig.create_social_post")
+    approved = tmp_path / "approved"
+    _approved(approved, "2026-07-06_proof.md", "2026-07-06")
+    cfg = load_instagram_config(CFG_PATH)
+    cfg.publish_tools["rail"] = "ghl"
+    result = publish_due(approved, tmp_path / "published", tmp_path / "state.json",
+                         cfg, today=dt.date(2026, 7, 6), live=False)
+    assert result["due"] == 1 and result["published"] == 0
+    get_accounts.assert_not_called()
+    create_post.assert_not_called()
