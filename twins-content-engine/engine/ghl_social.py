@@ -108,6 +108,33 @@ def _mime_for(url: str) -> str:
         return "image/jpeg"
     return "image/png"
 
+
+# Hard guard: content that is obviously a test/probe must NEVER reach a live
+# platform. This is a backstop for careless debugging — a "PROBE C" test post
+# reached the live Twins Facebook page on 2026-07-09 because a manual call used
+# status="published". This makes that impossible regardless of the caller.
+_TEST_MARKERS = ("probe", "schema probe", "deleteme", "test caption", "test post",
+                 "lorem ipsum", "asdf", "do not publish", "not for publishing")
+
+
+def _reject_if_test_content(caption: str, status: str) -> None:
+    if status == "draft":
+        return  # drafts never go live; probing with drafts is always allowed
+    lowered = (caption or "").lower()
+    for marker in _TEST_MARKERS:
+        if marker in lowered:
+            raise RuntimeError(
+                f"Refusing to PUBLISH content that looks like a test post "
+                f"(matched marker {marker!r}). Use status='draft' for probing."
+            )
+    if len((caption or "").strip()) < 20:
+        raise RuntimeError(
+            "Refusing to PUBLISH a suspiciously short caption "
+            f"({len((caption or '').strip())} chars). Real posts are longer; "
+            "use status='draft' for probing."
+        )
+
+
 def create_social_post(
     env_file: Path,
     account_ids: list[str],
@@ -118,10 +145,11 @@ def create_social_post(
     """POST a post to the given GHL social accounts.
 
     Raises ValueError if env vars are missing. Raises RuntimeError on a
-    non-2xx response or a response where success is not True; the message
-    includes the status code and first 300 chars of the response body, and
-    never the token.
+    non-2xx response, a response where success is not True, or when a
+    non-draft (live) post looks like test/probe content. The message includes
+    the status code and first 300 chars of the response body, never the token.
     """
+    _reject_if_test_content(caption, status)
     token, location = _load_ghl_env(env_file)
     url = f"{_API_BASE}/social-media-posting/{location}/posts"
     body = {

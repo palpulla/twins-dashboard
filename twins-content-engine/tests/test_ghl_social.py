@@ -80,13 +80,13 @@ def test_create_social_post_success(tmp_path, mocker):
     env_file = _write_env(tmp_path, location="loc-xyz")
     resp_payload = {"success": True, "statusCode": 201, "results": {"post": {"_id": "abc123"}}}
     mock_post = mocker.patch("engine.ghl_social.requests.post", return_value=_FakeResponse(201, resp_payload))
-    result = create_social_post(env_file, ["acct-fb", "acct-ig"], "Caption text", "https://example.com/x.jpg")
+    result = create_social_post(env_file, ["acct-fb", "acct-ig"], "Another new garage door installed for a local homeowner in the Madison and Milwaukee areas.", "https://example.com/x.jpg")
     assert result["success"] is True
     assert mock_post.call_count == 1
     _, kwargs = mock_post.call_args
     body = kwargs["json"]
     assert body["accountIds"] == ["acct-fb", "acct-ig"]
-    assert body["summary"] == "Caption text"
+    assert body["summary"] == "Another new garage door installed for a local homeowner in the Madison and Milwaukee areas."
     assert body["status"] == "published"
     assert body["userId"] == "loc-xyz"
     # media type + tags are REQUIRED: GHL's publish-now path 400s without them
@@ -101,7 +101,7 @@ def test_create_social_post_default_status_is_published(tmp_path, mocker):
         "engine.ghl_social.requests.post",
         return_value=_FakeResponse(201, {"success": True}),
     )
-    create_social_post(env_file, ["acct-fb"], "cap", "https://example.com/x.jpg")
+    create_social_post(env_file, ["acct-fb"], "Another new garage door installed for a local homeowner in the Madison and Milwaukee areas.", "https://example.com/x.jpg")
     assert mock_post.call_args.kwargs["json"]["status"] == "published"
 
 
@@ -119,7 +119,7 @@ def test_create_social_post_raises_on_non_2xx_without_leaking_token(tmp_path, mo
     env_file = _write_env(tmp_path, token="pit-supersecret")
     mocker.patch("engine.ghl_social.requests.post", return_value=_FakeResponse(500, text="server error"))
     with pytest.raises(RuntimeError) as exc:
-        create_social_post(env_file, ["acct-fb"], "cap", "https://example.com/x.jpg")
+        create_social_post(env_file, ["acct-fb"], "Another new garage door installed for a local homeowner in the Madison and Milwaukee areas.", "https://example.com/x.jpg")
     assert "500" in str(exc.value)
     assert "pit-supersecret" not in str(exc.value)
 
@@ -131,7 +131,7 @@ def test_create_social_post_raises_when_success_not_true(tmp_path, mocker):
         return_value=_FakeResponse(200, {"success": False, "msg": "nope"}),
     )
     with pytest.raises(RuntimeError) as exc:
-        create_social_post(env_file, ["acct-fb"], "cap", "https://example.com/x.jpg")
+        create_social_post(env_file, ["acct-fb"], "Another new garage door installed for a local homeowner in the Madison and Milwaukee areas.", "https://example.com/x.jpg")
     assert "pit-supersecret" not in str(exc.value)
 
 
@@ -139,4 +139,32 @@ def test_create_social_post_missing_env_vars_raises_value_error(tmp_path):
     env_file = tmp_path / ".env"
     env_file.write_text("# empty\n")
     with pytest.raises(ValueError):
-        create_social_post(env_file, ["acct-fb"], "cap", "https://example.com/x.jpg")
+        create_social_post(env_file, ["acct-fb"], "Another new garage door installed for a local homeowner in the Madison and Milwaukee areas.", "https://example.com/x.jpg")
+
+
+def test_publish_rejects_probe_content(tmp_path, mocker):
+    env_file = _write_env(tmp_path)
+    mock_post = mocker.patch("engine.ghl_social.requests.post")
+    import pytest
+    for bad in ("PROBE C", "test post do not publish", "deleteme", "asdf"):
+        with pytest.raises(RuntimeError, match="test post"):
+            create_social_post(env_file, ["acct"], bad, "https://x.com/y.png", status="published")
+    mock_post.assert_not_called()  # never even hit the network
+
+
+def test_publish_rejects_too_short_caption(tmp_path, mocker):
+    env_file = _write_env(tmp_path)
+    mock_post = mocker.patch("engine.ghl_social.requests.post")
+    import pytest
+    with pytest.raises(RuntimeError, match="short"):
+        create_social_post(env_file, ["acct"], "New door!", "https://x.com/y.png", status="published")
+    mock_post.assert_not_called()
+
+
+def test_draft_probe_content_is_allowed(tmp_path, mocker):
+    # drafts never go live, so probing with a draft must still work
+    env_file = _write_env(tmp_path)
+    mocker.patch("engine.ghl_social.requests.post",
+                 return_value=_FakeResponse(201, {"success": True, "results": {"post": {"_id": "d1"}}}))
+    out = create_social_post(env_file, ["acct"], "PROBE X", "https://x.com/y.png", status="draft")
+    assert out["success"] is True
