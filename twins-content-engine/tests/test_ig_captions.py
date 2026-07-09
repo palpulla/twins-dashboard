@@ -28,6 +28,15 @@ def test_build_prompt_carries_voice_and_topic():
     assert "no emojis" in prompt.lower()
 
 
+def test_proof_prompt_forbids_invented_timing():
+    slot = plan_slot(dt.date(2026, 7, 6), ANCHOR, hiring=False)  # proof
+    prompt = build_prompt(slot, "New garage door installation", "Madison", CFG, BRAND)
+    assert "do not claim when the job happened" in prompt.lower()
+    value_slot = plan_slot(dt.date(2026, 7, 8), ANCHOR, hiring=False)
+    value_prompt = build_prompt(value_slot, "Repair versus replacement - how to decide", None, CFG, BRAND)
+    assert "do not claim when the job happened" not in value_prompt.lower()
+
+
 def test_generate_caption_appends_cta(mocker):
     slot = plan_slot(dt.date(2026, 7, 6), ANCHOR, hiring=False)
     mocker.patch("engine.ig_captions.complete", return_value="Broken spring repair in Verona. Done the same day.")

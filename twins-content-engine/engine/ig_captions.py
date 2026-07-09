@@ -37,6 +37,17 @@ def build_prompt(slot: SlotSpec, topic: str, city: str | None,
                  cfg: InstagramConfig, brand: BrandConfig) -> str:
     place = f" in {city}" if city else ""
     avoid = ", ".join(cfg.banned_corporate_terms)
+    proof_rules = ""
+    if slot.slot == "proof":
+        # Proof posts show a real photo, but the model must not fabricate a
+        # story around it (a live smoke test produced "wrapped up today ...
+        # before we packed up for the day" — an invented narrative).
+        proof_rules = (
+            " Describe the kind of work shown in general terms (e.g. 'A recent "
+            "garage door installation in Madison by our crew'). Do NOT claim when "
+            "the job happened (no 'today', 'this morning', 'this week', 'just "
+            "wrapped up') and do NOT invent a narrative about how the job went."
+        )
     return (
         f"Write a short Instagram caption for {brand.business_name}, a residential "
         f"garage door company serving Madison and Dane County, Wisconsin.\n"
@@ -44,7 +55,7 @@ def build_prompt(slot: SlotSpec, topic: str, city: str | None,
         f"Rules: plain trade language, no emojis, no hashtags, no exclamation streaks, "
         f"avoid these words: {avoid}. 2-4 sentences. If a city is given, name it in the "
         f"first sentence. Do not invent job details, prices, or customer names. "
-        f"Same-day service may be mentioned truthfully.\n"
+        f"Same-day service may be mentioned truthfully.{proof_rules}\n"
         f"Return ONLY the caption text."
     )
 
