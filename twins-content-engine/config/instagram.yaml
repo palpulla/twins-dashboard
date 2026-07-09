@@ -44,6 +44,7 @@ banned_place_terms:               # non-WI markets that must never appear
   - lexington
   - illinois
   - chicago
+  - chicagoland
   - rockford
   - minnesota
   - iowa

@@ -20,13 +20,57 @@ _ADDRESS_RE = re.compile(
 )
 
 
+def _to_value(token: str) -> float:
+    return float(token.replace("$", "").replace(",", ""))
+
+
 def _dollar_values(text: str) -> list[tuple[str, float, int]]:
     """Return (matched_token, numeric_value, match_start) for each currency amount in text."""
     out = []
     for m in _DOLLAR_RE.finditer(text):
         tok = m.group(0)
-        out.append((tok, float(tok.replace("$", "").replace(",", "")), m.start()))
+        out.append((tok, _to_value(tok), m.start()))
     return out
+
+
+# Flexible amount group used inside approved-phrase regexes: tolerates commas and
+# optional cents ("$49.00 tune-up"); the matched amount is verified numerically
+# against the phrase's own value, so "$49.99 tune-up" is never vouched for.
+_AMOUNT_GROUP = r"(\$\d[\d,]*(?:\.\d+)?)"
+
+
+def _approved_phrase_patterns(cfg: InstagramConfig) -> list[tuple[re.Pattern[str], float]]:
+    """Compile each approved offer phrase into (regex, expected_value).
+
+    The phrase's literal dollar token becomes a flexible amount group and word
+    gaps become ``\\s+`` so whitespace variants still match. Phrases without a
+    dollar amount are skipped (they carry no value to vouch for).
+    """
+    patterns: list[tuple[re.Pattern[str], float]] = []
+    for phrase in cfg.approved_offer_phrases:
+        m = _DOLLAR_RE.search(phrase)
+        if not m:
+            continue
+        parts: list[str] = []
+        before = phrase[: m.start()].split()
+        after = phrase[m.end():].split()
+        if before:
+            parts.append(r"\s+".join(re.escape(w) for w in before))
+        parts.append(_AMOUNT_GROUP)
+        if after:
+            parts.append(r"\s+".join(re.escape(w) for w in after))
+        patterns.append((re.compile(r"\s+".join(parts), re.IGNORECASE), _to_value(m.group(0))))
+    return patterns
+
+
+def _vouched_amount_spans(text: str, cfg: InstagramConfig) -> list[tuple[int, int]]:
+    """Spans of dollar tokens that sit inside an approved offer phrase occurrence."""
+    spans: list[tuple[int, int]] = []
+    for pattern, phrase_value in _approved_phrase_patterns(cfg):
+        for m in pattern.finditer(text):
+            if _to_value(m.group(1)) == phrase_value:
+                spans.append((m.start(1), m.end(1)))
+    return spans
 
 
 def check_instagram_caption(text: str, cfg: InstagramConfig) -> RuleReport:
@@ -64,17 +108,17 @@ def check_instagram_caption(text: str, cfg: InstagramConfig) -> RuleReport:
     # Compare dollar amounts by numeric value so decimals/thousands/trailing
     # punctuation don't create false matches or false positives.
     approved_values = {value for _, value, _ in _dollar_values(" ".join(cfg.approved_offers))}
+    # Span-based phrase verification: each dollar occurrence must ITSELF sit
+    # inside an approved-phrase occurrence. A neighboring approved phrase must
+    # never vouch for a separate, unapproved use of the same amount.
+    vouched_spans = _vouched_amount_spans(text, cfg)
     for tok, value, start in _dollar_values(text):
         if value not in approved_values:
             violations.append(Violation("ig:unapproved_offer", "error",
                                         f"Dollar amount {tok} is not an approved offer."))
             continue
-        # Use the match's actual position (not the first occurrence of the
-        # token in the caption) so a repeated dollar amount is windowed
-        # correctly even when an earlier/later instance sits in a different
-        # phrase context.
-        window = lowered[max(0, start - 20): start + len(tok) + 25]
-        if not any(p.lower() in window for p in cfg.approved_offer_phrases if tok.lower() in p.lower()):
+        end = start + len(tok)
+        if not any(s <= start and end <= e for s, e in vouched_spans):
             violations.append(Violation("ig:unapproved_offer_phrase", "error",
                                         f"{tok} used outside an approved offer phrasing."))
 

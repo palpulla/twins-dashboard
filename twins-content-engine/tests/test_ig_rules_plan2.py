@@ -36,6 +36,20 @@ def test_offer_value_in_approved_phrase_passes():
     assert r.passed, r.violations
 
 
+def test_adjacent_approved_phrase_does_not_launder_bad_offer():
+    r = check_instagram_caption("Our $49 tune-up. Also $49 off any repair.", CFG)
+    assert "ig:unapproved_offer_phrase" in _ids(r)
+
+
+def test_chicagoland_blocked():
+    assert "ig:out_of_area" in _ids(check_instagram_caption("Serving the Chicagoland area.", CFG))
+
+
+def test_whitespace_and_cents_variants_of_approved_offer_pass():
+    assert check_instagram_caption("Get our $49  tune-up today.", CFG).passed
+    assert check_instagram_caption("Book the $49.00 tune-up.", CFG).passed
+
+
 def test_draft_check_enforces_cta_whitelist():
     bad = check_instagram_draft("Broken spring repair in Verona.", "DM us on WhatsApp!!", CFG)
     good = check_instagram_draft("Broken spring repair in Verona.", CFG.slot_cta["proof"], CFG)
