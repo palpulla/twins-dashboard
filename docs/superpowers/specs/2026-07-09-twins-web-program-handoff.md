@@ -25,7 +25,7 @@ You are continuing a large website program for Daniel (non-dev owner of Twins Ga
 - **Funnel pages** `/design-your-door/`: main **7073**, /wi **6756**, /ky **6386** (form name/phone/email/zip + honeypot → endpoint → redirect ezdoor.clopay.com). E2E verified. Region phones: main (833) 833-2010, /wi (608) 888-8785, /ky (859) 440-2227.
 - **Specs/plans:** `docs/superpowers/specs/2026-07-08-twins-web-redesign-clopay-ezdoor-design.md` (current architecture), `2026-07-08-clopay-door-builder-landing-design.md`, `2026-07-08-clopay-product-api-pages-design.md`. Change-log entries: `docs/marketing/change-log.md` (top).
 - **GHL leftovers to tidy sometime:** unused contact field `lead_region`; possible stray unsaved form "Door Builder - Main".
-- **Phase 1 (gallery fix + polish) DONE 2026-07-09** — see change-log G1/G2/P1 rows. Phase 2 = menu restructure (per 2026-07-09-phase1 spec's program context).
+- **Phase 1 (gallery fix + polish) DONE 2026-07-09** — see change-log G1/G2/P1 rows. Phase 2 = menu restructure (per 2026-07-09-phase1 spec's program context). Phase 1 ACTUALS: ~750k tokens vs the 80-150k estimate below — live-site browser automation with two-stage review runs ~3x the original guesses; scale the per-phase estimates below accordingly. Ops gotchas learned: throttle ALL automated site checks (≥6s/request, browser UA — rapid curls got the machine IP 403'd by the BlogVault firewall, which is upstream of WP and only manageable at app.blogvault.net); main's a8c edge CDN (`x-ac` header, covers subsites) needs Settings → Edge Cache → Clear after Rocket purges.
 
 ## BUG (fix first, small): Clopay gallery renders blank
 
