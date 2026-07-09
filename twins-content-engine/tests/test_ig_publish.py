@@ -20,7 +20,7 @@ def _verified_cfg():
 
 def _approved(dirp, name, date,
               caption="Broken spring repair in Verona.\n\nCall or book through the link in our profile",
-              asset_path=_CREATE, hashtags=None):
+              asset_path=_CREATE, hashtags=None, image_url="https://example.com/x.jpg"):
     dirp.mkdir(parents=True, exist_ok=True)
     if asset_path is _CREATE:
         asset = dirp / f"{name}.jpg"
@@ -33,8 +33,18 @@ def _approved(dirp, name, date,
     post["visual"] = {"kind": "real", "asset_path": asset_path, "ai_spec": None, "fallback_level": 1, "needs_approval": False}
     if hashtags is not None:
         post["hashtags"] = hashtags
+    if image_url is not None:
+        post["image_url"] = image_url
     p.write_text(frontmatter.dumps(post))
     return p
+
+
+def _composio_success(slug, payload):
+    """Default mocked run_tool: succeeds for both the container-create and
+    publish steps, returning a container id from the create step."""
+    if slug == CFG.publish_tools["media_create"]:
+        return {"successful": True, "data": {"id": "123"}}
+    return {"successful": True}
 
 
 def test_dry_run_publishes_nothing_and_lists_due(tmp_path, mocker):
@@ -66,13 +76,17 @@ def test_live_refuses_unverified_tools(tmp_path, mocker):
 
 
 def test_live_publishes_and_stamps(tmp_path, mocker):
-    run_tool = mocker.patch("scripts.publish_ig.run_tool", return_value={"successful": True})
+    run_tool = mocker.patch("scripts.publish_ig.run_tool", side_effect=_composio_success)
     approved = tmp_path / "approved"
     _approved(approved, "2026-07-06_proof.md", "2026-07-06")
     result = publish_due(approved, tmp_path / "published", tmp_path / "state.json",
                          _verified_cfg(), today=dt.date(2026, 7, 6), live=True)
     assert result["published"] == 1 and result["failed"] == 0
-    run_tool.assert_called_once()
+    assert run_tool.call_count == 2
+    first_call, second_call = run_tool.call_args_list
+    assert first_call[0][0] == CFG.publish_tools["media_create"]
+    assert second_call[0][0] == CFG.publish_tools["media_publish"]
+    assert second_call[0][1]["creation_id"] == "123"
     assert not list((tmp_path / "approved").glob("*.md"))
     published = list((tmp_path / "published").glob("*.md"))
     assert len(published) == 1
@@ -146,7 +160,7 @@ def test_missing_image_is_skipped_unsafe(tmp_path, mocker):
 
 
 def test_corrupt_yaml_in_published_does_not_block_run(tmp_path, mocker):
-    mocker.patch("scripts.publish_ig.run_tool", return_value={"successful": True})
+    mocker.patch("scripts.publish_ig.run_tool", side_effect=_composio_success)
     published = tmp_path / "published"; published.mkdir()
     (published / "corrupt.md").write_text("---\n: not: valid: yaml:\n---\nx")
     approved = tmp_path / "approved"
@@ -157,7 +171,7 @@ def test_corrupt_yaml_in_published_does_not_block_run(tmp_path, mocker):
 
 
 def test_corrupt_yaml_in_approved_skipped_invalid(tmp_path, mocker):
-    mocker.patch("scripts.publish_ig.run_tool", return_value={"successful": True})
+    mocker.patch("scripts.publish_ig.run_tool", side_effect=_composio_success)
     approved = tmp_path / "approved"
     _approved(approved, "2026-07-06_proof.md", "2026-07-06")
     (approved / "2026-07-01_bad.md").write_text("---\n: not: valid: yaml:\n---\nx")
@@ -177,18 +191,18 @@ def test_dry_run_previews_missing_image_skip(tmp_path, mocker, capsys):
 
 
 def test_hashtags_are_appended_to_posted_caption(tmp_path, mocker):
-    run_tool = mocker.patch("scripts.publish_ig.run_tool", return_value={"successful": True})
+    run_tool = mocker.patch("scripts.publish_ig.run_tool", side_effect=_composio_success)
     cfg = _verified_cfg()
     approved = tmp_path / "approved"
     _approved(approved, "2026-07-06_proof.md", "2026-07-06", hashtags=["#VeronaWI", "#GarageDoorRepair"])
     publish_due(approved, tmp_path / "published", tmp_path / "state.json", cfg,
                 today=dt.date(2026, 7, 6), live=True)
-    sent = run_tool.call_args[0][1]["caption"]
+    sent = run_tool.call_args_list[0][0][1]["caption"]
     assert sent.endswith("#VeronaWI #GarageDoorRepair")
 
 
 def test_banned_hashtag_caught_at_publish_time(tmp_path, mocker):
-    run_tool = mocker.patch("scripts.publish_ig.run_tool", return_value={"successful": True})
+    run_tool = mocker.patch("scripts.publish_ig.run_tool", side_effect=_composio_success)
     approved = tmp_path / "approved"
     _approved(approved, "2026-07-06_proof.md", "2026-07-06", hashtags=["#fyp"])
     result = publish_due(approved, tmp_path / "published", tmp_path / "state.json",
@@ -198,7 +212,7 @@ def test_banned_hashtag_caught_at_publish_time(tmp_path, mocker):
 
 
 def test_poison_date_skipped(tmp_path, mocker):
-    run_tool = mocker.patch("scripts.publish_ig.run_tool", return_value={"successful": True})
+    run_tool = mocker.patch("scripts.publish_ig.run_tool", side_effect=_composio_success)
     approved = tmp_path / "approved"
     _approved(approved, "2026-07-05_bad.md", "not-a-date")
     _approved(approved, "2026-07-06_proof.md", "2026-07-06")
@@ -206,4 +220,57 @@ def test_poison_date_skipped(tmp_path, mocker):
                          _verified_cfg(), today=dt.date(2026, 7, 6), live=True)
     assert result["skipped_invalid"] == 1
     assert result["published"] == 1  # the good draft still went out
-    run_tool.assert_called_once()
+    assert run_tool.call_count == 2  # container create + publish for the one good draft
+
+
+def test_missing_image_url_skipped_unsafe(tmp_path, mocker):
+    run_tool = mocker.patch("scripts.publish_ig.run_tool")
+    approved = tmp_path / "approved"
+    _approved(approved, "2026-07-06_proof.md", "2026-07-06", image_url=None)
+    result = publish_due(approved, tmp_path / "published", tmp_path / "state.json",
+                         _verified_cfg(), today=dt.date(2026, 7, 6), live=True)
+    assert result["published"] == 0 and result["skipped_unsafe"] == 1
+    run_tool.assert_not_called()
+    assert not list((tmp_path / "published").glob("*.md"))
+
+
+def test_container_failure_no_publish_call(tmp_path, mocker):
+    run_tool = mocker.patch("scripts.publish_ig.run_tool", return_value={"successful": False})
+    approved = tmp_path / "approved"
+    _approved(approved, "2026-07-06_proof.md", "2026-07-06")
+    result = publish_due(approved, tmp_path / "published", tmp_path / "state.json",
+                         _verified_cfg(), today=dt.date(2026, 7, 6), live=True)
+    assert result["published"] == 0 and result["failed"] == 1
+    assert run_tool.call_count == 1  # publish step never called after container failure
+    published = list((tmp_path / "published").glob("*.md"))
+    assert len(published) == 1
+    post = frontmatter.loads(published[0].read_text())
+    assert post.get("publish_error")
+    assert not post.get("published_at")
+
+
+def test_publish_step_failure_marked_failed(tmp_path, mocker, capsys):
+    def side_effect(slug, payload):
+        if slug == CFG.publish_tools["media_create"]:
+            return {"successful": True, "data": {"id": "999"}}
+        return {"successful": False}
+    run_tool = mocker.patch("scripts.publish_ig.run_tool", side_effect=side_effect)
+    cfg = _verified_cfg()
+    approved = tmp_path / "approved"
+    _approved(approved, "2026-07-06_proof.md", "2026-07-06")
+    result = publish_due(approved, tmp_path / "published", tmp_path / "state.json",
+                         cfg, today=dt.date(2026, 7, 6), live=True)
+    assert result["published"] == 0 and result["failed"] == 1
+    assert run_tool.call_count == 2
+    published = list((tmp_path / "published").glob("*.md"))
+    assert len(published) == 1
+    post = frontmatter.loads(published[0].read_text())
+    assert post.get("publish_error")
+    assert not post.get("published_at")
+    # Ambiguous case: the container was created (may be visible to Instagram)
+    # but the publish step itself failed, so we can't confirm success — the
+    # NEXT run must warn that this file needs a manual check on Instagram.
+    capsys.readouterr()  # clear first-run output
+    publish_due(approved, tmp_path / "published", tmp_path / "state.json",
+                cfg, today=dt.date(2026, 7, 6), live=True)
+    assert "manual check" in capsys.readouterr().out

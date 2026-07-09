@@ -37,8 +37,10 @@ timezone: "America/Chicago"
 # Composio tool slugs — VERIFIED at execution time via `composio search`, then
 # corrected here if they differ. Publisher refuses to run --live if unverified.
 publish_tools:
-  verified: false
-  image_post: "INSTAGRAM_CREATE_POST"
+  verified: false   # stays false until a public image-hosting step exists (image_url requirement)
+  ig_user_id: "me"
+  media_create: "INSTAGRAM_POST_IG_USER_MEDIA"
+  media_publish: "INSTAGRAM_POST_IG_USER_MEDIA_PUBLISH"
 banned_place_terms:               # non-WI markets that must never appear
   - kentucky
   - lexington

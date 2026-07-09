@@ -16,6 +16,17 @@ potentially lost post (human re-approves after checking IG) over a double post.
 Due-ness is by DATE only: a draft dated today or earlier is due regardless of
 time of day. ``post_time_local`` in config is informational until an external
 scheduler invokes this script at the posting time.
+
+Publishing is a two-step Composio flow (Instagram's Graph API requires it):
+first create a media container (``INSTAGRAM_POST_IG_USER_MEDIA``) from a
+*public* ``image_url``, then publish that container
+(``INSTAGRAM_POST_IG_USER_MEDIA_PUBLISH``) using the creation id the first
+call returns. Instagram will not fetch a local file path, so a draft can only
+be published once its frontmatter carries a public ``image_url`` — the local
+``visual.asset_path`` proof asset is still required to exist (when
+``visual.kind == "real"``) but is no longer what gets posted. Until an
+image-hosting step exists to populate ``image_url``, ``publish_tools.verified``
+stays ``false`` and drafts without a public URL are skipped as unsafe.
 """
 from __future__ import annotations
 
@@ -41,6 +52,53 @@ def _posted_caption(post) -> str:
     if tags:
         caption = f"{caption}\n\n{' '.join(tags)}"
     return caption
+
+
+def _extract_creation_id(resp: dict) -> str | None:
+    """Liberally read a creation/container id out of a Composio response.
+
+    Be liberal reading (accept "id", "creation_id", or a nested data.id),
+    strict validating (return None — a hard failure upstream — if nothing
+    usable is found).
+    """
+    data = resp.get("data") if isinstance(resp, dict) else None
+    if isinstance(data, dict):
+        for key in ("id", "creation_id"):
+            val = data.get(key)
+            if val:
+                return str(val)
+        nested = data.get("data")
+        if isinstance(nested, dict):
+            val = nested.get("id")
+            if val:
+                return str(val)
+    return None
+
+
+def _publish_via_composio(cfg: InstagramConfig, caption: str, image_url: str) -> None:
+    """Two-step Composio publish: create the media container, then publish it.
+
+    Raises RuntimeError on any failure (unsuccessful response or a container
+    response with no extractable id) so the caller's existing try/except
+    records it as ``publish_error``, per the mark-then-post safety contract.
+    """
+    pt = cfg.publish_tools
+    create_resp = run_tool(pt["media_create"], {
+        "ig_user_id": pt["ig_user_id"],
+        "image_url": image_url,
+        "caption": caption,
+    })
+    if not isinstance(create_resp, dict) or create_resp.get("successful") is not True:
+        raise RuntimeError(f"composio media container creation not successful: {create_resp!r}")
+    creation_id = _extract_creation_id(create_resp)
+    if not creation_id:
+        raise RuntimeError(f"composio media container response missing an id: {create_resp!r}")
+    publish_resp = run_tool(pt["media_publish"], {
+        "ig_user_id": pt["ig_user_id"],
+        "creation_id": creation_id,
+    })
+    if not isinstance(publish_resp, dict) or publish_resp.get("successful") is not True:
+        raise RuntimeError(f"composio media publish not successful: {publish_resp!r}")
 
 
 def _warn_unconfirmed_attempts(published_dir: Path) -> None:
@@ -98,8 +156,19 @@ def publish_due(approved_dir: Path, published_dir: Path, state_path: Path,
             result["skipped_unsafe"] += 1
             print(f"UNSAFE (skipped): {f.name}: {[v.message for v in report.violations]}")
             continue
+        image_url = post.get("image_url")
+        if not (isinstance(image_url, str) and image_url.startswith("http")):
+            result["skipped_unsafe"] += 1
+            reason = "no public image_url (hosting step pending)"
+            if live:
+                print(f"UNSAFE (skipped): {f.name}: {reason}")
+            else:
+                print(f"DRY-RUN would skip (missing image_url): {f.name}: {reason}")
+            continue
         asset_path = post.get("visual", {}).get("asset_path")
-        if not asset_path or not Path(asset_path).exists():
+        if post.get("visual", {}).get("kind") == "real" and (
+            not asset_path or not Path(asset_path).exists()
+        ):
             result["skipped_unsafe"] += 1
             if live:
                 print(f"UNSAFE (skipped): {f.name}: missing image (not on disk): {asset_path!r}")
@@ -119,12 +188,7 @@ def publish_due(approved_dir: Path, published_dir: Path, state_path: Path,
         try:
             # Caption body already ends with the CTA line (appended by
             # ig_captions.generate_caption) — do NOT concatenate post["cta"] again.
-            resp = run_tool(cfg.publish_tools["image_post"], {
-                "caption": caption,
-                "image_path": asset_path,
-            })
-            if not isinstance(resp, dict) or resp.get("successful") is not True:
-                error = f"composio response not successful: {resp!r}"
+            _publish_via_composio(cfg, caption, image_url)
         except Exception as e:
             error = str(e)
         if error:
