@@ -43,11 +43,17 @@ def build_prompt(slot: SlotSpec, topic: str, city: str | None,
         # story around it (a live smoke test produced "wrapped up today ...
         # before we packed up for the day" — an invented narrative).
         proof_rules = (
-            " Describe the kind of work shown in general terms (e.g. 'A recent "
-            "garage door installation in Madison by our crew'). Do NOT claim when "
+            " Describe the kind of work shown in general terms. Do NOT claim when "
             "the job happened (no 'today', 'this morning', 'this week', 'just "
             "wrapped up') and do NOT invent a narrative about how the job went."
         )
+        if not city:
+            # Unknown job location: never pin the job to a specific city.
+            proof_rules += (
+                " The job's exact city is unknown: do NOT name a specific city "
+                "for this job. If you mention location at all, say 'the Madison "
+                "area' only."
+            )
     return (
         f"Write a short Instagram caption for {brand.business_name}, a residential "
         f"garage door company serving Madison and Dane County, Wisconsin.\n"

@@ -43,3 +43,11 @@ def test_generate_caption_appends_cta(mocker):
     caption = generate_caption(slot, "Broken spring repair", "Verona", CFG, BRAND)
     assert caption.endswith(CFG.slot_cta["proof"])
     assert "Broken spring repair in Verona." in caption
+
+
+def test_proof_prompt_forbids_specific_city_when_unknown():
+    slot = plan_slot(dt.date(2026, 7, 6), ANCHOR, hiring=False)  # proof
+    prompt = build_prompt(slot, "New garage door installation", None, CFG, BRAND)
+    assert "do not name a specific city" in prompt.lower()
+    with_city = build_prompt(slot, "New garage door installation", "Verona", CFG, BRAND)
+    assert "do not name a specific city" not in with_city.lower()
