@@ -2,8 +2,11 @@
 
 The template (assets/instagram/brand/post_template.html) is Daniel-approved
 and FROZEN: layout, fonts, and styling never change here. This module only
-fills in the four markers the template exposes — {{PHOTO}}, {{BRAND}},
-{{KICKER}}, {{HEADLINE}} — and rasterizes the result with headless Chrome.
+fills in the five markers the template exposes — {{PHOTO}}, {{BRAND}},
+{{KICKER}}, {{HEADLINE}}, {{FIT}} — and rasterizes the result with headless
+Chrome. {{FIT}} selects the photo treatment: "" (default cover crop) or
+"contain" (full image letterboxed over a blurred backdrop — used for
+before/after collages so the comparison is never cropped away).
 """
 from __future__ import annotations
 
@@ -15,7 +18,7 @@ from engine.config import InstagramConfig
 
 
 def render_card(photo_path: Path, headline: str, kicker: str, cfg: InstagramConfig,
-                root: Path) -> Path:
+                root: Path, fit: str = "") -> Path:
     """Render photo_path into the branded card template and screenshot it to PNG.
 
     Raises RuntimeError if chrome exits non-zero, times out, or produces a
@@ -34,6 +37,7 @@ def render_card(photo_path: Path, headline: str, kicker: str, cfg: InstagramConf
         .replace("{{BRAND}}", f"file://{brand_dir}")
         .replace("{{KICKER}}", html.escape(kicker))
         .replace("{{HEADLINE}}", html.escape(headline))
+        .replace("{{FIT}}", "contain" if fit == "contain" else "")
     )
 
     html_path = out_dir / f"{photo_path.stem}_card.html"

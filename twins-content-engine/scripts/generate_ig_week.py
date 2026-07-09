@@ -129,8 +129,11 @@ def generate_week_wired(monday: dt.date, cfg: InstagramConfig, out_dir: Path, hi
         if chosen is not None:
             headline = cfg.design["kind_headline"][chosen.asset.kind]
             kicker = cfg.design["slot_kicker"][slot.slot]
+            # Collages must never be cover-cropped or the comparison is lost.
+            fit = "contain" if chosen.asset.kind == "before_after" else ""
             try:
-                card_path = render_card(Path(chosen.asset.path), headline, kicker, cfg, ROOT)
+                card_path = render_card(Path(chosen.asset.path), headline, kicker, cfg, ROOT,
+                                        fit=fit)
                 visual = replace_fields(visual, asset_path=str(card_path),
                                         original_photo=chosen.asset.path)
             except RuntimeError as e:

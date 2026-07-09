@@ -5,8 +5,13 @@
   * { margin:0; padding:0; box-sizing:border-box; }
   body { width:1080px; height:1350px; overflow:hidden; font-family:'Inter',sans-serif; background:#152647; position:relative; }
   .photo { position:absolute; top:0; left:0; width:1080px; height:1010px; overflow:hidden; }
-  .photo img.job { width:100%; height:100%; object-fit:cover; object-position:center 20%; }
-  .photo::after { content:''; position:absolute; inset:0;
+  .photo img.job { width:100%; height:100%; object-fit:cover; object-position:center 20%; position:relative; z-index:1; }
+  /* fit-contain mode (before/after collages): full image letterboxed over a blurred backdrop */
+  .photo.contain img.job { object-fit:contain; object-position:center center; }
+  .photo img.backdrop { display:none; }
+  .photo.contain img.backdrop { display:block; position:absolute; inset:-40px; width:1160px; height:1090px;
+    object-fit:cover; filter:blur(42px) brightness(.72); z-index:0; }
+  .photo::after { content:''; position:absolute; inset:0; z-index:2;
     background:linear-gradient(180deg, rgba(21,38,71,0) 65%, rgba(21,38,71,.6) 100%); }
   .shield { position:absolute; top:36px; left:36px; width:260px; z-index:3;
     filter:drop-shadow(0 6px 16px rgba(0,0,0,.45)); }
@@ -27,7 +32,7 @@
   .qr img { width:100%; display:block; }
   .qr .label { font:700 21px 'Inter'; color:#F5B301; letter-spacing:2px; margin-top:8px; }
 </style>
-<div class="photo"><img class="job" src="{{PHOTO}}"></div>
+<div class="photo {{FIT}}"><img class="backdrop" src="{{PHOTO}}"><img class="job" src="{{PHOTO}}"></div>
 <img class="shield" src="{{BRAND}}/logo_text.png">
 <img class="mascots" src="{{BRAND}}/mascots.png">
 <div class="band">

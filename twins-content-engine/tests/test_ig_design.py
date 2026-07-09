@@ -85,3 +85,21 @@ def test_render_card_raises_on_empty_output(tmp_path, mocker):
 
     with pytest.raises(RuntimeError):
         render_card(photo, headline="X", kicker="Y", cfg=cfg, root=ROOT)
+
+
+def test_fit_contain_marker_applied(tmp_path, mocker):
+    cfg = _cfg_for(tmp_path)
+    mocker.patch("engine.ig_design.subprocess.run", side_effect=_fake_chrome_writes_output)
+    photo = tmp_path / "before_after_collage.jpg"
+    photo.write_bytes(b"x")
+
+    render_card(photo, headline="Before & After", kicker="Good To Know",
+                cfg=cfg, root=ROOT, fit="contain")
+    filled = (tmp_path / "before_after_collage_card.html").read_text()
+    assert 'class="photo contain"' in filled
+    assert "{{FIT}}" not in filled
+
+    other = tmp_path / "completed_x.jpg"
+    other.write_bytes(b"x")
+    render_card(other, headline="X", kicker="Y", cfg=cfg, root=ROOT)
+    assert 'class="photo "' in (tmp_path / "completed_x_card.html").read_text()

@@ -70,7 +70,7 @@ def main() -> None:
  h1 {{ font-size:20px; }}
  .grid {{ display:flex; flex-wrap:wrap; gap:20px; }}
  .card {{ width:360px; background:#fff; border:1px solid #ddd; border-radius:12px; overflow:hidden; }}
- .card img {{ width:100%; height:360px; object-fit:cover; display:block; }}
+ .card img {{ width:100%; height:auto; display:block; }}  /* cards are 1080x1350; show them whole */
  .noimg {{ width:100%; height:120px; display:flex; align-items:center; justify-content:center; color:#999; background:#f0f0f0; }}
  .body {{ padding:12px 14px; }}
  .meta {{ color:#777; font-size:12px; margin-bottom:8px; }}
