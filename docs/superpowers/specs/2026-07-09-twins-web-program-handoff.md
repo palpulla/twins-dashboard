@@ -4,7 +4,7 @@ Paste this whole document into a new Claude Code chat in `~/twins-dashboard`.
 
 ---
 
-You are continuing a large website program for Daniel (non-dev owner of Twins Garage Doors, Madison WI). Start by invoking `/superpowers:brainstorming` with this scope, decompose it into phased specs/plans, confirm the open decisions below with Daniel, then execute phase by phase. Everything must be reversible. Show plans before building.
+You are continuing a large website program for Daniel (non-dev owner of Twins Garage Doors, Madison WI). All program decisions are ALREADY CONFIRMED (see DECISIONS below — do not re-ask) and Phase 1 is DONE. Start by invoking `/superpowers:brainstorming` scoped to **Phase 2 (menu restructure)** only: design → spec → plan → build → verify → change-log. Everything must be reversible. Show plans before building.
 
 ## Environment (verified working patterns — reuse, don't rediscover)
 
@@ -27,9 +27,9 @@ You are continuing a large website program for Daniel (non-dev owner of Twins Ga
 - **GHL leftovers to tidy sometime:** unused contact field `lead_region`; possible stray unsaved form "Door Builder - Main".
 - **Phase 1 (gallery fix + polish) DONE 2026-07-09** — see change-log G1/G2/P1 rows. Phase 2 = menu restructure (per 2026-07-09-phase1 spec's program context). Phase 1 ACTUALS: ~750k tokens vs the 80-150k estimate below — live-site browser automation with two-stage review runs ~3x the original guesses; scale the per-phase estimates below accordingly. Ops gotchas learned: throttle ALL automated site checks (≥6s/request, browser UA — rapid curls got the machine IP 403'd by the BlogVault firewall, which is upstream of WP and only manageable at app.blogvault.net); main's a8c edge CDN (`x-ac` header, covers subsites) needs Settings → Edge Cache → Clear after Rocket purges.
 
-## BUG (fix first, small): Clopay gallery renders blank
+## ~~BUG: Clopay gallery renders blank~~ — FIXED 2026-07-09 (Phase 1)
 
-Diagnosed: WP Rocket iframe lazy-load rewrites the gallery iframe to `src="about:blank" data-lazy-src=...` and never restores it (conflicts with the iframe's own `loading="lazy"`). Fix in snippet 7050/6369/6755: remove `loading="lazy"` from the iframe and add `data-no-lazy="1"` (and if still rewritten, add WP Rocket iframe-lazyload exclusion for `clopaydoor.com` or disable iframe lazyload); purge caches; verify anon HTML shows direct `src="https://www.clopaydoor.com/image-gallery/..."`. Hero background images are fine.
+Was: WP Rocket iframe lazy-load rewrote the gallery iframe to `about:blank`. Fixed in snippets 7050/6369/6755 (`loading="lazy"` → `data-no-lazy="1"`); only main was affected; main's a8c edge CDN needed a one-time Clear Edge Cache. Verified live. Details: change-log G1/G2.
 
 ## NEW SCOPE (Daniel's words, structured; priorities: main + /wi first, /il new, /ky LAST)
 
@@ -44,29 +44,36 @@ Diagnosed: WP Rocket iframe lazy-load rewrites the gallery iframe to `src="about
 9. **SEO + AEO:** aim at top organic + AI-engine visibility — proper heading hierarchy, FAQ content, LocalBusiness/Service/FAQPage schema (Rank Math or JSON-LD via snippet), internal linking hub (state → city → service), clean titles/meta, image alts. There's an existing AEO baseline: memory `project_ai_search_aeo`.
 10. **Reversibility:** every change logged in `docs/marketing/change-log.md` with revert path; page snapshots before rebuilds; snippets toggleable; /il unpublished.
 
-## Open decisions to confirm with Daniel early (AskUserQuestion)
+## DECISIONS — all confirmed by Daniel 2026-07-09 (do not re-ask)
 
-- All 23 residential collections or a curated subset? Commercial too?
-- /wi collection pages: Milwaukee-targeted or generic-WI? (cannibalization risk vs main)
-- Door builder: approve hybrid (gated EZDoor embed now, owned visualizer as phase 2)?
-- Milwaukee: phone number + address for menus/location pages?
-- /il: confirm city list; a name for the business entity there if different.
-- Menu tree: exact desired structure (propose a draft first: LOCATIONS → Wisconsin (Madison, Milwaukee, …) / Kentucky (Lexington) / Illinois (hidden until live)).
+- **Catalog:** ALL 23 residential Clopay collections get pages on main. No commercial.
+- **Positioning:** MAIN site = general / all locations. **/wi = Madison + Milwaukee + surrounding areas of both** (main goes broad; /wi carries the Wisconsin-local targeting).
+- **Door builder:** **owned visualizer first** — build the Twins-owned designer from Clopay API data (colors / ProductDesigns / TopSections / gallery imagery). NO gated-EZDoor-iframe stopgap. The existing /design-your-door funnel (form → email → EZDoor redirect) keeps working until it ships, then the redirect target becomes our visualizer.
+- **Menu tree (approved draft):** LOCATIONS → Wisconsin (Madison, Milwaukee as top cities, then other WI cities) / Kentucky (Lexington) / Illinois added only when /il goes live. Design Your Door as its own top-level item. Hörmann removed from menus only (page stays live).
+- **Milwaukee:** phone **(414) 800-9271**, address **11220 W Burleigh St Ste 100, Wauwatosa, WI 53222**. A Milwaukee page already exists but "needs complete overhaul" (that overhaul = /wi phase; until then the menu item points at the existing page).
+- **/il:** brand = Twins Garage Doors, phone **+1 815-800-2025**, address TBD (leave out — no placeholders). Build UNPUBLISHED (drafts + noindex). Cities (12, Daniel's exact list): Rockford, Loves Park, Machesney Park, Belvidere, Roscoe, Rockton, Cherry Valley, Poplar Grove, South Beloit, Winnebago, Byron, Caledonia.
 
-## Suggested phases (each = own spec → plan → build → verify → change-log)
+## Phase order (approved; each = own spec → plan → build → verify → change-log, one phase per session)
 
-1. Bug fix + polish pass on existing 9 twx pages (gallery iframe, more color/icons) — small.
-2. Menu restructure (state→city, Design Your Door in, Hörmann out) on main + /wi.
-3. Full Clopay catalog on main (template is parameterized; content per door from API + unique intros).
-4. /wi pages strategy + build.
-5. In-site builder (hybrid v1).
-6. /il subsite skeleton + Rockford-area location pages (unpublished).
-7. goodgollygarage-inspired conversion upgrades woven through 1-6.
+1. ~~Bug fix + polish pass on existing 9 twx pages~~ **DONE 2026-07-09** (change-log G1/G2/P1/P2; spec `2026-07-09-phase1-gallery-fix-twx-polish-design.md`, plan in `docs/superpowers/plans/`).
+2. **Menu restructure — NEXT.** Approved tree above, on main + /wi (and any shared Elementor Theme Builder headers). Investigate which menu feeds the nav (Appearance → Menus: /ky has "Menu" id 13 + "Quicklinks" id 14; menus have no theme locations, the Elementor nav widget references them by name). Milwaukee item → existing Milwaukee page for now. Every menu change screenshot-verified desktop + mobile.
+3. Owned door-builder visualizer (needs its own brainstorm/spec — the one genuinely new product in the program).
+4. Full Clopay catalog on main (~20 new pages on the twx template, unique intro copy per door, Rank Math meta each; general/all-locations positioning). Starts with a fresh goodgollygarage.com study that feeds phases 4-7.
+5. /wi build-out: Madison + Milwaukee positioning, /wi collection pages, complete Milwaukee page overhaul with the new number/address.
+6. /il subsite skeleton + the 12 Rockford-area location pages (unpublished).
+7. goodgollygarage-inspired conversion upgrades woven through 4-6.
 8. /ky parity LAST.
 
-## Token budget estimate (rough, based on this session's actuals)
+## Open follow-ups from Phase 1 (small, do or hand to Daniel early in next session)
 
-The 2026-07-08/09 session (9 pages + funnel + snippets, heavy browser automation) consumed roughly 400-500k tokens. Estimates: Phase 1 ~80-150k; Phase 2 ~100-180k (menu UIs are fiddly); Phase 3 ~300-500k (≈20 new pages, mostly repeated builder runs + per-page copy); Phase 4 ~150-250k; Phase 5 ~250-400k (new interactive component); Phase 6 ~200-350k; Phase 7 folded into others (+~100k for studying the reference site); Phase 8 ~100-150k. **Program total ≈ 1.3-2.1M tokens across multiple sessions.** Recommend one phase per session, updating this handoff (or memory) at each session end.
+- **BlogVault firewall:** this machine's IP **50.170.77.66** is 403-blocked for anonymous requests (ref 2893084716a4fa5da9dd88). Daniel must whitelist it at app.blogvault.net (not a WP plugin — nothing clearable from wp-admin). Once cleared: run ONE throttled anonymous curl per twx page to close the PENDING anon cache verification for the P1 polish batch (change-log row P2).
+- **/wi phone display:** a pre-existing site-wide "CAP: unify stray phone numbers" script rewrites /wi's visible number at runtime to **(608) 925-2038** (HTML carries (608) 888-8785). Confirm with Daniel that's the intended tracking number.
+- **Cosmetic option:** `.twx-underline` bar is left-aligned; under centered H2s ("Installed by the local pros", "Three easy steps") it sits at the section's left edge. One-line CSS fix if Daniel wants it centered there.
+- Pre-existing GHL leftovers (unchanged): unused contact field `lead_region`; possible stray unsaved form "Door Builder - Main".
+
+## Token budget (revised after Phase 1 actuals)
+
+Phase 1 actually consumed ~750k tokens against an 80-150k estimate — live-site browser automation with per-batch independent review runs ~3-5x naive guesses, and one detour (firewall block) added a full agent run. Revised: Phase 2 ~300-500k (menu UIs are fiddly); Phase 3 ~800k-1.2M (new interactive component + its own brainstorm); Phase 4 ~1-1.5M (≈20 pages of builder runs + per-page copy); Phase 5 ~500-800k; Phase 6 ~600k-1M; Phase 7 folded into 4-6; Phase 8 ~300-500k. One phase per session, update this handoff at each session end. Throttle rule from Phase 1 applies to ALL automated site checks: ≥6s between requests, browser UA, one fetch per page then grep locally.
 
 ## House rules (from memory — binding)
 
