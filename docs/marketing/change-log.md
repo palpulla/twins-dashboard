@@ -2,6 +2,20 @@
 
 Standing rule (CAP doc §8): no conversion action, pixel rule, or bid-strategy change ships without an entry here.
 
+## 2026-07-09 — Claude, Phase 3: door-builder visualizer LIVE on main + /wi (Daniel-approved spec)
+
+Spec: `docs/superpowers/specs/2026-07-09-phase3-door-builder-visualizer-design.md`. Owned configurator (real Clopay assets — design renders, color swatches, window thumbnails; honest labeling, no fake recoloring) at `/door-builder/`; leads email contact@ with the full door configuration. Code + local test harness: `docs/superpowers/backups/2026-07-09-phase3-door-builder/`.
+
+| # | Change | Detail | Revert |
+|---|---|---|---|
+| D1 | Endpoint 7072 → v2 (+copy fix) | `twins/v1/door-builder` gains optional config fields (collection/design/color/windows/glass/notes, sanitized, 200-char cap) appended to the lead email as a "Door configuration" block; backward compatible (funnel regression-tested live before anything else shipped). Stale "sent into EZDoor" sentence replaced with "Submitted via the Design Your Door flow on our site." | Paste back `endpoint-7072-before.php` in WPCode 7072 |
+| D2 | Builder snippet on main, id **7127** | "Twins Door Builder (visualizer)", Auto Insert Run Everywhere, shortcode `[twins_door_builder]`; client-side fetch from Clopay API (CORS `*`, sessionStorage cache); fallback contact form if Clopay is down (`?twxdbfail=1` forces it — verified live); region derived from home_url() path. | Deactivate snippet 7127 |
+| D3 | Page `/door-builder/` on main, id **7129** | twx hero + shortcode + navy band; Astra page-title disabled (single H1 verified); Rank Math meta set; full wizard + test lead E2E-verified (200 + email w/ config block received at contact@). | Unpublish page 7129 |
+| D4 | /wi: snippet **6765** + page `/wi/door-builder/` **6766** | Identical snippet (sha-verified); page built natively (no cross-site clone); region "wi" in payload verified; test lead email received. /wi hero HTML phone (608) 888-8785 (runtime rewrite shows (608) 925-2038, expected). | Deactivate 6765; unpublish 6766 |
+| D5 | Funnel redirect swap (main 7073, /wi 6756) | Post-submit `location.href` changed from `https://ezdoor.clopay.com/` to the region's `/door-builder/` page. Live-verified both: POST 200 then landing on the builder. **/ky 6386 untouched** (keeps EZDoor until Phase 8). Pre-change page snapshots committed (`funnel-7073-before.html`, `funnel-6756-before.html`). | Restore `location.href="https://ezdoor.clopay.com/";` in each page's HTML widget |
+
+**Verified:** local harness (all paths incl. fallback, no-windows, skip-to-quote, error retry); live wizard E2E both sites; 5 marked TEST lead emails at contact@ (regression, builder main, builder wi, redirect main x2, redirect wi — ignore them); caches purged (Rocket + Edge); post-purge anonymous curls: both /door-builder/ pages 200 with app markup + single H1, both funnels 200 referencing the builder. **BlogVault IP block appears lifted** — anonymous checks work again; the archived anon HTML also closes Phase 2's pending anon menu verification (no Hörmann, Design Your Door + full city list served to anonymous visitors on both sites).
+
 ## 2026-07-09 — Claude, Phase 2: menu restructure main + /wi (Daniel-approved spec)
 
 Spec: `docs/superpowers/specs/2026-07-09-phase2-menu-restructure-design.md`. All nav widgets on both sites render WP menu "Menu" (id 13 per site) — changes are menu-data edits via WP REST, zero Elementor template edits. Pre-change dumps: `docs/superpowers/backups/2026-07-09-phase2-menus/{main,wi}-menu13-before.json` (restore any deleted/changed item from these via the same REST endpoints).
