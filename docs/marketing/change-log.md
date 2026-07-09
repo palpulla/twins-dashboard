@@ -2,6 +2,21 @@
 
 Standing rule (CAP doc §8): no conversion action, pixel rule, or bid-strategy change ships without an entry here.
 
+## 2026-07-09 — Claude, Phase 2: menu restructure main + /wi (Daniel-approved spec)
+
+Spec: `docs/superpowers/specs/2026-07-09-phase2-menu-restructure-design.md`. All nav widgets on both sites render WP menu "Menu" (id 13 per site) — changes are menu-data edits via WP REST, zero Elementor template edits. Pre-change dumps: `docs/superpowers/backups/2026-07-09-phase2-menus/{main,wi}-menu13-before.json` (restore any deleted/changed item from these via the same REST endpoints).
+
+| # | Change | Detail | Revert |
+|---|---|---|---|
+| M1 | Hörmann removed from main menu | Menu item 6180 deleted; page `/hormann-garage-doors/` still published (verified). | Recreate item from backup JSON (custom link, parent 1540 Garage Doors) |
+| M2 | Main Locations → State → Cities | Wisconsin (4957) got 21 children: Madison, Milwaukee (→ `/wi/garage-door-repair-in-milwaukee-wi/` until the Phase 5 overhaul), then alphabetical — items 7094-7114, all → existing `/wi/location/*` pages. Kentucky (4956) got Lexington (7115 → `/ky/location/lexington/`). Whole menu renumbered (also fixed the LiftMaster duplicate menu_order quirk). | Delete items 7094-7115 |
+| M3 | Design Your Door top-level (main) | Item 7116 → `/design-your-door/`, third position after Garage Doors. | Delete item 7116 |
+| M4 | /wi Locations reorder + Milwaukee + dedupe + parent-link fix | Madison first, NEW Milwaukee item 6763 second (→ the Milwaukee repair page), rest alphabetical; duplicate Deerfield item 5972 deleted (5506 kept, same URL); Locations parent 5502 URL fixed from the main-site homepage `/` to `/wi/service-area/`. | Restore from wi backup JSON (recreate 5972, delete 6763, set 5502 url back) |
+| M5 | Design Your Door top-level (/wi) | Item 6764 → `/wi/design-your-door/`, third position. | Delete item 6764 |
+| M6 | CSS fixes in snippets 7050 (main) + 6755 (/wi), `/* P2 menu fixes */` block | (a) Both sites: UAEL mobile menu modal was unscrollable — with 21 cities expanded, lower menu items were unreachable on phones (pre-existing defect, exposed by the longer menu). Added viewport max-height + overflow-y auto on `.uael-modal.uael-modal-saved_rows` / `.uael-content`. (b) Main only: 8 top-level items no longer fit at 1201-1599px (Blog wrapped, logo overlapped LOCATIONS) — media query shrinks nav items (13px font, 6px margins) on widget 15c4a1b in that range. Before/after snippet copies committed alongside the menu dumps. | Remove the `/* P2 menu fixes */` block per snippet (before-files in backups dir) |
+
+**Verified:** independent spec-compliance re-read of both live menus (all checks pass); desktop + mobile screenshot pass on both sites incl. mobile scroll reachability after M6; 25/25 menu-destination URLs return HTTP 200 (21 /wi city pages, Lexington, both /design-your-door pages, Hörmann page). WP Rocket clear-and-preload (note: this Rocket version shows NO success toast — verified via its admin-post 200-redirect success path) + a8c Edge Cache cleared, twice (after menu edits, after M6). **Anonymous cached-output verification PENDING** the BlogVault IP unblock (50.170.77.66, carried from Phase 1 P2).
+
 ## 2026-07-09 — Claude, Phase 1: Clopay gallery iframe fix + twx polish (Daniel-approved spec)
 
 Spec: `docs/superpowers/specs/2026-07-09-phase1-gallery-fix-twx-polish-design.md`.
