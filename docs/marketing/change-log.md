@@ -2,6 +2,15 @@
 
 Standing rule (CAP doc §8): no conversion action, pixel rule, or bid-strategy change ships without an entry here.
 
+## 2026-07-09 — Claude, Phase 1a: Clopay gallery iframe fix (Daniel-approved spec)
+
+Spec: `docs/superpowers/specs/2026-07-09-phase1-gallery-fix-twx-polish-design.md`.
+
+| # | Change | Detail | Revert |
+|---|---|---|---|
+| G1 | Gallery iframe un-lazied | WP Rocket rewrote the Clopay gallery iframe to `about:blank` (conflict with the iframe's own `loading="lazy"`). Snippets 7050/6369/6755: removed `loading="lazy"`, added `data-no-lazy="1"`. Rocket caches purged (main + /ky). Verified anon HTML shows direct clopaydoor.com src. | Re-add `loading="lazy"`, remove `data-no-lazy` (repo backup holds prior text) |
+| G2 | Atomic Edge Cache cleared (main) | Anonymous traffic on main is fronted by the host's a8c edge CDN (`x-ac` header), which kept serving the pre-fix HTML after the Rocket purge. One-time "Clear Edge Cache" on main's Settings → Edge Cache page. No settings changed (cache left enabled); /ky pages revalidated on their own after the Rocket purge. | Nothing to revert — one-time cache clear |
+
 ## 2026-07-08/09 — Claude, full rebuild: Clopay collection pages + Design Your Door funnel (Daniel: "finish it, then review")
 
 Spec: `docs/superpowers/specs/2026-07-08-twins-web-redesign-clopay-ezdoor-design.md`. Brand tokens extracted from live CSS (navy #022751, deep #010D38, yellow #FBBD04, Montserrat) into a shared `.twx-` stylesheet. All pages built natively per subsite with class-based styling (immune to the cross-site kit problem).

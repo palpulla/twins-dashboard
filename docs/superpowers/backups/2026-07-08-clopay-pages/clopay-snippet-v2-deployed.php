@@ -69,7 +69,7 @@ function twins_clopay_product_shortcode( $atts ) {
 			<?php if ( ! empty( $p['ImageGallery'] ) ) : ?>
 				<div class="twx-clopay-gallery">
 					<iframe src="<?php echo esc_url( $p['ImageGallery'] ); ?>" width="480" height="380"
-						loading="lazy" title="<?php echo esc_attr( wp_strip_all_tags( $p['Title'] ) ); ?> photo gallery"></iframe>
+						data-no-lazy="1" title="<?php echo esc_attr( wp_strip_all_tags( $p['Title'] ) ); ?> photo gallery"></iframe>
 				</div>
 			<?php endif; ?>
 			<div class="twx-clopay-side">
