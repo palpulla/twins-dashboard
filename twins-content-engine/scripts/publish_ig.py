@@ -24,6 +24,7 @@ import datetime as dt
 from pathlib import Path
 
 import frontmatter
+import yaml
 
 from engine.composio_client import run_tool
 from engine.config import InstagramConfig, load_instagram_config
@@ -38,7 +39,11 @@ def _warn_unconfirmed_attempts(published_dir: Path) -> None:
     if not published_dir.exists():
         return
     for f in sorted(published_dir.glob("*.md")):
-        post = frontmatter.loads(f.read_text())
+        try:
+            post = frontmatter.loads(f.read_text())
+        except Exception as e:
+            print(f"WARNING: {f.name}: unparseable — needs manual inspection ({e})")
+            continue
         if post.get("publish_attempted_at") and not post.get("published_at"):
             print(
                 f"WARNING: {f.name} has publish_attempted_at but no published_at — "
@@ -71,7 +76,7 @@ def publish_due(approved_dir: Path, published_dir: Path, state_path: Path,
                 continue
             if dt.date.fromisoformat(str(post["date"])) > today:
                 continue
-        except (ValueError, KeyError) as e:
+        except (ValueError, KeyError, yaml.YAMLError) as e:
             result["skipped_invalid"] += 1
             print(f"INVALID (skipped): {f.name}: {e}")
             continue
@@ -82,13 +87,16 @@ def publish_due(approved_dir: Path, published_dir: Path, state_path: Path,
             result["skipped_unsafe"] += 1
             print(f"UNSAFE (skipped): {f.name}: {[v.message for v in report.violations]}")
             continue
-        if not live:
-            print(f"DRY-RUN would publish: {f.name} ({post.get('slot')})")
-            continue
         asset_path = post.get("visual", {}).get("asset_path")
         if not asset_path or not Path(asset_path).exists():
             result["skipped_unsafe"] += 1
-            print(f"UNSAFE (skipped): {f.name}: image missing or not on disk: {asset_path!r}")
+            if live:
+                print(f"UNSAFE (skipped): {f.name}: missing image (not on disk): {asset_path!r}")
+            else:
+                print(f"DRY-RUN would skip (missing image): {f.name}: {asset_path!r}")
+            continue
+        if not live:
+            print(f"DRY-RUN would publish: {f.name} ({post.get('slot')})")
             continue
         # Mark-then-post: stamp + move BEFORE calling Composio (see module docstring).
         post["publish_attempted_at"] = dt.datetime.now().isoformat(timespec="seconds")

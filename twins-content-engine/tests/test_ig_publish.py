@@ -143,6 +143,37 @@ def test_missing_image_is_skipped_unsafe(tmp_path, mocker):
     assert not list((tmp_path / "published").glob("*.md"))
 
 
+def test_corrupt_yaml_in_published_does_not_block_run(tmp_path, mocker):
+    mocker.patch("scripts.publish_ig.run_tool", return_value={"successful": True})
+    published = tmp_path / "published"; published.mkdir()
+    (published / "corrupt.md").write_text("---\n: not: valid: yaml:\n---\nx")
+    approved = tmp_path / "approved"
+    _approved(approved, "2026-07-06_proof.md", "2026-07-06")
+    result = publish_due(approved, published, tmp_path / "state.json", _verified_cfg(),
+                         today=dt.date(2026, 7, 6), live=True)
+    assert result["published"] == 1
+
+
+def test_corrupt_yaml_in_approved_skipped_invalid(tmp_path, mocker):
+    mocker.patch("scripts.publish_ig.run_tool", return_value={"successful": True})
+    approved = tmp_path / "approved"
+    _approved(approved, "2026-07-06_proof.md", "2026-07-06")
+    (approved / "2026-07-01_bad.md").write_text("---\n: not: valid: yaml:\n---\nx")
+    result = publish_due(approved, tmp_path / "published", tmp_path / "state.json",
+                         _verified_cfg(), today=dt.date(2026, 7, 6), live=True)
+    assert result["published"] == 1 and result["skipped_invalid"] == 1
+
+
+def test_dry_run_previews_missing_image_skip(tmp_path, mocker, capsys):
+    mocker.patch("scripts.publish_ig.run_tool")
+    approved = tmp_path / "approved"
+    _approved(approved, "2026-07-06_proof.md", "2026-07-06", asset_path=None)
+    result = publish_due(approved, tmp_path / "published", tmp_path / "state.json", CFG,
+                         today=dt.date(2026, 7, 6), live=False)
+    assert result["skipped_unsafe"] == 1 and result["published"] == 0
+    assert "missing image" in capsys.readouterr().out.lower()
+
+
 def test_poison_date_skipped(tmp_path, mocker):
     run_tool = mocker.patch("scripts.publish_ig.run_tool", return_value={"successful": True})
     approved = tmp_path / "approved"
