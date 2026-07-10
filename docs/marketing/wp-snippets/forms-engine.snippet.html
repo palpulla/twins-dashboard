@@ -1,0 +1,136 @@
+<script>
+(function () {
+  var EP = "https://jwrpjuqaynownxaoeayi.supabase.co/functions/v1";
+  window.__twinsChooser = function (el, tok) { el.innerHTML = chooserHtml(); wireChooser(el, tok); };
+  var mounts = document.querySelectorAll("[data-twins-form]");
+  if (!mounts.length) return;
+  var variant = localStorage.getItem("twins_form_variant");
+  if (variant !== "A" && variant !== "B") {
+    variant = Math.random() < 0.5 ? "A" : "B";
+    localStorage.setItem("twins_form_variant", variant);
+  }
+  var sid = localStorage.getItem("twins_form_sid") || (crypto.randomUUID && crypto.randomUUID()) || String(Date.now());
+  localStorage.setItem("twins_form_sid", sid);
+  var page = location.pathname;
+  function beacon(event) {
+    try {
+      navigator.sendBeacon(EP + "/lp-lead-intake", new Blob([JSON.stringify({ event: event, page: page, variant: variant, session_id: sid })], { type: "application/json" }));
+    } catch (e) {}
+  }
+  var CHIPS = ["Broken spring", "Door won't open", "Opener problem", "New door quote", "Something else"];
+  var S = 'width:100%;padding:13px 14px;border:2px solid #d7deea;border-radius:8px;font-size:15px;margin-bottom:10px;box-sizing:border-box';
+  var CONSENT = '<label style="display:block;font-size:12px;color:#4a5a74;margin:6px 0 10px"><input type="checkbox" name="consent" checked style="margin-right:6px">By submitting, you agree Twins Garage Doors may call or text this number about your request. Msg/data rates may apply. Reply STOP to opt out.</label>';
+
+  function wizardHtml() {
+    var chips = CHIPS.map(function (c) { return '<button type="button" class="tw-chip" data-c="' + c + '" style="display:block;width:100%;text-align:left;background:#fff;border:2px solid #16325c;border-radius:8px;padding:13px 14px;font-size:16px;color:#16325c;font-weight:600;margin-bottom:8px;cursor:pointer">' + c + "</button>"; }).join("");
+    return '<div class="tw-step tw-step1"><p style="font-weight:700;color:#16325c;font-size:18px;margin:0 0 10px">What\'s going on with your door?</p>' + chips + '</div>' +
+      '<div class="tw-step tw-step2" style="display:none"><a href="#" class="tw-back" style="font-size:13px;color:#4a5a74">&larr; back</a>' +
+      '<p class="tw-chosen" style="font-weight:700;color:#16325c;margin:8px 0 12px"></p>' +
+      '<form class="tw-wizard-form"><input name="name" placeholder="Full Name *" required style="' + S + '"><input name="phone" type="tel" placeholder="Phone Number *" required style="' + S + '"><input name="zip" placeholder="ZIP *" required pattern="\\d{5}" style="' + S + '"><input name="email" type="email" placeholder="Email (optional)" style="' + S + '"><textarea name="message" rows="3" placeholder="Anything else we should know?" style="' + S + '"></textarea>' +
+      '<input type="text" name="website" value="" style="position:absolute;left:-9999px" tabindex="-1" autocomplete="off">' + CONSENT +
+      '<button type="submit" style="width:100%;background:#ffcf3f;color:#16325c;font-weight:800;font-size:17px;border:2px solid #16325c;border-radius:8px;padding:14px;cursor:pointer">Get My Free Quote</button></form></div>';
+  }
+
+  function chooserHtml() {
+    return '<div class="tw-chooser" style="text-align:center;padding:18px 6px"><p style="font-size:20px;font-weight:800;color:#16325c;margin:0 0 6px">Got it - want an answer right now?</p>' +
+      '<p style="color:#4a5a74;margin:0 0 14px">Pick how you want to hear from us:</p>' +
+      '<button type="button" class="tw-pick" data-ch="sms" style="width:100%;background:#16325c;color:#fff;font-weight:700;border:none;border-radius:8px;padding:14px;font-size:16px;margin-bottom:8px;cursor:pointer">Text me now</button>' +
+      '<button type="button" class="tw-pick" data-ch="chat" style="width:100%;background:#ffcf3f;color:#16325c;font-weight:800;border:2px solid #16325c;border-radius:8px;padding:14px;font-size:16px;margin-bottom:8px;cursor:pointer">Chat now</button>' +
+      '<p style="font-size:14px;color:#4a5a74;margin:6px 0 0">or call <a href="tel:6088888785" style="color:#16325c;font-weight:700">(608) 888-8785</a></p></div>';
+  }
+
+  function chatHtml() {
+    return '<div class="tw-chat" style="border:3px solid #16325c;border-radius:12px;overflow:hidden"><div class="tw-chat-hd" style="background:#16325c;color:#fff;font-weight:700;padding:12px 14px">Twins Garage Doors</div>' +
+      '<div class="tw-chat-log" style="height:280px;overflow-y:auto;padding:12px;background:#f7f9fc"></div>' +
+      '<form class="tw-chat-form" style="display:flex;border-top:2px solid #d7deea"><input name="m" placeholder="Type a message" style="flex:1;border:none;padding:12px;font-size:15px" autocomplete="off"><button style="background:#ffcf3f;border:none;padding:0 18px;font-weight:800;color:#16325c;cursor:pointer">Send</button></form></div>';
+  }
+
+  function bubble(log, role, text) {
+    var d = document.createElement("div");
+    d.style.cssText = "max-width:85%;margin:0 0 8px;padding:9px 12px;border-radius:10px;font-size:14px;line-height:1.4;" +
+      (role === "user" ? "background:#16325c;color:#fff;margin-left:auto" : "background:#fff;border:1px solid #d7deea;color:#1e2b3c");
+    d.textContent = text;
+    log.appendChild(d); log.scrollTop = log.scrollHeight;
+  }
+
+  mounts.forEach(function (mount) {
+    var pre = mount.getAttribute("data-chooser-only");
+    if (pre !== null) {
+      var tk = pre;
+      if (!tk) { var ck = document.cookie.match(/(?:^|; )twins_chooser=([0-9a-f-]{36})/i); if (ck) { tk = ck[1]; document.cookie = "twins_chooser=; Max-Age=0; path=/"; } }
+      if (!tk) { mount.style.display = "none"; return; }
+      mount.innerHTML = chooserHtml(); wireChooser(mount, tk); return;
+    }
+    var started = false;
+    beacon("view");
+    var chosenService = "";
+    if (variant === "B") {
+      var keep = mount.querySelector("form"); if (keep) keep.style.display = "none";
+      var w = document.createElement("div"); w.innerHTML = wizardHtml(); mount.appendChild(w);
+      w.addEventListener("click", function (e) {
+        var chip = e.target.closest(".tw-chip");
+        if (chip) { chosenService = chip.getAttribute("data-c"); w.querySelector(".tw-chosen").textContent = chosenService; w.querySelector(".tw-step1").style.display = "none"; w.querySelector(".tw-step2").style.display = "block"; if (!started) { started = true; beacon("start"); } }
+        if (e.target.closest(".tw-back")) { e.preventDefault(); w.querySelector(".tw-step2").style.display = "none"; w.querySelector(".tw-step1").style.display = "block"; }
+      });
+    }
+    mount.addEventListener("input", function () { if (!started) { started = true; beacon("start"); } }, { once: true });
+    mount.addEventListener("submit", function (e) {
+      var form = e.target; e.preventDefault();
+      if (form.website && form.website.value) return;
+      var tok = (crypto.randomUUID && crypto.randomUUID()) || (Date.now() + "-x");
+      var data = {
+        name: (form.name && form.name.value || "").trim(),
+        phone: (form.phone && form.phone.value || "").trim(),
+        email: (form.email && form.email.value || "").trim(),
+        zip: (form.zip && form.zip.value || "").trim(),
+        message: (form.message && form.message.value || "").trim(),
+        service: chosenService || (form.service && form.service.value) || "", page: location.href, form_variant: variant,
+        chooser_token: tok, consent: form.consent && form.consent.checked ? "true" : "",
+        website: ""
+      };
+      if (!data.name || !data.phone) { alert("Please add your name and phone number."); return; }
+      var btn = form.querySelector('button[type="submit"]'); if (btn) { btn.disabled = true; btn.textContent = "Sending..."; }
+      fetch(EP + "/lp-lead-intake", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(data) })
+        .then(function (r) { if (!r.ok) throw 0; beacon("submit"); mount.innerHTML = chooserHtml(); wireChooser(mount, tok); })
+        .catch(function () { if (btn) { btn.disabled = false; btn.textContent = "Get My Free Quote"; } alert("Something went wrong - please call (608) 888-8785."); });
+    });
+  });
+
+  function wireChooser(mount, tok) {
+    mount.querySelectorAll(".tw-pick").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var ch = b.getAttribute("data-ch");
+        b.disabled = true;
+        fetch(EP + "/text-agent/start", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ chooser_token: tok, channel: ch }) })
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            if (ch === "sms") {
+              var p = document.createElement("p");
+              p.style.cssText = "text-align:center;font-weight:700;color:#16325c;padding:20px 0";
+              p.textContent = d && d.ok ? "Check your phone - we just texted you." : "Got it - the office will call you shortly.";
+              mount.innerHTML = ""; mount.appendChild(p); return;
+            }
+            mount.innerHTML = chatHtml();
+            var log = mount.querySelector(".tw-chat-log");
+            bubble(log, "assistant", (d && d.reply) || "Hi! How can we help?");
+            mount.querySelector(".tw-chat-form").addEventListener("submit", function (e) {
+              e.preventDefault();
+              var inp = e.target.m; var text = inp.value.trim(); if (!text) return;
+              bubble(log, "user", text); inp.value = "";
+              fetch(EP + "/text-agent/chat", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ thread_id: d.thread_id, chat_token: d.chat_token, message: text }) })
+                .then(function (r) { return r.json(); })
+                .then(function (x) { bubble(log, "assistant", (x && x.reply) || "The office will call you shortly."); })
+                .catch(function () { bubble(log, "assistant", "Connection hiccup - call us at (608) 888-8785."); });
+            });
+          })
+          .catch(function () {
+            var p = document.createElement("p");
+            p.style.cssText = "text-align:center;color:#16325c;padding:16px 0";
+            p.textContent = "All set - the office will call you shortly.";
+            mount.innerHTML = ""; mount.appendChild(p);
+          });
+      });
+    });
+  }
+})();
+</script>

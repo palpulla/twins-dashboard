@@ -1,0 +1,22 @@
+<!-- WPCode snippet: main 7330 "Twins thank-you chooser (gform_1) 2026-07-10", HTML, Site Wide Footer, Active.
+     Reads the twins_chooser cookie set by the gform_after_submission_1 PHP snippet (7165), builds a mount,
+     and hands it to window.__twinsChooser (exported by the forms-v2 engine 7326) which renders the chooser.
+     Poll makes it order-independent vs the engine's own footer execution. -->
+<script>
+(function () {
+  if (!/\/thank-you/i.test(location.pathname)) return;
+  var m = document.cookie.match(/(?:^|; )twins_chooser=([0-9a-f-]{36})/i);
+  if (!m) return;
+  document.cookie = "twins_chooser=; Max-Age=0; path=/";
+  var tok = m[1];
+  var mount = document.createElement("div");
+  mount.style.cssText = "max-width:560px;margin:24px auto;padding:0 16px";
+  var h1 = document.querySelector("h1");
+  (h1 && h1.parentNode ? h1.parentNode : document.body).insertBefore(mount, h1 ? h1.nextSibling : document.body.firstChild);
+  var tries = 0;
+  (function wait() {
+    if (window.__twinsChooser) { window.__twinsChooser(mount, tok); }
+    else if (tries++ < 150) { setTimeout(wait, 40); }
+  })();
+})();
+</script>
