@@ -28,7 +28,10 @@ var TWX2_ENTRY = {
 (function () {
   var TEL = 'tel:+18338332010';
   var PHONE = 'Call (833) 833-2010';
-  var DESIGN_URL = 'https://twinsgaragedoors.com/design-your-door/';
+  // Hero "Design This Door" deep-links into the owned door-builder app
+  // (snippet 7127) pre-selecting this page's collection: ?product={ProductId}.
+  var DESIGN_URL_BASE = 'https://twinsgaragedoors.com/door-builder/';
+  function designUrl(e) { return DESIGN_URL_BASE + '?product=' + e.product_id; }
   var BOOK_URL = 'https://book.housecallpro.com/book/Twins-Garage-Doors/26a3ce69028d4f018531ac62b1029d43?v2=true';
   var IMG_L = 'https://twinsgaragedoors.com/wp-content/uploads/2026/03/ICONLeft-1.png';
   var IMG_R = 'https://twinsgaragedoors.com/wp-content/uploads/2026/03/ICONright.png';
@@ -129,7 +132,7 @@ var TWX2_ENTRY = {
       '<h1>' + esc(e.h1) + '</h1>' +
       '<p class="twx2-sub">' + esc(e.hero_subhead) + '</p>' +
       '<div class="twx2-cta"><a class="twx2-btn twx2-btn--gold" href="' + TEL + '">' + PHONE + '</a>' +
-      '<a class="twx2-btn twx2-btn--ghost" href="' + DESIGN_URL + '">Design This Door</a></div>' +
+      '<a class="twx2-btn twx2-btn--ghost" href="' + designUrl(e) + '">Design This Door</a></div>' +
       '<div class="twx2-trustline"><b>&#9733;&#9733;&#9733;&#9733;&#9733;</b>&nbsp; 5.0 on Google &#183; Licensed and insured &#183; Local crew</div>' +
       '<div class="twx2-pair"><img class="twx2-back" src="' + IMG_L + '" alt="Twins Garage Doors mascot" data-no-lazy="1"><img class="twx2-front" src="' + IMG_R + '" alt="Twins Garage Doors mascot" data-no-lazy="1"></div>' +
       '</div>');

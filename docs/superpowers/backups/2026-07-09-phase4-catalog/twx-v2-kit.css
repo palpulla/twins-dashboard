@@ -18,9 +18,10 @@
 
 /* ---- hero (mockup .m-hero + .A .m-hero flourishes) ---- */
 .twx2-hero{position:relative;color:#fff;overflow:hidden;padding:56px 48px 24px;padding-right:min(38vw,460px);min-height:400px;background:
-  radial-gradient(700px 300px at 85% 20%, rgba(251,189,4,.16), transparent 60%),
-  repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 2px, transparent 2px 26px),
-  var(--tw-navy)}
+  radial-gradient(860px 480px at 84% 24%, rgba(251,189,4,.18), transparent 64%),
+  repeating-linear-gradient(0deg, rgba(255,255,255,.04) 0 2px, transparent 2px 26px),
+  repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 3px, transparent 3px 78px),
+  linear-gradient(165deg, var(--tw-navy) 0%, var(--tw-navy-deep) 90%)}
 .twx2-hero h1,.twx2-hero h2{font-size:clamp(26px,4vw,40px);font-weight:800;line-height:1.12;margin:0 0 12px;max-width:12em;text-wrap:balance;color:#fff}
 .twx2-hero h1 sup,.twx2-hero h2 sup{font-size:.45em;top:-.6em;position:relative}
 .twx2-hero h1 em,.twx2-hero h2 em{font-style:normal;color:var(--tw-yellow)}
