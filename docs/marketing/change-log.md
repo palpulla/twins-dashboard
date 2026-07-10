@@ -2,6 +2,20 @@
 
 Standing rule (CAP doc §8): no conversion action, pixel rule, or bid-strategy change ships without an entry here.
 
+## 2026-07-09 — Claude, Phase 4: full Clopay catalog on twx v2 LIVE (main; Daniel-approved spec + mockup)
+
+Spec: `docs/superpowers/specs/2026-07-09-phase4-clopay-catalog-twx-v2-design.md`. Approved Option A mockup, content pack, QA gate, redirect map, all snippet before/after bodies: `docs/superpowers/backups/2026-07-09-phase4-catalog/`.
+
+| # | Change | Detail | Revert |
+|---|---|---|---|
+| K1 | twx v2 design kit in snippets 7050 (main) + 6755 (/wi) | `/* twx v2 */` CSS (`.twx2-` classes: twins pair w/ bob + calibrated sizing, sticker cards/buttons, trust ribbon, steps, closer, textured hero — slat pinstripes + gold glow) appended inside the safelisted twx-ui style block; PHP on main only: `[clopay_collection_grid]` shortcode + defines. | Remove the `/* twx v2 */` block + PHP additions per snippet (before-files committed) |
+| K2 | Site-wide mobile Call/Book bar (main) | `#twx2-stickybar` ≤768px: Call (833) 833-2010 + Book Online (HCP booking link), rendered by 7050, suppressed on `-lp`/`.tlp` pages. Old `#twins-callbar` (snippet 7044) scoped to `-lp` pages via WPCode Conditional Logic — it had been showing the /wi 608 number to ALL main-site mobile visitors. | `TWINS_STICKYBAR` define false; remove 7044's conditional-logic rule |
+| K3 | 20 new collection pages + hub | All 23 Clopay residential collections now have twx v2 pages (ids 7137-7302 + existing 6034/6065/6090); hub `/clopay-garage-doors/` (7141) w/ server-rendered 23-card grid; menu item 7145 "All Clopay Collections" first in Garage Doors dropdown; unique pack copy (no verbatim manufacturer text, counts computed from API arrays, no prices/cities), Rank Math meta, FAQPage + Product JSON-LD matching visible content, hero CTA deep-links `/door-builder/?product={id}` (builder app gained the preselect param, snippet 7127). | Unpublish pages; delete menu item 7145; 7127 before-file committed |
+| K4 | 17 legacy Clopay pages: 301 + draft; menu 42 deleted | Rank Math 301s (via CSV import — the add-form is broken site-wide, see follow-up) from each old slug to its /clopay-*/ counterpart, verified 17/17 logged-in (redirects fire for admins too); old pages 6403-6427 → draft; unused menu "Clopay Products Menu" (42) deleted (dump committed). | Delete the 17 redirect rows (redirects-import.csv is the record); re-publish pages; recreate menu from menu42-before.json |
+| K5 | Verification sweep | 24/24 pages pass all QA-gate assertions (one H1 w/ product name, pack title/meta, 833 phone only, both JSON-LD blocks parse + match, no placeholder strings, live Clopay section, sibling links valid, sticky bar) — run logged-in because the **BlogVault firewall re-blocked this IP mid-phase** (ref 12819850836a50bfe361b7b); anonymous re-verification pending unblock. Screenshots: 5 sample pages + hub + dropdown, desktop + mobile. | n/a |
+
+**Open follow-ups:** BlogVault whitelist for 50.170.77.66 (Daniel, app.blogvault.net — second block, this session's QA volume tripped it); Rank Math redirection add/edit form broken site-wide (spawned task); Reserve Wood Custom/Extira specs sections mention colors but the API returns none for bespoke products (cosmetic).
+
 ## 2026-07-09 — Claude, Phase 3: door-builder visualizer LIVE on main + /wi (Daniel-approved spec)
 
 Spec: `docs/superpowers/specs/2026-07-09-phase3-door-builder-visualizer-design.md`. Owned configurator (real Clopay assets — design renders, color swatches, window thumbnails; honest labeling, no fake recoloring) at `/door-builder/`; leads email contact@ with the full door configuration. Code + local test harness: `docs/superpowers/backups/2026-07-09-phase3-door-builder/`.
