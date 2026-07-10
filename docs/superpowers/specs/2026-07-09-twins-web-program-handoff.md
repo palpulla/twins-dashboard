@@ -58,6 +58,21 @@ Phases after: 6 = /il subsite (unpublished), 7 = conversion upgrades woven throu
 
 Phase 1 ~750k · Phase 2 ~900k · Phase 3 ~1.1M · Phase 4 ~2.4M (three design-calibration rounds + firewall re-block + two session-limit cuts; the page pipeline itself ≈180k per 5-page batch). Phase 5 estimate: **1.5-2.5M** (chrome re-skin is new territory; /wi pages ride the proven pipeline). One phase per session; UPDATE THIS HANDOFF at session end.
 
+## Phase 5 progress (updated 2026-07-10)
+
+**Workstream A (/wi Madison + Milwaukee) — DONE this session.** Design + plan + change-log rows P5-1..P5-7 committed. Delivered:
+- Milwaukee hub (page 6460) + Madison install hub (page 1616) rebuilt on twx v2 via the Phase-4 pipeline: branded navy/yellow bands, collection **carousel** (23 cards, builder deep-links), reviews **carousel** (brb 2178, was a 437-review wall), 5-Q FAQ + FAQPage/LocalBusiness JSON-LD, cost ranges (from real jwrpj jobs) in FAQ only. Milwaukee = (414) 800-9271 + Wauwatosa NAP; Madison = (608) 420-2377 + 2921 Landmark Pl NAP.
+- /wi phone standardized: GHL number pool (snippet 6657) deactivated; snippet 6753 rewritten as a **per-metro** runtime unifier (Milwaukee→414, else→420) covering header/footer/mobile-bar text + tel. Rank Math Local SEO NAP fixed (620 N Carroll → 2921 Landmark Pl). Live-verified rendered: Madison header 420-2377, Milwaukee header 414, zero 888-8785/925-2038/620-N-Carroll displayed.
+
+**Workstream A open follow-ups:**
+- **Forward test (Daniel):** dial (608) 420-2377, confirm it rings the business line. Not yet verified.
+- Header/footer chrome still carries 888-8785 in *raw HTML* (client-side JS swaps the *display* to 420/414 correctly). Optional later pass: hardcode header doc 36 + footer doc 1409 to the tracking number for raw-HTML/AEO cleanliness. Low priority (display is correct; schema is correct).
+- Anonymous QA (`qa-gate.py`) + a manual a8c Edge Cache purge still pending the BlogVault IP whitelist. Elementor saves auto-purge the two page URLs, and the phone swap is client-side JS (runs even on cached HTML), so display is correct regardless.
+- Snippet 6754 emits a third, address-less LocalBusiness block (harmless; primary schema is clean). Remove in a later pass if desired.
+- Collection carousel images lazy-load on horizontal scroll (first few cards load immediately; verified all load).
+
+**Workstreams B (chrome re-skin), C (goodgolly shelf items: zip finder / cost-FAQ pages / city reviews), D (LP fixes) — NOT started.** Token spend this session was elevated by two subagent API-limit deaths + a mid-build redesign; remaining workstreams are fresh sessions.
+
 ## House rules (binding, from memory)
 
 Show plan/diff before implementing; never fabricate operational data (prices, addresses, people, reviews); real Twins numbers only; keep pages simple and mobile-fit; no em-dashes in customer-facing copy; full dollar amounts; never reference Lovable; all changes reversible + change-logged; commit docs as you go (own paths only — shared checkout).
