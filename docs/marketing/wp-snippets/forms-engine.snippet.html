@@ -14,7 +14,7 @@
   var page = location.pathname;
   function beacon(event) {
     try {
-      navigator.sendBeacon(EP + "/lp-lead-intake", new Blob([JSON.stringify({ event: event, page: page, variant: variant, session_id: sid })], { type: "application/json" }));
+      navigator.sendBeacon(EP + "/lp-lead-intake", new Blob([JSON.stringify({ event: event, page: page, variant: variant, session_id: sid })], { type: "text/plain" }));
     } catch (e) {}
   }
   var CHIPS = ["Broken spring", "Door won't open", "Opener problem", "New door quote", "Something else"];
