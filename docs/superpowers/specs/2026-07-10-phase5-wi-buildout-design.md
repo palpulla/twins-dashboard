@@ -18,7 +18,7 @@ Make /wi genuinely serve "Madison + Milwaukee + surrounding" (today Milwaukee ha
 | Madison NAP | **2921 Landmark Pl, Ste 206, Madison, WI 53713.** Fix the conflicting `620 N Carroll St` schema entry everywhere it appears. |
 | Milwaukee NAP | 11220 W Burleigh St Ste 100, Wauwatosa, WI 53222 (previously confirmed) |
 | Cost-FAQ data | **Computed from real HCP job data on jwrpj** (per-service price ranges). Daniel approves the computed ranges BEFORE publish. Never fabricated. |
-| Reviews | Review-card components OMITTED until Daniel supplies real Google reviews. Never sample text. |
+| Reviews | **Real reviews band on both hubs** via the existing Business Reviews Bundle plugin (RichPlugins, already live: `/wi/reviews/` renders 100+ real Google reviews server-side). Embed the plugin shortcode inside a twx v2 band wrapper. Never sample text; reviews are business-wide (one Google profile), not per-city. QA: ensure we don't double-emit review/AggregateRating schema (plugin may already emit it). |
 | WI license number | Still not provided. Footers ship without the line (no placeholder). |
 
 ## Discovery facts grounding this design (verified live 2026-07-10)
@@ -42,9 +42,10 @@ Elevated from repair-only to full metro hub (repair + install + openers). Sectio
 5. 23-collection Clopay grid (showcase) → cards deep-link `/wi/door-builder/?product={id}`
 6. What-to-expect 01-03 steps
 7. Service-area band: Milwaukee, Wauwatosa + surrounding
-8. FAQ band (visible Q&A, 5–8 questions incl. cost ranges) + FAQPage schema
-9. Book + Call closer
-10. Full footer: Wauwatosa NAP, (414) 800-9271, no license line yet
+8. Real reviews band — Business Reviews Bundle shortcode in a twx v2 wrapper
+9. FAQ band (visible Q&A, 5–8 questions incl. cost ranges) + FAQPage schema
+10. Book + Call closer
+11. Full footer: Wauwatosa NAP, (414) 800-9271, no license line yet
 
 ### 2. Madison install hub — overhaul `/wi/garage-door-installation/`
 
@@ -57,9 +58,10 @@ Product-forward "New Garage Doors & Installation" hub:
 5. Door-builder CTA band
 6. Financing band: GoodLeap + $0 service call (confirmed offers only)
 7. What-to-expect 01-03 steps
-8. FAQ band (incl. "how much does a new garage door cost in Madison") + FAQPage schema
-9. Closer
-10. Full footer: Madison NAP (2921 Landmark Pl Ste 206), 420-2377
+8. Real reviews band — Business Reviews Bundle shortcode in a twx v2 wrapper
+9. FAQ band (incl. "how much does a new garage door cost in Madison") + FAQPage schema
+10. Closer
+11. Full footer: Madison NAP (2921 Landmark Pl Ste 206), 420-2377
 
 ### 3. Supporting cleanup (all reversible, change-logged)
 
@@ -100,9 +102,8 @@ Chrome re-skin (workstream B) · zip finder / reviews page / standalone cost-FAQ
 ## Open items
 
 1. WI license number (Daniel) — add to footers when provided
-2. Real Google reviews feed (Daniel) — unlocks review cards later
-3. BlogVault IP whitelist (Daniel) — unlocks anonymous QA
-4. Confirm 420-2377 forwarding is active in GHL before publish (verify, don't assume)
+2. BlogVault IP whitelist (Daniel) — unlocks anonymous QA
+3. Confirm 420-2377 forwarding is active in GHL before publish (verify, don't assume)
 
 ## Revert paths
 
