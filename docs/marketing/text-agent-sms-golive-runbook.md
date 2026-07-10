@@ -1,52 +1,33 @@
-# AI text-agent — SMS go-live runbook (supervised, ~10 min)
+# AI text-agent — SMS go-live (supervised test, ~5 min)
 
-Everything except outbound SMS is already live and verified: website forms v2 (wizard + A/B), the post-submit chooser, on-page chat with the real Grok brain, the `/thank-you/` chooser for the main contact form, and the SMS consent disclosure. The on-page **Chat** path works today. This runbook turns on the **Text me** (SMS) path, which the spec intentionally gates behind a supervised test.
+Everything is built, deployed, and wired — including inbound replies. There is **no GHL workflow to configure**: the agent polls the Dunzo conversation for replies every minute (pg_cron job `text-agent-poll-1min` → `text-agent/poll`, token from vault). The GHL automation UI turned out to be un-automatable (cross-origin iframe), and polling is one less moving part anyway.
 
-By design, the AI does not text anyone until you finish step 2 below.
+What that means: the full SMS loop is live-capable right now. The one remaining step is the spec's supervised test — you watch a real thread before trusting it with real leads.
 
-## What is already done
+## The supervised test (do this once)
 
-- `text-agent` edge fn deployed to jwrpj (`/start`, `/chat`, `/ghl-webhook`), token-gated, `TEXT_AGENT_ENABLED=true`, `XAI_API_KEY` set and verified.
-- The chooser's "Text me now" button already calls `/start`, which sends the opening SMS via the Dunzo GHL API. The location can send SMS (the `call-intake-pipeline` integration already does).
-- The only missing wiring is the **inbound** side: when a lead texts back, GHL must call the agent so it can reply. That is the one piece that lives in GHL (step 1).
+1. On your phone (or a private window), open `twinsgaragedoors.com/madison-tune-up-lp/` and submit the form with your own name + cell. Pick **Text me now**.
+2. Within seconds you get an opening text from (608) 888-8785 referencing your issue.
+3. Reply a few times (replies are picked up within ~1 minute, the poll cadence). Confirm the agent:
+   - offers real arrival windows (from the same availability source as the voice agent),
+   - never quotes a firm price (free on-site estimate is THE pricing answer),
+   - never claims to book — it captures and says Ivory/the office confirms,
+   - submits the lead mid-conversation once details are confirmed (you and ivory@ get the capture email; HCP draft appears).
+4. **Human-takeover test:** from Dunzo Conversations, send any manual text in that thread. The AI must go silent in that thread from then on.
+5. **STOP test** (optional, from a second number or after unmuting): text `STOP`. GHL unsubscribes natively; the agent also mutes the thread.
+6. Clean up: delete the test contact/thread in Dunzo if you like; tell me and I'll clear the DB rows.
 
-## Step 1 — Build the "Customer Replied" workflow in Dunzo (one time)
+If anything misbehaves, flip the kill switch and tell me what you saw.
 
-Dunzo → Automation → Workflows → **Create Workflow** (blank).
+## Kill switches (fastest first)
 
-- **Trigger:** "Customer Replied". Add filter **Reply Channel = SMS**.
-- **Action:** "Webhook".
-  - Method: **POST**
-  - URL: `https://jwrpjuqaynownxaoeayi.supabase.co/functions/v1/text-agent/ghl-webhook?t=<TEXT_AGENT_TOKEN>`
-    - Replace `<TEXT_AGENT_TOKEN>` with the value of the `TEXT_AGENT_TOKEN` Supabase secret (also saved locally at `~/.twins-text-agent-token`). Do not share it anywhere else.
-  - Custom JSON body:
-    ```json
-    {
-      "contact_id": "{{contact.id}}",
-      "phone": "{{contact.phone}}",
-      "message": { "body": "{{message.body}}", "id": "{{message.id}}" }
-    }
-    ```
-    (`message.id` is best-effort; if GHL does not offer it as a merge field, delete that line. The agent still de-dupes and caps without it.)
-- Leave the workflow in **Draft** until you are at step 2.
+- `TEXT_AGENT_ENABLED=false` in Supabase → Edge Functions → Secrets: stops ALL sends (SMS opener, replies, chat) immediately. Chooser then shows the call CTA only.
+- Pause just the reply loop: `select cron.unschedule('text-agent-poll-1min');` on jwrpj (I can run this on request).
+- Per-thread: any human reply in Dunzo mutes that thread automatically; tag `ai-text-muted` does the same.
 
-## Step 2 — Supervised test (you + your own cell)
+## After the test passes
 
-1. Publish the workflow.
-2. On a phone or private window, open `twinsgaragedoors.com/madison-tune-up-lp/` (or `/wi/contact-us/`), submit the form with **your own** name + cell, then pick **Text me now**.
-3. You should get an opening text from (608) 888-8785 that references your issue and offers to check arrival windows.
-4. Reply a couple of times. Confirm the replies are on-brand, offer real windows, and never quote a firm price or book a job (it captures and says the office confirms).
-5. **Human-takeover test:** from Dunzo Conversations, have Ivory (or you) send a manual text in that thread. The AI must go silent for that thread from then on.
-6. **STOP test:** text `STOP`. GHL unsubscribes natively; the agent also treats it as mute.
-7. If all four behave, it is live for real leads. If anything is off, flip the kill switch (below) and tell me what happened.
-
-## Kill switch
-
-- `TEXT_AGENT_ENABLED=false` (Supabase → Edge Functions → Secrets) disables every send immediately; the chooser then shows the call CTA only. Set it back to `true` to resume.
-- To disable only inbound auto-replies, unpublish the GHL workflow.
-
-## After go-live
-
-- Merge PR #353 (github.com/palpulla/twins-dash/pull/353) into main.
-- A/B readout: `select variant, count(*) filter (where event='view') views, count(*) filter (where event='submit') submits from lp_form_events group by variant;` plus submits-by-variant from `lp_leads.utm->>'form_variant'`.
-- Optional cleanup: delete leftover TEST GHL contacts dodLmd4NTcMXdrbmYXZT, 1JzDDK0629JH7YnGSnIS, VpQxsJJHkrJlagJSES6m.
+- Say "go" and I'll merge [PR #353](https://github.com/palpulla/twins-dash/pull/353) to main.
+- A/B readout (any time, now measurable end to end):
+  `select variant, count(*) filter (where event='view') as views, count(*) filter (where event='submit') as submits from lp_form_events group by variant;`
+- Optional cleanup: TEST GHL contacts dodLmd4NTcMXdrbmYXZT, 1JzDDK0629JH7YnGSnIS, VpQxsJJHkrJlagJSES6m.
