@@ -71,7 +71,9 @@ Phase 1 ~750k · Phase 2 ~900k · Phase 3 ~1.1M · Phase 4 ~2.4M (three design-c
 - Snippet 6754 emits a third, address-less LocalBusiness block (harmless; primary schema is clean). Remove in a later pass if desired.
 - Collection carousel images lazy-load on horizontal scroll (first few cards load immediately; verified all load).
 
-**Workstreams B (chrome re-skin), C (goodgolly shelf items: zip finder / cost-FAQ pages / city reviews), D (LP fixes) — NOT started.** Token spend this session was elevated by two subagent API-limit deaths + a mid-build redesign; remaining workstreams are fresh sessions.
+**Workstream C (cost pages + zip finder) — DONE 2026-07-10 (same session).** Two NEW /wi cost pages (Madison 6807 + Milwaukee 6808) on twx v2: answer-first "short answer" card, branded price table (real jwrpj job ranges + $49 service call), what-affects-price, financing, navy steps, 8-Q FAQ + FAQPage/LocalBusiness JSON-LD, deterministic zip finder (537→Madison hub, 531/532→Milwaukee hub, else→contact). Phones per metro (420 / 414). Targets the AEO cost-query gap. Design: `2026-07-10-phase5-C-cost-pages-design.md`; change-log rows P5C-1..3; artifacts in `docs/superpowers/backups/2026-07-10-phase5-C/`. Optional follow-ups: link hub FAQ "how much" answers to these cost pages; add the zip finder onto the hubs.
+
+**Workstreams B (chrome re-skin) + D (LP fixes) — NOT started.** B is highest-risk (live GTM/Meta/GHL in shared header); D needs Daniel's explicit OK to touch the live paid LP. Both are fresh sessions.
 
 ## House rules (binding, from memory)
 
