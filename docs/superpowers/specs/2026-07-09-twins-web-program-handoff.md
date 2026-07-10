@@ -73,7 +73,15 @@ Phase 1 ~750k · Phase 2 ~900k · Phase 3 ~1.1M · Phase 4 ~2.4M (three design-c
 
 **Workstream C (cost pages + zip finder) — DONE 2026-07-10 (same session).** Two NEW /wi cost pages (Madison 6807 + Milwaukee 6808) on twx v2: answer-first "short answer" card, branded price table (real jwrpj job ranges + $49 service call), what-affects-price, financing, navy steps, 8-Q FAQ + FAQPage/LocalBusiness JSON-LD, deterministic zip finder (537→Madison hub, 531/532→Milwaukee hub, else→contact). Phones per metro (420 / 414). Targets the AEO cost-query gap. Design: `2026-07-10-phase5-C-cost-pages-design.md`; change-log rows P5C-1..3; artifacts in `docs/superpowers/backups/2026-07-10-phase5-C/`. Optional follow-ups: link hub FAQ "how much" answers to these cost pages; add the zip finder onto the hubs.
 
-**Workstreams B (chrome re-skin) + D (LP fixes) — NOT started.** B is highest-risk (live GTM/Meta/GHL in shared header); D needs Daniel's explicit OK to touch the live paid LP. Both are fresh sessions.
+**Workstream B (chrome re-skin) — PREPPED, execution deferred to a fresh session (Daniel's call 2026-07-10).** Do NOT edit in place; Codex reviewed and NO-GO'd that. Safe path is authored and committed:
+- Reviewed by Codex `gpt-5.6-sol` ultra (via CLI `codex exec`; the in-app codex MCP tool has a stale token and needs a host-app restart). Review verdict + reasons: `docs/superpowers/specs/2026-07-10-phase5-B-codex-review.md`.
+- Full backups of all 6 main-site chrome docs (Elementor data + conditions): `docs/superpowers/backups/2026-07-10-phase5-B/tb-{36,305,466,1409,2163,2179}.json`.
+- Site-qualified manifest (MAIN site): header **36** + footer **1409** = `include/general` (every page); menu **305** + widget **466** = no condition (referenced); alt footer **2179** = page 2123 (/contact-us); alt header **2163**. Library sections 1498-1516.
+- **Unit 1 execution package (header 36 + POP menu 305)** authored by Codex `gpt-5.6-sol` ultra: `docs/superpowers/specs/2026-07-10-phase5-B-unit1-header-menu-runbook.md`. Contains the preserve-list (22 element IDs, `#menuhopin` sticky, `15c4a1b` nav-fit coupling, chat mount, all links + SHA-256 drift hashes), re-skin spec (additive `.twx2-*` classes only, NEVER rename an ID), clone-and-swap runbook (canary page = `/clopay-gallery-steel/` id 6065), regression matrix (9 widths, anon+logged-in), rollback (condition-flip, seconds-fast).
+
+**NEXT-SESSION ENTRY POINT for B:** open the Unit 1 runbook; re-verify the drift hashes still match (another editor session may have changed 36/305); then execute stages 3.1→3.9. Clone+reskin+canary is safe/reversible (no global impact); the GLOBAL CUTOVER (§3.8) requires Daniel present + a low-traffic window. BlogVault whitelist is DONE, so anonymous QA works now. After Unit 1: repeat for footer 1409+466, then alt header/footer 2163/2179, then library sections, then B3 service pages (separate plan).
+
+**Workstream D (LP fixes) — NOT started.** Needs Daniel's explicit OK to touch the live paid LP. Fresh session.
 
 ## House rules (binding, from memory)
 
