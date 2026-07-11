@@ -72,6 +72,13 @@ Use Codex `gpt-5.6-sol` ultra to: (a) re-verify the Unit 1 runbook against fresh
 - WI license number still not provided (footers ship without it).
 - In-app Codex MCP tool: if still erroring, quit+reopen the Claude app once. (This session used the Codex CLI `gpt-5.6-sol` ultra successfully.)
 
+## Daniel design revisions (2026-07-10, applied live to the clones on canary 6065)
+- **Tagline** header infobox 6e02966 `infobox_title`: "T'Winning Every Time" → **"Garage Doors, Done Right"** (owner-requested copy change on header clone 7336).
+- **Quote CTA always-on shine**: appended a reduced-motion-safe `::before` shine-sweep animation (`@keyframes twx2-shine`, 3.4s) to the CTA in BOTH 7336 (`.twx2-header-cta`) and 7333 (`.twx2-popmenu .twx2-header-cta`) custom_css. Button now shines continuously, not just on hover.
+- **FOOTER re-skin = UNIT 2 (footer 1409), FOOTER_CLONE_ID = 7344** (type footer). Dependency: footer embeds the Dual Button widget 466 (`btnDUAL`, uael-buttons) via shortcode `[elementor-template id="466"]`, so 466 renders INSIDE the footer clone DOM → reskinned by CSS scoped to `.elementor-7344 .btnDUAL` (NO separate 466 clone needed). Pure-CSS reskin (no element deltas): deep-navy `#010D38` bg, yellow `#FBBD04` headings + icon-list arrows + contact icons + social sticker-icons, light `#CFDBEA` text/links w/ yellow hover, dual button as yellow sticker. Preserved: phone tel:8338332010, mailto:contact@twinsgaragedoors.com, WI+KY NAP, 4 social links. Canary on 6065 verified (footer data-elementor-id=7344, bg #010D38). Original 1409 untouched (`["include/general"]`).
+- **CURRENT LIVE STATE on page 6065**: header clone 7336 + menu clone 7333 + footer clone 7344 (all twx2, cohesive). All other pages = original 36/305/1409. Clones 7336(`include/singular/page/6065`), 7333(`[]`), 7344(`include/singular/page/6065`); originals 36+1409 have `exclude/singular/page/6065`.
+- Committed CSS snapshots (unit1-clone-*.css) predate the shine+tagline tweaks; live clone custom_css is source of truth.
+
 ## UNIT 1 — Session 2026-07-10 status + LOAD-BEARING mechanism + cutover procedure
 
 ### *** Conditions-cache mechanism (load-bearing for cutover AND every future chrome unit) ***
