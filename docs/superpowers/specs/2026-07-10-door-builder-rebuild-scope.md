@@ -47,3 +47,21 @@ The current builder overpromises (implies a live render it can't do) and shows s
 - Current builder: WPCode snippet 7127 `[twins_door_builder]`, mounts `#twxdb`, reads `?product=` from URL; lead endpoint snippet 7072 `POST /wp-json/twins/v1/door-builder`.
 - On page 6065 the builder is embedded in Elementor section `78da141` (preload html widget sets `?product=12`).
 - EZDoor: https://www.clopaydoor.com/ezdoor ; Door Imagination System overview: https://garagedoormore.com/residential/door-imagination-system/
+
+## Cost research (Option C / licensed visualizer) — 2026-07-10
+- **RenoGlance** (published dealer pricing, directly comparable): Dealer Starter **$299/mo**, Dealer Pro **$999/mo**, Manufacturer $2,500+/mo. Starter = on-home photo→catalog renderings + lead capture + basic analytics.
+- **Renoworks** (the platform that powers tools like Clopay EZDoor): quote-only, dealer tier in the same ~$300–$1,000/mo range; likely + one-time setup/onboarding fee. Sales 1-877-980-3880.
+- Clopay **EZDoor is FREE** to use but is OFF-SITE (redirect only — cannot iframe, malformed X-Frame-Options).
+
+## *** DANIEL'S DECISION (2026-07-10, binding) ***
+- The designer **MUST be embedded ON twinsgaragedoors.com** (in the site, not an off-site link).
+- It **MUST cost $0** (no monthly SaaS).
+- => **Paid vendors (Renoworks/RenoGlance) are RULED OUT.** **Off-site EZDoor handoff is RULED OUT.**
+- => The next session must build/improve a **FREE, on-site** door designer that is genuinely good, using only free assets (Clopay public API images, real product photos, WPCode). Be honest about what "photorealistic composite like EZDoor" can/can't be done for free — but push HARD on the free approaches below before concluding anything is impossible.
+
+## Free on-site approaches for the next session to investigate (in priority order)
+1. **Deep-mine Clopay's free assets for per-combination full-door images.** I only did a shallow pass. Re-examine ALL image URLs in `product-12.json` (and other products) + try URL-pattern manipulation for higher-res / per-design+color+window renders. Check if Clopay's own product page (clopaydoor.com/gallerysteel) swaps a FULL door image when you change options (inspect its network) — if so, harvest/construct those URLs (free, hotlinkable from Clopay CDN).
+2. **Harvest EZDoor's rendered door assets.** EZDoor (`ezdoor.clopay.com`, an Angular app) renders accurate doors. Drive its flow in the logged-in Chrome (claude-in-chrome MCP) and watch the network (read_network_requests) for the door-image CDN URLs it loads per (design/color/window/glass). If they're constructable/hotlinkable, build an on-page preview that shows the real rendered door for the selected combo (this gets ~EZDoor quality for the DOOR image, minus the upload-your-home overlay — which is acceptable and FREE + on-site).
+3. **Curated real-photo visualization.** `ProductImageGallery` has ~9 REAL full-door lifestyle photos per product (full doors, high quality). Map design+finish → the closest real photo so the "preview" is always a real, crisp door. Not a live composite but honest + beautiful + free.
+4. **Improve the existing builder (snippet 7127 `[twins_door_builder]`) regardless:** use full-res `.webp` at native size (the current low-res is scaled-up thumbnails), crisp swatches, honest labels.
+Combine 1/2/3 as available. Goal: an embedded, free, genuinely-good "Design Your Door" that shows an accurate/real door image for the selected options.
