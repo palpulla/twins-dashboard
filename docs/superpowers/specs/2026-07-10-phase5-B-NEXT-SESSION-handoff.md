@@ -61,14 +61,38 @@ Use Codex `gpt-5.6-sol` ultra to: (a) re-verify the Unit 1 runbook against fresh
 ## Current state (as of 2026-07-10, end of prior session)
 
 - **DONE + live + verified:** Workstream A (/wi Madison hub 1616 + Milwaukee hub 6460, twx v2, carousels, per-metro phones, schema NAP fixed, number pool retired). Workstream C (/wi cost pages 6807 Madison + 6808 Milwaukee + zip finder, AEO FAQPage schema). The (608) 420-2377 tracking-number forward to the business line is **confirmed working** by Daniel.
-- **PREPPED (this workstream):** B Unit 1 runbook + backups + manifest, all committed.
+- **BUILT + CANARY-VALIDATED + ROLLBACK-PROVEN, awaiting cutover (this workstream, 2026-07-10):** B Unit 1 clones are live-built, re-skinned to twx v2, and fully verified. **MENU_CLONE_ID = 7333** (section, = source 305 + 5 approved twx2 class deltas, custom_css set, dormant). **HEADER_CLONE_ID = 7336** (header, = source 36 + 10 class deltas + ct_saved_rows rewired 305→7333, custom_css set, dormant). Canary on page 6065 rendered clone 7336+7333 correctly (navy/yellow sticker header, sticky+headershow, POP modal opens/styled/closes, all 8 menu items, nav-fit 13px/.25px/6px, tracking parity GA×2/fbq init+PV/2 chat loaders/1 bubble, no console errors). Rollback proven (6065 reverted to 36). **END STATE: fully rolled back — site 100% original, both clones published-but-conditionless (dormant). Originals 36/305 untouched (hashes intact).** See UNIT 1 SESSION section below for the load-bearing conditions-cache mechanism + exact cutover steps.
 - **NOT started:** Workstream D (live paid LP bug fixes) — needs Daniel's explicit OK before touching the live paid LP.
 
 ## Open items for Daniel
 
+- **BlogVault is STILL IP-blocking anonymous requests from this machine (50.170.77.66) — anonymous request to a live page returns 403 firewall page.** This is a HARD GATE for Unit 1 cutover (runbook §4: "anonymous external QA unavailable" = NO-GO). Daniel must whitelist the IP at app.blogvault.net before cutover so anonymous convergence can be verified. (Real visitors on other IPs are unaffected; only this machine's external QA is blocked.)
+- **Unit 1 cutover** needs Daniel present + low-traffic window + BlogVault whitelist. It is otherwise fully prepped (clones built + validated); cutover is ~4 REST condition writes + one editor regenerate + QA (see below).
 - Global cutover of each chrome unit needs Daniel present + low-traffic window.
 - WI license number still not provided (footers ship without it).
-- In-app Codex MCP tool: if still erroring, quit+reopen the Claude app once.
+- In-app Codex MCP tool: if still erroring, quit+reopen the Claude app once. (This session used the Codex CLI `gpt-5.6-sol` ultra successfully.)
+
+## UNIT 1 — Session 2026-07-10 status + LOAD-BEARING mechanism + cutover procedure
+
+### *** Conditions-cache mechanism (load-bearing for cutover AND every future chrome unit) ***
+Elementor Pro caches theme-builder display conditions server-side. **A raw REST `_elementor_conditions` postmeta write is NOT honored on render until the cache regenerates. "Clear Files & Data" does NOT regenerate it.** The proven trigger:
+1. REST-write the target `_elementor_conditions` on the doc(s) (format proven: array of strings; a specific page = `"include/singular/page/{ID}"` / `"exclude/singular/page/{ID}"`, verified against live footer 2179 = `include/singular/page/2123`).
+2. Open the header clone in the Elementor editor (`/wp-admin/post.php?post=7336&action=elementor`); it loads conditions from postmeta into `elementorPro.modules.themeBuilder.conditionsModel` (verify it reflects the intended conditions).
+3. Run `$e.run('theme-builder-publish/save')` (component namespace `theme-builder-publish`; commands next/save/preview-settings). This persists conditions AND regenerates the WHOLE conditions cache from all docs' postmeta (so it also picks up doc 36's condition change).
+Then the render flips. Verify via a logged-in `fetch(path, {cache:'no-store'})` — edge shows `x-ac: ... BYPASS` (live PHP); parse the `<header ... data-elementor-id>`.
+
+Editor/REST gotchas discovered: `$e.run('document/elements/settings',...)` for class deltas works; **`$e.run('document/save/default')` returns a NON-thenable** — fire it then poll `elementor.documents.getCurrent().editor.isChanged` until false (header doc save takes >8s). Elementor injects benign page-setting `hide_title:"yes"` and nav-menu `menu_name:"Menu"` (the menu's own name; `menu` selection unchanged) on save — both adjudicated benign (Codex ultra). REST elementor_library writable meta: `_elementor_data`, `_elementor_conditions`, `_elementor_template_type`, `_elementor_edit_mode`, `_elementor_page_settings`; NOT writable: content/excerpt/taxonomy/version (taxonomy `elementor_library_type` term is set by the editor save — verified 7336=header, 7333=section). Reskin CSS lives in each clone's `_elementor_page_settings.custom_css`, scoped `.elementor-{cloneid} .twx2-*`; body-mounted modal uses `.popMENU-popup:has(.elementor-7333 .twx2-popmenu)` (`:has()` supported).
+
+### Exact CUTOVER procedure (when Daniel present + BlogVault whitelisted + low-traffic)
+1. Drift recheck: 36 hash `783e2f…c0570` + cond `["include/general"]`; 305 hash `c61398…003ed` + cond `[]`; 7336 cond `[]` + 9a8b90d.ct_saved_rows `7333`; 7333 cond `[]`; menu-13 ledger head `92a5b8ac70a6` (51 items).
+2. From canary state OR from dormant: REST-write **7336 → `["include/general"]`**, then within 5s **36 → `[]`** (do not warm public URLs between). If 2nd write fails, compensate: 7336 → `["include/singular/page/6065"]`, 36 → `["include/general","exclude/singular/page/6065"]` (recovers canary), stop.
+3. Open 7336 editor → confirm conditionsModel = include/general → `$e.run('theme-builder-publish/save')` to regenerate.
+4. Invalidation: Elementor Clear Files & Data (button id `elementor-clear-cache-button`) → WP Rocket Clear+Preload → a8c Edge Clear → verify clone CSS `post-7336.css`/`post-7333.css` return 200.
+5. Verify: homepage + a normal service page + /contact-us/ + a post + a Canvas LP all render header 7336 + menu 7333; NO `elementor-36`/`elementor-305`; one header, one #menuhopin; tracking parity (GA `G-XW0RGPTGSN`/`G-JR7LW39CND` ×1 each, fbq init `554750209097175`+PageView ×1, 2 leadconnector loaders, 1 visible bubble). Anonymous cold+warm ×2 (needs BlogVault whitelist).
+6. Rollback if any abort: 36 → `["include/general"]`, 7336 → `[]`, regenerate via editor, invalidate. (Proven this session: reverts in seconds + regen.)
+
+### Then subsequent units (Codex gpt-5.6-sol ultra authors each package first, same clone-and-swap + this mechanism)
+Footer **1409 + widget 466** → alt header/footer **2163 + 2179** → library sections **1498-1516**. Backups already committed in `docs/superpowers/backups/2026-07-10-phase5-B/`.
 
 ## Token budget note
 
