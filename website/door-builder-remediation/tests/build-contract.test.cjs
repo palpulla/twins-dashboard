@@ -2,6 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const childProcess = require('node:child_process');
 
 function read(relative) {
   const file = path.resolve(__dirname, '..', relative);
@@ -78,4 +79,33 @@ test('builder delegates payload and submission to tested modules', () => {
   assert.ok(app.trim().length > 0, 'app source missing');
   assert.match(app, /core\.buildLeadPayload/);
   assert.match(app, /funnel\.submitLead/);
+});
+
+test('generated WPCode is one inactive candidate wrapper', () => {
+  const php = read('dist/twins-door-builder-wpcode.php');
+  assert.equal((php.match(/add_shortcode\(\s*['"]twins_door_builder['"]/g) || []).length, 1);
+  assert.equal((php.match(/id="twxdb"/g) || []).length, 1);
+  assert.match(php, /CANDIDATE ONLY/);
+});
+
+test('local harness contains fixtures but no real lead endpoint', () => {
+  const harness = read('dist/local-harness.html');
+  assert.match(harness, /TwinsDoorBuilderFixtures/);
+  assert.match(harness, /twxdbfail/);
+  assert.doesNotMatch(harness, /twinsgaragedoors\.com\/wp-json\/twins\/v1\/door-builder/);
+});
+
+test('committed dist matches deterministic generation', () => {
+  const script = path.resolve(__dirname, '..', 'scripts', 'build.mjs');
+  const result = childProcess.spawnSync(process.execPath, [script, '--check'], { encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+});
+
+test('generated funnel candidate boots and configures the current lead form', () => {
+  const candidate = read('dist/design-your-door-funnel.js');
+  assert.match(candidate, /querySelector\(\"\.twx-db\"\)/);
+  assert.match(candidate, /TwinsDoorBuilderFunnel\.bindFunnel/);
+  assert.match(candidate, /twinsgaragedoors\.com\/wp-json\/twins\/v1\/door-builder/);
+  assert.match(candidate, /successUrl:\"\/door-builder\/\"/);
+  assert.match(candidate, /\(833\) 833-2010/);
 });

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "artifacts": [
+    {
+      "path": "design-your-door-funnel.js",
+      "sha256": "6246adc34bcaf94993526dacdfdf31fa9d6e36749a282e5af8c6fd168c44fb33"
+    },
+    {
+      "path": "local-harness.html",
+      "sha256": "0839cf1a86f5b86cdcd6e73198a7ce3454bae90cc5959c977a2dec20595a3ab1"
+    },
+    {
+      "path": "twins-door-builder-wpcode.php",
+      "sha256": "e4e5f726ffc91dfdbb501c56d6a1d28bbe1e25ada8d103eb6af3ab3b7eca4f4b"
+    }
+  ]
+}
