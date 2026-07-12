@@ -177,7 +177,6 @@
       ? (mounts.length === 1 ? mounts[0] : null)
       : documentRef.getElementById('twxdb');
     if (!mount || mountedRoot === mount) return false;
-    mountedRoot = mount;
 
     var REGION = mount.getAttribute('data-region') || 'main';
     var ENDPOINT = mount.getAttribute('data-endpoint') || '';
@@ -219,13 +218,20 @@
         + formHTML() + '</div>';
     }
 
+    function dependencyFallbackHTML() {
+      return '<div class="twxdb-app"><h2 class="twxdb-h">Call us for your free door quote</h2>'
+        + '<p class="twxdb-sub">The door builder is unavailable right now. Call us at <a href="tel:'
+        + PHONE.tel + '">' + PHONE.disp + '</a> and we\'ll help you choose the right door.</p></div>';
+    }
+
     var core = windowRef.TwinsDoorBuilderCore;
     var transport = windowRef.TwinsDoorBuilderTransport;
     var funnel = windowRef.TwinsDoorBuilderFunnel;
     if (!core || !transport || !funnel || typeof windowRef.fetch !== 'function') {
-      mount.innerHTML = fallbackHTML();
+      mount.innerHTML = dependencyFallbackHTML();
       return false;
     }
+    mountedRoot = mount;
 
     var storage = windowRef.sessionStorage || {
       getItem: function () { return null; },
@@ -527,7 +533,7 @@
 
     mount.addEventListener('load', function (event) {
       if (event.target.matches && event.target.matches('.twxdb img')) {
-        event.target.style.maxWidth = event.target.naturalWidth + 'px';
+        event.target.style.setProperty('--twxdb-natural-width', event.target.naturalWidth + 'px');
       }
     }, true);
 

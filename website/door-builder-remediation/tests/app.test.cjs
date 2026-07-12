@@ -51,6 +51,58 @@ function makeController(fetchImpl) {
   });
 }
 
+function bootFixture() {
+  const listeners = {};
+  const mount = {
+    innerHTML: '',
+    getAttribute(name) {
+      if (name === 'data-region') return 'main';
+      if (name === 'data-endpoint') return '/lead';
+      return null;
+    },
+    addEventListener(type, handler) {
+      listeners[type] = handler;
+    },
+    contains() {
+      return true;
+    }
+  };
+  const documentRef = {
+    querySelectorAll(selector) {
+      return selector === '#twxdb' ? [mount] : [];
+    }
+  };
+  return { documentRef, mount, listeners };
+}
+
+test('boot renders phone-only inert fallback when runtime dependencies are missing', () => {
+  const fixture = bootFixture();
+  const windowWithoutFetch = {
+    TwinsDoorBuilderCore: core,
+    TwinsDoorBuilderTransport: transport,
+    TwinsDoorBuilderFunnel: funnel
+  };
+  assert.equal(app.boot(fixture.documentRef, windowWithoutFetch), false);
+  assert.match(fixture.mount.innerHTML, /tel:\+18338332010/);
+  assert.doesNotMatch(fixture.mount.innerHTML, /<form\b|<input\b|<textarea\b/i);
+  assert.equal(Object.hasOwn(fixture.listeners, 'submit'), false);
+});
+
+test('failed dependency boot does not block a later valid boot attempt', () => {
+  const fixture = bootFixture();
+  assert.equal(app.boot(fixture.documentRef, {}), false);
+  const windowRef = {
+    TwinsDoorBuilderCore: core,
+    TwinsDoorBuilderTransport: transport,
+    TwinsDoorBuilderFunnel: funnel,
+    fetch: async () => jsonResponse(true, []),
+    sessionStorage: memoryStorage(),
+    location: { search: '' }
+  };
+  assert.equal(app.boot(fixture.documentRef, windowRef), true);
+  assert.equal(Object.hasOwn(fixture.listeners, 'submit'), true);
+});
+
 test('controller boots a valid product deep link through normalized fixtures', async () => {
   const calls = [];
   const controller = makeController(async (url) => {

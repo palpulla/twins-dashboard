@@ -26,10 +26,35 @@ test('builder imagery uses the explicit no-upscale CSS contract', () => {
   const css = read('src/styles.css');
   const stretchingImage = /\.twxdb[^{}]*img\{[^}]*(?<![-\w])width\s*:\s*100%/;
   assert.ok(css.trim().length > 0, 'CSS source missing');
-  assert.match(css, /\.twxdb img\{[^}]*width:auto[^}]*height:auto[^}]*max-width:100%/);
+  assert.match(
+    css,
+    /\.twxdb img\{[^}]*width:auto[^}]*height:auto[^}]*max-width:min\(100%,var\(--twxdb-natural-width,100%\)\)/
+  );
   assert.match('.twxdb-card img{width:100%}', stretchingImage);
   assert.doesNotMatch('.twxdb-card img{max-width:100%}', stretchingImage);
   assert.doesNotMatch(css, stretchingImage);
+});
+
+test('intrinsic image widths preserve responsive and component CSS caps', () => {
+  const app = read('src/app.js');
+  const css = read('src/styles.css');
+  assert.match(
+    app,
+    /style\.setProperty\('--twxdb-natural-width', event\.target\.naturalWidth \+ 'px'\)/
+  );
+  assert.doesNotMatch(app, /style\.maxWidth/);
+  assert.match(
+    css,
+    /\.twxdb-chip img\{[^}]*max-width:min\(46px,100%,var\(--twxdb-natural-width,46px\)\)/
+  );
+  assert.match(
+    css,
+    /\.twxdb-chip--wide img\{[^}]*max-width:min\(100%,var\(--twxdb-natural-width,100%\)\)/
+  );
+  assert.match(
+    css,
+    /\.twxdb-pick img\{[^}]*max-width:min\(26px,100%,var\(--twxdb-natural-width,26px\)\)/
+  );
 });
 
 test('candidate source contains no prohibited visualization promise', () => {
