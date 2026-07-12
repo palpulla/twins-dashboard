@@ -149,3 +149,81 @@ test('builds the unchanged plain-text lead payload contract', () => {
     glass: 'Seeded'
   });
 });
+
+test('uses a lifestyle image as labeled reference and panel art as intrinsic secondary evidence', () => {
+  assert.equal(typeof core.selectPreview, 'function');
+  const product = core.normalizeProduct(gallerySteel);
+  const preview = core.selectPreview(product, {
+    design: product.designs[0],
+    color: product.colors[0],
+    window: product.windows[0],
+    glass: product.glass[0]
+  }, { products: {} });
+  assert.equal(preview.hero.evidence, 'reference-photo');
+  assert.equal(preview.hero.allowUpscale, false);
+  assert.match(preview.hero.label, /Inspiration photo/);
+  assert.equal(preview.panel.evidence, 'panel-style');
+  assert.equal(preview.panel.allowUpscale, false);
+  assert.match(preview.panel.label, /original resolution/);
+  assert.equal(preview.samples.length, 3);
+  assert.equal(preview.samples.every((sample) => sample.evidence === 'swatch-only'), true);
+  assert.equal(preview.samples.every((sample) => sample.allowUpscale === false), true);
+  assert.equal(preview.samples.every((sample) => (
+    sample.label === 'Manufacturer sample — final appearance is confirmed before ordering.'
+  )), true);
+});
+
+test('never upgrades an unproven manifest record to an exact render', () => {
+  assert.equal(typeof core.selectPreview, 'function');
+  const product = core.normalizeProduct(gallerySteel);
+  const manifest = {
+    products: {
+      '12': {
+        referencePhotos: [{
+          url: product.referencePhotos[1].image,
+          evidence: 'exact-render',
+          label: 'unsupported claim'
+        }]
+      }
+    }
+  };
+  const preview = core.selectPreview(product, {}, manifest);
+  assert.equal(preview.hero.evidence, 'reference-photo');
+  assert.notEqual(preview.hero.label, 'unsupported claim');
+});
+
+test('initial reference manifest contains no exact-render record', () => {
+  const manifestPath = path.resolve(__dirname, '..', 'assets', 'reference-manifest.json');
+  const manifest = fs.existsSync(manifestPath)
+    ? JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
+    : {};
+  assert.equal(manifest.schemaVersion, 1);
+  assert.equal(JSON.stringify(manifest).includes('exact-render'), false);
+});
+
+test('calculates six-step availability and skips missing option families', () => {
+  assert.equal(typeof core.availableSteps, 'function');
+  assert.equal(typeof core.nextStep, 'function');
+  const byId = new Map(detailFixtures.map((raw) => {
+    const product = core.normalizeProduct(raw);
+    return [product.id, product];
+  }));
+  const full = byId.get('12');
+  assert.deepEqual(
+    core.availableSteps(full, { window: full.windows[0] }),
+    ['collection', 'design', 'color', 'windows', 'glass', 'summary']
+  );
+  assert.deepEqual(
+    core.availableSteps(full, { window: { title: 'No windows (solid)', none: true } }),
+    ['collection', 'design', 'color', 'windows', 'summary']
+  );
+  const noWindows = byId.get('16');
+  assert.deepEqual(
+    core.availableSteps(noWindows, {}),
+    ['collection', 'design', 'color', 'summary']
+  );
+  const empty = byId.get('8');
+  assert.deepEqual(core.availableSteps(empty, {}), ['collection', 'summary']);
+  assert.equal(core.nextStep('collection', empty, {}), 'summary');
+  assert.equal(core.nextStep('design', noWindows, {}), 'color');
+});

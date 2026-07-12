@@ -140,6 +140,84 @@
     return payload;
   }
 
+  function selectPreview(product, state, manifest) {
+    product = product || {};
+    state = state || {};
+    manifest = manifest && typeof manifest === 'object' ? manifest : { products: {} };
+    var entry = manifest.products && manifest.products[String(product.id)];
+    var curated = entry && Array.isArray(entry.referencePhotos) ? entry.referencePhotos : [];
+    var curatedPhoto = curated.map(function (item) {
+      if (!item || item.evidence !== 'reference-photo') {
+        return null;
+      }
+      var image = validateImageUrl(item.url);
+      return image ? {
+        image: image,
+        evidence: 'reference-photo',
+        label: 'Inspiration photo — your selected options are listed separately and Twins will confirm the final appearance.',
+        allowUpscale: false
+      } : null;
+    }).filter(Boolean)[0];
+    var galleryPhoto = product.referencePhotos && product.referencePhotos[0];
+    var hero = curatedPhoto || (galleryPhoto ? {
+      image: galleryPhoto.image,
+      evidence: 'reference-photo',
+      label: 'Inspiration photo — your selected options are listed separately and Twins will confirm the final appearance.',
+      allowUpscale: false
+    } : null);
+    if (!hero && product.showcaseImage) {
+      hero = {
+        image: product.showcaseImage,
+        evidence: 'reference-photo',
+        label: 'Inspiration photo — your selected options are listed separately and Twins will confirm the final appearance.',
+        allowUpscale: false
+      };
+    }
+    var panel = state.design && state.design.image ? {
+      image: state.design.image,
+      evidence: 'panel-style',
+      label: 'Panel-style reference shown at its original resolution.',
+      allowUpscale: false
+    } : null;
+    return {
+      hero: hero,
+      panel: panel,
+      samples: [state.color, state.window, state.glass].filter(Boolean).map(function (item) {
+        return {
+          title: plainText(item.titleHtml || item.title),
+          image: item.image || null,
+          evidence: 'swatch-only',
+          label: 'Manufacturer sample — final appearance is confirmed before ordering.',
+          allowUpscale: false
+        };
+      })
+    };
+  }
+
+  function availableSteps(product, state) {
+    product = product || {};
+    state = state || {};
+    var steps = ['collection'];
+    if (product.designs && product.designs.length) steps.push('design');
+    if (product.colors && product.colors.length) steps.push('color');
+    if (product.windows && product.windows.length) steps.push('windows');
+    if (state.window && !state.window.none && product.glass && product.glass.length) {
+      steps.push('glass');
+    }
+    steps.push('summary');
+    return steps;
+  }
+
+  function nextStep(current, product, state) {
+    var canonical = ['collection', 'design', 'color', 'windows', 'glass', 'summary'];
+    var available = new Set(availableSteps(product, state));
+    var index = canonical.indexOf(current);
+    for (var position = index + 1; position < canonical.length; position += 1) {
+      if (available.has(canonical[position])) return canonical[position];
+    }
+    return 'summary';
+  }
+
   return {
     sanitizeDisplay: sanitizeDisplay,
     plainText: plainText,
@@ -147,6 +225,9 @@
     normalizeCatalog: normalizeCatalog,
     normalizeProduct: normalizeProduct,
     parseDeepLink: parseDeepLink,
-    buildLeadPayload: buildLeadPayload
+    buildLeadPayload: buildLeadPayload,
+    selectPreview: selectPreview,
+    availableSteps: availableSteps,
+    nextStep: nextStep
   };
 }));
