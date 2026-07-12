@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "site": "MAIN",
+  "pageId": 7073,
+  "mutationStatus": "blocked-pending-fresh-export",
+  "heroCopy": "Choose your collection and options, then send the specification to Twins for a free quote.",
+  "supportingCopy": "Manufacturer photos and samples help you compare choices. Twins will confirm the exact appearance before ordering.",
+  "successRedirect": "/door-builder/",
+  "requiredErrorSelector": "[data-door-builder-error]",
+  "requiredCounts": {
+    "formSubmissionHandler": 1
+  },
+  "removeInlineOnsubmit": true,
+  "removeLegacyGlobal": "twxDbSubmit",
+  "redirectRequires": {
+    "httpOk": true,
+    "bodyOkTrue": true
+  },
+  "forbiddenClaims": [
+    "upload your home",
+    "try it on your house",
+    "every option live",
+    "exact render"
+  ]
+}

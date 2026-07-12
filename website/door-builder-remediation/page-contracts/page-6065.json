@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "site": "MAIN",
+  "pageId": 6065,
+  "mutationStatus": "blocked-pending-fresh-export",
+  "requiredCounts": {
+    "designYourDoorSection": 1,
+    "builderShortcode": 1,
+    "visibleHeading": 1
+  },
+  "requiredHeading": "Design Your Gallery Steel Door",
+  "productDeepLink": "?product=12",
+  "removalCandidate": {
+    "elementorSectionId": "e26273a",
+    "requiresExpectedOldExport": true
+  },
+  "preservedBuilderCandidate": {
+    "elementorSectionId": "78da141",
+    "presumeReplaceable": false
+  }
+}
