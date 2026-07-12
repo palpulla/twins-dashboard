@@ -8,6 +8,10 @@ const root = path.resolve(here, '..');
 const repo = path.resolve(root, '../..');
 const dist = path.join(root, 'dist');
 const check = process.argv.includes('--check');
+const expectedProductCount = 23;
+const harnessListUrl = 'https://www.clopaydoor.com/api/v2/GetProductsList/GetProducts?productType=Residential';
+const harnessDetailUrl = 'https://www.clopaydoor.com/api/v2/GetProductDetails/GetProductData?productId=';
+const harnessLeadPath = '/__harness__/lead';
 
 function read(relative) {
   return fs.readFileSync(path.join(root, relative), 'utf8');
@@ -26,11 +30,54 @@ function stableJson(value) {
   return JSON.stringify(value, null, 2) + '\n';
 }
 
+export function sameUtf8Bytes(current, value) {
+  return Buffer.isBuffer(current) && current.equals(Buffer.from(value, 'utf8'));
+}
+
+export function validateCatalogFixtures(listFixture, detailFixtures) {
+  if (!Array.isArray(listFixture) || listFixture.length !== expectedProductCount) {
+    throw new Error('expected exactly 23 catalog entries');
+  }
+  if (!Array.isArray(detailFixtures) || detailFixtures.length !== expectedProductCount) {
+    throw new Error('expected exactly 23 detail files');
+  }
+
+  const records = detailFixtures.map(function (fixture) {
+    const match = /^product-([0-9]+)\.json$/.exec(fixture.name);
+    if (!match) throw new Error('invalid detail fixture filename: ' + fixture.name);
+    return {
+      name: fixture.name,
+      fileId: match[1],
+      bodyId: String(fixture.detail.ProductId),
+      detail: fixture.detail
+    };
+  });
+  const detailIds = records.map(function (record) { return record.bodyId; });
+  if (new Set(detailIds).size !== expectedProductCount) {
+    throw new Error('expected exactly 23 unique detail body IDs');
+  }
+  records.forEach(function (record) {
+    if (record.fileId !== record.bodyId) {
+      throw new Error('detail filename/body ProductId mismatch: ' + record.name);
+    }
+  });
+
+  const listIds = listFixture.map(function (item) { return String(item.ProductId); }).sort();
+  detailIds.sort();
+  if (JSON.stringify(listIds) !== JSON.stringify(detailIds)) {
+    throw new Error('catalog/detail fixture ID mismatch');
+  }
+
+  const details = {};
+  records.forEach(function (record) { details[record.bodyId] = record.detail; });
+  return { details: details, listIds: listIds, detailIds: detailIds };
+}
+
 function writeOrCheck(relative, value) {
   const target = path.join(dist, relative);
   if (check) {
-    const current = fs.existsSync(target) ? fs.readFileSync(target, 'utf8') : '';
-    if (current !== value) {
+    const current = fs.existsSync(target) ? fs.readFileSync(target) : null;
+    if (current === null || !sameUtf8Bytes(current, value)) {
       console.error('generated artifact differs: ' + relative);
       process.exitCode = 1;
     }
@@ -40,6 +87,7 @@ function writeOrCheck(relative, value) {
   fs.writeFileSync(target, value, 'utf8');
 }
 
+function build() {
 const css = read('src/styles.css');
 const core = read('src/core.js');
 const transport = read('src/transport.js');
@@ -70,16 +118,13 @@ const detailFiles = fs.readdirSync(fixtureRoot)
   .sort(function (left, right) {
     return Number(left.match(/[0-9]+/)[0]) - Number(right.match(/[0-9]+/)[0]);
   });
-const details = {};
-detailFiles.forEach(function (name) {
-  const detail = JSON.parse(fs.readFileSync(path.join(fixtureRoot, name), 'utf8'));
-  details[String(detail.ProductId)] = detail;
+const detailFixtures = detailFiles.map(function (name) {
+  return {
+    name: name,
+    detail: JSON.parse(fs.readFileSync(path.join(fixtureRoot, name), 'utf8'))
+  };
 });
-const listIds = listFixture.map(function (item) { return String(item.ProductId); }).sort();
-const detailIds = Object.keys(details).sort();
-if (JSON.stringify(listIds) !== JSON.stringify(detailIds)) {
-  throw new Error('catalog/detail fixture ID mismatch');
-}
+const details = validateCatalogFixtures(listFixture, detailFixtures).details;
 const fixturesScript = 'window.TwinsDoorBuilderFixtures = '
   + JSON.stringify({ list: listFixture, details: details }) + ';';
 
@@ -107,6 +152,8 @@ const harness = [
   '<html lang="en"><head>',
   '<meta charset="utf-8">',
   '<meta name="viewport" content="width=device-width,initial-scale=1">',
+  '<meta http-equiv="Content-Security-Policy" content="default-src \'none\'; script-src \'unsafe-inline\'; style-src \'unsafe-inline\'; img-src \'none\'; connect-src \'none\'; form-action \'none\'; base-uri \'none\'; object-src \'none\'">',
+  '<!-- Offline visual verification inspects honest labels, preserved source URL attributes and CSS; external pixels remain blocked. -->',
   '<title>Twins door builder repository harness</title>',
   '<style>:root{--tw-navy:#022751;--tw-yellow:#FBBD04}body{font-family:Arial,sans-serif;margin:0;padding:24px}</style>',
   '</head><body>',
@@ -116,22 +163,28 @@ const harness = [
   '<script>',
   '(function(){',
   'window.__twxdbPosts=[];',
+  'var LIST_URL=' + JSON.stringify(harnessListUrl) + ';',
+  'var DETAIL_URL=' + JSON.stringify(harnessDetailUrl) + ';',
+  'var LEAD_PATH=' + JSON.stringify(harnessLeadPath) + ';',
   'window.fetch=function(url,options){',
   'var href=String(url);',
-  'if(options&&options.method==="POST"){',
+  'var method=options&&options.method!==undefined?String(options.method):"GET";',
+  'if(method==="POST"&&href===LEAD_PATH){',
   'var payload=JSON.parse(options.body||"{}");',
   'window.__twxdbPosts.push(payload);',
   'var fail=new URLSearchParams(location.search).get("leadFail")==="1";',
   'return Promise.resolve(new Response(JSON.stringify({ok:!fail}),{status:fail?500:200,headers:{"Content-Type":"application/json"}}));',
   '}',
-  'if(href.indexOf("GetProductsList/GetProducts")>=0){',
+  'if(method==="GET"&&href===LIST_URL){',
   'var catalogFail=new URLSearchParams(location.search).get("twxdbfail")==="1";',
   'if(catalogFail)return Promise.resolve(new Response(JSON.stringify({error:"forced catalog failure"}),{status:503,headers:{"Content-Type":"application/json"}}));',
   'return Promise.resolve(new Response(JSON.stringify(window.TwinsDoorBuilderFixtures.list),{status:200,headers:{"Content-Type":"application/json"}}));',
   '}',
-  'var match=href.match(/productId=([0-9]+)/);',
-  'if(match&&window.TwinsDoorBuilderFixtures.details[match[1]]){',
-  'return Promise.resolve(new Response(JSON.stringify(window.TwinsDoorBuilderFixtures.details[match[1]]),{status:200,headers:{"Content-Type":"application/json"}}));',
+  'if(method==="GET"&&href.indexOf(DETAIL_URL)===0){',
+  'var productId=href.slice(DETAIL_URL.length);',
+  'if(/^[0-9]+$/.test(productId)&&Object.prototype.hasOwnProperty.call(window.TwinsDoorBuilderFixtures.details,productId)){',
+  'return Promise.resolve(new Response(JSON.stringify(window.TwinsDoorBuilderFixtures.details[productId]),{status:200,headers:{"Content-Type":"application/json"}}));',
+  '}',
   '}',
   'return Promise.reject(new Error("harness blocked network"));',
   '};',
@@ -166,3 +219,8 @@ writeOrCheck('artifact-manifest.json', stableJson({
 if (!process.exitCode) {
   console.log(check ? 'generated artifacts match' : 'generated four artifacts');
 }
+}
+
+const isMain = process.argv[1]
+  && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+if (isMain) build();

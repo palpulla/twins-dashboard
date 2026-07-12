@@ -3,10 +3,47 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const childProcess = require('node:child_process');
+const vm = require('node:vm');
+const { pathToFileURL } = require('node:url');
+
+const LIST_URL = 'https://www.clopaydoor.com/api/v2/GetProductsList/GetProducts?productType=Residential';
+const DETAIL_URL = 'https://www.clopaydoor.com/api/v2/GetProductDetails/GetProductData?productId=';
+const LEAD_PATH = '/__harness__/lead';
 
 function read(relative) {
   const file = path.resolve(__dirname, '..', relative);
   return fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
+}
+
+function frozenFixtures() {
+  const fixtureRoot = path.resolve(
+    __dirname,
+    '../../..',
+    'docs/superpowers/backups/2026-07-09-phase4-catalog/clopay-api-snapshot'
+  );
+  const list = JSON.parse(fs.readFileSync(path.join(fixtureRoot, 'products-list.json'), 'utf8'));
+  const detailFixtures = fs.readdirSync(fixtureRoot)
+    .filter((name) => /^product-[0-9]+\.json$/.test(name))
+    .map((name) => ({
+      name,
+      detail: JSON.parse(fs.readFileSync(path.join(fixtureRoot, name), 'utf8'))
+    }));
+  return { list, detailFixtures };
+}
+
+function buildModule() {
+  const script = path.resolve(__dirname, '..', 'scripts', 'build.mjs');
+  return import(pathToFileURL(script).href);
+}
+
+function harnessRuntime(search = '') {
+  const harness = read('dist/local-harness.html');
+  const scripts = Array.from(harness.matchAll(/<script>([\s\S]*?)<\/script>/g), (match) => match[1]);
+  const context = { location: { search }, Response, URLSearchParams };
+  context.window = context;
+  vm.runInNewContext(scripts.find((script) => script.includes('TwinsDoorBuilderFixtures =')), context);
+  vm.runInNewContext(scripts.find((script) => script.includes('window.__twxdbPosts=[]')), context);
+  return context;
 }
 
 test('browser app declares the honest reference labels and core dependency', () => {
@@ -108,4 +145,107 @@ test('generated funnel candidate boots and configures the current lead form', ()
   assert.match(candidate, /twinsgaragedoors\.com\/wp-json\/twins\/v1\/door-builder/);
   assert.match(candidate, /successUrl:\"\/door-builder\/\"/);
   assert.match(candidate, /\(833\) 833-2010/);
+});
+
+test('fixture validator requires exactly 23 catalog entries', async () => {
+  const { validateCatalogFixtures } = await buildModule();
+  const fixtures = frozenFixtures();
+  assert.throws(
+    () => validateCatalogFixtures(fixtures.list.slice(0, 22), fixtures.detailFixtures),
+    /exactly 23 catalog entries/
+  );
+});
+
+test('fixture validator rejects 24 detail files with a duplicate body ID', async () => {
+  const { validateCatalogFixtures } = await buildModule();
+  const fixtures = frozenFixtures();
+  const duplicate = structuredClone(fixtures.detailFixtures[0]);
+  duplicate.name = 'product-999.json';
+  assert.throws(
+    () => validateCatalogFixtures(fixtures.list, fixtures.detailFixtures.concat(duplicate)),
+    /exactly 23 detail files/
+  );
+});
+
+test('fixture validator requires 23 unique detail body IDs', async () => {
+  const { validateCatalogFixtures } = await buildModule();
+  const fixtures = frozenFixtures();
+  const details = structuredClone(fixtures.detailFixtures);
+  details[22].detail.ProductId = details[0].detail.ProductId;
+  assert.throws(
+    () => validateCatalogFixtures(fixtures.list, details),
+    /exactly 23 unique detail body IDs/
+  );
+});
+
+test('fixture validator rejects filename and body ProductId mismatch', async () => {
+  const { validateCatalogFixtures } = await buildModule();
+  const fixtures = frozenFixtures();
+  const details = structuredClone(fixtures.detailFixtures);
+  details[0].detail.ProductId = '999';
+  assert.throws(
+    () => validateCatalogFixtures(fixtures.list, details),
+    /filename\/body ProductId mismatch/
+  );
+});
+
+test('local harness CSP blocks every network-capable subresource', () => {
+  const harness = read('dist/local-harness.html');
+  assert.match(
+    harness,
+    /<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'none'; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'">/
+  );
+  assert.match(harness, /Offline visual verification inspects honest labels, preserved source URL attributes and CSS/);
+  assert.match(harness, /https:\/\/www\.clopaydoor\.com\/images\//);
+});
+
+test('local harness accepts only exact frozen GET routes', async () => {
+  const runtime = harnessRuntime();
+  const list = await runtime.fetch(LIST_URL);
+  const detail = await runtime.fetch(DETAIL_URL + '330');
+  assert.equal(list.status, 200);
+  assert.equal((await list.json()).length, 23);
+  assert.equal(detail.status, 200);
+  assert.equal(String((await detail.json()).ProductId), '330');
+
+  for (const [url, options] of [
+    [LIST_URL + '&unexpected=1'],
+    ['https://example.invalid/?next=' + encodeURIComponent(LIST_URL)],
+    [DETAIL_URL + '330&unexpected=1'],
+    [DETAIL_URL + '330/path'],
+    ['https://example.invalid/details?productId=330'],
+    [DETAIL_URL + '999'],
+    [LIST_URL, { method: 'DELETE' }],
+    [DETAIL_URL + '330', { method: 'POST' }]
+  ]) {
+    await assert.rejects(runtime.fetch(url, options), /harness blocked network/);
+  }
+});
+
+test('local harness accepts POST only at the exact lead path', async () => {
+  const runtime = harnessRuntime();
+  const response = await runtime.fetch(LEAD_PATH, {
+    method: 'POST',
+    body: JSON.stringify({ name: 'Offline test' })
+  });
+  assert.equal(response.status, 200);
+  assert.equal(JSON.stringify(runtime.__twxdbPosts), JSON.stringify([{ name: 'Offline test' }]));
+
+  for (const [url, options] of [
+    ['/__harness__/lead?unexpected=1', { method: 'POST', body: '{}' }],
+    ['https://example.invalid/__harness__/lead', { method: 'POST', body: '{}' }],
+    [LEAD_PATH, { method: 'post', body: '{}' }],
+    [LEAD_PATH, { method: 'PUT', body: '{}' }],
+    [LEAD_PATH]
+  ]) {
+    await assert.rejects(runtime.fetch(url, options), /harness blocked network/);
+  }
+});
+
+test('UTF-8 artifact comparison rejects byte-different decoded text', async () => {
+  const { sameUtf8Bytes } = await buildModule();
+  const malformed = Buffer.from([0xc0]);
+  assert.equal(malformed.toString('utf8'), '\uFFFD');
+  assert.equal(sameUtf8Bytes(malformed, '\uFFFD'), false);
+  assert.equal(sameUtf8Bytes(Buffer.from('\uFFFD', 'utf8'), '\uFFFD'), true);
 });
