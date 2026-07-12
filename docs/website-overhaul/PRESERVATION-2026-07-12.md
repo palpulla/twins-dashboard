@@ -9,6 +9,7 @@ This branch preserves the tracked, publish-safe repository artifacts from the Ju
 - Source repository: `palpulla/twins-dashboard`
 - Source commit: `76020481df2f69abe58d0b13f67ebe3155f84f93`
 - Source boundary: final website-specific commit before unrelated text-agent work resumed
+- Source reachability: at preservation time, the pinned commit was available in the audited local source checkout but was not reachable from the publication clone or a recorded GitHub ref; the manifest's blob IDs remain integrity identifiers, while this branch preserves the reviewed contents rather than the original source commit objects
 - Target base branch: `main`
 - Target base commit: `1754fd2904df42b2e896a9a2a6ee6d56bf1f80c2`
 - Import method: allowlisted `git archive` snapshot; no merge, rebase, or cherry-pick from the mixed local branch
