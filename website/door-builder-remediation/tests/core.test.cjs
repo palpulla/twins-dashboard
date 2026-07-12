@@ -15,6 +15,10 @@ const fixturePath = path.resolve(
   '../../../docs/superpowers/backups/2026-07-09-phase4-catalog/clopay-api-snapshot/product-12.json'
 );
 const gallerySteel = JSON.parse(fs.readFileSync(fixturePath, 'utf8'));
+const classicSteel = JSON.parse(fs.readFileSync(
+  path.join(path.dirname(fixturePath), 'product-13.json'),
+  'utf8'
+));
 const catalogPath = path.resolve(
   __dirname,
   '../../../docs/superpowers/backups/2026-07-09-phase4-catalog/clopay-api-snapshot/products-list.json'
@@ -56,6 +60,16 @@ test('normalizes the frozen Gallery Steel option counts', () => {
   assert.equal(product.referencePhotos.length, 9);
 });
 
+test('preserves word boundaries in the frozen Classic Steel design names', () => {
+  const product = core.normalizeProduct(classicSteel);
+  assert.deepEqual(product.designs.map((design) => design.title), [
+    'Elegant Short 3-layer doors',
+    'Elegant Long 3-layer doors',
+    'Traditional Short Panel 2 and 1-layer doors',
+    'Traditional Long Panel 2 and 1-layer doors'
+  ]);
+});
+
 test('sanitizes display labels and strips all lead-payload markup', () => {
   assert.equal(typeof core.sanitizeDisplay, 'function');
   assert.equal(
@@ -63,6 +77,20 @@ test('sanitizes display labels and strips all lead-payload markup', () => {
     'Gallery<sup>®</sup><br>Steel'
   );
   assert.equal(core.plainText('Gallery<sup>®</sup>&nbsp;Steel'), 'Gallery® Steel');
+});
+
+test('removes malicious closing br tags from display labels', () => {
+  assert.equal(
+    core.sanitizeDisplay('First</br onmouseover=bad>Second'),
+    'FirstSecond'
+  );
+});
+
+test('normalizes malicious closing sup tags in display labels', () => {
+  assert.equal(
+    core.sanitizeDisplay('Gallery<sup class=x>®</sup onmouseover=bad> Steel'),
+    'Gallery<sup>®</sup> Steel'
+  );
 });
 
 test('allows only HTTPS images on the Clopay public host', () => {

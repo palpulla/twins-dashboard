@@ -24,13 +24,16 @@
 
   function sanitizeDisplay(value) {
     return stringValue(value)
-      .replace(/<(?!\/?(?:sup|br)\b)[^>]*>/gi, '')
-      .replace(/<sup\b[^>]*>/gi, '<sup>')
-      .replace(/<br\b[^>]*>/gi, '<br>');
+      .replace(/<br\b[^>]*>/gi, '<br>')
+      .replace(/<(\/?)sup\b[^>]*>/gi, '<$1sup>')
+      .replace(/<(?!br>|\/?sup>)[^>]*>/gi, '');
   }
 
   function plainText(value) {
-    return decodeEntities(sanitizeDisplay(value).replace(/<[^>]*>/g, ''))
+    return decodeEntities(stringValue(value)
+      .replace(/<br\b[^>]*>/gi, ' ')
+      .replace(/<\/?sup\b[^>]*>/gi, '')
+      .replace(/<[^>]*>/g, ' '))
       .replace(/\s+/g, ' ')
       .trim();
   }
