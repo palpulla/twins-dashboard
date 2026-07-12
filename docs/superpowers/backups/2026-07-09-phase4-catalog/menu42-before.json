@@ -1,0 +1,23 @@
+{
+  "note": "Backup of WP menu 42 (legacy Clopay collection menu) items before deletion. Dumped 2026-07-10 via logged-in REST GET /wp-json/wp/v2/menu-items?menus=42&per_page=100&context=edit, trimmed to recreate-relevant fields. All items: type=post_type, object=page, parent=0, target='', classes=[''], xfn=[''], attr_title='', description='', status=publish, menus=42.",
+  "menu_id": 42,
+  "items": [
+    {"id": 6475, "title": "Avante®", "url": "https://twinsgaragedoors.com/avante/", "object_id": 6403, "menu_order": 0},
+    {"id": 6477, "title": "Classic™ Steel", "url": "https://twinsgaragedoors.com/classic-steel/", "object_id": 6404, "menu_order": 2},
+    {"id": 6479, "title": "Classic™ Wood", "url": "https://twinsgaragedoors.com/classic-wood/", "object_id": 6405, "menu_order": 3},
+    {"id": 6481, "title": "Modern Steel™ Ultra-Grain® Plank", "url": "https://twinsgaragedoors.com/modern-steel-ultra-grain-plank/", "object_id": 6406, "menu_order": 4},
+    {"id": 6483, "title": "Avante® Sleek", "url": "https://twinsgaragedoors.com/avante-sleek/", "object_id": 6407, "menu_order": 5},
+    {"id": 6485, "title": "Reserve® Wood Custom", "url": "https://twinsgaragedoors.com/reserve-wood-custom/", "object_id": 6408, "menu_order": 6},
+    {"id": 6487, "title": "Canyon Ridge® Carriage House (5-Layer)", "url": "https://twinsgaragedoors.com/canyon-ridge-carriage-house-5-layer/", "object_id": 6409, "menu_order": 7},
+    {"id": 6489, "title": "Coachman®", "url": "https://twinsgaragedoors.com/coachman/", "object_id": 6410, "menu_order": 8},
+    {"id": 6491, "title": "Canyon Ridge® Louver", "url": "https://twinsgaragedoors.com/canyon-ridge-louver/", "object_id": 6411, "menu_order": 9},
+    {"id": 6493, "title": "VertiStack® Avante®", "url": "https://twinsgaragedoors.com/vertistack-avante/", "object_id": 6412, "menu_order": 10},
+    {"id": 6495, "title": "Canyon Ridge® Elements", "url": "https://twinsgaragedoors.com/canyon-ridge-elements/", "object_id": 6413, "menu_order": 11},
+    {"id": 6497, "title": "Canyon Ridge® Modern", "url": "https://twinsgaragedoors.com/canyon-ridge-modern/", "object_id": 6415, "menu_order": 12},
+    {"id": 6499, "title": "Canyon Ridge® Carriage House (4-Layer)", "url": "https://twinsgaragedoors.com/canyon-ridge-carriage-house-4-layer/", "object_id": 6418, "menu_order": 13},
+    {"id": 6501, "title": "Gallery® Steel", "url": "https://twinsgaragedoors.com/gallery-steel/", "object_id": 6420, "menu_order": 14},
+    {"id": 6503, "title": "Grand Harbor®", "url": "https://twinsgaragedoors.com/grand-harbor/", "object_id": 6423, "menu_order": 15},
+    {"id": 6505, "title": "Reserve® Wood Modern", "url": "https://twinsgaragedoors.com/reserve-wood-modern/", "object_id": 6425, "menu_order": 16},
+    {"id": 6507, "title": "Bridgeport™ Steel", "url": "https://twinsgaragedoors.com/bridgeport-steel/", "object_id": 6427, "menu_order": 17}
+  ]
+}

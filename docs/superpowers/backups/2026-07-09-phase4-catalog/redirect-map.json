@@ -1,0 +1,22 @@
+{
+  "note": "Phase 4 dedupe: 301 each legacy Clopay page slug to its twx v2 counterpart. Sources are exact paths; destinations are full URLs. Old pages -> draft AFTER 301s verified.",
+  "redirects": [
+    {"old_path": "/avante/", "old_page_id": 6403, "new_url": "https://twinsgaragedoors.com/clopay-avante/"},
+    {"old_path": "/classic-steel/", "old_page_id": 6404, "new_url": "https://twinsgaragedoors.com/clopay-classic-collection/"},
+    {"old_path": "/classic-wood/", "old_page_id": 6405, "new_url": "https://twinsgaragedoors.com/clopay-classic-wood/"},
+    {"old_path": "/modern-steel-ultra-grain-plank/", "old_page_id": 6406, "new_url": "https://twinsgaragedoors.com/clopay-modern-steel-ultra-grain-plank/"},
+    {"old_path": "/avante-sleek/", "old_page_id": 6407, "new_url": "https://twinsgaragedoors.com/clopay-avante-sleek/"},
+    {"old_path": "/reserve-wood-custom/", "old_page_id": 6408, "new_url": "https://twinsgaragedoors.com/clopay-reserve-wood-custom/"},
+    {"old_path": "/canyon-ridge-carriage-house-5-layer/", "old_page_id": 6409, "new_url": "https://twinsgaragedoors.com/clopay-canyon-ridge-carriage-house-5-layer/"},
+    {"old_path": "/coachman/", "old_page_id": 6410, "new_url": "https://twinsgaragedoors.com/clopay-coachman/"},
+    {"old_path": "/canyon-ridge-louver/", "old_page_id": 6411, "new_url": "https://twinsgaragedoors.com/clopay-canyon-ridge-louver/"},
+    {"old_path": "/vertistack-avante/", "old_page_id": 6412, "new_url": "https://twinsgaragedoors.com/clopay-vertistack-avante/"},
+    {"old_path": "/canyon-ridge-elements/", "old_page_id": 6413, "new_url": "https://twinsgaragedoors.com/clopay-canyon-ridge-elements/"},
+    {"old_path": "/canyon-ridge-modern/", "old_page_id": 6415, "new_url": "https://twinsgaragedoors.com/clopay-canyon-ridge-modern/"},
+    {"old_path": "/canyon-ridge-carriage-house-4-layer/", "old_page_id": 6418, "new_url": "https://twinsgaragedoors.com/clopay-canyon-ridge-carriage-house-4-layer/"},
+    {"old_path": "/gallery-steel/", "old_page_id": 6420, "new_url": "https://twinsgaragedoors.com/clopay-gallery-steel/"},
+    {"old_path": "/grand-harbor/", "old_page_id": 6423, "new_url": "https://twinsgaragedoors.com/clopay-grand-harbor/"},
+    {"old_path": "/reserve-wood-modern/", "old_page_id": 6425, "new_url": "https://twinsgaragedoors.com/clopay-reserve-wood-modern/"},
+    {"old_path": "/bridgeport-steel/", "old_page_id": 6427, "new_url": "https://twinsgaragedoors.com/clopay-bridgeport-steel/"}
+  ]
+}

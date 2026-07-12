@@ -1,0 +1,3 @@
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"LocalBusiness","name":"Twins Garage Doors","url":"https://twinsgaragedoors.com/wi/","telephone":"+16088888785","address":{"@type":"PostalAddress","addressLocality":"Madison","addressRegion":"WI","addressCountry":"US"},"openingHours":"Mo-Su 00:00-24:00","areaServed":"Madison WI and surrounding communities","sameAs":["https://www.facebook.com/twinsgaragedoors"]}
+</script>
