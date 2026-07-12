@@ -62,6 +62,13 @@
     });
   }
 
+  function windowList(value) {
+    return optionList(value, 'ThumbnailImage', 'swatch-only').map(function (item) {
+      item.none = /\bsolid\b/i.test(item.group) || /\bsolid\b/i.test(item.title);
+      return item;
+    });
+  }
+
   function normalizeProduct(raw) {
     raw = raw && typeof raw === 'object' ? raw : {};
     var gallery = Array.isArray(raw.ProductImageGallery) ? raw.ProductImageGallery : [];
@@ -72,7 +79,7 @@
       showcaseImage: validateImageUrl(raw.ShowcaseImage),
       designs: optionList(raw.ProductDesigns, 'ProductImage', 'panel-style'),
       colors: optionList(raw.Colors, 'ProductImage', 'swatch-only'),
-      windows: optionList(raw.TopSections, 'ThumbnailImage', 'swatch-only'),
+      windows: windowList(raw.TopSections),
       glass: optionList(raw.SpecialityGlassOptions, 'Image', 'swatch-only'),
       referencePhotos: gallery.filter(function (item) {
         return !item || item.IsImage !== false;

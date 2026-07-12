@@ -209,8 +209,14 @@ test('calculates six-step availability and skips missing option families', () =>
     return [product.id, product];
   }));
   const full = byId.get('12');
+  const solidWindow = full.windows.find((window) => window.title === 'Short Solid');
   assert.deepEqual(
-    core.availableSteps(full, { window: full.windows[0] }),
+    core.availableSteps(full, { window: solidWindow }),
+    ['collection', 'design', 'color', 'windows', 'summary']
+  );
+  const realWindow = full.windows.find((window) => window.title === 'ARCH3 Plain');
+  assert.deepEqual(
+    core.availableSteps(full, { window: realWindow }),
     ['collection', 'design', 'color', 'windows', 'glass', 'summary']
   );
   assert.deepEqual(
@@ -226,4 +232,43 @@ test('calculates six-step availability and skips missing option families', () =>
   assert.deepEqual(core.availableSteps(empty, {}), ['collection', 'summary']);
   assert.equal(core.nextStep('collection', empty, {}), 'summary');
   assert.equal(core.nextStep('design', noWindows, {}), 'color');
+});
+
+test('annotates every frozen solid top section as a no-window choice', () => {
+  const products = detailFixtures.map(core.normalizeProduct);
+  const isFrozenSolid = (window) => /\bsolid\b/i.test(`${window.group} ${window.title}`);
+  const affected = products
+    .filter((product) => product.windows.some(isFrozenSolid))
+    .sort((left, right) => Number(left.id) - Number(right.id));
+  assert.deepEqual(
+    affected.map((product) => product.id),
+    ['9', '10', '11', '12', '13', '23', '27', '29', '30', '250', '330', '380']
+  );
+  const solidWindows = affected.flatMap((product) => product.windows.filter(isFrozenSolid));
+  assert.equal(solidWindows.length, 51);
+  assert.equal(solidWindows.every((window) => window.none === true), true);
+  const realWindows = products.flatMap((product) => product.windows.filter((window) => (
+    !isFrozenSolid(window)
+  )));
+  assert.equal(realWindows.every((window) => window.none === false), true);
+});
+
+test('uses actual frozen solid choices to suppress glass availability', () => {
+  const isFrozenSolid = (window) => /\bsolid\b/i.test(`${window.group} ${window.title}`);
+  const affected = detailFixtures
+    .map(core.normalizeProduct)
+    .filter((product) => product.glass.length && product.windows.some(isFrozenSolid))
+    .sort((left, right) => Number(left.id) - Number(right.id));
+  assert.deepEqual(
+    affected.map((product) => product.id),
+    ['9', '10', '11', '12', '13', '29', '30', '250', '330', '380']
+  );
+  affected.forEach((product) => {
+    product.windows.filter(isFrozenSolid).forEach((window) => {
+      assert.equal(core.availableSteps(product, { window }).includes('glass'), false);
+    });
+    const realWindow = product.windows.find((window) => !isFrozenSolid(window));
+    assert.ok(realWindow);
+    assert.equal(core.availableSteps(product, { window: realWindow }).includes('glass'), true);
+  });
 });
