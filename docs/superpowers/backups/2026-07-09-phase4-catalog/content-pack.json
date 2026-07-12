@@ -1,0 +1,1365 @@
+{
+ "_meta": {
+  "generated": "2026-07-09",
+  "source": "clopay-api-snapshot/ (fetched 2026-07-09 from clopaydoor.com API v2)",
+  "phase": "Phase 4 Clopay catalog, twx v2",
+  "live_pages": {
+   "clopay-modern-steel": 170,
+   "clopay-gallery-steel": 12,
+   "clopay-classic-collection": 13
+  },
+  "notes": "20 new collection pages + 1 hub. intro_copy is original Twins-voice writing grounded only in each product's API fields. No prices, no numeric lead times, no city names."
+ },
+ "pages": [
+  {
+   "slug": "clopay-coachman",
+   "product_id": 11,
+   "h1": "Clopay Coachman Garage Doors",
+   "rank_math_title": "BEST Clopay Coachman Garage Doors Near You",
+   "meta_description": "Clopay Coachman carriage house garage doors, installed and serviced by the Twins crew. Steel build, wood-look overlay, insulated options. Free on-site quotes.",
+   "hero_subhead": "The carriage house classic: steel strength underneath, warm woodgrain character on top, zero wood upkeep.",
+   "intro_copy": "If you want the carriage house look without the upkeep of real wood, the Coachman is the door we point people to first. It is built in four layers: a steel base, insulation, a second steel skin, and a textured composite overlay molded with a realistic woodgrain, so it reads like a classic wood door but stands up to daily family traffic. There is plenty of room to make it yours, with 15 carriage house designs, 16 factory color combinations, 20 top section styles, and 12 decorative hardware pieces. Insulation is a choice too. Coachman offers polyurethane and polystyrene options rated anywhere between R-6.5 and R-18.4, so a workshop garage and a rarely-heated one can get different doors. One honest note: Coachman doors should not be painted dark colors, because that can void the warranty. We walk trade-offs like that with you at the free on-site quote.",
+   "checklist_cards": [
+    {
+     "title": "Four-layer build",
+     "body": "Steel base, insulation, a second steel skin, and a woodgrain composite overlay on top. Carriage house charm, none of the sanding or staining."
+    },
+    {
+     "title": "Insulation your way",
+     "body": "Polyurethane or polystyrene cores rated R-6.5 up to R-18.4. We help you match the insulation to how you actually use the garage."
+    },
+    {
+     "title": "15 designs, 16 colors",
+     "body": "Fifteen carriage house designs, 16 factory color combos, 20 top sections, and 12 hardware options. We narrow it down with you in one visit."
+    }
+   ],
+   "faq": [
+    {
+     "q": "How well is the Coachman insulated?",
+     "a": "You choose the core: 2-inch polyurethane, 2-inch polystyrene, or 1-3/8-inch polystyrene, rated from R-6.5 at the low end to R-18.4 at the top. If you heat the garage or have a room above it, we usually steer you toward the higher end."
+    },
+    {
+     "q": "Can I paint a Coachman door a dark color?",
+     "a": "No, and this catches people off guard. Clopay's warranty does not allow dark paint on the Coachman because of light-reflectance requirements. If you want a dark carriage house look, ask us about Canyon Ridge Elements instead, which offers dark factory finishes."
+    },
+    {
+     "q": "How many design and color options does the Coachman have?",
+     "a": "There are 15 carriage house designs, 16 factory color combinations for the overlay and base, 20 top section styles including windows, and 12 decorative hardware pieces. Clopay also offers a large custom paint program if the factory colors are not quite right."
+    },
+    {
+     "q": "Can I see a Coachman on my own house before I order?",
+     "a": "Yes. Use our Design Your Door page to upload a photo of your home and preview Coachman designs, colors, and windows on your actual garage before you commit to anything."
+    },
+    {
+     "q": "How long does a Coachman take to arrive?",
+     "a": "Lead times vary by design, color, and options, and they change through the year, so we do not print a number here. Ask us for current lead times when we do your free quote and we will give you a straight answer for the exact door you pick."
+    }
+   ],
+   "siblings": [
+    "clopay-canyon-ridge-carriage-house-4-layer",
+    "clopay-gallery-steel",
+    "clopay-grand-harbor",
+    "clopay-canyon-ridge-elements"
+   ],
+   "assertions": {
+    "must_contain": [
+     "Coachman"
+    ],
+    "must_not_contain": [
+     "608",
+     "859",
+     "[Insert",
+     "TBD",
+     "lorem",
+     "{{"
+    ]
+   }
+  },
+  {
+   "slug": "clopay-canyon-ridge-carriage-house-4-layer",
+   "product_id": 29,
+   "h1": "Clopay Canyon Ridge Carriage House (4-Layer) Garage Doors",
+   "rank_math_title": "BEST Clopay Canyon Ridge 4-Layer Garage Doors Near You",
+   "meta_description": "Clopay Canyon Ridge Carriage House 4-Layer doors: faux wood overlay, 2-inch insulated steel core, R-18.4. Installed by the Twins crew. Free on-site quotes.",
+   "hero_subhead": "Faux wood carriage house looks on an insulated steel core, with an R-value that actually earns its keep.",
+   "intro_copy": "The Canyon Ridge Carriage House 4-Layer takes the classic carriage house style and builds it the modern way: a steel base, 2 inches of Intellicore polyurethane insulation, a second steel layer, and a composite overlay molded from real wood pieces. You get genuine-looking grain and texture without warping, rotting, or repainting. The insulation is the quiet hero here, with an R-value of 18.4 that keeps an attached garage from dragging down the rest of the house in winter. On the styling side there are 14 overlay designs across three series, 11 finish options including Ultra-Grain wood tones, and 20 top section choices with or without windows. Optional WindCode reinforcement is available for high-wind areas. Our crew installs Canyon Ridge doors regularly and services what we sell, and the on-site quote costs you nothing but half an hour.",
+   "checklist_cards": [
+    {
+     "title": "Real R-18.4 insulation",
+     "body": "Two inches of Intellicore polyurethane fill the door completely. That is a warmer, quieter garage all year, not a marketing number."
+    },
+    {
+     "title": "Wood look, steel bones",
+     "body": "The composite overlay is molded from real wood pieces, so the grain is authentic. Underneath it is steel that will not warp, crack, or rot."
+    },
+    {
+     "title": "14 designs, 11 finishes",
+     "body": "Fourteen carriage house designs, 11 finishes including Ultra-Grain wood tones, and 20 top section styles. Plenty of room to make it yours."
+    }
+   ],
+   "faq": [
+    {
+     "q": "What R-value does the Canyon Ridge 4-Layer have?",
+     "a": "It carries an R-value of 18.4 from a 2-inch Intellicore polyurethane core. That is a genuinely well-insulated door, and it makes a noticeable difference in an attached garage."
+    },
+    {
+     "q": "What is the difference between the 4-Layer and 5-Layer Canyon Ridge?",
+     "a": "The 5-Layer adds composite cladding under the overlay for deeper dimension and a slightly higher R-value of 20.4. The 4-Layer skips the cladding layer, which keeps the look cleaner and the door a bit lighter. We can show you both side by side."
+    },
+    {
+     "q": "Does the faux wood overlay look convincing up close?",
+     "a": "Yes, because it is molded from actual wood pieces, so the grain pattern and texture come from real boards. Unlike wood, it will not warp, crack, or rot, and it never needs sanding or staining."
+    },
+    {
+     "q": "Can I preview this door on a photo of my house?",
+     "a": "Yes. Head to our Design Your Door page, upload a photo of your home, and try Canyon Ridge designs, finishes, and windows on your actual garage before deciding."
+    },
+    {
+     "q": "What is the lead time on a Canyon Ridge 4-Layer?",
+     "a": "It depends on the design, finish, and options you choose, and it shifts through the year. Ask us for current lead times at your quote and we will tell you exactly what to expect for your configuration."
+    }
+   ],
+   "siblings": [
+    "clopay-canyon-ridge-carriage-house-5-layer",
+    "clopay-canyon-ridge-elements",
+    "clopay-canyon-ridge-chevron",
+    "clopay-coachman"
+   ],
+   "assertions": {
+    "must_contain": [
+     "Canyon Ridge",
+     "4-Layer"
+    ],
+    "must_not_contain": [
+     "608",
+     "859",
+     "[Insert",
+     "TBD",
+     "lorem",
+     "{{"
+    ]
+   }
+  },
+  {
+   "slug": "clopay-canyon-ridge-carriage-house-5-layer",
+   "product_id": 30,
+   "h1": "Clopay Canyon Ridge Carriage House (5-Layer) Garage Doors",
+   "rank_math_title": "BEST Clopay Canyon Ridge 5-Layer Garage Doors Near You",
+   "meta_description": "Canyon Ridge Carriage House 5-Layer: Clopay's flagship faux wood door with R-20.4 insulation and cladding plus overlay depth. Twins installed. Free quotes.",
+   "hero_subhead": "Clopay's flagship faux wood carriage house door: five layers deep, R-20.4 warm, and stunning from the curb.",
+   "intro_copy": "The 5-Layer Canyon Ridge Carriage House is the door people stop and look at. It stacks five layers: steel, 2 inches of Intellicore polyurethane insulation, more steel, then composite cladding and a composite overlay, both molded from real wood boards like Clear Cypress and Mahogany. That double layer of composite gives the door real depth and shadow lines you cannot get from embossed steel. It is also one of the warmest doors Clopay makes, with an R-value of 20.4 that pays off every winter in an attached garage. Style-wise you choose from 15 carriage house designs, 11 finishes from natural stains to bolder tones, 20 top section options, and decorative hardware. Optional WindCode reinforcement covers high-wind areas. We install these often enough to know the details cold, and the on-site quote is free.",
+   "checklist_cards": [
+    {
+     "title": "Five layers of door",
+     "body": "Steel, insulation, steel, composite cladding, and a composite overlay molded from real wood boards. The depth is what sells it from the curb."
+    },
+    {
+     "title": "R-20.4 insulation",
+     "body": "Two inches of Intellicore polyurethane make this one of the warmest, quietest doors in the Clopay lineup. Attached garages feel the difference."
+    },
+    {
+     "title": "15 designs, 11 finishes",
+     "body": "Carriage house designs across three series, stains from Natural to Espresso, and 20 top section options. We help you narrow it down in one visit."
+    }
+   ],
+   "faq": [
+    {
+     "q": "How warm is the Canyon Ridge 5-Layer?",
+     "a": "It has an R-value of 20.4 thanks to a 2-inch Intellicore polyurethane core, which puts it near the top of Clopay's residential lineup. If your garage is attached or heated, this door earns its keep."
+    },
+    {
+     "q": "Is the 5-Layer worth it over the 4-Layer?",
+     "a": "The 5-Layer adds composite cladding beneath the overlay, which gives deeper relief and shadow lines plus a slightly higher R-value of 20.4 versus 18.4. If you want maximum dimension from the street, yes. If the budget is tighter, the 4-Layer still looks excellent."
+    },
+    {
+     "q": "What finishes can I get on the 5-Layer?",
+     "a": "There are 11 finish options, including stains like Natural, Medium, Dark, Walnut, Slate, and Espresso that highlight the faux wood grain. Clopay's custom color program is available beyond that if you want something specific."
+    },
+    {
+     "q": "Can I see this door on my own home first?",
+     "a": "Yes. Our Design Your Door page lets you upload a photo of your house and preview Canyon Ridge designs and finishes on your actual garage before you order."
+    },
+    {
+     "q": "How long will I wait for a Canyon Ridge 5-Layer?",
+     "a": "Lead times move around based on design, finish, and season, so we quote them live rather than publish a stale number. Ask for current lead times at your free quote and we will give it to you straight."
+    }
+   ],
+   "siblings": [
+    "clopay-canyon-ridge-carriage-house-4-layer",
+    "clopay-canyon-ridge-louver",
+    "clopay-canyon-ridge-chevron",
+    "clopay-reserve-wood-limited-edition"
+   ],
+   "assertions": {
+    "must_contain": [
+     "Canyon Ridge",
+     "5-Layer"
+    ],
+    "must_not_contain": [
+     "608",
+     "859",
+     "[Insert",
+     "TBD",
+     "lorem",
+     "{{"
+    ]
+   }
+  },
+  {
+   "slug": "clopay-canyon-ridge-elements",
+   "product_id": 330,
+   "h1": "Clopay Canyon Ridge Elements Garage Doors",
+   "rank_math_title": "BEST Clopay Canyon Ridge Elements Garage Doors Near You",
+   "meta_description": "Clopay Canyon Ridge Elements: painted-wood looks on insulated steel with clean square edges and 6 factory colors, including dark tones. Twins installed.",
+   "hero_subhead": "The painted-wood look with clean, square edges, on an insulated steel door that never needs repainting.",
+   "intro_copy": "Canyon Ridge Elements is for homeowners who love the look of painted wood but have zero interest in maintaining it. The door is built in four layers: steel inside and out, high-performance insulation between, and a composite overlay molded with a realistic woodgrain texture and crisp, square edges. The 1-3/8-inch polystyrene core carries an R-value of 6.5, a sensible match for detached or unheated garages. Where Elements really stands apart is color: six factory finishes including White, Bronze, Charcoal, Black, Desert Tan, and Iron Ore, so this is the Canyon Ridge to pick if you want a dark, modern-farmhouse door. There are 13 overlay designs across three series, 20 top section options, 12 decorative hardware pieces, and optional WindCode reinforcement for high-wind areas. Our crew installs and services Elements doors, and the on-site quote is always free.",
+   "checklist_cards": [
+    {
+     "title": "Painted wood, minus the painting",
+     "body": "A molded composite overlay with real woodgrain texture and clean square edges. It will not rot, warp, or crack, and it never needs a brush."
+    },
+    {
+     "title": "Dark colors welcome",
+     "body": "Six factory finishes including Black, Charcoal, and Iron Ore. This is the Canyon Ridge to choose when you want a genuinely dark door."
+    },
+    {
+     "title": "13 designs, 20 top sections",
+     "body": "Thirteen overlay designs across three series plus 20 top section styles and 12 hardware options. We bring the catalog to your driveway."
+    }
+   ],
+   "faq": [
+    {
+     "q": "What insulation does Canyon Ridge Elements have?",
+     "a": "It uses a 1-3/8-inch polystyrene core with an R-value of 6.5. That suits detached or unheated garages well. If you need serious insulation, look at the Canyon Ridge 4-Layer or 5-Layer, which we also install."
+    },
+    {
+     "q": "Can I get Canyon Ridge Elements in black or another dark color?",
+     "a": "Yes, and that is one of its best tricks. The six standard colors include Black, Charcoal, and Iron Ore alongside White, Bronze, and Desert Tan. Some other overlay doors, like the Coachman, cannot be painted dark without voiding the warranty, so Elements fills that gap."
+    },
+    {
+     "q": "How many designs does Elements come in?",
+     "a": "There are 13 overlay designs spread across three series, plus 20 top section options with windows or solid panels and 12 decorative hardware choices, so you can go traditional or modern farmhouse."
+    },
+    {
+     "q": "Can I preview Elements on my own house?",
+     "a": "Yes. Use our Design Your Door page to upload a photo of your home and see Elements designs and colors on your actual garage before you decide."
+    },
+    {
+     "q": "What is the current lead time for an Elements door?",
+     "a": "It varies with the design and color you pick and the time of year, so a printed number would just go stale. Ask us for current lead times at your free on-site quote."
+    }
+   ],
+   "siblings": [
+    "clopay-canyon-ridge-carriage-house-4-layer",
+    "clopay-canyon-ridge-modern",
+    "clopay-coachman",
+    "clopay-canyon-ridge-chevron"
+   ],
+   "assertions": {
+    "must_contain": [
+     "Canyon Ridge",
+     "Elements"
+    ],
+    "must_not_contain": [
+     "608",
+     "859",
+     "[Insert",
+     "TBD",
+     "lorem",
+     "{{"
+    ]
+   }
+  },
+  {
+   "slug": "clopay-canyon-ridge-chevron",
+   "product_id": 320,
+   "h1": "Clopay Canyon Ridge Chevron Garage Doors",
+   "rank_math_title": "BEST Clopay Canyon Ridge Chevron Garage Doors Near You",
+   "meta_description": "Canyon Ridge Chevron by Clopay: faux wood cladding cut at 45 degrees into a bold V pattern, R-20.4 insulated. Installed by the Twins crew. Free quotes.",
+   "hero_subhead": "Faux wood cladding cut at 45 degrees into a bold chevron V. Nobody else on the block will have this door.",
+   "intro_copy": "The Canyon Ridge Chevron is the statement door of the faux wood lineup. Every cladding board gets cut at a precise 45-degree angle so the pieces meet in that signature chevron V pattern, and because the composite is molded from real wood, each one carries authentic grain and texture. Underneath the pattern sits serious construction: five layers of steel, 2-inch Intellicore polyurethane insulation, steel again, then composite cladding and overlay. The R-value lands at 20.4, so the drama outside comes with real comfort inside. You can choose from 12 design variations, materials in Clear Cypress or Mahogany, and 11 finishes from natural stains to bolder colors, with Clopay's custom paint program beyond that. Optional WindCode reinforcement is available for high-wind areas. If you want a door people ask about, this is it, and our free on-site quote makes the sizing easy.",
+   "checklist_cards": [
+    {
+     "title": "The 45-degree signature",
+     "body": "Cladding pieces are precision-cut and laid in a chevron V. Molded from real wood, so the grain changes piece to piece like the real thing."
+    },
+    {
+     "title": "R-20.4 underneath",
+     "body": "Five layers with a 2-inch Intellicore polyurethane core. The boldest-looking Canyon Ridge is also one of the warmest."
+    },
+    {
+     "title": "12 designs, 11 finishes",
+     "body": "Chevron layouts in Clear Cypress or Mahogany with stains from Natural to Walnut and beyond. We bring samples to the quote."
+    }
+   ],
+   "faq": [
+    {
+     "q": "What makes the Chevron pattern special?",
+     "a": "Each composite cladding piece is cut at a precise 45-degree angle so the boards form a V pattern across the door. Because the composite is molded from real wood pieces, the grain direction and texture shift board to board, which is what makes it read as genuine from the street."
+    },
+    {
+     "q": "How well insulated is the Canyon Ridge Chevron?",
+     "a": "Very. It is a five-layer door with 2 inches of Intellicore polyurethane foam and an R-value of 20.4, among the warmest residential doors Clopay builds."
+    },
+    {
+     "q": "What colors and materials can I choose?",
+     "a": "The composite comes molded from Clear Cypress or Mahogany, with 11 standard finishes including wood-tone stains like Natural, Medium, Dark, and Walnut. Clopay's custom color program opens it up further if you have something exact in mind."
+    },
+    {
+     "q": "Can I see the Chevron on a photo of my house?",
+     "a": "Yes. Our Design Your Door page lets you upload a photo of your home and preview the Chevron pattern and finishes on your actual garage before ordering."
+    },
+    {
+     "q": "How long does a Chevron take to get here?",
+     "a": "Lead times depend on the design and finish and move with the season, so we will not print a number that might be wrong next month. Ask for current lead times at your free quote."
+    }
+   ],
+   "siblings": [
+    "clopay-canyon-ridge-carriage-house-5-layer",
+    "clopay-canyon-ridge-modern",
+    "clopay-canyon-ridge-louver",
+    "clopay-canyon-ridge-elements"
+   ],
+   "assertions": {
+    "must_contain": [
+     "Canyon Ridge",
+     "Chevron"
+    ],
+    "must_not_contain": [
+     "608",
+     "859",
+     "[Insert",
+     "TBD",
+     "lorem",
+     "{{"
+    ]
+   }
+  },
+  {
+   "slug": "clopay-canyon-ridge-louver",
+   "product_id": 240,
+   "h1": "Clopay Canyon Ridge Louver Garage Doors",
+   "rank_math_title": "BEST Clopay Canyon Ridge Louver Garage Doors Near You",
+   "meta_description": "Clopay Canyon Ridge Louver: plantation-style louvered faux wood garage doors on a five-layer insulated core. Installed by the Twins crew. Free on-site quotes.",
+   "hero_subhead": "Plantation-shutter style for your garage: louvered faux wood detail on a five-layer insulated door.",
+   "intro_copy": "The Canyon Ridge Louver brings plantation-shutter styling to the garage, and it is unlike anything else in the Clopay residential lineup. The louvered detail is formed in composite that is molded from real wood, so you get the coastal, breezy character of louvers with none of wood's maintenance. Construction is the full five-layer Canyon Ridge recipe: steel, 2 inches of Intellicore polyurethane insulation, a second steel layer, then composite cladding and overlay. R-values run from 18.4 to 20.4 depending on configuration, so the door is as practical as it is distinctive. There are 12 louvered designs across two series, materials molded from Clear Cypress or Mahogany, 11 finishes, and window top sections offered on Design 52. Optional WindCode reinforcement covers high-wind areas. Our crew handles the install and the service afterward, and the on-site quote is free.",
+   "checklist_cards": [
+    {
+     "title": "Louvered character",
+     "body": "Plantation-style louver detail molded from real wood pieces in Clear Cypress or Mahogany. A coastal look that shrugs off real weather."
+    },
+    {
+     "title": "Five-layer, R-18.4 to 20.4",
+     "body": "Steel, 2-inch Intellicore polyurethane, steel, cladding, overlay. The style is light and breezy but the construction is anything but."
+    },
+    {
+     "title": "12 designs, 11 finishes",
+     "body": "Twelve louvered layouts with stains like Medium, Dark, Walnut, and Slate. Window top sections are available on Design 52."
+    }
+   ],
+   "faq": [
+    {
+     "q": "Are the louvers actually open to the air?",
+     "a": "No. The louvered look is a molded composite detail on a fully sealed, insulated five-layer door. You get the plantation style without drafts, pests, or water getting anywhere near your garage."
+    },
+    {
+     "q": "What R-value does the Canyon Ridge Louver carry?",
+     "a": "Between 18.4 and 20.4 depending on the configuration, thanks to a 2-inch Intellicore polyurethane core. It is a genuinely warm door despite the airy look."
+    },
+    {
+     "q": "Can I add windows to a Louver door?",
+     "a": "Window top sections are available specifically on Design 52, with rectangular and square configurations to pick from. On other designs the louvered pattern runs solid. We can show you both directions at the quote."
+    },
+    {
+     "q": "Can I preview the Louver on my own home?",
+     "a": "Yes. Upload a photo of your house on our Design Your Door page and preview louvered designs and finishes on your actual garage before you commit."
+    },
+    {
+     "q": "What is the lead time on a Canyon Ridge Louver?",
+     "a": "It shifts with design, finish, and season. Rather than print a number that goes stale, we will give you current lead times when we do your free on-site quote."
+    }
+   ],
+   "siblings": [
+    "clopay-canyon-ridge-carriage-house-5-layer",
+    "clopay-canyon-ridge-chevron",
+    "clopay-grand-harbor",
+    "clopay-coachman"
+   ],
+   "assertions": {
+    "must_contain": [
+     "Canyon Ridge",
+     "Louver"
+    ],
+    "must_not_contain": [
+     "608",
+     "859",
+     "[Insert",
+     "TBD",
+     "lorem",
+     "{{"
+    ]
+   }
+  },
+  {
+   "slug": "clopay-canyon-ridge-modern",
+   "product_id": 26,
+   "h1": "Clopay Canyon Ridge Modern Garage Doors",
+   "rank_math_title": "BEST Clopay Canyon Ridge Modern Garage Doors Near You",
+   "meta_description": "Clopay Canyon Ridge Modern: faux wood planks with chamfered edges, slim windows, and insulation up to R-20.4. Installed by the Twins crew. Free quotes.",
+   "hero_subhead": "Clean-lined faux wood planks with chamfered edges, slim glass, and up to R-20.4 of insulation behind them.",
+   "intro_copy": "Canyon Ridge Modern is what happens when the faux wood door goes contemporary. Instead of carriage house arches you get clean horizontal planks with chamfered edges, molded from real Clear Cypress or Mahogany so the grain and texture are authentic. The build is four layers: steel, insulation, steel, and a tough composite cladding with fiberglass-filled boards for extra durability. Insulation is 2-inch Intellicore polyurethane, with R-values that run 6.3 up to 20.4 based on which design you choose, including full-view options. There are nine designs, from 3-inch and 6-inch plank layouts to specialty looks with slim windows or aluminum inlay accents, and 11 finishes with Clopay's custom color program beyond that. WindCode reinforcement is available for high-wind areas. We install and service these doors, and a free on-site quote gets you exact answers for your opening.",
+   "checklist_cards": [
+    {
+     "title": "Modern lines, real texture",
+     "body": "Horizontal planks with chamfered edges, molded from Clear Cypress or Mahogany. Contemporary from the curb, wood-real up close."
+    },
+    {
+     "title": "Up to R-20.4",
+     "body": "A 2-inch Intellicore polyurethane core delivers anywhere from R-6.3 to R-20.4 by design. We help you pick the right balance."
+    },
+    {
+     "title": "9 designs, 11 finishes",
+     "body": "Plank designs in two widths, specialty layouts with slim windows or metal accents, and finishes from stains to solid colors."
+    }
+   ],
+   "faq": [
+    {
+     "q": "What R-value does Canyon Ridge Modern have?",
+     "a": "Anywhere from R-6.3 up to R-20.4 based on the design you pick, since some layouts include glass or full-view sections. The solid plank designs with the 2-inch Intellicore polyurethane core sit at the top of that range."
+    },
+    {
+     "q": "Is the wood texture real?",
+     "a": "The texture is molded from genuine wood pieces in Clear Cypress or Mahogany, so the grain patterns come from real boards. The material itself is a composite that will not rot, warp, or crack, and it never needs staining."
+    },
+    {
+     "q": "What design options are there?",
+     "a": "Nine designs total: horizontal plank layouts in 3-inch and 6-inch widths plus specialty designs that add slim vertical windows or aluminum inlay accents. Finishes run to 11 standard options with a large custom color program behind them."
+    },
+    {
+     "q": "Can I see this door on a photo of my house first?",
+     "a": "Yes. Use our Design Your Door page to upload a photo of your home and preview Canyon Ridge Modern designs and finishes on your actual garage."
+    },
+    {
+     "q": "How fast can I get a Canyon Ridge Modern?",
+     "a": "Lead times depend on design and finish and change through the year. Ask us for current lead times at your free quote and we will give you the real number for your exact configuration."
+    }
+   ],
+   "siblings": [
+    "clopay-modern-steel",
+    "clopay-modern-steel-ultra-grain-plank",
+    "clopay-reserve-wood-modern",
+    "clopay-canyon-ridge-chevron"
+   ],
+   "assertions": {
+    "must_contain": [
+     "Canyon Ridge",
+     "Modern"
+    ],
+    "must_not_contain": [
+     "608",
+     "859",
+     "[Insert",
+     "TBD",
+     "lorem",
+     "{{"
+    ]
+   }
+  },
+  {
+   "slug": "clopay-modern-steel-ultra-grain-plank",
+   "product_id": 340,
+   "h1": "Clopay Modern Steel Ultra-Grain Plank Garage Doors",
+   "rank_math_title": "BEST Clopay Modern Steel Ultra-Grain Plank Garage Doors Near You",
+   "meta_description": "Modern Steel Ultra-Grain Plank: digitally printed wood-look planks on insulated steel, R-18.4, six finishes. Installed by the Twins crew. Free on-site quotes.",
+   "hero_subhead": "Stained-wood plank looks printed onto tough insulated steel. Rustic warmth, modern flush panels, zero staining.",
+   "intro_copy": "The Modern Steel Ultra-Grain Plank splits the difference between rustic and modern better than any other steel door we install. The flush panels carry horizontal planks in a digitally printed, stained wood-look finish, and because the printing process varies the graining, no two doors repeat exactly. Underneath it is a three-layer build: steel, 2 inches of Intellicore polyurethane insulation, and steel again, with tongue-and-groove joints between sections to keep weather out. The R-value is 18.4, strong enough for heated and attached garages. You pick from six plank finishes, including Natural, Cedar, Barnwood, Espresso, Kona, and Coastal Gray, five designs, and contemporary window options with slim or architectural glass placed where you want them. Optional WindCode reinforcement is there for high-wind areas. It is a distinct product from the standard Modern Steel line, and our free on-site quote will show you both.",
+   "checklist_cards": [
+    {
+     "title": "Printed plank realism",
+     "body": "Digitally printed wood-look planks with graining that never repeats. The warmth of stained wood on a door you never sand or stain."
+    },
+    {
+     "title": "Three-layer, R-18.4",
+     "body": "Steel, 2-inch Intellicore polyurethane, steel. Tongue-and-groove section joints keep wind and water where they belong: outside."
+    },
+    {
+     "title": "Six finishes, five designs",
+     "body": "Barnwood, Kona, Espresso, Coastal Gray, Natural, and Cedar, with slim or architectural window options to finish the look."
+    }
+   ],
+   "faq": [
+    {
+     "q": "Is the Ultra-Grain Plank finish real wood?",
+     "a": "No, and that is the point. It is a digitally printed wood-look finish on steel, with graining that varies so it reads as authentic stained planks. You get the warmth without the staining, sealing, or warping that real wood brings."
+    },
+    {
+     "q": "How is this different from the regular Modern Steel door?",
+     "a": "Ultra-Grain Plank is its own product: a flush-panel door where the printed horizontal planks are the design. Standard Modern Steel offers flush or grooved panels in solid colors and other finishes. If you are torn, we can show you both at your quote."
+    },
+    {
+     "q": "What insulation does it have?",
+     "a": "A 2-inch Intellicore polyurethane core rated at R-18.4, in a three-layer steel sandwich. It also meets strict air infiltration standards, so it is a legitimately efficient door."
+    },
+    {
+     "q": "Can I preview the plank finishes on my house?",
+     "a": "Yes. Our Design Your Door page lets you upload a photo of your home and preview all six Ultra-Grain Plank finishes and the window options on your actual garage."
+    },
+    {
+     "q": "What is the lead time on an Ultra-Grain Plank door?",
+     "a": "It depends on finish, windows, and season. Ask us for current lead times when you get your free quote and we will give you an answer for the exact door you want, not a guess."
+    }
+   ],
+   "siblings": [
+    "clopay-modern-steel",
+    "clopay-canyon-ridge-modern",
+    "clopay-avante",
+    "clopay-reserve-wood-modern"
+   ],
+   "assertions": {
+    "must_contain": [
+     "Modern Steel",
+     "Ultra-Grain Plank"
+    ],
+    "must_not_contain": [
+     "608",
+     "859",
+     "[Insert",
+     "TBD",
+     "lorem",
+     "{{"
+    ]
+   }
+  },
+  {
+   "slug": "clopay-avante",
+   "product_id": 16,
+   "h1": "Clopay Avante Garage Doors",
+   "rank_math_title": "BEST Clopay Avante Garage Doors Near You",
+   "meta_description": "Clopay Avante aluminum and glass garage doors: full-view panels, 7 frame finishes, optional C-Power privacy glass. Installed by the Twins crew. Free quotes.",
+   "hero_subhead": "Aluminum and glass, floor to header. Natural light all day, a glowing showpiece at night.",
+   "intro_copy": "The Avante turns the garage door into architecture. Its frame is 2-1/8-inch commercial-grade aluminum, rust-resistant and close to maintenance-free, and the panels are whatever you want them to be: clear, frosted, or tinted tempered glass, acrylic, Polygal, or solid aluminum for privacy. Daylight pours into the garage all day, and at night the whole door glows like a lantern. There are 16 designs and seven frame finishes, from clear anodized aluminum to painted bronze and black, with a huge custom color program behind them. The AXU model adds Intellicore polyurethane insulation in the rails and stiles, reaching an R-value of 3.8 with insulated glass. Avante also offers C-Power technology, where Click-to-Conceal panels switch from transparent to opaque by remote. WindCode reinforcement is available for high-wind areas. Our crew installs and services Avante doors, and the on-site quote is free.",
+   "checklist_cards": [
+    {
+     "title": "Commercial-grade frame",
+     "body": "2-1/8-inch aluminum that resists rust and skips the maintenance list. Built for daily use, styled like a storefront."
+    },
+    {
+     "title": "Glass your way",
+     "body": "Tempered glass in clear, frosted, or tinted looks, plus acrylic, Polygal, and solid aluminum panel choices. Dial in exactly the light and privacy you want."
+    },
+    {
+     "title": "C-Power privacy on demand",
+     "body": "Optional Click-to-Conceal panels flip from transparent to opaque with a remote. Showpiece by day, private by night."
+    }
+   ],
+   "faq": [
+    {
+     "q": "Is an aluminum and glass door insulated?",
+     "a": "The Avante AXU model has Intellicore polyurethane insulated rails and stiles and reaches R-3.8 when fitted with clear insulated glass. Glass doors will never match a foam-filled steel door for warmth, so we will be straight with you about whether it fits how you use your garage."
+    },
+    {
+     "q": "What is C-Power technology?",
+     "a": "It is Clopay's Click-to-Conceal option: panels that flip between clear and opaque at the tap of a remote. You keep the clean glass look and add privacy exactly when you want it."
+    },
+    {
+     "q": "What panel and finish options are there?",
+     "a": "Sixteen designs and seven frame finishes, including clear anodized aluminum, white, bronze, chocolate, and black, plus a large custom color program. Panels come in tempered glass, acrylic, Polygal, or solid aluminum in clear, frosted, and tinted looks."
+    },
+    {
+     "q": "Can I see an Avante on my own house before committing?",
+     "a": "Yes. Upload a photo of your home on our Design Your Door page and preview Avante frame finishes and glass options on your actual garage."
+    },
+    {
+     "q": "How long does an Avante take to arrive?",
+     "a": "Lead times vary with glass, finish, and options, and they move through the year. Ask for current lead times at your free quote and we will tell you what to expect for your exact build."
+    }
+   ],
+   "siblings": [
+    "clopay-avante-sleek",
+    "clopay-vertistack-avante",
+    "clopay-modern-steel",
+    "clopay-canyon-ridge-modern"
+   ],
+   "assertions": {
+    "must_contain": [
+     "Avante"
+    ],
+    "must_not_contain": [
+     "608",
+     "859",
+     "[Insert",
+     "TBD",
+     "lorem",
+     "{{"
+    ]
+   }
+  },
+  {
+   "slug": "clopay-avante-sleek",
+   "product_id": 290,
+   "h1": "Clopay Avante Sleek Garage Doors",
+   "rank_math_title": "BEST Clopay Avante Sleek Garage Doors Near You",
+   "meta_description": "Clopay Avante Sleek: minimalist aluminum frames with slim horizontal glass for wide-open views. C-Power privacy option. Twins installed. Free on-site quotes.",
+   "hero_subhead": "The thinnest frames in the glass-door family, for views with almost nothing in the way.",
+   "intro_copy": "The Avante Sleek takes everything people love about the Avante and pares it down further: minimalist frames and slim horizontal glass panels that make the door read as bands of light. The frame is still 2-1/8-inch commercial-grade aluminum, naturally rust-resistant and about as low-maintenance as a garage door gets. You choose from 18 designs and seven finishes, from clear anodized to painted bronze, chocolate, and black, with a large custom color program beyond that. Glass options run clear, frosted, tinted, and obscure, plus acrylic panels. The AZ6U model carries Intellicore polyurethane inside its rails and stiles, reaching R-3.8 with insulated glass, and every panel joint carries a weather seal. C-Power Click-to-Conceal panels are available for instant privacy by remote. WindCode reinforcement covers high-wind areas. We install and service the Sleek, and the on-site quote is free.",
+   "checklist_cards": [
+    {
+     "title": "Minimalist frames",
+     "body": "Slim horizontal glass with the thinnest sight lines in the Avante family. The door becomes bands of light instead of panels."
+    },
+    {
+     "title": "Weather-sealed aluminum",
+     "body": "2-1/8-inch commercial-grade frame with sealed panel joints and a reinforcing fin on wider doors. Low maintenance, long life."
+    },
+    {
+     "title": "18 designs, 7 finishes",
+     "body": "Anodized and painted finishes from clear aluminum to black, with clear, frosted, tinted, or obscure glass and acrylic options."
+    }
+   ],
+   "faq": [
+    {
+     "q": "How is Avante Sleek different from the regular Avante?",
+     "a": "The Sleek uses more minimalist frames and slim horizontal windows, so you get wider, less interrupted views of the glass. The regular Avante has a more visible grid. Same commercial-grade aluminum construction family, different visual weight."
+    },
+    {
+     "q": "Can the Avante Sleek be insulated?",
+     "a": "The AZ6U model carries Intellicore polyurethane in its rails and stiles and hits R-3.8 when paired with clear insulated glass. It is a comfort improvement, not a substitute for a foam-filled steel door, and we will tell you honestly which fits your garage."
+    },
+    {
+     "q": "What privacy options are there for all that glass?",
+     "a": "Frosted, tinted, and obscure glass options keep light coming in while blocking the view. If you want it switchable, C-Power Click-to-Conceal panels flip from transparent to opaque with a remote."
+    },
+    {
+     "q": "Can I preview the Sleek on a photo of my home?",
+     "a": "Yes. Our Design Your Door page lets you upload a photo of your house and try Avante Sleek designs, finishes, and glass options on your actual garage."
+    },
+    {
+     "q": "What kind of lead time should I expect?",
+     "a": "It depends on the model, glass, and finish, and it changes seasonally. Ask us for current lead times during your free quote and we will give you a real answer for your configuration."
+    }
+   ],
+   "siblings": [
+    "clopay-avante",
+    "clopay-vertistack-avante",
+    "clopay-modern-steel"
+   ],
+   "assertions": {
+    "must_contain": [
+     "Avante Sleek"
+    ],
+    "must_not_contain": [
+     "608",
+     "859",
+     "[Insert",
+     "TBD",
+     "lorem",
+     "{{"
+    ]
+   }
+  },
+  {
+   "slug": "clopay-vertistack-avante",
+   "product_id": 370,
+   "h1": "Clopay VertiStack Avante Garage Doors",
+   "rank_math_title": "BEST Clopay VertiStack Avante Garage Doors Near You",
+   "meta_description": "Clopay VertiStack Avante: sections stack flat on the wall above the opening, so there are no overhead tracks. Aluminum and glass. Twins installed. Free quotes.",
+   "hero_subhead": "No overhead tracks. The sections stack flat on the wall above the opening and leave your ceiling alone.",
+   "intro_copy": "The VertiStack Avante solves a problem most people assume is unsolvable: it gets rid of the overhead track entirely. Instead of rolling back across your ceiling, the door sections stack vertically on the wall above the opening, with no exposed hinges, track, or cable in the garage. Your ceiling stays free for lighting, storage lifts, or a tall vehicle, and the panels can even tuck into a recessed soffit for a fully clean look. The frame is rugged 2-5/8-inch commercial-grade aluminum with Intellicore polyurethane packed into the stiles and rails at R-3.8, and optional tempered insulated glass adds efficiency. There are 14 designs and seven finishes across anodized, painted, and powder-coated aluminum, with glass, acrylic, polycarbonate, or solid aluminum panels. WindCode reinforcement is available. This is a specialty install, and our crew is glad to walk your garage at a free on-site quote.",
+   "checklist_cards": [
+    {
+     "title": "Ceiling stays yours",
+     "body": "Sections stack on the wall above the opening with minimal projection. No overhead tracks, no exposed hinges or cables inside."
+    },
+    {
+     "title": "Heavy-duty aluminum",
+     "body": "A 2-5/8-inch commercial-grade frame that resists rust and corrosion, with Intellicore insulated stiles and rails at R-3.8."
+    },
+    {
+     "title": "14 designs, 7 finishes",
+     "body": "Anodized, painted, or powder-coated frames with glass, acrylic, polycarbonate, or solid aluminum panels. Modern from every angle."
+    }
+   ],
+   "faq": [
+    {
+     "q": "How does the VertiStack actually open?",
+     "a": "The door sections stack vertically against the wall above the opening instead of traveling back along ceiling tracks. There are no exposed hinges, track, or cable inside the garage, and the stacked panels project only minimally from the wall."
+    },
+    {
+     "q": "Why would I want a door without overhead tracks?",
+     "a": "Ceiling space. Overhead tracks block lighting, storage lifts, car lifts, and tall vehicles. The VertiStack leaves the ceiling completely clear, and the panels can even vanish into a recessed soffit if you want the cleanest possible look."
+    },
+    {
+     "q": "Is the VertiStack Avante insulated?",
+     "a": "The stiles and rails carry Intellicore polyurethane insulation rated at R-3.8, and optional tempered insulated glass improves efficiency further. Like all glass doors, it prioritizes light and looks over maximum warmth, and we will be honest about that trade-off."
+    },
+    {
+     "q": "Can I preview it on my own home?",
+     "a": "Yes. Use our Design Your Door page to upload a photo of your house and preview VertiStack Avante finishes and panel options on your actual garage."
+    },
+    {
+     "q": "What is the lead time on a VertiStack?",
+     "a": "As a specialty product, lead times vary more than standard doors and depend on your configuration. Ask us for current lead times at your free quote and we will map out the whole timeline with you."
+    }
+   ],
+   "siblings": [
+    "clopay-avante",
+    "clopay-avante-sleek",
+    "clopay-modern-steel"
+   ],
+   "assertions": {
+    "must_contain": [
+     "VertiStack Avante"
+    ],
+    "must_not_contain": [
+     "608",
+     "859",
+     "[Insert",
+     "TBD",
+     "lorem",
+     "{{"
+    ]
+   }
+  },
+  {
+   "slug": "clopay-bridgeport-steel",
+   "product_id": 250,
+   "h1": "Clopay Bridgeport Steel Garage Doors",
+   "rank_math_title": "BEST Clopay Bridgeport Steel Garage Doors Near You",
+   "meta_description": "Clopay Bridgeport Steel garage doors: timeless recessed panels, 19 colors, insulation options up to R-18.4. Installed by the Twins crew. Free on-site quotes.",
+   "hero_subhead": "Timeless recessed panels in durable steel, with enough color and insulation options to fit any house and budget.",
+   "intro_copy": "The Bridgeport Steel is the quiet workhorse of the Clopay lineup: a classic recessed-panel door that suits nearly any home and comes in enough configurations to hit nearly any budget. You choose one-, two-, or three-layer construction, with insulation options from polystyrene up to 2-inch Intellicore polyurethane and R-values running 6.3 to 18.4. Panels come in wide or narrow recessed styles, and the color range is one of the deepest in the catalog: 19 finishes across standard and premium groups, including wood-look Ultra-Grain tones, with a large custom paint program past that. Add any of 17 top section styles, from solid panels to arched and decorative windows, plus optional WindCode reinforcement for high-wind areas. It is a straightforward, durable door done right, and our crew installs and services them constantly. The on-site quote is free and comes with honest advice about which layer count you actually need.",
+   "checklist_cards": [
+    {
+     "title": "Pick your construction",
+     "body": "One, two, or three layers with R-values from 6.3 to 18.4. We help you match the build to how you actually use your garage."
+    },
+    {
+     "title": "19 colors deep",
+     "body": "Standard and premium finishes including Ultra-Grain wood looks and modern matte, with subtle woodgrain texture in the steel."
+    },
+    {
+     "title": "17 top section styles",
+     "body": "Solid tops for a clean look, or rectangular, square, arched, and decorative window options to let in light."
+    }
+   ],
+   "faq": [
+    {
+     "q": "What is the difference between 1-, 2-, and 3-layer Bridgeport doors?",
+     "a": "A single layer is the steel pan door, the budget option. Two layers add insulation behind the steel. Three layers sandwich the insulation between steel inside and out for the most strength, quiet, and efficiency. R-values run from 6.3 up to 18.4 with 2-inch Intellicore polyurethane."
+    },
+    {
+     "q": "How many colors does the Bridgeport Steel come in?",
+     "a": "Nineteen finishes across standard and premium groups, from White, Almond, and Sandtone to deeper tones plus Ultra-Grain wood looks. Clopay's custom paint program covers you if you need an exact match."
+    },
+    {
+     "q": "Can I add windows to a Bridgeport Steel door?",
+     "a": "Yes. There are 17 top section options including solid panels, rectangular and square windows, arched designs, and decorative inserts, plus six specialty glass choices for light and privacy."
+    },
+    {
+     "q": "Can I see it on my home before ordering?",
+     "a": "Yes. Our Design Your Door page lets you upload a photo of your house and preview Bridgeport panel styles, colors, and windows on your actual garage."
+    },
+    {
+     "q": "How quickly can I get a Bridgeport Steel installed?",
+     "a": "Lead times depend on configuration and season. Popular setups often move faster, but we would rather quote you current lead times at your free visit than print a number that goes stale."
+    }
+   ],
+   "siblings": [
+    "clopay-bridgeport-inlay",
+    "clopay-classic-collection",
+    "clopay-gallery-steel",
+    "clopay-modern-steel"
+   ],
+   "assertions": {
+    "must_contain": [
+     "Bridgeport Steel"
+    ],
+    "must_not_contain": [
+     "608",
+     "859",
+     "[Insert",
+     "TBD",
+     "lorem",
+     "{{"
+    ]
+   }
+  },
+  {
+   "slug": "clopay-bridgeport-inlay",
+   "product_id": 380,
+   "h1": "Clopay Bridgeport Inlay Garage Doors",
+   "rank_math_title": "BEST Clopay Bridgeport Inlay Garage Doors Near You",
+   "meta_description": "Clopay Bridgeport Inlay: recessed steel panels with carriage house inlays in A, X, or V patterns and a pebbled fiberglass texture. Twins installed. Free quotes.",
+   "hero_subhead": "Recessed steel panels meet carriage house inlays in A, X, or V patterns, with a pebbled texture that pops.",
+   "intro_copy": "The Bridgeport Inlay layers carriage house personality onto a clean recessed-panel steel door. The inlay itself is durable fiberglass with a pebbled texture that stands up to weather and UV while playing nicely against woodgrain and stucco exteriors. You pick one of three inlay patterns, A, X, or V, then build the door your way: one-, two-, or three-layer construction with polystyrene or Intellicore polyurethane insulation and R-values from 6.3 to 18.4. There are 16 color options including Ultra-Grain wood-look tones, and the premium Black and Iron Ore finishes step up to thicker 25-gauge steel with solar reflective paint. Six glass choices, from clear to rain to obscure, cover the window question, with 16 top section styles. Optional WindCode reinforcement reaches up to W8 on select models. Our crew installs and services the Inlay, and the free on-site quote sorts out the right build for your opening.",
+   "checklist_cards": [
+    {
+     "title": "A, X, or V",
+     "body": "Three carriage house inlay patterns in weather-tough fiberglass with a pebbled texture that plays well with woodgrain and stucco."
+    },
+    {
+     "title": "Build it your way",
+     "body": "One, two, or three layers with R-values from 6.3 to 18.4. Premium Black and Iron Ore add thicker 25-gauge steel and solar reflective paint."
+    },
+    {
+     "title": "16 colors, 6 glass options",
+     "body": "Solid colors, Ultra-Grain wood looks, and glass from clear to frosted to rain. The look is yours to compose."
+    }
+   ],
+   "faq": [
+    {
+     "q": "What exactly is the inlay made of?",
+     "a": "Tough fiberglass with a pebbled texture, layered over the steel door. It resists warping, weather, and UV light, so the decorative detail keeps looking sharp without maintenance."
+    },
+    {
+     "q": "What insulation can I get in a Bridgeport Inlay?",
+     "a": "Your choice of Intellicore polyurethane or polystyrene in one-, two-, or three-layer builds, with R-values from 6.3 up to 18.4. We will help you decide how much insulation your garage actually needs."
+    },
+    {
+     "q": "What makes the Black and Iron Ore finishes premium?",
+     "a": "Those two step up to thicker 25-gauge steel and use advanced solar reflective paint, which helps dark doors handle sun exposure. The other 14 colors include solid shades with woodgrain embossing and four Ultra-Grain wood-look finishes."
+    },
+    {
+     "q": "Can I preview the A, X, and V patterns on my house?",
+     "a": "Yes. Upload a photo of your home on our Design Your Door page and compare all three inlay patterns, colors, and glass options on your actual garage."
+    },
+    {
+     "q": "What is the lead time for a Bridgeport Inlay?",
+     "a": "It varies by pattern, color, and construction, and it moves with the season. Ask us for current lead times at your free quote and we will give you the real timeline for your build."
+    }
+   ],
+   "siblings": [
+    "clopay-bridgeport-steel",
+    "clopay-gallery-steel",
+    "clopay-coachman",
+    "clopay-grand-harbor"
+   ],
+   "assertions": {
+    "must_contain": [
+     "Bridgeport Inlay"
+    ],
+    "must_not_contain": [
+     "608",
+     "859",
+     "[Insert",
+     "TBD",
+     "lorem",
+     "{{"
+    ]
+   }
+  },
+  {
+   "slug": "clopay-grand-harbor",
+   "product_id": 27,
+   "h1": "Clopay Grand Harbor Garage Doors",
+   "rank_math_title": "BEST Clopay Grand Harbor Garage Doors Near You",
+   "meta_description": "Clopay Grand Harbor: carriage house style on a budget, with a 24-gauge steel base, composite overlays, and optional insulation. Twins installed. Free quotes.",
+   "hero_subhead": "Carriage house charm at a price that leaves room in the budget, with steel durability where it counts.",
+   "intro_copy": "The Grand Harbor is our honest answer when someone loves the carriage house look but the budget has a ceiling. It starts with a rugged 24-gauge steel base in a woodgrain-embossed finish, then adds smooth composite overlays that create the carriage house lines without wood maintenance. Construction comes in two- or three-layer versions, and insulation is optional: a 1-5/8-inch vinyl-backed polystyrene core rated at R-6.3 for garages that need the comfort. There are eight designs across four series, 26 top section options including an unusually wide range of solid and window styles, and five decorative hardware pieces. The base comes in four factory colors, White, Almond, Desert Tan, and Sandtone, and the door takes exterior latex paint well if you want something more custom. WindCode reinforcement is available for high-wind areas. We install plenty of these, we service what we install, and the on-site quote is free.",
+   "checklist_cards": [
+    {
+     "title": "Budget-smart carriage house",
+     "body": "A 24-gauge steel base with smooth composite overlays. The carriage house look without the premium-collection invoice."
+    },
+    {
+     "title": "Insulation optional",
+     "body": "Add a 1-5/8-inch polystyrene core at R-6.3 if your garage needs it, or skip it and save if it does not. We will tell you honestly."
+    },
+    {
+     "title": "8 designs, 26 top sections",
+     "body": "Four design series with one of the widest top section ranges in the catalog, from clean solids to bright window layouts."
+    }
+   ],
+   "faq": [
+    {
+     "q": "Is the Grand Harbor insulated?",
+     "a": "Insulation is optional. You can add a 1-5/8-inch vinyl-backed polystyrene core rated at R-6.3, which we recommend for attached garages. For a detached garage you may not need it, and we will say so rather than upsell you."
+    },
+    {
+     "q": "What colors does the Grand Harbor come in?",
+     "a": "The steel base comes in four woodgrain-textured factory colors: Almond, Desert Tan, Sandtone, and Standard White, with the overlay in white only. If you want something else, the door can be painted with quality exterior latex paint."
+    },
+    {
+     "q": "How does it compare to the Coachman?",
+     "a": "Both are steel-plus-overlay carriage house doors. The Coachman offers more insulation choices, more designs, and more factory color combinations, while the Grand Harbor keeps the same general style at a friendlier price with optional insulation. We can quote both so you see the gap."
+    },
+    {
+     "q": "Can I preview the Grand Harbor on my own home?",
+     "a": "Yes. Use our Design Your Door page to upload a photo of your house and preview Grand Harbor designs and top sections on your actual garage."
+    },
+    {
+     "q": "How long is the wait for a Grand Harbor?",
+     "a": "Lead times change with configuration and season, so we skip printing a number that could mislead you. Ask for current lead times at your free on-site quote."
+    }
+   ],
+   "siblings": [
+    "clopay-coachman",
+    "clopay-gallery-steel",
+    "clopay-bridgeport-inlay",
+    "clopay-canyon-ridge-carriage-house-4-layer"
+   ],
+   "assertions": {
+    "must_contain": [
+     "Grand Harbor"
+    ],
+    "must_not_contain": [
+     "608",
+     "859",
+     "[Insert",
+     "TBD",
+     "lorem",
+     "{{"
+    ]
+   }
+  },
+  {
+   "slug": "clopay-classic-wood",
+   "product_id": 23,
+   "h1": "Clopay Classic Wood Garage Doors",
+   "rank_math_title": "BEST Clopay Classic Wood Garage Doors Near You",
+   "meta_description": "Clopay Classic Wood garage doors, handcrafted in the USA in redwood, hemlock, or cedar. Raised, recessed, or flush panels. Twins installed. Free on-site quotes.",
+   "hero_subhead": "Handcrafted real wood in redwood, hemlock, or cedar. The genuine article, built in the USA.",
+   "intro_copy": "Some houses just call for real wood, and the Classic Wood collection delivers it without the custom-shop price tag. Every door is handcrafted in the USA, with models to fit different needs: Model 44 offers raised panels with heavy-duty stile-and-rail construction, Models 20 and 10 bring recessed panels, and Model 33 is a flush-panel door with three-layer construction and polystyrene insulation rated at R-5.9. Wood choices include sustainably sourced redwood, hemlock, and cedar for staining, plus paint-grade Extira composite panels. There are six designs, optional hand-carved decorative windows, and ten finish options spanning nine stains and paint, with a large custom color program beyond. Real wood asks for some upkeep over its life, and we will be upfront about that at the quote. Our crew installs Classic Wood doors with the care they deserve, and the on-site visit costs nothing.",
+   "checklist_cards": [
+    {
+     "title": "Handcrafted in the USA",
+     "body": "Real redwood, hemlock, or cedar built with stile-and-rail joinery. A door with actual grain, weight, and character."
+    },
+    {
+     "title": "Three panel styles",
+     "body": "Raised panels on Model 44, recessed on Models 20 and 10, and an insulated flush-panel Model 33 at R-5.9."
+    },
+    {
+     "title": "Stain or paint",
+     "body": "Nine stains that bring out the grain, or paint-grade surfaces including Extira composite panels for a crisp finished color."
+    }
+   ],
+   "faq": [
+    {
+     "q": "Which Classic Wood model should I look at?",
+     "a": "Model 44 has handcrafted raised panels in stain-grade or paint-grade woods. Models 20 and 10 offer recessed panels. Model 33 is the flush-panel option and the insulated one, with three-layer construction and an R-value of 5.9. We will walk all of them at your quote."
+    },
+    {
+     "q": "What woods can I choose?",
+     "a": "Sustainably sourced redwood, cedar, and hemlock in stain grade, plus paint-grade options including Extira wood composite panels. Nine stains and paint finishes cover the color side, with a custom program beyond that."
+    },
+    {
+     "q": "How much maintenance does a real wood door need?",
+     "a": "More than steel or composite, honestly. Finishes need renewing over the door's life depending on sun and weather exposure. Clopay backs construction and paint for one year and stain for two. If that upkeep is a dealbreaker, we will point you to faux wood alternatives we also install."
+    },
+    {
+     "q": "Can I see a Classic Wood door on my house first?",
+     "a": "Yes. Our Design Your Door page lets you upload a photo of your home and preview wood designs and finishes on your actual garage before you decide."
+    },
+    {
+     "q": "What is the lead time on a handcrafted wood door?",
+     "a": "Handcrafted doors take longer than stock steel, and timing varies by model and finish. Ask for current lead times at your free quote and we will build the schedule around reality, not optimism."
+    }
+   ],
+   "siblings": [
+    "clopay-reserve-wood-semi-custom",
+    "clopay-reserve-wood-limited-edition",
+    "clopay-classic-collection",
+    "clopay-reserve-wood-custom"
+   ],
+   "assertions": {
+    "must_contain": [
+     "Classic Wood"
+    ],
+    "must_not_contain": [
+     "608",
+     "859",
+     "[Insert",
+     "TBD",
+     "lorem",
+     "{{"
+    ]
+   }
+  },
+  {
+   "slug": "clopay-reserve-wood-custom",
+   "product_id": 8,
+   "h1": "Clopay Reserve Wood Custom Garage Doors",
+   "rank_math_title": "BEST Clopay Reserve Wood Custom Garage Doors Near You",
+   "meta_description": "Clopay Reserve Wood Custom: handcrafted, fully bespoke wood garage doors in cedar, mahogany, or oak, insulated and built to your design. Twins installed.",
+   "hero_subhead": "A fully bespoke, handcrafted wood door. You dream it, skilled craftsmen build it, we install it.",
+   "intro_copy": "The Reserve Wood Custom is the top of the wood line: a handcrafted door built to your design rather than picked from a catalog. Each one is constructed in a solid four- or five-layer build, with a premium wood overlay, your choice of base materials, a polystyrene-insulated Hemlock frame, and a Luan backer for durability. The woods are sustainably sourced species like Cedar, Mahogany, and Oak, selected for beauty and staying power, and finishes span hundreds of stains and paints with a huge custom color program. Details matter at this level: three-panel section construction allows larger authentic window openings, and a one-piece drip cap sheds water away from the overlays. You can even choose swing-out carriage house operation instead of standard overhead. WindCode reinforcement is available for high-wind areas. This is a design-it-together door, and our free on-site consultation is where that conversation starts.",
+   "checklist_cards": [
+    {
+     "title": "Truly bespoke",
+     "body": "Not a catalog pick. Wood species, design, finish, and even swing-out operation are chosen by you and built by hand."
+    },
+    {
+     "title": "Premium wood species",
+     "body": "Sustainably sourced Cedar, Mahogany, and Oak, selected for beauty and durability, over an insulated Hemlock frame."
+    },
+    {
+     "title": "Details done right",
+     "body": "Three-panel sections allow bigger windows, and a one-piece drip cap sheds water off the overlays to protect the door for the long haul."
+    }
+   ],
+   "faq": [
+    {
+     "q": "How custom is the Reserve Wood Custom, really?",
+     "a": "Genuinely custom. You choose the wood species, design direction, finish from hundreds of stains and paints, and window arrangement, and skilled craftsmen build the door to that spec. If you can sketch it, it is worth a conversation."
+    },
+    {
+     "q": "Is a custom wood door insulated?",
+     "a": "Yes. The build includes a polystyrene-insulated Hemlock frame inside the multi-layer construction, which helps keep the garage comfortable while the outside stays all wood."
+    },
+    {
+     "q": "Can it open like old carriage house doors?",
+     "a": "Yes. The Reserve Wood Custom offers an authentic swing-out carriage house operation as well as standard overhead operation, so you can have the historic look and function or the everyday convenience."
+    },
+    {
+     "q": "Can I visualize a custom door on my home?",
+     "a": "Start with our Design Your Door page to preview looks on a photo of your house, then bring the ideas to a free consultation where we sketch the custom details together."
+    },
+    {
+     "q": "How long does a custom door take?",
+     "a": "Longer than a stock door, as you would expect from handcrafted work, and it depends entirely on the design. Ask us for current lead times when we scope your project and we will set an honest schedule."
+    }
+   ],
+   "siblings": [
+    "clopay-reserve-wood-limited-edition",
+    "clopay-reserve-wood-semi-custom",
+    "clopay-reserve-wood-extira",
+    "clopay-reserve-wood-modern"
+   ],
+   "assertions": {
+    "must_contain": [
+     "Reserve Wood Custom"
+    ],
+    "must_not_contain": [
+     "608",
+     "859",
+     "[Insert",
+     "TBD",
+     "lorem",
+     "{{"
+    ]
+   }
+  },
+  {
+   "slug": "clopay-reserve-wood-semi-custom",
+   "product_id": 9,
+   "h1": "Clopay Reserve Wood Semi-Custom Garage Doors",
+   "rank_math_title": "BEST Clopay Reserve Wood Semi-Custom Doors Near You",
+   "meta_description": "Clopay Reserve Wood Semi-Custom: handcrafted two-layer real wood doors in redwood, hemlock, or cedar with six recessed panel designs. Twins installed.",
+   "hero_subhead": "Handcrafted real wood with a defined set of designs, so you get artisan quality without a from-scratch process.",
+   "intro_copy": "The Reserve Wood Semi-Custom sits in the sweet spot between a stock door and a full custom build. Each door is handcrafted from two layers of real wood, a sturdy Hemlock frame with quality panels backed in Luan, so it has the weight and warmth only genuine wood delivers. You choose from six timeless recessed panel designs in redwood, hemlock, or cedar, then finish it your way: factory primed, painted, or stained, with ten finish options and a large custom color program beyond. True divided lite windows and period hardware are optional touches that complete the look, and larger window designs use three-section construction for wider openings. This model is non-insulated, though solid wood naturally buffers sound and temperature, and we will be straight about whether that suits your garage. The woods come from sustainable and naturally fallen sources. Our crew installs these with care, and the on-site quote is free.",
+   "checklist_cards": [
+    {
+     "title": "Two layers of real wood",
+     "body": "A handcrafted Hemlock frame with wood panels and Luan backing. Genuine grain and heft, artisan joinery throughout."
+    },
+    {
+     "title": "Six timeless designs",
+     "body": "Recessed panel styles in redwood, hemlock, or cedar, with true divided lite windows and classic hardware available as options."
+    },
+    {
+     "title": "Finish it your way",
+     "body": "Primed, painted, or stained, with stains from Natural to Dark Oak that bring out the grain, plus a big custom color program."
+    }
+   ],
+   "faq": [
+    {
+     "q": "Is the Reserve Wood Semi-Custom insulated?",
+     "a": "No. Clopay builds this one without an insulation layer, though the thick wood itself buffers a bit of sound and temperature swing. If your garage is heated or attached, we may steer you toward an insulated wood or faux wood option instead. We will tell you honestly at the quote."
+    },
+    {
+     "q": "What wood species and finishes can I pick?",
+     "a": "Redwood, hemlock, or cedar, in six recessed panel designs. Finishes include stains like Natural, Mahogany, Teak, Butternut, Cedar, and Dark Oak, or primed and painted looks, with a large custom color program available."
+    },
+    {
+     "q": "What are true divided lite windows?",
+     "a": "Windows where each pane is a genuinely separate piece of glass set in the wood, the way older craftsman homes did it, rather than one sheet with a snap-in grille. The Semi-Custom offers them along with a range of top section styles."
+    },
+    {
+     "q": "Can I preview this door on my own house?",
+     "a": "Yes. Upload a photo of your home on our Design Your Door page and preview panel designs and finishes on your actual garage before ordering."
+    },
+    {
+     "q": "How long does a Semi-Custom wood door take?",
+     "a": "Handcrafted wood runs longer than stock steel and varies with design and finish. Ask us for current lead times at your free quote and we will give you a realistic schedule."
+    }
+   ],
+   "siblings": [
+    "clopay-reserve-wood-custom",
+    "clopay-reserve-wood-limited-edition",
+    "clopay-classic-wood",
+    "clopay-reserve-wood-extira"
+   ],
+   "assertions": {
+    "must_contain": [
+     "Reserve Wood Semi-Custom"
+    ],
+    "must_not_contain": [
+     "608",
+     "859",
+     "[Insert",
+     "TBD",
+     "lorem",
+     "{{"
+    ]
+   }
+  },
+  {
+   "slug": "clopay-reserve-wood-limited-edition",
+   "product_id": 10,
+   "h1": "Clopay Reserve Wood Limited Edition Garage Doors",
+   "rank_math_title": "BEST Clopay Reserve Wood Limited Edition Near You",
+   "meta_description": "Clopay Reserve Wood Limited Edition: hand-built carriage house doors in real wood with insulation, true divided windows, and eight designs. Twins installed.",
+   "hero_subhead": "Hand-built carriage house beauty in real wood, with insulation and details that make it livable every day.",
+   "intro_copy": "The Reserve Wood Limited Edition is the carriage house door done in genuine wood, built by hand, and engineered so you can actually live with it. Construction is a solid four- or five-layer build: real wood overlays, an optional tongue-and-groove base, a polystyrene-insulated Hemlock frame rated at R-5.9, and a tough Luan interior backer. The doors look like they swing open but operate overhead like any modern door. You choose from eight classic carriage house designs and eight paint- or stain-ready wood species, with ten standard finishes and a big custom color program. True divided windows come standard for the authentic look, three-panel sections allow larger window openings, and a one-piece drip cap keeps water off the grooved overlays. Every door uses sustainably harvested or naturally fallen wood. WindCode reinforcement is available for high-wind areas. Our crew installs and services these, and the on-site quote is free.",
+   "checklist_cards": [
+    {
+     "title": "Hand-built, insulated wood",
+     "body": "Real wood overlays over a polystyrene-insulated Hemlock frame at R-5.9. Old-world looks with a garage that stays livable."
+    },
+    {
+     "title": "Eight carriage designs",
+     "body": "Classic carriage house layouts with true divided windows standard and decorative hardware options to finish the story."
+    },
+    {
+     "title": "Built to shed water",
+     "body": "A one-piece drip cap steers water away from the grooved overlays, protecting the wood where doors usually fail first."
+    }
+   ],
+   "faq": [
+    {
+     "q": "Is the Limited Edition insulated?",
+     "a": "Yes. The Hemlock frame carries polystyrene insulation rated at R-5.9, wrapped with a Luan interior backer. It will not match a thick polyurethane steel door, but for a real wood door it keeps the garage noticeably more comfortable."
+    },
+    {
+     "q": "Do these doors swing open like old carriage doors?",
+     "a": "They look like they do, but they operate overhead like a modern door, so your opener and daily routine work normally. If you want actual swing-out operation, ask us about the Reserve Wood Custom."
+    },
+    {
+     "q": "What woods and finishes are available?",
+     "a": "Eight paint- or stain-ready wood species, sustainably harvested or naturally fallen, with ten standard finishes including stains like Natural, Cedar, Teak, Butternut, Mahogany, and Dark Oak, plus a large custom color program."
+    },
+    {
+     "q": "Can I preview it on a photo of my home?",
+     "a": "Yes. Our Design Your Door page lets you upload a photo of your house and preview Limited Edition designs and finishes on your actual garage."
+    },
+    {
+     "q": "What is the lead time for a Limited Edition door?",
+     "a": "Hand-built wood doors take longer than stock products and vary by design and finish. Ask for current lead times at your free quote and we will lay out an honest timeline."
+    }
+   ],
+   "siblings": [
+    "clopay-reserve-wood-custom",
+    "clopay-reserve-wood-semi-custom",
+    "clopay-canyon-ridge-carriage-house-5-layer",
+    "clopay-classic-wood"
+   ],
+   "assertions": {
+    "must_contain": [
+     "Reserve Wood Limited Edition"
+    ],
+    "must_not_contain": [
+     "608",
+     "859",
+     "[Insert",
+     "TBD",
+     "lorem",
+     "{{"
+    ]
+   }
+  },
+  {
+   "slug": "clopay-reserve-wood-extira",
+   "product_id": 291,
+   "h1": "Clopay Reserve Wood Extira Garage Doors",
+   "rank_math_title": "BEST Clopay Reserve Wood Extira Garage Doors Near You",
+   "meta_description": "Clopay Reserve Wood Extira: paint-grade wood composite doors that resist moisture, rot, and termites, with deep V-grooves and arches. Twins installed.",
+   "hero_subhead": "The craftsmanship of a wood door in a composite that laughs at moisture, rot, and termites.",
+   "intro_copy": "The Reserve Wood Extira is for people who want the crafted, painted-wood look without wood's weaknesses. Extira is a patented wood composite made from certified eco-friendly materials, and it resists moisture, rot, and termites while machining like fine lumber. That means details most garage doors cannot pull off: smooth or grooved panels, deep V-grooves, arches, and curves, all on a knot-free surface that takes paint like furniture. The build is a four-layer construction with Extira used for both the overlay and the base, a Hemlock frame insulated with polystyrene at R-5.9, and a Luan backer for a clean interior face. Doors arrive primed or painted, with hundreds of paint shades available through a large custom color program. True divided windows, eleven top section options, a one-piece drip cap, and premium hardware round it out. WindCode reinforcement is available. Our crew installs and services these doors, and the on-site quote is free.",
+   "checklist_cards": [
+    {
+     "title": "Extira composite",
+     "body": "A patented, eco-friendly wood composite that resists moisture, rot, and termites. Wood's workability without wood's worries."
+    },
+    {
+     "title": "Furniture-grade paint finish",
+     "body": "The knot-free surface takes paint beautifully. Deep V-grooves, arches, and curves stay crisp for years."
+    },
+    {
+     "title": "Insulated Hemlock frame",
+     "body": "Polystyrene insulation at R-5.9 inside a solid Hemlock frame, wrapped and banded to seal out moisture."
+    }
+   ],
+   "faq": [
+    {
+     "q": "What is Extira, exactly?",
+     "a": "A patented wood composite manufactured from certified eco-friendly materials, including wood with no commercial timber value. It machines and paints like fine lumber but resists moisture, rot, termites, and swelling, which is why it works so well outdoors."
+    },
+    {
+     "q": "Can I stain an Extira door?",
+     "a": "No, Extira is a paint-grade material, and that is its strength: the ultra-smooth, knot-free surface takes paint evenly for a furniture-quality finish. Doors arrive primed or painted, with hundreds of shades available. If you want stained grain, look at the other Reserve Wood doors."
+    },
+    {
+     "q": "Is the Reserve Wood Extira insulated?",
+     "a": "Yes. Polystyrene insulation inside the Hemlock frame gives it an R-value of 5.9, and the frame comes wrapped and banded against moisture, so the comfort holds up over time."
+    },
+    {
+     "q": "Can I see design options on my own home?",
+     "a": "Yes. Use our Design Your Door page to upload a photo of your house and preview panel styles, windows, and colors on your actual garage."
+    },
+    {
+     "q": "How long does an Extira door take to arrive?",
+     "a": "It depends on the design and finish work, and timing shifts through the year. Ask us for current lead times at your free quote and we will map the schedule with you."
+    }
+   ],
+   "siblings": [
+    "clopay-reserve-wood-custom",
+    "clopay-reserve-wood-semi-custom",
+    "clopay-reserve-wood-limited-edition",
+    "clopay-classic-wood"
+   ],
+   "assertions": {
+    "must_contain": [
+     "Reserve Wood Extira"
+    ],
+    "must_not_contain": [
+     "608",
+     "859",
+     "[Insert",
+     "TBD",
+     "lorem",
+     "{{"
+    ]
+   }
+  },
+  {
+   "slug": "clopay-reserve-wood-modern",
+   "product_id": 25,
+   "h1": "Clopay Reserve Wood Modern Garage Doors",
+   "rank_math_title": "BEST Clopay Reserve Wood Modern Garage Doors Near You",
+   "meta_description": "Clopay Reserve Wood Modern: real wood cladding in clean contemporary lines, with offset windows and aluminum accents. Twins installed. Free on-site quotes.",
+   "hero_subhead": "Clean, contemporary lines that let real wood grain do the talking.",
+   "intro_copy": "The Reserve Wood Modern is proof that real wood is not just for traditional houses. Its simple forms and clean horizontal lines put the grain itself front and center, which is exactly what a contemporary facade wants. Each door is a four-layer build: natural wood cladding outside, a sturdy base core, a polystyrene-insulated Hemlock frame rated at R-5.9, and a Luan backer for a finished interior. There are eleven design variations across offset-window, accent-strip, and horizontal-cladding looks, with slim glass panels or sleek aluminum strips as counterpoints to the wood. Six wood species options and nine stain colors, from Natural and Cedar to Dark Oak, cover the finish side, with paint and a large custom color program available. Heavy-duty hinges, rollers, and track keep it running smoothly, and WindCode reinforcement is available for high-wind areas. We install and service these doors, and the free on-site quote settles the details.",
+   "checklist_cards": [
+    {
+     "title": "Real wood, modern lines",
+     "body": "Natural wood cladding in clean horizontal layouts. The grain is the design, the way contemporary architecture likes it."
+    },
+    {
+     "title": "11 design variations",
+     "body": "Offset window patterns, aluminum accent strips, and full horizontal cladding looks, in six wood species options."
+    },
+    {
+     "title": "Insulated Hemlock core",
+     "body": "A polystyrene-insulated frame at R-5.9 with a Luan backer, plus heavy-duty hardware for smooth, quiet operation."
+    }
+   ],
+   "faq": [
+    {
+     "q": "Is the Reserve Wood Modern insulated?",
+     "a": "Yes. The Hemlock frame is packed with polystyrene insulation rated at R-5.9. It is a real wood door first, so if maximum warmth is your priority we may point you at an insulated steel or faux wood option instead."
+    },
+    {
+     "q": "What design options does it come in?",
+     "a": "Eleven variations across three families: offset window patterns mixing short and long glass, accent strip designs with sleek aluminum lines, and horizontal cladding layouts that keep the face all wood."
+    },
+    {
+     "q": "What woods and stains can I pick?",
+     "a": "Six wood species options with nine stain colors, including Natural, Cedar, Natural Oak, Butternut, Teak, Mahogany, and Dark Oak, each chosen to bring out the grain. Paint and a large custom color program are also available."
+    },
+    {
+     "q": "Can I preview this door on my house?",
+     "a": "Yes. Upload a photo of your home on our Design Your Door page and preview Reserve Wood Modern designs and stains on your actual garage before you order."
+    },
+    {
+     "q": "How long is the lead time?",
+     "a": "Real wood doors take longer than stock steel and vary by design and finish. Ask for current lead times at your free quote and we will give you the honest schedule for your build."
+    }
+   ],
+   "siblings": [
+    "clopay-canyon-ridge-modern",
+    "clopay-modern-steel",
+    "clopay-reserve-wood-custom",
+    "clopay-avante"
+   ],
+   "assertions": {
+    "must_contain": [
+     "Reserve Wood Modern"
+    ],
+    "must_not_contain": [
+     "608",
+     "859",
+     "[Insert",
+     "TBD",
+     "lorem",
+     "{{"
+    ]
+   }
+  },
+  {
+   "slug": "clopay-garage-doors",
+   "product_id": null,
+   "h1": "Clopay Garage Door Collections",
+   "rank_math_title": "BEST Clopay Garage Doors Near You | All 23 Collections",
+   "meta_description": "Browse all 23 Clopay residential garage door collections in one place: steel, faux wood, real wood, and glass. Installed and serviced by the Twins crew.",
+   "hero_subhead": "Every Clopay residential collection in one place: steel, faux wood, real wood, and aluminum glass doors, all installed and serviced by our crew.",
+   "intro_copy": "Choosing a garage door gets a lot easier once you know the four families. Steel doors, like Classic, Bridgeport, Gallery, and Modern Steel, are the workhorses: durable, insulated if you want, and available in the widest color ranges. Faux wood doors, the Canyon Ridge collections, put molded composite made from real wood boards over an insulated steel core, so you get wood looks without wood upkeep. Real wood doors, the Classic Wood and Reserve Wood collections, are handcrafted from genuine species like cedar, redwood, and mahogany for houses that deserve the real thing. And the aluminum and glass Avante family turns the door into architecture, filling the garage with daylight. Below you will find every Clopay residential collection we install. Browse the grid, open any collection that catches your eye, or skip the homework entirely: request a free on-site quote and we will bring honest recommendations to your driveway.",
+   "checklist_cards": [
+    {
+     "title": "Four door families",
+     "body": "Steel for value and color range, faux wood for looks without upkeep, real wood for the genuine article, and glass for modern light."
+    },
+    {
+     "title": "Insulation that matters",
+     "body": "Attached or heated garage? Prioritize R-value. Detached and unheated? Save the money. We will tell you which side you are on."
+    },
+    {
+     "title": "One crew, every collection",
+     "body": "We install and service every collection on this page. One free on-site quote covers measuring, options, and a straight recommendation."
+    }
+   ],
+   "faq": [
+    {
+     "q": "How do I choose between steel, faux wood, real wood, and glass?",
+     "a": "Start with budget and upkeep. Steel gives the most door per dollar. Faux wood Canyon Ridge doors give wood looks with zero staining. Real wood is the premium, authentic choice that asks for maintenance over its life. Aluminum and glass Avante doors are for modern homes that want light. We walk this decision at every quote."
+    },
+    {
+     "q": "Do you install every collection shown here?",
+     "a": "Yes. Our crew installs and services all 23 Clopay residential collections on this page, from the budget-friendly steel lines to fully custom handcrafted wood doors."
+    },
+    {
+     "q": "How much insulation do I actually need?",
+     "a": "If your garage is attached to the house or heated, insulation pays for itself in comfort, and doors range up to an R-value of 20.4. If it is detached and unheated, you can often skip it. We will give you a straight answer for your setup rather than upsell you."
+    },
+    {
+     "q": "Can I preview doors on a photo of my own house?",
+     "a": "Yes. Our Design Your Door page lets you upload a photo of your home and try collections, colors, and windows on your actual garage before you talk to anyone."
+    },
+    {
+     "q": "What do lead times look like?",
+     "a": "They vary by collection, options, and season, so we do not publish numbers that go stale. Ask for current lead times at your free on-site quote and we will tell you exactly what to expect for the door you want."
+    }
+   ],
+   "siblings": [
+    "clopay-modern-steel",
+    "clopay-canyon-ridge-carriage-house-5-layer",
+    "clopay-avante",
+    "clopay-reserve-wood-custom"
+   ],
+   "assertions": {
+    "must_contain": [
+     "Clopay",
+     "Collections"
+    ],
+    "must_not_contain": [
+     "608",
+     "859",
+     "[Insert",
+     "TBD",
+     "lorem",
+     "{{"
+    ]
+   }
+  }
+ ]
+}
