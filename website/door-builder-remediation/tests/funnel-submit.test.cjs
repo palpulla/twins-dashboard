@@ -138,6 +138,37 @@ test('bound funnel redirects and keeps its error hidden after confirmed success'
   assert.equal(fixture.error.hidden, true);
 });
 
+test('bound funnel accepts only one submission through confirmed success', async () => {
+  const fixture = boundForm();
+  const redirects = [];
+  let requests = 0;
+  let resolveResponse;
+  const pendingResponse = new Promise((resolve) => {
+    resolveResponse = resolve;
+  });
+  funnel.bindFunnel(fixture.form, {
+    fetchImpl: async () => {
+      requests += 1;
+      return pendingResponse;
+    },
+    endpoint: '/lead',
+    successUrl: '/door-builder/',
+    redirectImpl: (url) => redirects.push(url),
+    errorMessage: 'Call Twins.'
+  });
+
+  const first = fixture.submit();
+  const concurrent = fixture.submit();
+  const requestsWhilePending = requests;
+  resolveResponse(response(true, { ok: true }));
+  await Promise.all([first, concurrent]);
+  await fixture.submit();
+
+  assert.equal(requestsWhilePending, 1);
+  assert.equal(requests, 1);
+  assert.deepEqual(redirects, ['/door-builder/']);
+});
+
 test('bound funnel re-enables the button and shows fallback on failure', async () => {
   assert.equal(typeof funnel.bindFunnel, 'function');
   const fixture = boundForm();
@@ -154,4 +185,31 @@ test('bound funnel re-enables the button and shows fallback on failure', async (
   assert.equal(fixture.button.disabled, false);
   assert.equal(fixture.error.hidden, false);
   assert.equal(fixture.error.textContent, 'Call Twins at (833) 833-2010.');
+});
+
+test('bound funnel allows retry after a failed submission', async () => {
+  const fixture = boundForm();
+  const redirects = [];
+  let requests = 0;
+  funnel.bindFunnel(fixture.form, {
+    fetchImpl: async () => {
+      requests += 1;
+      return requests === 1
+        ? response(false, { ok: true })
+        : response(true, { ok: true });
+    },
+    endpoint: '/lead',
+    successUrl: '/door-builder/',
+    redirectImpl: (url) => redirects.push(url),
+    errorMessage: 'Call Twins at (833) 833-2010.'
+  });
+
+  await fixture.submit();
+  assert.equal(fixture.button.disabled, false);
+  assert.equal(fixture.error.hidden, false);
+
+  await fixture.submit();
+  assert.equal(requests, 2);
+  assert.deepEqual(redirects, ['/door-builder/']);
+  assert.equal(fixture.error.hidden, true);
 });

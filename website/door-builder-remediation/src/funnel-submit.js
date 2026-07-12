@@ -52,8 +52,11 @@
   }
 
   function bindFunnel(form, options) {
+    var locked = false;
     form.addEventListener('submit', async function (event) {
       event.preventDefault();
+      if (locked) return;
+      locked = true;
       var button = form.querySelector('button[type="submit"]');
       var error = form.querySelector('[data-door-builder-error]');
       var values = collectValues(form);
@@ -69,6 +72,7 @@
         }
       });
       if (!result.ok) {
+        locked = false;
         button.disabled = false;
         error.hidden = false;
         error.textContent = options.errorMessage;
