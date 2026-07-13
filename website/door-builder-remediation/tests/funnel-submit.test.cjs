@@ -36,6 +36,25 @@ test('redirects once only for 2xx plus ok true', async () => {
   assert.equal(output.redirects, 1);
 });
 
+test('keeps an accepted lead successful when navigation throws', async () => {
+  let requests = 0;
+  const result = await funnel.submitLead({
+    fetchImpl: async () => {
+      requests += 1;
+      return response(true, { ok: true });
+    },
+    endpoint: '/lead',
+    payload: { name: 'Accepted' },
+    redirect: () => { throw new Error('navigation unavailable'); }
+  });
+  assert.equal(requests, 1);
+  assert.deepEqual(result, {
+    ok: true,
+    navigationOk: false,
+    reason: 'redirect'
+  });
+});
+
 test('does not redirect for non-2xx', async () => {
   const output = await run(async () => response(false, { ok: true }));
   assert.equal(output.result.ok, false);
@@ -167,6 +186,28 @@ test('bound funnel accepts only one submission through confirmed success', async
   assert.equal(requestsWhilePending, 1);
   assert.equal(requests, 1);
   assert.deepEqual(redirects, ['/door-builder/']);
+});
+
+test('bound funnel remains accepted and locked when redirect throws', async () => {
+  const fixture = boundForm();
+  let requests = 0;
+  funnel.bindFunnel(fixture.form, {
+    fetchImpl: async () => {
+      requests += 1;
+      return response(true, { ok: true });
+    },
+    endpoint: '/lead',
+    successUrl: '/door-builder/',
+    redirectImpl: () => { throw new Error('navigation unavailable'); },
+    errorMessage: 'Call Twins.'
+  });
+
+  await fixture.submit();
+  await fixture.submit();
+
+  assert.equal(requests, 1);
+  assert.equal(fixture.button.disabled, true);
+  assert.equal(fixture.error.hidden, true);
 });
 
 test('bound funnel re-enables the button and shows fallback on failure', async () => {

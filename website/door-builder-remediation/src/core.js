@@ -59,6 +59,8 @@
         image: validateImageUrl(item && item[imageKey]),
         evidence: evidence
       };
+    }).filter(function (item) {
+      return Boolean(item.title);
     });
   }
 

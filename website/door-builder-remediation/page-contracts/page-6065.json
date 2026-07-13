@@ -9,6 +9,7 @@
     "visibleHeading": 1
   },
   "requiredHeading": "Design Your Gallery Steel Door",
+  "requiredSectionId": "design-your-door",
   "productDeepLink": "?product=12",
   "removalCandidate": {
     "elementorSectionId": "e26273a",

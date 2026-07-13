@@ -1825,6 +1825,7 @@ git commit -m "docs(web): define blocked door-builder page contracts"
 - Generate: website/door-builder-remediation/dist/twins-door-builder-wpcode.php
 - Generate: website/door-builder-remediation/dist/design-your-door-funnel.js
 - Generate: website/door-builder-remediation/dist/local-harness.html
+- Generate: website/door-builder-remediation/dist/verification-image.svg
 - Generate: website/door-builder-remediation/dist/artifact-manifest.json
 
 **Interfaces:**
@@ -2087,7 +2088,7 @@ writeOrCheck('artifact-manifest.json', stableJson({
 }));
 
 if (!process.exitCode) {
-  console.log(check ? 'generated artifacts match' : 'generated four artifacts');
+  console.log(check ? 'generated artifacts match' : 'generated five artifacts');
 }
 ~~~
 
@@ -2097,7 +2098,7 @@ if (!process.exitCode) {
 node website/door-builder-remediation/scripts/build.mjs
 ~~~
 
-Expected: four files written under dist and no network access.
+Expected after the final-review amendment: five files written under dist and no network access.
 
 - [ ] **Step 6: Run artifact and deterministic checks**
 
@@ -2149,7 +2150,7 @@ The README must include:
 node --test website/door-builder-remediation/tests/*.test.cjs
 ~~~
 
-Expected: 43 tests pass, 0 fail. If the actual count differs because a runner groups subtests, record the exact count in the handoff; 0 failures is mandatory.
+Expected after the final-review amendment: 81 tests pass, 0 fail, 0 skipped.
 
 - [ ] **Step 3: Verify deterministic output**
 
@@ -2173,7 +2174,7 @@ Expected: no output.
 Start:
 
 ~~~bash
-python3 -m http.server 8123 --directory website/door-builder-remediation/dist
+python3 -m http.server 8123 --bind 127.0.0.1 --directory website/door-builder-remediation/dist
 ~~~
 
 Use the browser-testing workflow against:
@@ -2191,11 +2192,11 @@ Verify at desktop and 390-pixel width:
 - product 8 skips directly from collection to summary because every option family is empty;
 - product 16 skips windows and glass;
 - product 291 skips color while retaining its available design, windows and glass steps;
-- reference hero is crisp and labeled as inspiration;
+- deterministic same-origin verification images load with `naturalWidth > 0`, while the reference hero remains labeled as inspiration;
 - panel reference remains at intrinsic width;
 - every .twxdb img satisfies rendered width <= naturalWidth + 1 pixel at desktop and 390-pixel width;
 - no builder render contains img[src=""], an img without src, or the literal src="null" when a fixture option has no valid image;
-- every displayed builder image has an https URL on www.clopaydoor.com;
+- every displayed builder image uses the local verification fixture and preserves its original HTTPS `www.clopaydoor.com` URL in `data-source-url`;
 - color/window/glass selections change samples and summary, not the reference-photo claim;
 - full path, no-window path and skip-to-quote path work;
 - leadFail=1 keeps the form and shows fallback;

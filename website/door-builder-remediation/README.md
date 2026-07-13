@@ -30,7 +30,8 @@ website/door-builder-remediation/
 │   ├── artifact-manifest.json
 │   ├── design-your-door-funnel.js
 │   ├── local-harness.html
-│   └── twins-door-builder-wpcode.php
+│   ├── twins-door-builder-wpcode.php
+│   └── verification-image.svg
 └── README.md
 ```
 
@@ -41,10 +42,10 @@ The build reads the frozen 23-product catalog snapshot at `docs/superpowers/back
 Run from the repository root.
 
 ```bash
-# Complete automated suite (currently 61 tests)
+# Complete automated suite (currently 81 tests)
 node --test website/door-builder-remediation/tests/*.test.cjs
 
-# Regenerate all four files in dist/
+# Regenerate all five files in dist/
 node website/door-builder-remediation/scripts/build.mjs
 
 # Prove committed generated files are byte-identical to fresh output
@@ -55,7 +56,7 @@ git diff --check
 git diff origin/main -- docs/superpowers/backups
 
 # Localhost-only preview; stop with Ctrl-C after verification
-python3 -m http.server 8123 --directory website/door-builder-remediation/dist
+python3 -m http.server 8123 --bind 127.0.0.1 --directory website/door-builder-remediation/dist
 ```
 
 Use these localhost-only cases:
@@ -69,7 +70,9 @@ http://localhost:8123/local-harness.html?product=12&leadFail=1
 http://localhost:8123/local-harness.html?twxdbfail=1
 ```
 
-The harness replaces catalog and lead requests with same-document frozen fixtures and local recording. Its Content Security Policy intentionally blocks external images and connections, so local verification covers honest labels, preserved HTTPS Clopay `src` attributes, intrinsic/container/component size caps, navigation, and local POST behavior—not fetched image pixels.
+The harness replaces catalog and lead requests with same-document frozen fixtures and local recording. It rewrites rendered images to the same-origin `verification-image.svg` before the browser can request the original, while preserving each original HTTPS Clopay URL in `data-source-url`. The repository-generated fixture is described and SHA-256-backed in `artifact-manifest.json`; it is local verification evidence, not a manufacturer photograph or production asset. The Content Security Policy permits only same-origin images and blocks external subresources, connections, and form actions. Browser checks require `naturalWidth > 0` plus intrinsic, container, and component caps at desktop and 390px.
+
+There are exactly five regular files in `dist/`. `build.mjs --check` rejects changed, missing, extra, or non-regular entries.
 
 ## Source and generated artifacts
 
@@ -82,7 +85,8 @@ The harness replaces catalog and lead requests with same-document frozen fixture
 | `dist/twins-door-builder-wpcode.php` | generated candidate | Inactive shortcode candidate assembled from the template and source modules. |
 | `dist/design-your-door-funnel.js` | generated candidate | Inactive page-7073 lead-gate candidate using the current endpoint payload and success-only behavior. |
 | `dist/local-harness.html` | generated verification artifact | Network-closed localhost harness with all 23 frozen catalog fixtures and a local-only lead recorder. Never a production page. |
-| `dist/artifact-manifest.json` | generated integrity record | Stable SHA-256 records for the other three generated files. |
+| `dist/verification-image.svg` | generated verification fixture | Deterministic 960×540 same-origin placeholder used only to prove image loading and responsive intrinsic-size caps without external traffic. |
+| `dist/artifact-manifest.json` | generated integrity record | Stable SHA-256 records for the other four generated files plus local-fixture provenance and dimensions. |
 
 Do not hand-edit `dist/`. Edit source, regenerate, and run the deterministic check.
 

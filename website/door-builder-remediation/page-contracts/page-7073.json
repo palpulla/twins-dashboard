@@ -7,6 +7,19 @@
   "supportingCopy": "Manufacturer photos and samples help you compare choices. Twins will confirm the exact appearance before ordering.",
   "successRedirect": "/door-builder/",
   "requiredErrorSelector": "[data-door-builder-error]",
+  "requiredDomBindings": {
+    "formSelector": ".twx-db",
+    "fieldSelectors": {
+      "name": "[name=\"name\"],#twx-n",
+      "phone": "[name=\"phone\"],#twx-p",
+      "email": "[name=\"email\"],#twx-e",
+      "zip": "[name=\"zip\"],#twx-z",
+      "website": "[name=\"website\"],#twx-w"
+    },
+    "regionAttribute": "data-region",
+    "submitButtonSelector": "button[type=\"submit\"]",
+    "errorSelector": "[data-door-builder-error]"
+  },
   "requiredCounts": {
     "formSubmissionHandler": 1
   },

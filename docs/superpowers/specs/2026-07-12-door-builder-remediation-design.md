@@ -80,6 +80,7 @@ website/door-builder-remediation/
     twins-door-builder-wpcode.php
     design-your-door-funnel.js
     local-harness.html
+    verification-image.svg
     artifact-manifest.json
 ```
 
@@ -210,7 +211,7 @@ Successful submission redirects to `/door-builder/`. Any failure stays on the pa
 - Invalid or unapproved image URLs are omitted.
 - A manifest mismatch degrades to `reference-photo`, `panel-style`, or `swatch-only`; it never upgrades to `exact-render`.
 - Lead failures never redirect and never show a success state.
-- The local harness blocks calls to the real lead endpoint and records submissions in memory.
+- The local harness blocks calls to the real lead endpoint, records submissions in memory, rewrites rendered images to a deterministic same-origin verification fixture, and preserves original manufacturer URLs as source metadata.
 - Build output is deterministic; `build.mjs --check` fails when committed `dist/` differs from generated output.
 
 ## Testing strategy
@@ -241,7 +242,7 @@ Testing uses Node's built-in `node:test` runner and no third-party dependencies.
 - The generated CSS contains the no-upscale image contract.
 - The app contains no real endpoint call in `local-harness.html`.
 - Generated copy contains none of the forbidden visualization promises.
-- A second build produces byte-identical files and matching SHA-256 records.
+- A second build produces byte-identical files, the exact five-regular-file `dist/` set, and matching SHA-256 records. `--check` rejects extra or non-regular entries.
 
 ### Page-contract tests
 
@@ -252,14 +253,14 @@ Testing uses Node's built-in `node:test` runner and no third-party dependencies.
 
 ### Local browser verification
 
-After automated tests pass, the generated harness is exercised at desktop and 390-pixel widths. Verification covers the full option path, no-window path, skip-to-quote path, API-failure fallback, non-2xx lead failure, and `?product=12` deep link. No test submits to the real endpoint.
+After automated tests pass, the generated harness is exercised at desktop and 390-pixel widths. Verification covers the full option path, no-window path, skip-to-quote path, API-failure fallback, non-2xx lead failure, and `?product=12` deep link. The hash-backed same-origin fixture must load with `naturalWidth > 0`; rendered images must preserve original Clopay source metadata and remain within intrinsic, container, and component caps. CSP allows same-origin verification images while blocking external subresources, connections, and form actions. No test submits to the real endpoint.
 
 ## Build and verification commands
 
 ```bash
 node --test website/door-builder-remediation/tests/*.test.cjs
 node website/door-builder-remediation/scripts/build.mjs --check
-python3 -m http.server 8123 --directory website/door-builder-remediation/dist
+python3 -m http.server 8123 --bind 127.0.0.1 --directory website/door-builder-remediation/dist
 ```
 
 The HTTP server is used only for local browser verification and is stopped afterward.

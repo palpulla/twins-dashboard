@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-labelledby="title description">
+<title id="title">Local door-builder verification fixture</title>
+<desc id="description">Repository-generated placeholder used only to verify local image loading and responsive intrinsic-size caps.</desc>
+<rect width="960" height="540" fill="#f2f5f7"/>
+<rect x="90" y="70" width="780" height="400" rx="18" fill="#ffffff" stroke="#022751" stroke-width="12"/>
+<path d="M110 180h740M110 290h740M110 400h740" stroke="#022751" stroke-width="8"/>
+<path d="M285 80v380M480 80v380M675 80v380" stroke="#022751" stroke-width="6" opacity=".45"/>
+<rect x="345" y="18" width="270" height="58" rx="29" fill="#fbbd04"/>
+<text x="480" y="54" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#022751">LOCAL VERIFICATION FIXTURE</text>
+<text x="480" y="515" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" fill="#022751">Generated offline • not a product photograph • never used in production</text>
+</svg>

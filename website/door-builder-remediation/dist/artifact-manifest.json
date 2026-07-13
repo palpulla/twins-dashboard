@@ -3,15 +3,31 @@
   "artifacts": [
     {
       "path": "design-your-door-funnel.js",
-      "sha256": "6246adc34bcaf94993526dacdfdf31fa9d6e36749a282e5af8c6fd168c44fb33"
+      "sha256": "fd01a866f3285a4ff89bc6309c9edea0d7c9102e877204451f99cfdd49e39f26"
     },
     {
       "path": "local-harness.html",
-      "sha256": "f5e7c78876de770a54cd97de78c578cf2f44183ce66958166042a740440b4124"
+      "sha256": "819cc9fd0e240e6391811940081326bc49b67004319afbf5bdae36c80a7ad9e5"
     },
     {
       "path": "twins-door-builder-wpcode.php",
-      "sha256": "e4e5f726ffc91dfdbb501c56d6a1d28bbe1e25ada8d103eb6af3ab3b7eca4f4b"
+      "sha256": "4eb0912567cd15163f58a8e236af65cc6d6b181128d32886e95d1e559bf0fc09"
+    },
+    {
+      "path": "verification-image.svg",
+      "sha256": "ee893c20e14b7af71010450413e5730c2dfe1d654a19f4fe064c3890029e4a33"
+    }
+  ],
+  "verificationFixtures": [
+    {
+      "path": "verification-image.svg",
+      "sha256": "ee893c20e14b7af71010450413e5730c2dfe1d654a19f4fe064c3890029e4a33",
+      "mediaType": "image/svg+xml",
+      "width": 960,
+      "height": 540,
+      "provenance": "repository-generated deterministic local verification fixture",
+      "purpose": "Local-only image loading and intrinsic-size verification without external traffic.",
+      "productionUse": false
     }
   ]
 }

@@ -26,6 +26,7 @@ test('6065 requires one section, mount and visible heading', () => {
     visibleHeading: 1
   });
   assert.equal(contract.requiredHeading, 'Design Your Gallery Steel Door');
+  assert.equal(contract.requiredSectionId, 'design-your-door');
   assert.equal(contract.productDeepLink, '?product=12');
   assert.deepEqual(contract.removalCandidate, {
     elementorSectionId: 'e26273a',
@@ -49,6 +50,19 @@ test('7073 uses approved truthful copy and success-only redirect', () => {
   );
   assert.equal(contract.successRedirect, '/door-builder/');
   assert.equal(contract.requiredErrorSelector, '[data-door-builder-error]');
+  assert.deepEqual(contract.requiredDomBindings, {
+    formSelector: '.twx-db',
+    fieldSelectors: {
+      name: '[name="name"],#twx-n',
+      phone: '[name="phone"],#twx-p',
+      email: '[name="email"],#twx-e',
+      zip: '[name="zip"],#twx-z',
+      website: '[name="website"],#twx-w'
+    },
+    regionAttribute: 'data-region',
+    submitButtonSelector: 'button[type="submit"]',
+    errorSelector: '[data-door-builder-error]'
+  });
   assert.deepEqual(contract.requiredCounts, {
     formSubmissionHandler: 1
   });

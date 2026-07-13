@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const childProcess = require('node:child_process');
+const crypto = require('node:crypto');
 const vm = require('node:vm');
 const { pathToFileURL } = require('node:url');
 
@@ -138,6 +139,37 @@ test('committed dist matches deterministic generation', () => {
   assert.equal(result.status, 0, result.stdout + result.stderr);
 });
 
+test('deterministic check rejects an extra stale regular dist entry', () => {
+  const script = path.resolve(__dirname, '..', 'scripts', 'build.mjs');
+  const stale = path.resolve(__dirname, '..', 'dist', 'stale-generated-entry.txt');
+  fs.writeFileSync(stale, 'stale\n', 'utf8');
+  try {
+    const result = childProcess.spawnSync(process.execPath, [script, '--check'], { encoding: 'utf8' });
+    assert.notEqual(result.status, 0, result.stdout + result.stderr);
+    assert.match(result.stdout + result.stderr, /unexpected generated entry: stale-generated-entry\.txt/);
+  } finally {
+    fs.unlinkSync(stale);
+  }
+});
+
+test('dist entry validation requires the exact expected regular-file set', async () => {
+  const { validateDistEntries } = await buildModule();
+  const regular = (name) => ({ name, isFile: () => true });
+  const nonRegular = (name) => ({ name, isFile: () => false });
+  assert.deepEqual(validateDistEntries(
+    [regular('expected.txt'), nonRegular('stale-directory')],
+    ['expected.txt']
+  ), ['unexpected generated entry: stale-directory']);
+  assert.deepEqual(validateDistEntries(
+    [nonRegular('expected.txt')],
+    ['expected.txt']
+  ), ['generated artifact is not a regular file: expected.txt']);
+  assert.deepEqual(validateDistEntries(
+    [regular('expected.txt')],
+    ['expected.txt']
+  ), []);
+});
+
 test('generated funnel candidate boots and configures the current lead form', () => {
   const candidate = read('dist/design-your-door-funnel.js');
   assert.match(candidate, /querySelector\(\"\.twx-db\"\)/);
@@ -145,6 +177,79 @@ test('generated funnel candidate boots and configures the current lead form', ()
   assert.match(candidate, /twinsgaragedoors\.com\/wp-json\/twins\/v1\/door-builder/);
   assert.match(candidate, /successUrl:\"\/door-builder\/\"/);
   assert.match(candidate, /\(833\) 833-2010/);
+});
+
+test('page 7073 contract drives matching source and generated funnel DOM bindings', async () => {
+  const contract = JSON.parse(read('page-contracts/page-7073.json'));
+  const source = require('../src/funnel-submit.js');
+  assert.deepEqual(source.DOM_BINDINGS, contract.requiredDomBindings);
+
+  async function exerciseBindings(api) {
+    const bindings = contract.requiredDomBindings;
+    const values = Object.fromEntries(Object.entries(bindings.fieldSelectors).map(([name, selector]) => (
+      [selector, { value: name === 'website' ? '' : name }]
+    )));
+    const button = { disabled: false };
+    const error = { hidden: true, textContent: '' };
+    const selectors = [];
+    const attributes = [];
+    let submitHandler;
+    const form = {
+      addEventListener(type, handler) {
+        if (type === 'submit') submitHandler = handler;
+      },
+      querySelector(selector) {
+        selectors.push(selector);
+        if (selector === bindings.submitButtonSelector) return button;
+        if (selector === bindings.errorSelector) return error;
+        return values[selector] || null;
+      },
+      getAttribute(name) {
+        attributes.push(name);
+        return name === bindings.regionAttribute ? 'main' : null;
+      }
+    };
+    api.bindFunnel(form, {
+      fetchImpl: async () => ({ ok: true, json: async () => ({ ok: true }) }),
+      endpoint: '/lead',
+      successUrl: '/door-builder/',
+      redirectImpl() {},
+      errorMessage: 'Call Twins.'
+    });
+    await submitHandler({ preventDefault() {} });
+    assert.deepEqual(new Set(selectors), new Set([
+      bindings.submitButtonSelector,
+      bindings.errorSelector,
+      ...Object.values(bindings.fieldSelectors)
+    ]));
+    assert.deepEqual(attributes, [bindings.regionAttribute]);
+  }
+
+  await exerciseBindings(source);
+
+  const candidate = read('dist/design-your-door-funnel.js');
+  const queried = [];
+  const context = {
+    document: {
+      readyState: 'complete',
+      querySelector(selector) {
+        queried.push(selector);
+        return null;
+      },
+      addEventListener() {},
+      createElement() { throw new Error('form is absent'); }
+    },
+    fetch: async () => { throw new Error('not called'); },
+    location: { assign() {} }
+  };
+  context.globalThis = context;
+  vm.runInNewContext(candidate, context);
+  assert.equal(queried[0], contract.requiredDomBindings.formSelector);
+  assert.equal(
+    JSON.stringify(context.TwinsDoorBuilderFunnel.DOM_BINDINGS),
+    JSON.stringify(contract.requiredDomBindings)
+  );
+  await exerciseBindings(context.TwinsDoorBuilderFunnel);
 });
 
 test('fixture validator requires exactly 23 catalog entries', async () => {
@@ -189,14 +294,48 @@ test('fixture validator rejects filename and body ProductId mismatch', async () 
   );
 });
 
-test('local harness CSP blocks every network-capable subresource', () => {
+test('local harness CSP permits only same-origin images and blocks external traffic', () => {
   const harness = read('dist/local-harness.html');
   assert.match(
     harness,
-    /<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'none'; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'">/
+    /<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self'; frame-src 'self'; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'">/
   );
-  assert.match(harness, /Offline visual verification inspects honest labels, preserved source URL attributes and CSS/);
+  assert.match(harness, /<link rel="icon" href="\.\/verification-image\.svg" type="image\/svg\+xml">/);
+  assert.match(harness, /TwinsDoorBuilderVerificationImage/);
+  assert.match(harness, /data-source-url/);
+  assert.match(harness, /repository-generated deterministic local verification fixture/);
   assert.match(harness, /https:\/\/www\.clopaydoor\.com\/images\//);
+});
+
+test('generated verification image is deterministic, hash-backed and provenance-described', () => {
+  const image = fs.readFileSync(path.resolve(__dirname, '..', 'dist', 'verification-image.svg'));
+  const manifest = JSON.parse(read('dist/artifact-manifest.json'));
+  const artifact = manifest.artifacts.find((entry) => entry.path === 'verification-image.svg');
+  const fixture = manifest.verificationFixtures.find((entry) => entry.path === 'verification-image.svg');
+  assert.match(image.toString('utf8'), /^<svg[^>]+width="960"[^>]+height="540"/);
+  assert.equal(artifact.sha256, crypto.createHash('sha256').update(image).digest('hex'));
+  assert.equal(fixture.sha256, artifact.sha256);
+  assert.equal(fixture.provenance, 'repository-generated deterministic local verification fixture');
+  assert.equal(fixture.productionUse, false);
+});
+
+test('production candidates do not enable the local verification fixture', () => {
+  const wpcode = read('dist/twins-door-builder-wpcode.php');
+  const funnel = read('dist/design-your-door-funnel.js');
+  assert.doesNotMatch(wpcode, /window\.TwinsDoorBuilderVerificationImage\s*=/);
+  assert.doesNotMatch(wpcode, /verification-image\.svg/);
+  assert.doesNotMatch(funnel, /verification-image\.svg|data-source-url/);
+});
+
+test('README binds the preview server to loopback and documents image-enabled verification', () => {
+  const readme = read('README.md');
+  assert.match(
+    readme,
+    /python3 -m http\.server 8123 --bind 127\.0\.0\.1 --directory website\/door-builder-remediation\/dist/
+  );
+  assert.match(readme, /verification-image\.svg/);
+  assert.match(readme, /naturalWidth > 0/);
+  assert.match(readme, /five regular files in `dist\/`/);
 });
 
 test('local harness accepts only exact frozen GET routes', async () => {

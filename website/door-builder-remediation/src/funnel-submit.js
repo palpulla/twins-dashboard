@@ -8,46 +8,65 @@
 }(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
 
+  var DOM_BINDINGS = {
+    formSelector: '.twx-db',
+    fieldSelectors: {
+      name: '[name="name"],#twx-n',
+      phone: '[name="phone"],#twx-p',
+      email: '[name="email"],#twx-e',
+      zip: '[name="zip"],#twx-z',
+      website: '[name="website"],#twx-w'
+    },
+    regionAttribute: 'data-region',
+    submitButtonSelector: 'button[type="submit"]',
+    errorSelector: '[data-door-builder-error]'
+  };
+
   async function submitLead(options) {
+    var response;
     try {
-      var response = await options.fetchImpl(options.endpoint, {
+      response = await options.fetchImpl(options.endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(options.payload)
       });
-      if (!response || !response.ok) {
-        return { ok: false, reason: 'http' };
-      }
-      var body;
-      try {
-        body = await response.json();
-      } catch (_error) {
-        return { ok: false, reason: 'json' };
-      }
-      if (!body || body.ok !== true) {
-        return { ok: false, reason: 'body' };
-      }
-      if (typeof options.redirect === 'function') {
-        options.redirect();
-      }
-      return { ok: true };
     } catch (_error) {
       return { ok: false, reason: 'network' };
     }
+    if (!response || !response.ok) {
+      return { ok: false, reason: 'http' };
+    }
+    var body;
+    try {
+      body = await response.json();
+    } catch (_error) {
+      return { ok: false, reason: 'json' };
+    }
+    if (!body || body.ok !== true) {
+      return { ok: false, reason: 'body' };
+    }
+    if (typeof options.redirect === 'function') {
+      try {
+        options.redirect();
+      } catch (_error) {
+        return { ok: true, navigationOk: false, reason: 'redirect' };
+      }
+    }
+    return { ok: true, navigationOk: true };
   }
 
   function collectValues(form) {
-    function value(name, id) {
-      var element = form.querySelector('[name="' + name + '"],#' + id);
+    function value(name) {
+      var element = form.querySelector(DOM_BINDINGS.fieldSelectors[name]);
       return element ? String(element.value || '').trim() : '';
     }
     return {
-      name: value('name', 'twx-n'),
-      phone: value('phone', 'twx-p'),
-      email: value('email', 'twx-e'),
-      zip: value('zip', 'twx-z'),
-      region: form.getAttribute('data-region') || 'main',
-      website: value('website', 'twx-w')
+      name: value('name'),
+      phone: value('phone'),
+      email: value('email'),
+      zip: value('zip'),
+      region: form.getAttribute(DOM_BINDINGS.regionAttribute) || 'main',
+      website: value('website')
     };
   }
 
@@ -57,8 +76,8 @@
       event.preventDefault();
       if (locked) return;
       locked = true;
-      var button = form.querySelector('button[type="submit"]');
-      var error = form.querySelector('[data-door-builder-error]');
+      var button = form.querySelector(DOM_BINDINGS.submitButtonSelector);
+      var error = form.querySelector(DOM_BINDINGS.errorSelector);
       var values = collectValues(form);
       button.disabled = true;
       error.hidden = true;
@@ -81,6 +100,7 @@
   }
 
   return {
+    DOM_BINDINGS: DOM_BINDINGS,
     submitLead: submitLead,
     collectValues: collectValues,
     bindFunnel: bindFunnel

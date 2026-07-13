@@ -70,6 +70,50 @@ test('preserves word boundaries in the frozen Classic Steel design names', () =>
   ]);
 });
 
+for (const family of [
+  { property: 'ProductDesigns', output: 'designs', imageKey: 'ProductImage' },
+  { property: 'Colors', output: 'colors', imageKey: 'ProductImage' },
+  { property: 'TopSections', output: 'windows', imageKey: 'ThumbnailImage' },
+  { property: 'SpecialityGlassOptions', output: 'glass', imageKey: 'Image' }
+]) {
+  test('filters malformed and titleless ' + family.output + ' options', () => {
+    const raw = { ProductId: '999', Title: 'Synthetic' };
+    raw[family.property] = [
+      null,
+      {},
+      { Title: '' },
+      { Title: ' <br><sup></sup> ' },
+      { Title: 'Usable option', [family.imageKey]: 'https://www.clopaydoor.com/images/usable.webp' }
+    ];
+    const product = core.normalizeProduct(raw);
+    assert.deepEqual(product[family.output].map((item) => item.title), ['Usable option']);
+  });
+}
+
+test('preserves valid solid and non-solid window navigation after malformed options are removed', () => {
+  const product = core.normalizeProduct({
+    ProductId: '999',
+    Title: 'Synthetic',
+    ProductDesigns: [null, { Title: 'Valid design' }],
+    Colors: [{ Title: '' }, { Title: 'Valid color' }],
+    TopSections: [
+      null,
+      { Title: '<br>' },
+      { Title: 'Short Solid', GroupName: 'Solid' },
+      { Title: 'ARCH3 Plain', GroupName: 'Decorative' }
+    ],
+    SpecialityGlassOptions: [{}, { Title: 'Seeded' }]
+  });
+  const solid = product.windows.find((item) => item.title === 'Short Solid');
+  const nonSolid = product.windows.find((item) => item.title === 'ARCH3 Plain');
+  assert.deepEqual(core.availableSteps(product, { window: solid }), [
+    'collection', 'design', 'color', 'windows', 'summary'
+  ]);
+  assert.deepEqual(core.availableSteps(product, { window: nonSolid }), [
+    'collection', 'design', 'color', 'windows', 'glass', 'summary'
+  ]);
+});
+
 test('sanitizes display labels and strips all lead-payload markup', () => {
   assert.equal(typeof core.sanitizeDisplay, 'function');
   assert.equal(

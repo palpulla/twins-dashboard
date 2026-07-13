@@ -26,10 +26,16 @@
 
   function imageHTML(image, alt, className, loading) {
     if (!image) return '';
-    return '<img src="' + esc(image) + '" alt="' + esc(alt || '') + '"'
+    var verification = root && root.TwinsDoorBuilderVerificationImage;
+    var renderedImage = verification && verification.path ? verification.path : image;
+    var sourceAttributes = verification && verification.path
+      ? ' data-source-url="' + esc(image) + '" data-verification-provenance="'
+        + esc(verification.provenance || '') + '"'
+      : '';
+    return '<img src="' + esc(renderedImage) + '" alt="' + esc(alt || '') + '"'
       + (className ? ' class="' + esc(className) + '"' : '')
       + (loading ? ' loading="' + esc(loading) + '"' : '')
-      + ' data-no-lazy="1">';
+      + sourceAttributes + ' data-no-lazy="1">';
   }
 
   function createController(dependencies) {
@@ -46,8 +52,15 @@
       window: null,
       glass: null,
       skipped: {},
-      history: []
+      history: [],
+      submissionStatus: 'idle'
     };
+    var submissionPromise = null;
+    var acceptedResult = null;
+
+    function submissionLocked() {
+      return state.submissionStatus === 'pending' || state.submissionStatus === 'accepted';
+    }
 
     function loadCached(key, url) {
       var cached = cache.get(key);
@@ -69,6 +82,7 @@
     }
 
     async function selectProduct(id) {
+      if (submissionLocked()) return state;
       clearProduct();
       var listed = state.products.some(function (item) { return item.id === id; });
       if (!listed) {
@@ -108,7 +122,7 @@
     }
 
     function choose(kind, index) {
-      if (!state.product) return state;
+      if (!state.product || submissionLocked()) return state;
       var sourceName = {
         design: 'designs',
         color: 'colors',
@@ -135,26 +149,44 @@
     }
 
     function back() {
+      if (submissionLocked()) return state;
       if (state.history.length) state.step = state.history.pop();
       return state;
     }
 
     function skipToQuote() {
+      if (submissionLocked()) return state;
       if (state.step !== 'summary') state.history.push(state.step);
       state.step = 'summary';
       return state;
     }
 
     function submit(formValues) {
+      if (state.submissionStatus === 'pending') return submissionPromise;
+      if (state.submissionStatus === 'accepted') return Promise.resolve(acceptedResult);
       var payload = core.buildLeadPayload(formValues, state, dependencies.region);
-      return funnel.submitLead({
+      state.submissionStatus = 'pending';
+      var request = funnel.submitLead({
         fetchImpl: dependencies.fetchImpl,
         endpoint: dependencies.endpoint,
         payload: payload
-      }).then(function (result) {
-        if (result.ok) state.step = 'thanks';
-        return result;
       });
+      submissionPromise = request.then(function (result) {
+        if (result.ok) {
+          state.submissionStatus = 'accepted';
+          acceptedResult = result;
+          state.step = 'thanks';
+        } else {
+          state.submissionStatus = 'idle';
+          submissionPromise = null;
+        }
+        return result;
+      }).catch(function (error) {
+        state.submissionStatus = 'idle';
+        submissionPromise = null;
+        throw error;
+      });
+      return submissionPromise;
     }
 
     return {
@@ -231,12 +263,17 @@
       mount.innerHTML = dependencyFallbackHTML();
       return false;
     }
-    mountedRoot = mount;
-
-    var storage = windowRef.sessionStorage || {
+    var storage;
+    try {
+      storage = windowRef.sessionStorage;
+    } catch (_error) {
+      storage = null;
+    }
+    storage = storage || {
       getItem: function () { return null; },
       setItem: function () {}
     };
+    mountedRoot = mount;
     var search = windowRef.location ? windowRef.location.search : '';
     var forceFail = /[?&]twxdbfail=1/.test(search);
     var fetchImpl = function (url, options) {

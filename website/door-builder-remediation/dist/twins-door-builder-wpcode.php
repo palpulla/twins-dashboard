@@ -134,6 +134,8 @@ textarea.twxdb-in{min-height:84px;resize:vertical}
         image: validateImageUrl(item && item[imageKey]),
         evidence: evidence
       };
+    }).filter(function (item) {
+      return Boolean(item.title);
     });
   }
 
@@ -380,46 +382,65 @@ textarea.twxdb-in{min-height:84px;resize:vertical}
 }(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
 
+  var DOM_BINDINGS = {
+    formSelector: '.twx-db',
+    fieldSelectors: {
+      name: '[name="name"],#twx-n',
+      phone: '[name="phone"],#twx-p',
+      email: '[name="email"],#twx-e',
+      zip: '[name="zip"],#twx-z',
+      website: '[name="website"],#twx-w'
+    },
+    regionAttribute: 'data-region',
+    submitButtonSelector: 'button[type="submit"]',
+    errorSelector: '[data-door-builder-error]'
+  };
+
   async function submitLead(options) {
+    var response;
     try {
-      var response = await options.fetchImpl(options.endpoint, {
+      response = await options.fetchImpl(options.endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(options.payload)
       });
-      if (!response || !response.ok) {
-        return { ok: false, reason: 'http' };
-      }
-      var body;
-      try {
-        body = await response.json();
-      } catch (_error) {
-        return { ok: false, reason: 'json' };
-      }
-      if (!body || body.ok !== true) {
-        return { ok: false, reason: 'body' };
-      }
-      if (typeof options.redirect === 'function') {
-        options.redirect();
-      }
-      return { ok: true };
     } catch (_error) {
       return { ok: false, reason: 'network' };
     }
+    if (!response || !response.ok) {
+      return { ok: false, reason: 'http' };
+    }
+    var body;
+    try {
+      body = await response.json();
+    } catch (_error) {
+      return { ok: false, reason: 'json' };
+    }
+    if (!body || body.ok !== true) {
+      return { ok: false, reason: 'body' };
+    }
+    if (typeof options.redirect === 'function') {
+      try {
+        options.redirect();
+      } catch (_error) {
+        return { ok: true, navigationOk: false, reason: 'redirect' };
+      }
+    }
+    return { ok: true, navigationOk: true };
   }
 
   function collectValues(form) {
-    function value(name, id) {
-      var element = form.querySelector('[name="' + name + '"],#' + id);
+    function value(name) {
+      var element = form.querySelector(DOM_BINDINGS.fieldSelectors[name]);
       return element ? String(element.value || '').trim() : '';
     }
     return {
-      name: value('name', 'twx-n'),
-      phone: value('phone', 'twx-p'),
-      email: value('email', 'twx-e'),
-      zip: value('zip', 'twx-z'),
-      region: form.getAttribute('data-region') || 'main',
-      website: value('website', 'twx-w')
+      name: value('name'),
+      phone: value('phone'),
+      email: value('email'),
+      zip: value('zip'),
+      region: form.getAttribute(DOM_BINDINGS.regionAttribute) || 'main',
+      website: value('website')
     };
   }
 
@@ -429,8 +450,8 @@ textarea.twxdb-in{min-height:84px;resize:vertical}
       event.preventDefault();
       if (locked) return;
       locked = true;
-      var button = form.querySelector('button[type="submit"]');
-      var error = form.querySelector('[data-door-builder-error]');
+      var button = form.querySelector(DOM_BINDINGS.submitButtonSelector);
+      var error = form.querySelector(DOM_BINDINGS.errorSelector);
       var values = collectValues(form);
       button.disabled = true;
       error.hidden = true;
@@ -453,6 +474,7 @@ textarea.twxdb-in{min-height:84px;resize:vertical}
   }
 
   return {
+    DOM_BINDINGS: DOM_BINDINGS,
     submitLead: submitLead,
     collectValues: collectValues,
     bindFunnel: bindFunnel
@@ -487,10 +509,16 @@ textarea.twxdb-in{min-height:84px;resize:vertical}
 
   function imageHTML(image, alt, className, loading) {
     if (!image) return '';
-    return '<img src="' + esc(image) + '" alt="' + esc(alt || '') + '"'
+    var verification = root && root.TwinsDoorBuilderVerificationImage;
+    var renderedImage = verification && verification.path ? verification.path : image;
+    var sourceAttributes = verification && verification.path
+      ? ' data-source-url="' + esc(image) + '" data-verification-provenance="'
+        + esc(verification.provenance || '') + '"'
+      : '';
+    return '<img src="' + esc(renderedImage) + '" alt="' + esc(alt || '') + '"'
       + (className ? ' class="' + esc(className) + '"' : '')
       + (loading ? ' loading="' + esc(loading) + '"' : '')
-      + ' data-no-lazy="1">';
+      + sourceAttributes + ' data-no-lazy="1">';
   }
 
   function createController(dependencies) {
@@ -507,8 +535,15 @@ textarea.twxdb-in{min-height:84px;resize:vertical}
       window: null,
       glass: null,
       skipped: {},
-      history: []
+      history: [],
+      submissionStatus: 'idle'
     };
+    var submissionPromise = null;
+    var acceptedResult = null;
+
+    function submissionLocked() {
+      return state.submissionStatus === 'pending' || state.submissionStatus === 'accepted';
+    }
 
     function loadCached(key, url) {
       var cached = cache.get(key);
@@ -530,6 +565,7 @@ textarea.twxdb-in{min-height:84px;resize:vertical}
     }
 
     async function selectProduct(id) {
+      if (submissionLocked()) return state;
       clearProduct();
       var listed = state.products.some(function (item) { return item.id === id; });
       if (!listed) {
@@ -569,7 +605,7 @@ textarea.twxdb-in{min-height:84px;resize:vertical}
     }
 
     function choose(kind, index) {
-      if (!state.product) return state;
+      if (!state.product || submissionLocked()) return state;
       var sourceName = {
         design: 'designs',
         color: 'colors',
@@ -596,26 +632,44 @@ textarea.twxdb-in{min-height:84px;resize:vertical}
     }
 
     function back() {
+      if (submissionLocked()) return state;
       if (state.history.length) state.step = state.history.pop();
       return state;
     }
 
     function skipToQuote() {
+      if (submissionLocked()) return state;
       if (state.step !== 'summary') state.history.push(state.step);
       state.step = 'summary';
       return state;
     }
 
     function submit(formValues) {
+      if (state.submissionStatus === 'pending') return submissionPromise;
+      if (state.submissionStatus === 'accepted') return Promise.resolve(acceptedResult);
       var payload = core.buildLeadPayload(formValues, state, dependencies.region);
-      return funnel.submitLead({
+      state.submissionStatus = 'pending';
+      var request = funnel.submitLead({
         fetchImpl: dependencies.fetchImpl,
         endpoint: dependencies.endpoint,
         payload: payload
-      }).then(function (result) {
-        if (result.ok) state.step = 'thanks';
-        return result;
       });
+      submissionPromise = request.then(function (result) {
+        if (result.ok) {
+          state.submissionStatus = 'accepted';
+          acceptedResult = result;
+          state.step = 'thanks';
+        } else {
+          state.submissionStatus = 'idle';
+          submissionPromise = null;
+        }
+        return result;
+      }).catch(function (error) {
+        state.submissionStatus = 'idle';
+        submissionPromise = null;
+        throw error;
+      });
+      return submissionPromise;
     }
 
     return {
@@ -692,12 +746,17 @@ textarea.twxdb-in{min-height:84px;resize:vertical}
       mount.innerHTML = dependencyFallbackHTML();
       return false;
     }
-    mountedRoot = mount;
-
-    var storage = windowRef.sessionStorage || {
+    var storage;
+    try {
+      storage = windowRef.sessionStorage;
+    } catch (_error) {
+      storage = null;
+    }
+    storage = storage || {
       getItem: function () { return null; },
       setItem: function () {}
     };
+    mountedRoot = mount;
     var search = windowRef.location ? windowRef.location.search : '';
     var forceFail = /[?&]twxdbfail=1/.test(search);
     var fetchImpl = function (url, options) {
