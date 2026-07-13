@@ -7,6 +7,7 @@ const path = require('node:path');
 const ROOT = path.resolve(__dirname, '..');
 const PLUGIN_PATH = path.join(ROOT, 'mu-plugins', 'twins-staging-safety.php');
 const README_PATH = path.join(ROOT, 'README.md');
+const TWX_V2_CSS_PATH = path.join(ROOT, 'mu-plugins', 'twins-staging-assets', 'twx-v2-kit.css');
 const HARNESS_PATH = path.join(__dirname, 'wordpress-harness.php');
 const EXPECTED_CSP_DIRECTIVES = [
   "default-src 'self'",
@@ -154,6 +155,45 @@ test('STAGING is visibly labelled in WordPress admin and on the public frontend'
   assert.match(admin, /STAGING/);
   assert.match(frontend, /STAGING/);
   assert.match(frontend, /position:\s*fixed/);
+});
+
+test('Claude twx v2 visual layer is restored locally without enabling integrations', () => {
+  const source = read(PLUGIN_PATH);
+  const css = read(TWX_V2_CSS_PATH);
+  assert.ok(css, 'the local-only twx v2 stylesheet is missing');
+
+  assert.match(source, /add_action\(\s*'wp_enqueue_scripts'\s*,\s*'twins_staging_safety_enqueue_visual_preview_styles'\s*,\s*PHP_INT_MAX\s*\)/);
+  const enqueue = functionBody(source, 'twins_staging_safety_enqueue_visual_preview_styles');
+  assert.match(enqueue, /plugins_url\(\s*'twins-staging-assets\/twx-v2-kit\.css'\s*,\s*__FILE__\s*\)/);
+  assert.match(enqueue, /wp_enqueue_style\(\s*'twins-staging-twx-v2'/);
+
+  for (const selector of [
+    '.twx2-hero',
+    '.twx2-pair',
+    '.twx2-btn--gold',
+    '.twx2-ribbon',
+    '.twx2-card',
+    '.twx2-steps',
+    '.twx2-closer',
+    '.twx2-grid',
+    '#twx2-stickybar'
+  ]) {
+    assert.ok(css.includes(selector), `${selector} is missing from the visual kit`);
+  }
+  assert.doesNotMatch(css, /@import|url\s*\(|https?:|javascript:|expression\s*\(/i);
+});
+
+test('Wisconsin staging preview keeps Claude per-metro phone presentation local-only', () => {
+  const source = read(PLUGIN_PATH);
+  assert.match(source, /add_action\(\s*'wp_footer'\s*,\s*'twins_staging_safety_wi_phone_preview'\s*,\s*PHP_INT_MAX\s*-\s*1\s*\)/);
+  const preview = functionBody(source, 'twins_staging_safety_wi_phone_preview');
+  assert.match(preview, /get_current_blog_id\(\)\s*!==\s*4/);
+  assert.match(preview, /milwaukee/i);
+  assert.match(preview, /\(414\) 800-9271/);
+  assert.match(preview, /\(608\) 420-2377/);
+  assert.match(preview, /tel:\+14148009271/);
+  assert.match(preview, /tel:\+16084202377/);
+  assert.doesNotMatch(preview, /https?:|fetch\s*\(|XMLHttpRequest|sendBeacon|WebSocket|<form/i);
 });
 
 test('legacy staging-only links resolve through a bounded same-origin redirect map', () => {

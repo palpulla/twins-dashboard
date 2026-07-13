@@ -1,0 +1,150 @@
+/* ============================== twx v2 ==============================
+ * Phase 4 component kit (.twx2-* classes). Translated 1:1 from the
+ * APPROVED Option A mockup:
+ *   docs/superpowers/backups/2026-07-09-phase4-catalog/twx-v2-mockup-approved.html
+ * Deploy: append this whole block INSIDE the existing twx-ui style block
+ * of snippets 7050 (main) + 6755 (/wi), just before the closing style tag.
+ * (No literal style tags in this comment: HTML parsers would end the
+ * block at the first closing style tag, even inside a CSS comment.)
+ * Additive: no existing .twx- selector is touched. Revert = delete block.
+ * Tokens re-declared below with the exact twx-ui values so the kit also
+ * works standalone (local harness); harmless duplicate when appended.
+ * ==================================================================== */
+:root{--tw-navy:#022751;--tw-navy-deep:#010D38;--tw-yellow:#FBBD04;--tw-soft:#F2F5F7}
+
+/* base type for v2 components (mockup body font, applied per-component
+ * so the kit never restyles theme content outside .twx2- markup) */
+.twx2-hero,.twx2-ribbon,.twx2-body,.twx2-steps,.twx2-closer,.twx2-social,.twx2-grid,#twx2-stickybar{font-family:Montserrat,'Avenir Next','Helvetica Neue',Arial,sans-serif}
+
+/* ---- hero (mockup .m-hero + .A .m-hero flourishes) ---- */
+.twx2-hero{position:relative;color:#fff;overflow:hidden;padding:56px 48px 24px;padding-right:min(38vw,460px);min-height:400px;background:
+  radial-gradient(860px 480px at 84% 24%, rgba(251,189,4,.18), transparent 64%),
+  repeating-linear-gradient(0deg, rgba(255,255,255,.04) 0 2px, transparent 2px 26px),
+  repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 3px, transparent 3px 78px),
+  linear-gradient(165deg, var(--tw-navy) 0%, var(--tw-navy-deep) 90%)}
+.twx2-hero h1,.twx2-hero h2{font-size:clamp(26px,4vw,40px);font-weight:800;line-height:1.12;margin:0 0 12px;max-width:12em;text-wrap:balance;color:#fff}
+.twx2-hero h1 sup,.twx2-hero h2 sup{font-size:.45em;top:-.6em;position:relative}
+.twx2-hero h1 em,.twx2-hero h2 em{font-style:normal;color:var(--tw-yellow)}
+.twx2-sub{max-width:44ch;color:#cfdbea;margin:0 0 24px;font-size:16.5px;line-height:1.55}
+/* eyebrow — brackets are literal text content: "[ Official Clopay Dealer ]" */
+.twx2-eyebrow{color:var(--tw-yellow);font-weight:800;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:14px}
+.twx2-eyebrow--section{color:#5d7189;font-size:11.5px;margin-bottom:0}
+.twx2-cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.twx2-trustline{margin-top:20px;font-size:13.5px;color:#cfdbea}
+.twx2-trustline b{color:var(--tw-yellow);letter-spacing:2px}
+
+/* ---- stamp badge (.A .stamp) ---- */
+.twx2-stamp{position:absolute;top:30px;right:380px;transform:rotate(-8deg);background:var(--tw-yellow);color:var(--tw-navy);font-weight:800;font-size:13px;letter-spacing:1px;padding:10px 16px;border:3px dashed var(--tw-navy);border-radius:10px;text-transform:uppercase}
+
+/* ---- twins pair — BOTH twins, staggered, NEVER hidden (.pair, calibrated) ---- */
+.twx2-pair{position:absolute;right:14px;bottom:0;display:flex;align-items:flex-end}
+.twx2-pair img{height:min(34vw,420px);filter:drop-shadow(6px 10px 0 rgba(1,13,56,.35));animation:twx2bob 5.5s ease-in-out infinite}
+.twx2-pair img.twx2-back{height:min(26vw,325px);margin-right:-40px;position:relative;z-index:0;opacity:.97;animation-delay:1.4s;animation-duration:6.5s}
+.twx2-pair img.twx2-front{position:relative;z-index:1}
+@keyframes twx2bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+/* flanking variant for navy/soft CTA bands (.closer .flank) */
+.twx2-pair--band{position:absolute;bottom:0;height:104px;animation:twx2bob 6s ease-in-out infinite;filter:drop-shadow(3px 5px 0 rgba(1,13,56,.3))}
+.twx2-pair--band.twx2-l{left:22px}
+.twx2-pair--band.twx2-r{right:22px;transform:scaleX(-1)}
+@media(prefers-reduced-motion:reduce){.twx2-pair img,.twx2-pair--band{animation:none}}
+
+/* ---- sticker buttons (.btn + .A variants) ---- */
+.twx2-btn,.twx2-btn:visited{display:inline-block;font-family:Montserrat,'Avenir Next','Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:15.5px;line-height:1.55;text-decoration:none!important;padding:14px 26px;border-radius:10px;cursor:pointer;transition:transform .1s}
+.twx2-btn--gold,.twx2-btn--gold:visited{background:var(--tw-yellow);color:var(--tw-navy)!important;border:3px solid var(--tw-navy-deep);box-shadow:4px 4px 0 rgba(1,13,56,.85)}
+.twx2-btn--gold:hover{color:var(--tw-navy)!important}
+.twx2-btn--ghost,.twx2-btn--ghost:visited{background:transparent;color:#fff!important;border:3px solid #fff;box-shadow:4px 4px 0 rgba(1,13,56,.45)}
+.twx2-btn--ghost:hover{color:#fff!important}
+.twx2-btn--navy,.twx2-btn--navy:visited{background:var(--tw-navy);color:#fff!important;border:3px solid var(--tw-navy-deep);box-shadow:4px 4px 0 rgba(251,189,4,.9)}
+.twx2-btn--navy:hover{color:#fff!important}
+
+/* ---- trust ribbon (.ribbon + .A .rib-item) ---- */
+.twx2-ribbon{background:var(--tw-yellow);padding:18px 48px;display:flex;gap:16px;flex-wrap:wrap;justify-content:center;border-top:3px solid var(--tw-navy-deep);border-bottom:3px solid var(--tw-navy-deep)}
+.twx2-rib-item{display:flex;align-items:center;gap:12px;background:#fff;border-radius:12px;padding:12px 18px;min-width:230px;flex:1;max-width:310px;border:3px solid var(--tw-navy);box-shadow:3px 3px 0 rgba(1,13,56,.8)}
+.twx2-rib-ico{width:38px;height:38px;border-radius:10px;background:var(--tw-navy);display:flex;align-items:center;justify-content:center;flex:none}
+.twx2-rib-ico svg{width:20px;height:20px;stroke:var(--tw-yellow);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.twx2-rib-item b{display:block;color:var(--tw-navy);font-size:14.5px;line-height:1.2}
+.twx2-rib-item small{color:#4c5f76;font-size:12.5px}
+
+/* ---- intro/why two-column section (.m-body) ---- */
+.twx2-body{background:#fff;padding:46px 48px;display:grid;grid-template-columns:1.15fr .85fr;gap:36px;align-items:start}
+.twx2-h3{color:var(--tw-navy);font-size:24px;font-weight:800;margin:0 0 4px;font-family:Montserrat,'Avenir Next','Helvetica Neue',Arial,sans-serif}
+.twx2-h3::after{content:"";display:block;width:56px;height:5px;background:var(--tw-yellow);border-radius:3px;margin-top:8px}
+
+/* ---- sticker cards (.A .card) — default yellow offset shadow ---- */
+.twx2-cards{display:grid;gap:14px;margin-top:18px}
+.twx2-card{display:flex;gap:14px;align-items:flex-start;background:#fff;border-radius:12px;padding:16px 18px;border:3px solid var(--tw-navy);box-shadow:4px 4px 0 rgba(251,189,4,.9)}
+.twx2-card--navyshadow{box-shadow:4px 4px 0 rgba(1,13,56,.85)}
+.twx2-chip{width:34px;height:34px;border-radius:9px;background:var(--tw-yellow);color:var(--tw-navy);font-weight:900;display:flex;align-items:center;justify-content:center;flex:none;font-size:17px}
+.twx2-card b{color:var(--tw-navy)}
+.twx2-card p{margin:2px 0 0;color:#42556e;font-size:14px;line-height:1.55}
+
+/* ---- numbered what-to-expect steps (.steps + .A .step) ---- */
+.twx2-steps{background:#fff;border-top:1px solid #e7ecf2;padding:38px 48px}
+.twx2-steps h3{color:var(--tw-navy);font-size:22px;font-weight:800;margin:6px 0 20px}
+.twx2-row3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.twx2-step{border-radius:12px;padding:18px;position:relative;background:#fff;border:3px solid var(--tw-navy);box-shadow:4px 4px 0 rgba(1,13,56,.85)}
+.twx2-num{font-size:30px;font-weight:900;color:var(--tw-yellow);-webkit-text-stroke:1.5px var(--tw-navy);line-height:1}
+.twx2-step b{display:block;color:var(--tw-navy);margin:8px 0 4px}
+.twx2-step p{margin:0;color:#42556e;font-size:14px;line-height:1.55}
+
+/* ---- closer band w/ flanking twins (.closer + .A .closer) ---- */
+.twx2-closer{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;background:var(--tw-soft);padding:26px 120px;position:relative}
+.twx2-closer span{font-weight:700;color:var(--tw-navy)}
+@media(max-width:700px){
+  .twx2-closer{padding-left:16px;padding-right:16px}
+  .twx2-pair--band{height:56px}
+  .twx2-pair--band.twx2-l{left:4px}
+  .twx2-pair--band.twx2-r{right:4px}
+}
+
+/* ---- review card + brands strip (.m-social, .A .review, .A .logos) ---- */
+.twx2-social{background:#fff;padding:40px 48px;border-top:1px solid #e7ecf2;display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center}
+.twx2-review{position:relative;background:#fff;border-radius:14px;padding:26px 24px 20px;border:3px solid var(--tw-navy);box-shadow:5px 5px 0 rgba(251,189,4,.9)}
+.twx2-qm{position:absolute;top:-22px;left:18px;font-size:64px;line-height:1;color:var(--tw-yellow);font-weight:900;font-family:Georgia,serif}
+.twx2-review p{margin:8px 0 10px;color:#28405f;font-size:15px}
+.twx2-review b{color:var(--tw-navy);font-size:13.5px}
+.twx2-stars{color:var(--tw-yellow);letter-spacing:2px;font-size:15px}
+.twx2-brands{display:flex;flex-direction:column;gap:8px}
+.twx2-strip-label{font-size:11.5px;letter-spacing:2.5px;text-transform:uppercase;color:#5d7189;font-weight:800}
+.twx2-brands .twx2-row{display:flex;gap:12px;flex-wrap:wrap}
+.twx2-lg{border:2px solid var(--tw-navy);border-radius:9px;padding:9px 16px;font-weight:800;color:var(--tw-navy);font-size:14px;background:#fff;box-shadow:3px 3px 0 rgba(1,13,56,.25)}
+
+/* ---- hub collection grid ([clopay_collection_grid] output; sticker
+ * vocabulary from Option A cards — mockup has no hub design, so cards
+ * follow the approved card treatment: 3px navy border, yellow offset) ---- */
+.twx2-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px;max-width:1140px;margin:0 auto}
+.twx2-gcard,.twx2-gcard:visited{display:flex;flex-direction:column;background:#fff;border:3px solid var(--tw-navy);border-radius:12px;overflow:hidden;box-shadow:4px 4px 0 rgba(251,189,4,.9);text-decoration:none!important;color:var(--tw-navy)!important;transition:transform .12s}
+.twx2-gcard:hover{transform:translate(-2px,-2px);color:var(--tw-navy)!important}
+.twx2-gcard img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;border-bottom:3px solid var(--tw-navy)}
+.twx2-gcard-body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.twx2-gcard b{font-size:16px;color:var(--tw-navy);line-height:1.25}
+.twx2-gcard b sup{font-size:.55em}
+.twx2-gcard small{color:#42556e;font-size:13px;line-height:1.45}
+.twx2-gcard-cta{margin-top:auto;padding-top:6px;font-weight:800;font-size:13px;color:var(--tw-navy)}
+.twx2-grid--empty{display:block;background:var(--tw-soft);border:3px solid var(--tw-navy);border-radius:12px;padding:22px 24px;color:var(--tw-navy);font-weight:600;text-align:center}
+.twx2-grid--empty a{color:var(--tw-navy);font-weight:800}
+
+/* ---- mockup mobile behavior (breakpoints kept 1:1 at 860/700) ---- */
+@media(max-width:860px){
+  .twx2-hero{padding-right:48px;min-height:0}
+  .twx2-pair{position:static;justify-content:flex-end;margin:20px -20px -28px 0}
+  .twx2-pair img{height:250px}
+  .twx2-pair img.twx2-back{height:195px;margin-right:-30px}
+  .twx2-stamp{position:static;display:inline-block;transform:rotate(-3deg);margin-bottom:14px}
+  .twx2-body{grid-template-columns:1fr}
+  .twx2-row3{grid-template-columns:1fr}
+  .twx2-social{grid-template-columns:1fr}
+}
+
+/* ---- mobile sticky Call/Book bar (site-wide, rendered on wp_footer;
+ * z-index 99998 = below WP admin bar; mockup .phone .bar scaled to a
+ * real 390px viewport) ---- */
+#twx2-stickybar{display:none}
+@media(max-width:768px){
+  #twx2-stickybar{display:flex;position:fixed;left:0;right:0;bottom:0;gap:8px;padding:9px 10px;padding-bottom:calc(9px + env(safe-area-inset-bottom));background:var(--tw-navy-deep);border-top:3px solid var(--tw-yellow);z-index:99998}
+  #twx2-stickybar a,#twx2-stickybar a:visited{flex:1;text-align:center;font-weight:800;font-size:14px;padding:12px 4px;border-radius:8px;text-decoration:none!important;line-height:1.2;white-space:nowrap}
+  #twx2-stickybar .twx2-sb-call,#twx2-stickybar .twx2-sb-call:visited{background:var(--tw-yellow);color:var(--tw-navy)!important}
+  #twx2-stickybar .twx2-sb-book,#twx2-stickybar .twx2-sb-book:visited{border:2px solid #fff;color:#fff!important;background:transparent}
+  body.twx2-hasbar{padding-bottom:64px}
+}
+/* ============================ end twx v2 ============================ */

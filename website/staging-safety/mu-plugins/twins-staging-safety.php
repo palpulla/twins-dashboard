@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Twins Staging Safety
  * Description: Fail-closed side-effect and indexing controls for an isolated Twins WordPress staging clone.
- * Version: 1.1.3
+ * Version: 1.2.1
  * Author: Twins Garage Doors
  * Network: true
  */
@@ -153,6 +153,83 @@ function twins_staging_safety_frontend_banner() {
     $rendered = true;
 
     echo '<div id="twins-staging-banner" role="alert" style="position:fixed;left:0;right:0;top:0;z-index:2147483647;padding:8px 16px;background:#b91c1c;color:#fff;text-align:center;font:700 14px/1.3 sans-serif;letter-spacing:.08em;pointer-events:none">STAGING — NOT PRODUCTION</div>';
+}
+
+/**
+ * Restore Claude's approved twx v2 presentation from a local static asset.
+ *
+ * The production stylesheet originally lived inside WPCode. WPCode stays
+ * inactive on staging because it also carries executable integrations. This
+ * same-origin CSS asset restores the completed page designs without loading
+ * scripts, registering endpoints, or enabling any external service.
+ *
+ * @return void
+ */
+function twins_staging_safety_enqueue_visual_preview_styles() {
+    wp_enqueue_style(
+        'twins-staging-twx-v2',
+        plugins_url('twins-staging-assets/twx-v2-kit.css', __FILE__),
+        array(),
+        '2026.07.13'
+    );
+}
+
+/**
+ * Reproduce Claude's Wisconsin per-metro phone presentation without WPCode.
+ *
+ * This browser-local rewrite changes display text and tel: links only. It does
+ * not create a booking link, submit data, or contact an external destination.
+ *
+ * @return void
+ */
+function twins_staging_safety_wi_phone_preview() {
+    if (!is_multisite() || get_current_blog_id() !== 4) {
+        return;
+    }
+
+    echo <<<'HTML'
+<script id="twins-staging-wi-phone-preview">
+(function () {
+    function applyPhonePreview() {
+        var milwaukee = /milwaukee/i.test(window.location.pathname);
+        var display = milwaukee ? '(414) 800-9271' : '(608) 420-2377';
+        var telephone = milwaukee ? 'tel:+14148009271' : 'tel:+16084202377';
+        var source = /(\(?833\)?[ .-]?833[ .-]?2010)|(\(?608\)?[ .-]?888[ .-]?8785)/;
+
+        document.querySelectorAll('a[href*="8338332010"],a[href*="833-2010"],a[href*="6088888785"],a[href*="888-8785"],a[href*="16088888785"]').forEach(function (anchor) {
+            anchor.setAttribute('href', telephone);
+        });
+
+        var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+            acceptNode: function (node) {
+                var parent = node.parentNode ? node.parentNode.nodeName : '';
+                if (parent === 'SCRIPT' || parent === 'STYLE') {
+                    return NodeFilter.FILTER_REJECT;
+                }
+                return source.test(node.nodeValue || '') ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+            }
+        });
+        var nodes = [];
+        var node;
+        while ((node = walker.nextNode())) {
+            nodes.push(node);
+        }
+        nodes.forEach(function (textNode) {
+            textNode.nodeValue = textNode.nodeValue
+                .replace(/\(?833\)?[ .-]?833[ .-]?2010/g, display)
+                .replace(/\(?608\)?[ .-]?888[ .-]?8785/g, display);
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', applyPhonePreview);
+    } else {
+        applyPhonePreview();
+    }
+    window.setTimeout(applyPhonePreview, 1200);
+})();
+</script>
+HTML;
 }
 
 /**
@@ -605,6 +682,8 @@ add_action('admin_notices', 'twins_staging_safety_admin_banner', PHP_INT_MAX);
 add_action('network_admin_notices', 'twins_staging_safety_admin_banner', PHP_INT_MAX);
 add_action('wp_body_open', 'twins_staging_safety_frontend_banner', PHP_INT_MIN);
 add_action('wp_footer', 'twins_staging_safety_frontend_banner', PHP_INT_MAX);
+add_action('wp_footer', 'twins_staging_safety_wi_phone_preview', PHP_INT_MAX - 1);
+add_action('wp_enqueue_scripts', 'twins_staging_safety_enqueue_visual_preview_styles', PHP_INT_MAX);
 add_action('template_redirect', 'twins_staging_safety_redirect_legacy_request', PHP_INT_MIN);
 twins_staging_safety_register_placeholders();
 add_action('plugins_loaded', 'twins_staging_safety_register_placeholders', PHP_INT_MAX);

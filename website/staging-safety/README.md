@@ -70,6 +70,12 @@ Production must not be changed by this runbook.
   robots and virtual `robots.txt` also deny indexing. These are crawler hints,
   not access control.
 - A red `STAGING` warning appears in WordPress admin and on the frontend.
+- Claude's approved `twx v2` visual kit is restored from a same-origin static
+  stylesheet while WPCode remains inactive. This preserves the completed page
+  presentation without enabling its scripts, endpoints, or integrations.
+- Wisconsin pages reproduce the completed Madison/Milwaukee phone presentation
+  with a browser-local text and `tel:` rewrite only; no booking, tracking, or
+  messaging connection is enabled.
 - Known broken legacy links copied from production redirect only to explicit,
   verified paths on the same staging hostname. These staging-only redirects do
   not change production content or conceal unrelated missing pages.
