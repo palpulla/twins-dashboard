@@ -1,0 +1,17 @@
+/**
+ * CANDIDATE ONLY — repository-generated door builder.
+ * Live use requires fresh exports, verified staging, owner-signed grant,
+ * CHATGPT_PROFILE_1 lease attestation and exact rollback evidence.
+ */
+add_shortcode( 'twins_door_builder', function () {
+  $region = strpos( home_url(), '/wi' ) !== false ? 'wi' : 'main';
+  ob_start(); ?>
+<div id="twxdb" class="twxdb" data-region="<?php echo esc_attr( $region ); ?>" data-endpoint="https://twinsgaragedoors.com/wp-json/twins/v1/door-builder"></div>
+<style id="twxdb-css">/*__TWXDB_CSS__*/</style>
+<script>/*__TWXDB_MANIFEST__*/</script>
+<script>/*__TWXDB_CORE__*/</script>
+<script>/*__TWXDB_TRANSPORT__*/</script>
+<script>/*__TWXDB_FUNNEL__*/</script>
+<script>/*__TWXDB_APP__*/</script>
+<?php return ob_get_clean();
+} );

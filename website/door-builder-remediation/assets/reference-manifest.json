@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "allowedHost": "www.clopaydoor.com",
+  "products": {
+    "12": {
+      "title": "Gallery Steel",
+      "referencePhotos": [
+        {
+          "url": "https://www.clopaydoor.com/images/default-source/product-images/garage-doors/gallerysteel/normal/gallery-steel-ug-long-rec14-822.webp?sfvrsn=3eb6b5f1_6",
+          "evidence": "reference-photo",
+          "label": "Gallery Steel inspiration photo",
+          "source": "clopay-public-product-api",
+          "sourceField": "ProductImageGallery.ImageUrl",
+          "rightsStatement": "Manufacturer-hosted reference image; deployment remains subject to owner review."
+        },
+        {
+          "url": "https://www.clopaydoor.com/images/default-source/product-images/garage-doors/gallerysteel/normal/gallery-lp-ug-rectgrilles-01.webp?sfvrsn=e1e3dabb_6",
+          "evidence": "reference-photo",
+          "label": "Gallery Steel installed-door reference",
+          "source": "clopay-public-product-api",
+          "sourceField": "ProductImageGallery.ImageUrl",
+          "rightsStatement": "Manufacturer-hosted reference image; deployment remains subject to owner review."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "artifacts": [
+    {
+      "path": "design-your-door-funnel.js",
+      "sha256": "b8551e2868b96ba6c4b2430f82ca5dd6e91da96a25e8febc2d755ea0d3d4f4b2"
+    },
+    {
+      "path": "local-harness.html",
+      "sha256": "e4346660bf4c56f1b2eef0b3fc3b1260edcc1d0993619dbad3b7c681cd5086fd"
+    },
+    {
+      "path": "twins-door-builder-wpcode.php",
+      "sha256": "a86654676594fcf19b84224ed640fe684021022d77ae141705121fc74b0699a0"
+    },
+    {
+      "path": "verification-image.svg",
+      "sha256": "ee893c20e14b7af71010450413e5730c2dfe1d654a19f4fe064c3890029e4a33"
+    }
+  ],
+  "verificationFixtures": [
+    {
+      "path": "verification-image.svg",
+      "sha256": "ee893c20e14b7af71010450413e5730c2dfe1d654a19f4fe064c3890029e4a33",
+      "mediaType": "image/svg+xml",
+      "width": 960,
+      "height": 540,
+      "provenance": "repository-generated deterministic local verification fixture",
+      "purpose": "Local-only image loading and intrinsic-size verification without external traffic.",
+      "productionUse": false
+    }
+  ]
+}
