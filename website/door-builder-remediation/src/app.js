@@ -506,6 +506,8 @@
     mount.addEventListener('click', function (event) {
       var element = event.target.closest ? event.target.closest('[data-act]') : null;
       if (!element || !mount.contains(element)) return;
+      if (controller.state.submissionStatus === 'pending'
+          || controller.state.submissionStatus === 'accepted') return;
       var action = element.getAttribute('data-act');
       var index = parseInt(element.getAttribute('data-i') || '-1', 10);
       if (action === 'product') {

@@ -42,7 +42,7 @@ The build reads the frozen 23-product catalog snapshot at `docs/superpowers/back
 Run from the repository root.
 
 ```bash
-# Complete automated suite (currently 81 tests)
+# Complete automated suite (currently 82 tests)
 node --test website/door-builder-remediation/tests/*.test.cjs
 
 # Regenerate all five files in dist/

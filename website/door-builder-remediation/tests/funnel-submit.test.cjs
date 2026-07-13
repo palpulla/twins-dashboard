@@ -188,7 +188,7 @@ test('bound funnel accepts only one submission through confirmed success', async
   assert.deepEqual(redirects, ['/door-builder/']);
 });
 
-test('bound funnel remains accepted and locked when redirect throws', async () => {
+test('bound funnel shows accepted continuation and remains locked when redirect throws', async () => {
   const fixture = boundForm();
   let requests = 0;
   funnel.bindFunnel(fixture.form, {
@@ -207,7 +207,10 @@ test('bound funnel remains accepted and locked when redirect throws', async () =
 
   assert.equal(requests, 1);
   assert.equal(fixture.button.disabled, true);
-  assert.equal(fixture.error.hidden, true);
+  assert.equal(fixture.error.hidden, false);
+  assert.match(fixture.error.innerHTML, /request was received/i);
+  assert.match(fixture.error.innerHTML, /href="\/door-builder\/"/);
+  assert.match(fixture.error.innerHTML, /continue/i);
 });
 
 test('bound funnel re-enables the button and shows fallback on failure', async () => {

@@ -75,6 +75,90 @@ function bootFixture() {
   return { documentRef, mount, listeners };
 }
 
+function interactiveBootFixture(fetchImpl, search = '?product=12') {
+  const listeners = {};
+  let currentHtml = '';
+  let currentForm = null;
+
+  function makeLeadForm() {
+    const fields = {
+      name: { value: 'Test Lead' },
+      phone: { value: '608-555-0100' },
+      email: { value: 'test@example.com' },
+      zip: { value: '53703' },
+      notes: { value: '' },
+      website: { value: '' }
+    };
+    const button = { disabled: false, textContent: 'Get my free quote', isConnected: true };
+    const error = { hidden: true, textContent: '', innerHTML: '', isConnected: true };
+    const form = {
+      isConnected: true,
+      button,
+      error,
+      classList: { contains: (name) => name === 'twxdb-form' },
+      querySelector(selector) {
+        if (selector === 'button[type="submit"]') return button;
+        if (selector === '.twxdb-err') return error;
+        const match = /^\[name="([^"]+)"\]$/.exec(selector);
+        return match ? fields[match[1]] || null : null;
+      }
+    };
+    return form;
+  }
+
+  const mount = {
+    get innerHTML() { return currentHtml; },
+    set innerHTML(value) {
+      if (currentForm) {
+        currentForm.isConnected = false;
+        currentForm.button.isConnected = false;
+        currentForm.error.isConnected = false;
+      }
+      currentHtml = value;
+      currentForm = /class="twxdb-form"/.test(value) ? makeLeadForm() : null;
+    },
+    get form() { return currentForm; },
+    getAttribute(name) {
+      if (name === 'data-region') return 'main';
+      if (name === 'data-endpoint') return '/lead';
+      return null;
+    },
+    addEventListener(type, handler) {
+      listeners[type] = handler;
+    },
+    contains(element) {
+      return element.isConnected !== false;
+    },
+    scrollIntoView() {}
+  };
+  const documentRef = {
+    querySelectorAll(selector) {
+      return selector === '#twxdb' ? [mount] : [];
+    }
+  };
+  const windowRef = {
+    TwinsDoorBuilderCore: core,
+    TwinsDoorBuilderTransport: transport,
+    TwinsDoorBuilderFunnel: funnel,
+    fetch: fetchImpl,
+    sessionStorage: memoryStorage(),
+    location: { search }
+  };
+  return { documentRef, windowRef, mount, listeners };
+}
+
+function actionElement(action, index) {
+  return {
+    isConnected: true,
+    closest() { return this; },
+    getAttribute(name) {
+      if (name === 'data-act') return action;
+      if (name === 'data-i' && index !== undefined) return String(index);
+      return null;
+    }
+  };
+}
+
 test('boot renders phone-only inert fallback when runtime dependencies are missing', () => {
   const fixture = bootFixture();
   const windowWithoutFetch = {
@@ -289,6 +373,47 @@ test('controller freezes navigation while a submission is pending', async () => 
 
   resolvePost(jsonResponse(true, { ok: true }));
   await request;
+});
+
+test('pending DOM navigation keeps the visible lead form mounted through failure feedback', async () => {
+  let posts = 0;
+  let resolvePost;
+  const pendingPost = new Promise((resolve) => { resolvePost = resolve; });
+  const fixture = interactiveBootFixture(async (url, options = {}) => {
+    if (options.method === 'POST') {
+      posts += 1;
+      return pendingPost;
+    }
+    if (url.includes('GetProductsList')) return jsonResponse(true, list);
+    const id = new URL(url).searchParams.get('productId');
+    return jsonResponse(true, details[id]);
+  });
+
+  assert.equal(app.boot(fixture.documentRef, fixture.windowRef), true);
+  await new Promise((resolve) => setImmediate(resolve));
+  fixture.listeners.click({ target: actionElement('skip') });
+  const form = fixture.mount.form;
+  const button = form.button;
+  const error = form.error;
+
+  fixture.listeners.submit({ target: form, preventDefault() {} });
+  assert.equal(button.disabled, true);
+  fixture.listeners.click({ target: actionElement('back') });
+  const visibleFormWhilePending = fixture.mount.form;
+
+  resolvePost(jsonResponse(false, { ok: false }, 503));
+  await new Promise((resolve) => setImmediate(resolve));
+
+  assert.equal(posts, 1);
+  assert.strictEqual(visibleFormWhilePending, form);
+  assert.strictEqual(fixture.mount.form, form);
+  assert.equal(form.isConnected, true);
+  assert.equal(button.isConnected, true);
+  assert.equal(error.isConnected, true);
+  assert.equal(button.disabled, false);
+  assert.equal(error.hidden, false);
+  assert.match(error.innerHTML, /tel:\+18338332010/);
+  assert.match(error.innerHTML, /\(833\) 833-2010/);
 });
 
 test('controller clears its submission guard after confirmed failure and permits retry', async () => {

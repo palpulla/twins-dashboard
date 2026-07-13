@@ -469,6 +469,10 @@ textarea.twxdb-in{min-height:84px;resize:vertical}
         button.disabled = false;
         error.hidden = false;
         error.textContent = options.errorMessage;
+      } else if (result.navigationOk === false) {
+        error.hidden = false;
+        error.innerHTML = 'Thanks — your request was received. '
+          + '<a href="/door-builder/">Continue to the door builder</a>.';
       }
     });
   }
@@ -989,6 +993,8 @@ textarea.twxdb-in{min-height:84px;resize:vertical}
     mount.addEventListener('click', function (event) {
       var element = event.target.closest ? event.target.closest('[data-act]') : null;
       if (!element || !mount.contains(element)) return;
+      if (controller.state.submissionStatus === 'pending'
+          || controller.state.submissionStatus === 'accepted') return;
       var action = element.getAttribute('data-act');
       var index = parseInt(element.getAttribute('data-i') || '-1', 10);
       if (action === 'product') {

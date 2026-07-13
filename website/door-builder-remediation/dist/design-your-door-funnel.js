@@ -95,6 +95,10 @@
         button.disabled = false;
         error.hidden = false;
         error.textContent = options.errorMessage;
+      } else if (result.navigationOk === false) {
+        error.hidden = false;
+        error.innerHTML = 'Thanks — your request was received. '
+          + '<a href="/door-builder/">Continue to the door builder</a>.';
       }
     });
   }
