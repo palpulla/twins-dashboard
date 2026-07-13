@@ -92,6 +92,8 @@ Do not hand-edit `dist/`. Edit source, regenerate, and run the deterministic che
 
 ## Inactive and blocked status
 
+- This package is a WordPress candidate plus a localhost-only harness; a Vercel preview is not a deployment or validation gate for it.
+- The production Twins operations dashboard is the separate `palpulla/twins-dash` repository and Vercel project. Do not point the outer `palpulla/twins-dashboard` Vercel project at `3b-holdings-dashboard` or treat that unrelated property-management prototype as this package's application.
 - Endpoint `7072` is unchanged. This package neither edits nor replaces it.
 - Pages `6065`, `7073`, and `7129` remain blocked pending fresh authoritative Elementor exports. Their JSON files are contracts only.
 - Snippets `7127`, `6765`, `7072`, `7050`, and `6755` are unchanged by this package.
