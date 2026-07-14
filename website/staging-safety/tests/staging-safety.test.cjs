@@ -9,6 +9,8 @@ const PLUGIN_PATH = path.join(ROOT, 'mu-plugins', 'twins-staging-safety.php');
 const README_PATH = path.join(ROOT, 'README.md');
 const TWX_V2_CSS_PATH = path.join(ROOT, 'mu-plugins', 'twins-staging-assets', 'twx-v2-kit.css');
 const HARNESS_PATH = path.join(__dirname, 'wordpress-harness.php');
+const CHROME_TRANSITION_PATH = path.join(ROOT, 'tools', 'staging-chrome-transition.php');
+const CHROME_TRANSITION_HARNESS_PATH = path.join(__dirname, 'staging-chrome-transition-harness.php');
 const EXPECTED_CSP_DIRECTIVES = [
   "default-src 'self'",
   "base-uri 'self'",
@@ -63,6 +65,30 @@ function functionBody(source, name) {
     }
   }
   assert.fail(`${name} body is not balanced`);
+}
+
+function compactPhpCode(source) {
+  let compact = '';
+  let quote = null;
+  let escaped = false;
+  for (const character of source) {
+    if (quote) {
+      compact += character;
+      if (escaped) {
+        escaped = false;
+      } else if (character === '\\') {
+        escaped = true;
+      } else if (character === quote) {
+        quote = null;
+      }
+    } else if (character === "'" || character === '"') {
+      quote = character;
+      compact += character;
+    } else if (!/\s/.test(character)) {
+      compact += character;
+    }
+  }
+  return compact;
 }
 
 test('MU plugin fails closed before registering hooks outside an explicitly configured staging environment', () => {
@@ -449,6 +475,106 @@ test('runbook documents the all-HTTP, shortcode and option fail-closed gates', (
   assert.match(normalized, /brainstrom_products.*(?:license|purchase|token|key)/i);
 });
 
+test('staging chrome transition pins the staging identity and immutable template manifest', () => {
+  const source = read(CHROME_TRANSITION_PATH);
+  assert.ok(source, 'staging chrome transition tool is missing');
+
+  assert.match(source, /home_url\(\)/);
+  assert.match(source, /https:\/\/danielj140\.sg-host\.com/);
+  assert.match(source, /get_current_blog_id\(\)\s*!==\s*1/);
+  assert.match(source, /defined\(\s*'WP_ENVIRONMENT_TYPE'\s*\)/);
+  assert.match(source, /WP_ENVIRONMENT_TYPE\s*!==\s*'staging'/);
+  assert.match(source, /defined\(\s*'TWINS_STAGING_SAFETY'\s*\)/);
+  assert.match(source, /TWINS_STAGING_SAFETY\s*!==\s*true/);
+
+  const manifest = [
+    [36, 'Header', 'header', 'f433dcb2b40578ee75394c486e7c13b987dc9f0cc20d9c83ab2d9c195996072d'],
+    [305, 'POP Menu Template', 'section', '4df9f5ae619f65b8eb4fdb674ee0fffa7b21d4f4ba3577509f1aa1d6b5360341'],
+    [7333, 'UNIT 1 DEP — POP MENU 305 twx2 — 2026-07-10', 'section', 'd00c1141386ddcb162200d0767741cd46901336a07e58b0fac2be3fe77605c8d'],
+    [7336, 'UNIT 1 CANARY — Header 36 twx2 — 2026-07-10', 'header', 'f158f14cc66da49e7621d0002da7536c38a34e5103abc54e2f83e155e9a743c0'],
+    [1409, 'Footer', 'footer', '4db2fe9f8f1fd6772a1b2908faafba3aa3a093a4b6a603ee9465cdb9263be296'],
+    [7344, 'UNIT 2 CANARY — Footer 1409 twx2 — 2026-07-10', 'footer', '4db2fe9f8f1fd6772a1b2908faafba3aa3a093a4b6a603ee9465cdb9263be296'],
+    [2163, 'Header Contact Us', 'header', '0928a31330c97748fa522910fe065bdc36e8f0b3b57c4aebf472e271dc19b7c7'],
+    [2179, 'Footer Contact Us', 'footer', 'a1b6a10f7aa12bbab7d138ca71cf6e30d73e8adf8f9f2b36985f459a8bdeef32']
+  ];
+  const expectedManifest = `return[${manifest.map(([id, title, type, sha256]) =>
+    `${id}=>['title'=>'${title}','type'=>'${type}','dataSha256'=>'${sha256}'],`
+  ).join('')}];`;
+  assert.equal(compactPhpCode(functionBody(source, 'twins_staging_chrome_manifest')), expectedManifest);
+
+  const identity = compactPhpCode(functionBody(source, 'twins_staging_chrome_assert_identity'));
+  assert.ok(identity.includes("if(!defined('WP_ENVIRONMENT_TYPE')||WP_ENVIRONMENT_TYPE!=='staging')"));
+  assert.ok(identity.includes("if(!defined('TWINS_STAGING_SAFETY')||TWINS_STAGING_SAFETY!==true)"));
+  assert.ok(identity.includes("if(rtrim(home_url(),'/')!=='https://danielj140.sg-host.com')"));
+  assert.ok(identity.includes('if(get_current_blog_id()!==1)'));
+  assert.equal((source.match(/danielj140\.sg-host\.com/g) || []).length, 1, 'the fixed staging host must have one authority source');
+  assert.match(source, /hash\(\s*'sha256'\s*,/);
+  const authorityFields = source.match(/['"]productionWriteAuthority['"]\s*=>/g) || [];
+  const falseAuthorityFields = source.match(/['"]productionWriteAuthority['"]\s*=>\s*false/g) || [];
+  assert.ok(authorityFields.length >= 1, 'production authority receipt is missing');
+  assert.equal(authorityFields.length, falseAuthorityFields.length, 'production authority must be literal false in every receipt');
+});
+
+test('staging chrome transition fixes all known condition states and one-pass write orders', () => {
+  const source = read(CHROME_TRANSITION_PATH);
+  assert.ok(source, 'staging chrome transition tool is missing');
+  const compact = source.replace(/\s+/g, ' ');
+  const canary = [[36, ['include/general', 'exclude/singular/page/6065']], [305, []], [7333, []], [7336, ['include/singular/page/6065']], [1409, ['include/general', 'exclude/singular/page/6065']], [7344, ['include/singular/page/6065']], [2163, []], [2179, ['include/singular/page/2123']]];
+  const global = [[36, []], [305, []], [7333, []], [7336, ['include/general']], [1409, []], [7344, ['include/general']], [2163, []], [2179, ['include/singular/page/2123']]];
+  const original = [[36, ['include/general']], [305, []], [7333, []], [7336, []], [1409, ['include/general']], [7344, []], [2163, []], [2179, ['include/singular/page/2123']]];
+  const phpMap = (entries) => `[${entries.map(([id, conditions]) =>
+    `${id}=>[${conditions.map((condition) => `'${condition}'`).join(',')}],`
+  ).join('')}]`;
+  const expectedMaps = `$canary=${phpMap(canary)};$global=${phpMap(global)};$original=${phpMap(original)};return['CANARY'=>$canary,'GLOBAL'=>$global,'ORIGINAL'=>$original,];`;
+  assert.equal(compactPhpCode(functionBody(source, 'twins_staging_chrome_condition_maps')), expectedMaps);
+
+  for (const mode of ['status', 'promote', 'restore-canary', 'rollback']) {
+    assert.ok(source.includes(`'${mode}'`), `${mode} mode is missing`);
+  }
+
+  assert.match(compact, /'promote'\s*=>\s*\[7336,\s*36,\s*7344,\s*1409\]/);
+  assert.match(compact, /'restore-canary'\s*=>\s*\[36,\s*7336,\s*1409,\s*7344\]/);
+  assert.match(compact, /'rollback'\s*=>\s*\[36,\s*7336,\s*1409,\s*7344\]/);
+  assert.equal((source.match(/->save_conditions\s*\(/g) || []).length, 1, 'writes must pass through one one-shot save call');
+  assert.match(source, /explode\(\s*'\/'\s*,\s*\$condition\s*\)/);
+  assert.match(source, /twins_staging_chrome_read_conditions\(\s*\$document_id\s*\)/);
+  assert.match(source, /TRANSITION_COMPENSATED/);
+  assert.doesNotMatch(source, /\bretry\b|\bwhile\s*\(/i);
+  assert.doesNotMatch(source, /function\s+twins_staging_chrome_apply_conditions\s*\(/, 'no globally callable write boundary is allowed');
+  assert.match(source, /private\s+static\s+function\s+execute\s*\(/);
+  assert.match(source, /private\s+static\s+function\s+write_target\s*\(/);
+  assert.match(source, /'compensate'\s*=>\s*\[36,\s*7336,\s*1409,\s*7344\]/);
+  assert.match(source, /function\s+twins_staging_chrome_cli_exit_code\s*\(/);
+  assert.match(source, /TRANSITION_COMPENSATION_FAILED/);
+  assert.match(source, /TRANSITION_FAILED/);
+});
+
+test('staging chrome transition keeps dry-run actuality separate from projection', () => {
+  const source = read(CHROME_TRANSITION_PATH);
+  assert.ok(source, 'staging chrome transition tool is missing');
+
+  assert.match(source, /TWINS_STAGING_CHROME_DRY_RUN/);
+  assert.match(source, /in_array\(\s*\$dry_run_raw\s*,\s*\[\s*'0'\s*,\s*'1'\s*\]\s*,\s*true\s*\)/);
+  assert.match(source, /'stagingMutation'\s*=>\s*false/);
+  assert.match(source, /'afterState'\s*=>\s*\$before_state/);
+  assert.match(source, /(?:'projectedState'\s*=>|\['projectedState'\]\s*=)\s*\$projected_state/);
+  assert.match(source, /'changedDocumentIds'\s*=>\s*\[\s*\]/);
+  assert.match(source, /(?:'projectedDocumentIds'\s*=>|\['projectedDocumentIds'\]\s*=)\s*\$projected_document_ids/);
+});
+
+test('staging chrome transition has no production authority or integration side channel', () => {
+  const source = read(CHROME_TRANSITION_PATH);
+  assert.ok(source, 'staging chrome transition tool is missing');
+
+  assert.doesNotMatch(source, /twinsgaragedoors\.com/i);
+  assert.doesNotMatch(source, /\$_(?:GET|POST|REQUEST|SERVER|ENV)|\$(?:argv|argc)\b|\bSTDIN\b|php:\/\/stdin|fgets\s*\(|stream_get_contents\s*\(/i);
+  assert.doesNotMatch(source, /TWINS_STAGING_CHROME_(?:HOST|BLOG|DOCUMENT|IDS?)/i);
+  const getenvNames = Array.from(source.matchAll(/getenv\(\s*['"]([^'"]+)['"]\s*\)/g), (match) => match[1]);
+  assert.deepEqual(getenvNames, ['TWINS_STAGING_CHROME_MODE', 'TWINS_STAGING_CHROME_DRY_RUN']);
+  assert.equal((source.match(/getenv\s*\(/g) || []).length, getenvNames.length, 'all environment input must be fixed and named');
+  assert.doesNotMatch(source, /wpcode|activate_plugin|wp_(?:safe_)?remote_|WP_Http|Requests::|curl_|fsockopen|pfsockopen|stream_socket_client|file_get_contents|\bfopen\s*\(|\breadfile\s*\(|\bmail\s*\(|wp_mail|<form|form[_-]?submit|submit[_-]?form/i);
+});
+
 const phpProbe = childProcess.spawnSync('php', ['-v'], { encoding: 'utf8' });
 const phpAvailable = phpProbe.status === 0;
 
@@ -521,4 +647,10 @@ test('WordPress-stubbed runtime exercises the fail-closed gates and network poli
   assert.deepEqual(report.brainstrom.purchaseAdd, []);
   assert.deepEqual(report.brainstrom.tokenAdd, []);
   assert.deepEqual(report.brainstrom.keyAdd, []);
+});
+
+test('PHP runtime exercises the staging chrome transition state contract', { skip: !phpAvailable }, () => {
+  const result = childProcess.spawnSync('php', [CHROME_TRANSITION_HARNESS_PATH, CHROME_TRANSITION_PATH], { encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.equal(result.stdout.trim(), 'STAGING_CHROME_TRANSITION_HARNESS_OK');
 });
