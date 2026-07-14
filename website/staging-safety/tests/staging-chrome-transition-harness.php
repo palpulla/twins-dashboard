@@ -7,6 +7,10 @@ namespace {
     $GLOBALS['twins_staging_chrome_meta'] = [];
     $GLOBALS['twins_staging_chrome_save_calls'] = [];
     $GLOBALS['twins_staging_chrome_save_failures'] = [];
+    $GLOBALS['twins_staging_chrome_save_drifts'] = [];
+    $GLOBALS['twins_staging_chrome_snapshot_calls'] = 0;
+    $GLOBALS['twins_staging_chrome_snapshot_failures'] = [];
+    $GLOBALS['twins_staging_chrome_statuses'] = [];
 
     function home_url(): string
     {
@@ -49,6 +53,11 @@ namespace ElementorPro\Modules\ThemeBuilder {
                 },
                 $conditions
             );
+            if (isset($GLOBALS['twins_staging_chrome_save_drifts'][$call_number])) {
+                foreach ($GLOBALS['twins_staging_chrome_save_drifts'][$call_number] as $drift_id => $drift_conditions) {
+                    $GLOBALS['twins_staging_chrome_meta'][$drift_id]['_elementor_conditions'] = $drift_conditions;
+                }
+            }
         }
     }
 
@@ -74,7 +83,13 @@ namespace {
         }
     }
 
-    function twins_staging_chrome_harness_seed(array $conditions, array $failures = []): void
+    function twins_staging_chrome_harness_seed(
+        array $conditions,
+        array $failures = [],
+        array $drifts = [],
+        array $snapshot_failures = [],
+        array $statuses = []
+    ): void
     {
         $GLOBALS['twins_staging_chrome_meta'] = [];
         foreach ($conditions as $document_id => $document_conditions) {
@@ -82,13 +97,25 @@ namespace {
         }
         $GLOBALS['twins_staging_chrome_save_calls'] = [];
         $GLOBALS['twins_staging_chrome_save_failures'] = $failures;
+        $GLOBALS['twins_staging_chrome_save_drifts'] = $drifts;
+        $GLOBALS['twins_staging_chrome_snapshot_calls'] = 0;
+        $GLOBALS['twins_staging_chrome_snapshot_failures'] = $snapshot_failures;
+        $GLOBALS['twins_staging_chrome_statuses'] = array_fill_keys(array_keys($conditions), 'publish');
+        foreach ($statuses as $document_id => $status) {
+            $GLOBALS['twins_staging_chrome_statuses'][$document_id] = $status;
+        }
     }
 
     function twins_staging_chrome_harness_snapshot(): array
     {
+        $call_number = ++$GLOBALS['twins_staging_chrome_snapshot_calls'];
+        if (isset($GLOBALS['twins_staging_chrome_snapshot_failures'][$call_number])) {
+            throw new \RuntimeException($GLOBALS['twins_staging_chrome_snapshot_failures'][$call_number]);
+        }
         $snapshot = [];
         foreach (array_keys(twins_staging_chrome_manifest()) as $document_id) {
             $snapshot[$document_id] = [
+                'status' => $GLOBALS['twins_staging_chrome_statuses'][$document_id] ?? 'missing',
                 'conditions' => twins_staging_chrome_normalize_conditions(
                     $GLOBALS['twins_staging_chrome_meta'][$document_id]['_elementor_conditions'] ?? []
                 ),
@@ -200,6 +227,16 @@ namespace {
     twins_staging_chrome_harness_assert(twins_staging_chrome_harness_conditions() === $global, 'promotion target failed');
     twins_staging_chrome_harness_assert(twins_staging_chrome_cli_exit_code($promoted) === 0, 'successful transition exit code failed');
 
+    twins_staging_chrome_harness_seed($global, [], [], [], [7336 => 'draft']);
+    $status_drift_refused = false;
+    try {
+        $run('status', false);
+    } catch (\RuntimeException $error) {
+        $status_drift_refused = strpos($error->getMessage(), 'template status mismatch 7336') !== false;
+    }
+    twins_staging_chrome_harness_assert($status_drift_refused, 'template status drift was not refused');
+    twins_staging_chrome_harness_assert(twins_staging_chrome_harness_call_ids() === [], 'status drift attempted a write');
+
     twins_staging_chrome_harness_seed($global);
     $rolled_back = $run('rollback', false);
     twins_staging_chrome_harness_assert(twins_staging_chrome_harness_call_ids() === [36, 7336, 1409, 7344], 'rollback order failed');
@@ -226,12 +263,50 @@ namespace {
 
     twins_staging_chrome_harness_seed($global, [2 => 'rollback write failed']);
     $partial = $run('rollback', false);
-    twins_staging_chrome_harness_assert(twins_staging_chrome_harness_call_ids() === [36, 7336], 'failed rollback continued unexpectedly');
-    twins_staging_chrome_harness_assert($partial['status'] === 'TRANSITION_FAILED', 'partial failure status failed');
-    twins_staging_chrome_harness_assert($partial['afterState'] === 'UNKNOWN', 'partial failure actual state failed');
+    twins_staging_chrome_harness_assert(twins_staging_chrome_harness_call_ids() === [36, 7336, 7336, 36, 7344, 1409], 'failed rollback compensation order/one-pass failed');
+    twins_staging_chrome_harness_assert($partial['status'] === 'TRANSITION_COMPENSATED', 'partial rollback was not compensated');
+    twins_staging_chrome_harness_assert($partial['afterState'] === 'GLOBAL', 'partial rollback did not restore global state');
     twins_staging_chrome_harness_assert($partial['stagingMutation'] === true, 'partial failure hid mutation');
-    twins_staging_chrome_harness_assert($partial['changedDocumentIds'] === [36], 'partial failure changed IDs failed');
+    twins_staging_chrome_harness_assert($partial['changedDocumentIds'] === [], 'partial rollback left changed IDs');
+    twins_staging_chrome_harness_assert(twins_staging_chrome_harness_conditions() === $global, 'partial rollback compensation target failed');
     twins_staging_chrome_harness_assert(twins_staging_chrome_cli_exit_code($partial) === 1, 'partial failure exit code failed');
+
+    twins_staging_chrome_harness_seed($global, [2 => 'restore-canary write failed']);
+    $restore_partial = $run('restore-canary', false);
+    twins_staging_chrome_harness_assert(twins_staging_chrome_harness_call_ids() === [36, 7336, 7336, 36, 7344, 1409], 'failed restore-canary compensation order/one-pass failed');
+    twins_staging_chrome_harness_assert($restore_partial['status'] === 'TRANSITION_COMPENSATED', 'partial restore-canary was not compensated');
+    twins_staging_chrome_harness_assert($restore_partial['afterState'] === 'GLOBAL', 'partial restore-canary did not restore global state');
+    twins_staging_chrome_harness_assert(twins_staging_chrome_harness_conditions() === $global, 'partial restore-canary compensation target failed');
+
+    twins_staging_chrome_harness_seed(
+        $canary,
+        [2 => 'promotion write failed'],
+        [],
+        [7 => 'compensation snapshot failed']
+    );
+    $compensation_preflight_failed = $run('promote', false);
+    twins_staging_chrome_harness_assert(twins_staging_chrome_harness_call_ids() === [7336, 36], 'compensation preflight failure retried a write');
+    twins_staging_chrome_harness_assert($compensation_preflight_failed['status'] === 'TRANSITION_COMPENSATION_FAILED', 'compensation preflight failure status failed');
+    twins_staging_chrome_harness_assert($compensation_preflight_failed['stagingMutation'] === true, 'compensation preflight failure hid possible mutation');
+    twins_staging_chrome_harness_assert($compensation_preflight_failed['afterState'] === 'UNKNOWN', 'compensation preflight failure was not indeterminate');
+    twins_staging_chrome_harness_assert(count($compensation_preflight_failed['compensationErrors']) >= 1, 'compensation preflight error was not reported');
+
+    twins_staging_chrome_harness_seed($canary, [], [
+        1 => [1409 => []],
+    ]);
+    $drift_compensated = $run('promote', false);
+    twins_staging_chrome_harness_assert(
+        twins_staging_chrome_harness_call_ids() === [7336, 36, 7336, 1409, 7344],
+        'condition drift was overwritten instead of forcing compensation'
+    );
+    twins_staging_chrome_harness_assert(
+        $drift_compensated['status'] === 'TRANSITION_COMPENSATED',
+        'condition drift did not fail closed through compensation'
+    );
+    twins_staging_chrome_harness_assert(
+        twins_staging_chrome_harness_conditions() === $canary,
+        'condition drift compensation did not restore the canary'
+    );
 
     echo "STAGING_CHROME_TRANSITION_HARNESS_OK\n";
 }

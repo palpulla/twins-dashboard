@@ -131,6 +131,47 @@ For each staging site, confirm all of the following:
 If any check fails, stop. Take the clone offline and do not restore production
 data until the gate is corrected.
 
+## Current private staging chrome
+
+As of 2026-07-13, the main private staging site at
+`danielj140.sg-host.com` is in the verified `GLOBAL` chrome state. This is a
+staging-only preview; it is not a production publication and grants no
+production write authority.
+
+- Header document `7336` and footer document `7344` have the fixed
+  `include/general` condition.
+- Saved menu document `7333` remains the header's modal-menu dependency.
+- Original header `36`, saved menu `305`, and footer `1409` remain published but
+  have no conditions, preserving an exact rollback path.
+- Contact footer `2179` retains only its existing contact-page condition.
+- Wisconsin and Kentucky multisite surfaces retain their original chrome.
+- The staging visual kit applies `overflow-x: clip` to the root and body solely
+  to contain legacy horizontal spill in the private preview. This rule is not a
+  production change. It also confines the long cloned mobile menu to its modal
+  scroll area and locks the background page only while that modal is open.
+
+The condition transition changes no Elementor content, titles, statuses,
+template types, links, menu bindings, or document hashes. Before promotion, the
+following mode-600 backups were captured outside the web root:
+
+- `/home/customer/staging-safety/chrome-before-20260713.json`
+  (`sha256:5ab877462d07e1401ebf86512b47253104e5644874a7825957d89a9b2ebe65c6`)
+- `/home/customer/staging-safety/before-global-chrome-20260713.sql.gz`
+  (`sha256:c25fbf9ce2dc5eebd4d014aae09eaf6a059b524e1e34f9fa39913e2b8b88c8d8`)
+
+The rollback transition is fixed and fail-closed. Verify it first with
+`TWINS_STAGING_CHROME_DRY_RUN=1`; a valid dry run reports the actual state as
+`GLOBAL`, projects `ORIGINAL`, reports `stagingMutation:false`, and lists only
+documents `36`, `7336`, `1409`, and `7344` as projected changes. To execute the
+rollback from the staging WordPress directory only when explicitly required:
+
+```sh
+TWINS_STAGING_CHROME_MODE=rollback wp eval-file /home/customer/staging-safety/staging-chrome-transition.php
+```
+
+Do not run this command on production. After a real rollback, flush Elementor
+CSS and the private staging cache, then repeat browser and whole-site checks.
+
 ## Rollback
 
 Rollback means destroying or sanitizing the staging clone; it never means

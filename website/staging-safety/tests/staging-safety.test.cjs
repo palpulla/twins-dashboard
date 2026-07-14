@@ -206,6 +206,26 @@ test('Claude twx v2 visual layer is restored locally without enabling integratio
   ]) {
     assert.ok(css.includes(selector), `${selector} is missing from the visual kit`);
   }
+  assert.match(
+    css,
+    /html\s*,\s*body\s*\{[^}]*overflow-x\s*:\s*clip/i,
+    'the private staging preview must contain legacy horizontal overflow without creating a scroll container'
+  );
+  assert.match(
+    css,
+    /\.twx2-pop-trigger-popup\s+\.uael-modal\.uael-show\s*\{[^}]*overflow-y\s*:\s*auto[^}]*overscroll-behavior\s*:\s*contain/i,
+    'the long mobile menu must scroll inside its modal instead of moving the page behind it'
+  );
+  assert.match(
+    css,
+    /html:has\(\.twx2-pop-trigger-popup\s+\.uael-modal\.uael-show\)\s*,\s*body:has\(\.twx2-pop-trigger-popup\s+\.uael-modal\.uael-show\)\s*\{[^}]*overflow-y\s*:\s*hidden/i,
+    'the page behind the open mobile menu must remain locked'
+  );
+  assert.doesNotMatch(
+    css,
+    /Deploy:\s*append this whole block/i,
+    'a staging-only global containment rule must never be presented as a production WPCode deployment block'
+  );
   assert.doesNotMatch(css, /@import|url\s*\(|https?:|javascript:|expression\s*\(/i);
 });
 
@@ -478,6 +498,11 @@ test('runbook documents the all-HTTP, shortcode and option fail-closed gates', (
 test('staging chrome transition pins the staging identity and immutable template manifest', () => {
   const source = read(CHROME_TRANSITION_PATH);
   assert.ok(source, 'staging chrome transition tool is missing');
+  assert.doesNotMatch(
+    source,
+    /declare\s*\(\s*strict_types\s*=\s*1\s*\)/,
+    'wp eval-file evaluates inside WordPress, so a file-level strict_types declaration is fatal'
+  );
 
   assert.match(source, /home_url\(\)/);
   assert.match(source, /https:\/\/danielj140\.sg-host\.com/);
@@ -509,6 +534,8 @@ test('staging chrome transition pins the staging identity and immutable template
   assert.ok(identity.includes('if(get_current_blog_id()!==1)'));
   assert.equal((source.match(/danielj140\.sg-host\.com/g) || []).length, 1, 'the fixed staging host must have one authority source');
   assert.match(source, /hash\(\s*'sha256'\s*,/);
+  assert.match(source, /template status mismatch/);
+  assert.match(source, /['"]publish['"]/);
   const authorityFields = source.match(/['"]productionWriteAuthority['"]\s*=>/g) || [];
   const falseAuthorityFields = source.match(/['"]productionWriteAuthority['"]\s*=>\s*false/g) || [];
   assert.ok(authorityFields.length >= 1, 'production authority receipt is missing');
@@ -543,7 +570,10 @@ test('staging chrome transition fixes all known condition states and one-pass wr
   assert.doesNotMatch(source, /function\s+twins_staging_chrome_apply_conditions\s*\(/, 'no globally callable write boundary is allowed');
   assert.match(source, /private\s+static\s+function\s+execute\s*\(/);
   assert.match(source, /private\s+static\s+function\s+write_target\s*\(/);
-  assert.match(source, /'compensate'\s*=>\s*\[36,\s*7336,\s*1409,\s*7344\]/);
+  assert.match(source, /\$pre_write_conditions\s*!==\s*\$expected_conditions/);
+  assert.match(source, /condition state drift before write/);
+  assert.match(source, /'compensate-canary'\s*=>\s*\[36,\s*7336,\s*1409,\s*7344\]/);
+  assert.match(source, /'compensate-global'\s*=>\s*\[7336,\s*36,\s*7344,\s*1409\]/);
   assert.match(source, /function\s+twins_staging_chrome_cli_exit_code\s*\(/);
   assert.match(source, /TRANSITION_COMPENSATION_FAILED/);
   assert.match(source, /TRANSITION_FAILED/);

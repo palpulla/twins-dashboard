@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * Fail-closed Elementor Theme Builder condition transition for private staging.
  */
@@ -175,6 +173,9 @@ function twins_staging_chrome_snapshot_conditions(array $snapshot): array
     $conditions = [];
     foreach (twins_staging_chrome_manifest() as $document_id => $expected) {
         unset($expected);
+        if (($snapshot[$document_id]['status'] ?? null) !== 'publish') {
+            throw new RuntimeException('TRANSITION_REFUSED: template status mismatch ' . $document_id);
+        }
         if (!isset($snapshot[$document_id]['conditions']) || !is_array($snapshot[$document_id]['conditions'])) {
             throw new RuntimeException('TRANSITION_REFUSED: incomplete transition snapshot');
         }
@@ -190,7 +191,8 @@ function twins_staging_chrome_write_orders(): array
         'promote' => [7336, 36, 7344, 1409],
         'restore-canary' => [36, 7336, 1409, 7344],
         'rollback' => [36, 7336, 1409, 7344],
-        'compensate' => [36, 7336, 1409, 7344],
+        'compensate-canary' => [36, 7336, 1409, 7344],
+        'compensate-global' => [7336, 36, 7344, 1409],
     ];
 }
 
@@ -283,36 +285,40 @@ final class Twins_Staging_Chrome_Transition_Runtime
             return $report;
         }
 
-        if ($mode === 'promote') {
-            $compensation = self::write_target('compensate', true, $snapshot_reader, $save_conditions);
-            $compensated = self::read_actual_state($snapshot_reader);
-            $changed = self::actual_changed_document_ids($before_snapshot, $compensated['snapshot']);
-            $compensation_failed = $compensation['errors'] !== [] || $compensated['state'] !== 'CANARY';
-
-            $report['stagingMutation'] = true;
-            $report['afterState'] = $compensated['state'];
-            $report['changedDocumentIds'] = $changed === null ? $write['successfulIds'] : $changed;
-            $report['snapshot'] = $compensated['snapshot'];
-            $report['status'] = $compensation_failed
-                ? 'TRANSITION_COMPENSATION_FAILED'
-                : 'TRANSITION_COMPENSATED';
+        if ($write['attemptedIds'] === []) {
+            $changed = self::actual_changed_document_ids($before_snapshot, $after['snapshot']);
+            $report['afterState'] = $after['state'];
+            $report['changedDocumentIds'] = $changed === null ? [] : $changed;
+            $report['snapshot'] = $after['snapshot'];
+            $report['status'] = 'TRANSITION_FAILED';
             $report['errors'] = $write['errors'];
-            $report['compensationErrors'] = $compensation['errors'];
-            if ($compensated['error'] !== null) {
-                $report['compensationErrors'][] = $compensated['error'];
+            if ($after['error'] !== null) {
+                $report['errors'][] = $after['error'];
             }
             return $report;
         }
 
-        $changed = self::actual_changed_document_ids($before_snapshot, $after['snapshot']);
-        $report['stagingMutation'] = $write['attemptedIds'] !== [];
-        $report['afterState'] = $after['state'];
+        $compensation_mode = $mode === 'promote' ? 'compensate-canary' : 'compensate-global';
+        $compensation_state = $mode === 'promote' ? 'CANARY' : 'GLOBAL';
+        $compensation = self::write_target($compensation_mode, true, $snapshot_reader, $save_conditions);
+        $compensated = self::read_actual_state($snapshot_reader);
+        $changed = self::actual_changed_document_ids($before_snapshot, $compensated['snapshot']);
+        $compensation_failed = $compensation['errors'] !== [] || $compensated['state'] !== $compensation_state;
+
+        $report['stagingMutation'] = true;
+        $report['afterState'] = $compensated['state'];
         $report['changedDocumentIds'] = $changed === null ? $write['successfulIds'] : $changed;
-        $report['snapshot'] = $after['snapshot'];
-        $report['status'] = 'TRANSITION_FAILED';
+        $report['snapshot'] = $compensated['snapshot'];
+        $report['status'] = $compensation_failed
+            ? 'TRANSITION_COMPENSATION_FAILED'
+            : 'TRANSITION_COMPENSATED';
         $report['errors'] = $write['errors'];
         if ($after['error'] !== null) {
             $report['errors'][] = $after['error'];
+        }
+        $report['compensationErrors'] = $compensation['errors'];
+        if ($compensated['error'] !== null) {
+            $report['compensationErrors'][] = $compensated['error'];
         }
         return $report;
     }
@@ -323,40 +329,84 @@ final class Twins_Staging_Chrome_Transition_Runtime
         callable $snapshot_reader,
         callable $save_conditions
     ): array {
-        $target_mode = $mode === 'compensate' ? 'restore-canary' : $mode;
+        $compensation_targets = [
+            'compensate-canary' => 'restore-canary',
+            'compensate-global' => 'promote',
+        ];
+        $target_mode = $compensation_targets[$mode] ?? $mode;
+        $is_compensation = isset($compensation_targets[$mode]);
         $target = twins_staging_chrome_target_conditions($target_mode);
         $orders = twins_staging_chrome_write_orders();
         if (!isset($orders[$mode])) {
             throw new RuntimeException('TRANSITION_REFUSED: missing fixed write order');
         }
 
+        try {
+            $initial_snapshot = $snapshot_reader();
+            $expected_conditions = twins_staging_chrome_snapshot_conditions($initial_snapshot);
+        } catch (Throwable $error) {
+            return [
+                'attemptedIds' => [],
+                'successfulIds' => [],
+                'errors' => ['transition preflight: ' . $error->getMessage()],
+            ];
+        }
+        if (!$is_compensation) {
+            $expected_sources = [
+                'promote' => twins_staging_chrome_condition_maps()['CANARY'],
+                'restore-canary' => twins_staging_chrome_condition_maps()['GLOBAL'],
+                'rollback' => twins_staging_chrome_condition_maps()['GLOBAL'],
+            ];
+            if ($expected_conditions !== $expected_sources[$mode]) {
+                return [
+                    'attemptedIds' => [],
+                    'successfulIds' => [],
+                    'errors' => ['condition state drift before write'],
+                ];
+            }
+        }
+
         $attempted_ids = [];
         $successful_ids = [];
         $errors = [];
         foreach ($orders[$mode] as $document_id) {
-            $attempted_ids[] = $document_id;
             try {
                 $pre_write_snapshot = $snapshot_reader();
-                twins_staging_chrome_snapshot_conditions($pre_write_snapshot);
+                $pre_write_conditions = twins_staging_chrome_snapshot_conditions($pre_write_snapshot);
+                if ($pre_write_conditions !== $expected_conditions) {
+                    throw new RuntimeException(
+                        'TRANSITION_WRITE_FAILED: condition state drift before write ' . $document_id
+                    );
+                }
 
                 $ordered_segments = [];
                 foreach ($target[$document_id] as $condition) {
                     $ordered_segments[] = explode('/', $condition);
                 }
+                $attempted_ids[] = $document_id;
                 $save_conditions($document_id, $ordered_segments);
 
                 $read_back_snapshot = $snapshot_reader();
                 $read_back_conditions = twins_staging_chrome_snapshot_conditions($read_back_snapshot);
-                if ($read_back_conditions[$document_id] !== $target[$document_id]) {
+                $expected_after_write = $expected_conditions;
+                $expected_after_write[$document_id] = $target[$document_id];
+                if ($read_back_conditions !== $expected_after_write) {
                     throw new RuntimeException(
-                        'TRANSITION_WRITE_FAILED: condition read-back mismatch ' . $document_id
+                        'TRANSITION_WRITE_FAILED: condition state drift after write ' . $document_id
                     );
                 }
                 $successful_ids[] = $document_id;
+                $expected_conditions = $read_back_conditions;
             } catch (Throwable $error) {
                 $errors[] = $document_id . ': ' . $error->getMessage();
                 if (!$continue_after_error) {
                     break;
+                }
+                try {
+                    $recovery_snapshot = $snapshot_reader();
+                    $expected_conditions = twins_staging_chrome_snapshot_conditions($recovery_snapshot);
+                } catch (Throwable $recovery_error) {
+                    $errors[] = $document_id . ': ' . $recovery_error->getMessage();
                 }
             }
         }

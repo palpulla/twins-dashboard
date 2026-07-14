@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Twins Staging Safety
  * Description: Fail-closed side-effect and indexing controls for an isolated Twins WordPress staging clone.
- * Version: 1.2.1
+ * Version: 1.2.4
  * Author: Twins Garage Doors
  * Network: true
  */
@@ -170,7 +170,7 @@ function twins_staging_safety_enqueue_visual_preview_styles() {
         'twins-staging-twx-v2',
         plugins_url('twins-staging-assets/twx-v2-kit.css', __FILE__),
         array(),
-        '2026.07.13'
+        '2026.07.13.3'
     );
 }
 
