@@ -83,6 +83,9 @@ test('recovered deployment-critical files are regular blobs byte-identical to th
     'routes.php',
     'components.php',
     'renderers.php',
+    'brand-runtime.php',
+    'adapters/BrandStagingAdapters.php',
+    'adapters/BrandStagingPreviews.php',
     'templates/home.php',
     'templates/service.php',
     'templates/location.php',
@@ -146,6 +149,9 @@ test('the preview has no production-domain or outbound submission authority', ()
     `${PACKAGE}/routes.php`,
     `${PACKAGE}/components.php`,
     `${PACKAGE}/renderers.php`,
+    `${PACKAGE}/brand-runtime.php`,
+    `${PACKAGE}/adapters/BrandStagingAdapters.php`,
+    `${PACKAGE}/adapters/BrandStagingPreviews.php`,
     ...fs.readdirSync(absolute(`${PACKAGE}/templates`)).filter((file) => file.endsWith('.php')).map((file) => `${PACKAGE}/templates/${file}`),
     `${ASSETS}/twins-overhaul.js`
   ];
@@ -199,7 +205,7 @@ test('mobile keeps both Twin characters animated and uses a modern inset action 
   assert.match(css, /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?animation:\s*none\s*!important/s);
 });
 
-test('fixed routing preserves campaign and careers work while providing regional aliases and builder routes', () => {
+test('fixed routing preserves campaign work while branding Careers and retaining regional aliases and builder routes', () => {
   const safety = read(SAFETY);
   const routes = read(`${PACKAGE}/routes.php`);
   const data = read(`${PACKAGE}/data.php`);
@@ -212,11 +218,70 @@ test('fixed routing preserves campaign and careers work while providing regional
   assert.match(redirect, /['"]\/wi\/careers\/['"]\s*=>\s*['"]\/careers\/['"]/);
   assert.match(redirect, /['"]\/ky\/careers\/['"]\s*=>\s*['"]\/careers\/['"]/);
   assert.match(classify, /in_array\(\s*\$postId,\s*array\(7092,\s*7093\),\s*true\)/);
-  assert.match(classify, /\$postId\s*===\s*7341[\s\S]*?return\s+['"]careers-preserve['"]/);
+  assert.match(classify, /\$postId\s*===\s*7341[\s\S]*?return\s+['"]careers-brand['"]/);
   for (const [blog, route] of [[1, '/door-builder'], [3, '/ky/design-your-door'], [4, '/wi/door-builder'], [5, '/il/door-builder']]) {
     assert.match(classify, new RegExp(`${blog}\\s*=>\\s*['"]${route.replaceAll('/', '\\/')}['"]`));
   }
   assert.equal((data.match(/twins_overhaul_navigation_item\(['"]Careers['"],\s*['"]\/careers\/['"]\)/g) || []).length, 4);
+});
+
+test('private staging brand bridge is fixed-origin, inert, and isolated behind the unchanged root gates', () => {
+  const runtimePath = `${PACKAGE}/brand-runtime.php`;
+  const adaptersPath = `${PACKAGE}/adapters/BrandStagingAdapters.php`;
+  const previewsPath = `${PACKAGE}/adapters/BrandStagingPreviews.php`;
+  const runtime = read(runtimePath);
+  const adapters = read(adaptersPath);
+  const previews = read(previewsPath);
+  const routes = read(`${PACKAGE}/routes.php`);
+  const renderers = read(`${PACKAGE}/renderers.php`);
+  const bootstrap = read(`${PACKAGE}/bootstrap.php`);
+
+  assert.equal(sha256(LOADER), LIVE_HASHES[LOADER], 'root gate loader changed');
+  assert.match(bootstrap, /require_once\s+__DIR__\s*\.\s*['"]\/brand-runtime\.php['"]/);
+  assert.match(runtime, /count\(\$valid\)\s*!==\s*1/);
+  assert.match(runtime, /Portable brand core resolution is unavailable or ambiguous/);
+  assert.match(runtime, /content_url\(\s*['"]mu-plugins\/twins-brand-experience['"]\s*\)/);
+  assert.match(runtime, /network_home_url\(\s*['"]\/['"]\s*\)/);
+  assert.match(runtime, /WPMU_PLUGIN_DIR[\s\S]*?google-business-reviews-collection-2178\.json/);
+
+  for (const classification of ['home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand']) {
+    assert.match(routes, new RegExp(`['"]${classification}['"]`));
+    assert.match(renderers, new RegExp(`['"]${classification}['"]`));
+  }
+  for (const obsolete of ['careers-preserve', 'team-preserve']) {
+    assert.doesNotMatch(routes, new RegExp(`['"]${obsolete}['"]`));
+  }
+
+  assert.match(adapters, /final\s+class\s+StagingAssetResolver\s+implements\s+AssetResolver/);
+  assert.match(adapters, /final\s+class\s+StagingRouteAdapter\s+implements\s+RouteAdapter/);
+  assert.match(adapters, /final\s+class\s+CapturedReviewsProvider\s+implements\s+ReviewsProvider/);
+  assert.match(adapters, /final\s+class\s+StagingQuoteAdapter\s+implements\s+QuoteAdapter/);
+  assert.match(adapters, /final\s+class\s+StagingQuoteAdapter[\s\S]*?private\s+string\s+\$href/);
+  assert.match(adapters, /final\s+class\s+StagingBookingAdapter\s+implements\s+BookingAdapter/);
+  assert.match(adapters, /final\s+class\s+StagingApplicationAdapter\s+implements\s+ApplicationAdapter/);
+  assert.match(adapters, /Cross-origin staging assets are forbidden/);
+  assert.match(adapters, /Unknown asset key/);
+  assert.match(adapters, /Unknown staging route key|Unknown route key/);
+  assert.match(adapters, /Unknown staging adapter context key/);
+  assert.match(adapters, /\$expectedMarket/);
+  assert.match(adapters, /ReviewCodec::verifyCollection/);
+  assert.match(adapters, /lstat\s*\(/);
+  assert.match(adapters, /2097152/);
+  for (const field of ['dev', 'ino', 'mode', 'uid', 'gid', 'size', 'mtime', 'ctime']) {
+    assert.match(adapters, new RegExp(`['"]${field}['"]`));
+  }
+  assert.match(adapters, /sameSnapshot\(\$before,\s*\$readSnapshot\)/);
+  assert.match(adapters, /sameSnapshot\(\$before,\s*\$after\)/);
+  assert.doesNotMatch(adapters, /\b(?:do_shortcode|wp_(?:safe_)?remote_(?:get|post|request)|get_transient|set_transient)\s*\(/i);
+  assert.doesNotMatch(adapters, /\$_(?:GET|POST|REQUEST)|\$wpdb\b/);
+
+  assert.doesNotMatch(previews, /<form\b|type=["'](?:submit|image)["']|\bname=|\bformaction=|https?:\/\//i);
+  assert.match(previews, /data-preview-kind=["']quote["']/);
+  assert.match(previews, /data-preview-kind=["']application["']/);
+  assert.match(previews, /data-twins-booking-dialog/);
+  assert.match(renderers, /twins-brand-experience/);
+  assert.match(renderers, /connect-src 'none'/);
+  assert.match(renderers, /form-action 'none'/);
 });
 
 test('Lexington exception is pinned to the exact blog, location, queried post, and Elementor document tuple', () => {

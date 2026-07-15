@@ -125,7 +125,7 @@ require $argv[1];
 
 assert(twins_overhaul_classify_request(4, '/wi/garage-door-cost-in-madison-wi/', 'page', 6807) === 'cost-madison');
 assert(twins_overhaul_classify_request(1, '/madison-garage-door-repair-lp/', 'page', 7092) === 'campaign-preserve');
-assert(twins_overhaul_classify_request(1, '/careers/', 'page', 7341) === 'careers-preserve');
+assert(twins_overhaul_classify_request(1, '/careers/', 'page', 7341) === 'careers-brand');
 assert(twins_overhaul_classify_request(5, '/il/location/rockford/', 'location', 0) === 'location');
 assert(twins_overhaul_should_render_chrome('campaign-preserve') === false);
 assert(twins_overhaul_should_render_chrome('cost-madison') === true);

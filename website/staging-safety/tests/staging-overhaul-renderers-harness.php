@@ -165,6 +165,16 @@ function wp_parse_url($url, $component = -1)
     return parse_url((string) $url, (int) $component);
 }
 
+function network_home_url($path = ''): string
+{
+    return 'https://stage.example.test/' . ltrim((string) $path, '/');
+}
+
+function content_url($path = ''): string
+{
+    return 'https://stage.example.test/wp-content/' . ltrim((string) $path, '/');
+}
+
 function twins_staging_safety_csp_policy(): string
 {
     return "default-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'self';";
@@ -308,7 +318,7 @@ if ($argc !== 3 || !is_file($argv[1])) {
 }
 
 $scenario = $argv[2];
-if (!in_array($scenario, ['routes', 'hooks', 'blog-index', 'campaign', 'preserve-once', 'family-once', 'home-brand', 'elementor-theme-content', 'elementor-document-content', 'legacy-location-document', 'ineligible', 'article', 'unknown-blog'], true)) {
+if (!in_array($scenario, ['routes', 'hooks', 'blog-index', 'campaign', 'family-once', 'home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand', 'elementor-theme-content', 'elementor-document-content', 'legacy-location-document', 'ineligible', 'article', 'unknown-blog'], true)) {
     fwrite(STDERR, "UNKNOWN_RENDERER_SCENARIO\n");
     exit(2);
 }
@@ -320,8 +330,12 @@ if ($scenario === 'routes') {
     $cases = [
         [1, '/madison-garage-door-repair-lp/', 'page', 7092, 'campaign-preserve'],
         [1, '/madison-tune-up-lp/', 'page', 7093, 'campaign-preserve'],
-        [1, '/careers/', 'page', 7341, 'careers-preserve'],
-        [1, '/our-team/', 'page', 6955, 'team-preserve'],
+        [1, '/careers/', 'page', 7341, 'careers-brand'],
+        [1, '/our-team/', 'page', 6955, 'team-brand'],
+        [1, '/reviews/', 'page', 2186, 'reviews-brand'],
+        [4, '/wi/reviews/', 'page', 2186, 'reviews-brand'],
+        [1, '/contact-us/', 'page', 2030, 'contact-brand'],
+        [3, '/ky/contact-us/', 'page', 2030, 'contact-brand'],
         [1, '/clopay-garage-doors/', 'page', 7141, 'catalog-preserve'],
         [1, '/clopay-classic-collection/', 'page', 6034, 'catalog-preserve'],
         [1, '/privacy-policy/', 'page', 2009, 'legal-preserve'],
@@ -333,16 +347,15 @@ if ($scenario === 'routes') {
         [4, '/wi/door-builder/', 'page', 6766, 'builder'],
         [3, '/ky/design-your-door/', 'page', 0, 'builder'],
         [5, '/il/door-builder/', 'page', 0, 'builder'],
-        [1, '/', 'page', 1, 'home'],
-        [3, '/ky/', 'page', 1, 'home'],
-        [4, '/wi/', 'page', 1, 'home'],
-        [5, '/il/', 'page', 1, 'home'],
+        [1, '/', 'page', 1, 'home-brand'],
+        [3, '/ky/', 'page', 1, 'home-brand'],
+        [4, '/wi/', 'page', 1, 'home-brand'],
+        [5, '/il/', 'page', 1, 'home-brand'],
         [5, '/il/location/rockford/', 'location', 0, 'location'],
         [1, '/location/madison/', 'page', 0, 'location'],
         [4, '/wi/service-area/', 'page', 0, 'location'],
         [4, '/wi/garage-door-repair-in-milwaukee-wi/', 'page', 0, 'location'],
         [3, '/ky/about-us/', 'page', 0, 'trust'],
-        [1, '/contact-us/', 'page', 0, 'trust'],
         [4, '/wi/garage-door-spring-repair/', 'page', 0, 'service'],
         [5, '/il/garage-door-installation/', 'page', 0, 'service'],
         [1, '/garage-door-repair/', 'page', 0, 'service'],
@@ -453,12 +466,16 @@ if ($scenario === 'hooks') {
     $classes = ($bodyHook[2])(['existing-class']);
     twins_overhaul_renderer_assert(in_array('twins-overhaul-preview', $classes, true), 'eligible request lacks preview body class');
     twins_overhaul_renderer_assert(in_array('twins-overhaul-singular', $classes, true), 'eligible singular request lacks singular-only body class');
+    twins_overhaul_renderer_assert(in_array('twins-brand-experience', $classes, true), 'branded request lacks portable body class');
 
     twins_overhaul_enqueue_assets();
-    twins_overhaul_renderer_assert(count($GLOBALS['twins_overhaul_renderer_assets']) === 2, 'eligible request did not enqueue exactly two assets');
-    foreach ($GLOBALS['twins_overhaul_renderer_assets'] as $asset) {
-        twins_overhaul_renderer_assert((bool) preg_match('~^/(?!/)~', (string) $asset[2]), 'asset URL is not same-origin root-relative');
-    }
+    twins_overhaul_renderer_assert(count($GLOBALS['twins_overhaul_renderer_assets']) === 4, 'branded request did not enqueue two legacy and two portable assets');
+    twins_overhaul_renderer_assert((bool) preg_match('~^/(?!/)~', (string) $GLOBALS['twins_overhaul_renderer_assets'][0][2]), 'legacy style is not same-origin root-relative');
+    twins_overhaul_renderer_assert((bool) preg_match('~^/(?!/)~', (string) $GLOBALS['twins_overhaul_renderer_assets'][1][2]), 'legacy script is not same-origin root-relative');
+    twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][2][1] === 'twins-brand-experience', 'portable style handle changed');
+    twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][3][1] === 'twins-brand-experience', 'portable script handle changed');
+    twins_overhaul_renderer_assert(strpos((string) $GLOBALS['twins_overhaul_renderer_assets'][2][2], 'https://stage.example.test/wp-content/mu-plugins/twins-brand-experience/assets/css/twins-brand.css') === 0, 'portable style is not fixed same-origin');
+    twins_overhaul_renderer_assert(strpos((string) $GLOBALS['twins_overhaul_renderer_assets'][3][2], 'https://stage.example.test/wp-content/mu-plugins/twins-brand-experience/assets/js/twins-brand.js') === 0, 'portable script is not fixed same-origin');
     twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_dequeued_styles'] === [
         'astra-google-fonts',
         'elementor-gf-local-montserrat',
@@ -552,6 +569,15 @@ if ($scenario === 'hooks') {
     twins_overhaul_renderer_assert(substr_count($themePostFallback, 'id="twins-overhaul-main"') === 1, 'exact article body widget did not receive the fixed fallback frame');
     twins_overhaul_renderer_assert(substr_count($themePostFallback, $legacyTitle) === 1, 'exact article body widget content changed during fallback rendering');
 
+    twins_overhaul_renderer_set([
+        'path' => '/',
+        'postType' => 'page',
+        'postId' => 1,
+        'renderedPostType' => 'page',
+        'renderedPostId' => 1,
+        'title' => 'Twins Garage Doors',
+    ]);
+
     ob_start();
     ($fontSentinelHook[2])();
     ($fontSentinelHook[2])();
@@ -562,14 +588,14 @@ if ($scenario === 'hooks') {
     ($headerHook[2])();
     ($headerHook[2])();
     $header = (string) ob_get_clean();
-    twins_overhaul_renderer_assert(substr_count($header, '<header class="twins-overhaul-header"') === 1, 'header once guard failed');
-    twins_overhaul_renderer_assert(strpos($header, 'href="#twins-overhaul-main"') !== false, 'skip link does not target the main wrapper');
+    twins_overhaul_renderer_assert(substr_count($header, '<header class="twins-brand-header"') === 1, 'portable header once guard failed');
+    twins_overhaul_renderer_assert(substr_count($header, 'aria-label="Primary navigation"') === 1, 'portable header primary navigation count changed');
 
     ob_start();
     ($footerHook[2])();
     ($footerHook[2])();
     $footer = (string) ob_get_clean();
-    twins_overhaul_renderer_assert(substr_count($footer, '<footer class="twins-overhaul-footer"') === 1, 'footer once guard failed');
+    twins_overhaul_renderer_assert(substr_count($footer, '<footer class="twins-brand-footer"') === 1, 'portable footer once guard failed');
 }
 
 if ($scenario === 'blog-index') {
@@ -637,41 +663,6 @@ if ($scenario === 'campaign') {
     twins_overhaul_renderer_assert(stripos($campaign, '<form') === false && stripos($campaign, '</form>') === false, 'campaign retained a form element');
     twins_overhaul_renderer_assert(stripos($campaign, 'type="submit"') === false && stripos($campaign, 'action=') === false && stripos($campaign, 'method=') === false, 'campaign retained submission authority');
     twins_overhaul_renderer_assert(strpos($campaign, 'data-twins-staging-form-inert=true') !== false, 'campaign lacks the context-neutral server-side inert marker');
-}
-
-if ($scenario === 'preserve-once') {
-    twins_overhaul_renderer_set([
-        'blogId' => 1,
-        'path' => '/careers/',
-        'postType' => 'page',
-        'postId' => 7341,
-        'renderedPostType' => 'page',
-        'renderedPostId' => 7341,
-        'title' => 'Careers',
-        'mainQuery' => false,
-    ]);
-    $preservedVisual = '<section data-preserved="exact">CAREERS-BYTES</section>';
-    $original = $preservedVisual
-        . '<script>const R = { innerHTML: "" }; R.innerHTML="<form id=\\"application-form\\" action=\\"/wp-json/twins/v1/employment-applications\\" method=\\"post\\"><button id=\\"submit-button\\" type=\\"submit\\">Apply</button></form>";</script>';
-    twins_overhaul_renderer_assert(twins_overhaul_replace_main_content($original) === $original, 'ineligible call changed content');
-    twins_overhaul_renderer_set(['mainQuery' => true]);
-    $wrapped = twins_overhaul_replace_main_content($original);
-    twins_overhaul_renderer_assert($wrapped !== $original, 'eligible preserve route was not framed');
-    twins_overhaul_renderer_assert(substr_count($wrapped, $preservedVisual) === 1, 'preserved visible content was not retained exactly once');
-    twins_overhaul_renderer_assert(stripos($wrapped, '<form') === false && stripos($wrapped, '</form>') === false, 'Careers output retained a form element');
-    twins_overhaul_renderer_assert(stripos($wrapped, 'type=\\"submit\\"') === false && stripos($wrapped, 'action=') === false && stripos($wrapped, 'method=') === false, 'Careers output retained escaped submission authority');
-    twins_overhaul_renderer_assert(strpos($wrapped, 'data-twins-staging-form-inert=true') !== false, 'Careers output lacks the context-neutral server-side inert marker');
-    twins_overhaul_renderer_assert(
-        preg_match('~R\\.innerHTML="((?:\\\\.|[^"\\\\])*)";~s', $wrapped, $scriptMatch) === 1,
-        'Careers output broke the completed escaped JavaScript string'
-    );
-    $decodedTemplate = json_decode('"' . $scriptMatch[1] . '"', true);
-    twins_overhaul_renderer_assert(is_string($decodedTemplate), 'Careers output no longer contains a decodable completed template');
-    twins_overhaul_renderer_assert(strpos($decodedTemplate, '<div role=form id="application-form" data-twins-staging-form-inert=true>') !== false, 'Careers completed template did not render as an inert semantic group');
-    twins_overhaul_renderer_assert(strpos($decodedTemplate, 'type=button') !== false, 'Careers completed template retained an active submit control');
-    twins_overhaul_renderer_assert(strpos($wrapped, 'id="twins-overhaul-main"') !== false, 'preserved frame lacks skip target');
-    $second = '<p>SECOND-ELIGIBLE-CALL</p>';
-    twins_overhaul_renderer_assert(twins_overhaul_replace_main_content($second) === $second, 'content once guard failed');
 }
 
 if ($scenario === 'family-once') {
@@ -746,35 +737,42 @@ if ($scenario === 'home-brand') {
         'renderedPostId' => 1,
         'title' => 'Garage Door Repair & Installation',
     ]);
-    $original = '<section><h1>Legacy homepage heading</h1><p>LOCAL PUBLISHED HOME FACT</p>'
-        . '<form action="/lead"><button type="submit">Send</button></form></section>';
-    $rendered = twins_overhaul_replace_main_content($original);
-    twins_overhaul_renderer_assert(substr_count(strtolower($rendered), '<h1') === 1, 'branded homepage must render exactly one H1');
-    foreach (['twins-home', 'twins-home-hero', 'twins-home-benefits', 'twins-home-services', 'twins-home-fleet', 'twins-home-builder', 'twins-home-service-area', 'twins-home-closing'] as $class) {
-        twins_overhaul_renderer_assert(strpos($rendered, $class) !== false, 'branded homepage section missing: ' . $class);
-    }
-    foreach (['twin-left.png', 'twin-right.png', 'twins-service-truck-cutout.webp', 'twins-service-truck-cutout.png'] as $asset) {
-        twins_overhaul_renderer_assert(strpos($rendered, $asset) !== false, 'branded homepage owned asset missing: ' . $asset);
-    }
-    twins_overhaul_renderer_assert(substr_count($rendered, 'LOCAL PUBLISHED HOME FACT') === 1, 'branded homepage lost or duplicated safe published content');
-    twins_overhaul_renderer_assert(strpos($rendered, 'Start with the details already published') === false, 'branded homepage retained generic family filler');
-    twins_overhaul_renderer_assert(stripos($rendered, '<form') === false && stripos($rendered, 'action=') === false, 'branded homepage contains form authority');
-    foreach (['five-star', 'same-day', 'licensed', 'guaranteed', '24/7', '$0'] as $unsupported) {
-        twins_overhaul_renderer_assert(stripos($rendered, $unsupported) === false, 'branded homepage invented unsupported claim: ' . $unsupported);
-    }
-    $homeHeader = twins_overhaul_render_header(twins_overhaul_current_context('home'));
-    twins_overhaul_renderer_assert(strpos($homeHeader, 'twins-overhaul-header--home') !== false, 'homepage lacks its compact header modifier');
-    twins_overhaul_renderer_assert(strpos($homeHeader, 'twins-overhaul-header__phone--home') !== false, 'homepage lacks its yellow regional phone CTA');
-    twins_overhaul_renderer_assert(strpos($homeHeader, 'twins-overhaul-logo') !== false, 'homepage compact header lost the Twins logo');
-    foreach (['twins-overhaul-utility', 'twins-overhaul-menu-trigger', 'twins-overhaul-nav', 'twins-overhaul-button--quote'] as $crowdedChrome) {
-        twins_overhaul_renderer_assert(strpos($homeHeader, $crowdedChrome) === false, 'homepage compact header retained crowded chrome: ' . $crowdedChrome);
-    }
-    $serviceContext = twins_overhaul_current_context('service');
-    $nonHomeHeader = twins_overhaul_render_header($serviceContext);
-    twins_overhaul_renderer_assert(strpos($nonHomeHeader, 'twins-overhaul-header--home') === false, 'non-home header received the homepage modifier');
-    foreach (['twins-overhaul-utility', 'twins-overhaul-menu-trigger', 'twins-overhaul-nav', 'twins-overhaul-button--quote'] as $sharedChrome) {
-        twins_overhaul_renderer_assert(strpos($nonHomeHeader, $sharedChrome) !== false, 'non-home shared header lost existing chrome: ' . $sharedChrome);
-    }
+    $body = twins_overhaul_replace_main_content('<section>OBSOLETE-HOME-BYTES</section>');
+    $context = twins_overhaul_current_context('home-brand');
+    $output = twins_overhaul_render_header($context) . $body . twins_overhaul_render_footer($context);
+    twins_overhaul_renderer_assert(substr_count($output, 'aria-label="Primary navigation"') === 1, 'home lacks exactly one primary navigation');
+    twins_overhaul_renderer_assert(strpos($output, 'Request a Quote') !== false, 'home lacks exact quote CTA');
+    twins_overhaul_renderer_assert(strpos($output, 'Book Online') !== false, 'home lacks booking control');
+    twins_overhaul_renderer_assert(strpos($output, 'Our Team') !== false, 'home lacks Our Team journey');
+    twins_overhaul_renderer_assert(strpos($output, 'Get an Estimate') === false, 'obsolete CTA survived');
+    twins_overhaul_renderer_assert(substr_count($body, 'id="twins-overhaul-main"') === 1, 'home lacks one portable main landmark');
+    twins_overhaul_renderer_assert(strpos($body, 'OBSOLETE-HOME-BYTES') === false, 'obsolete homepage body survived replacement');
+    twins_overhaul_renderer_assert(stripos($output, '<form') === false, 'home retained form authority');
+}
+
+if (in_array($scenario, ['team-brand', 'careers-brand', 'reviews-brand', 'contact-brand'], true)) {
+    $fixtures = [
+        'team-brand' => ['/our-team/', 6955, 'Our Team', 'twins-brand-team-page'],
+        'careers-brand' => ['/careers/', 7341, 'Careers', 'twins-brand-careers-page'],
+        'reviews-brand' => ['/reviews/', 2186, 'Reviews', 'twins-brand-reviews-page'],
+        'contact-brand' => ['/contact-us/', 2030, 'Contact', 'twins-brand-contact-page'],
+    ];
+    [$path, $postId, $title, $marker] = $fixtures[$scenario];
+    twins_overhaul_renderer_set([
+        'blogId' => 1,
+        'path' => $path,
+        'postType' => 'page',
+        'postId' => $postId,
+        'renderedPostType' => 'page',
+        'renderedPostId' => $postId,
+        'title' => $title,
+    ]);
+    twins_overhaul_renderer_assert(twins_overhaul_current_classification() === $scenario, $scenario . ' classification mismatch');
+    $body = twins_overhaul_replace_main_content('<section>LEGACY-BRAND-BODY</section>');
+    twins_overhaul_renderer_assert(substr_count($body, 'id="twins-overhaul-main"') === 1, $scenario . ' lacks one portable main landmark');
+    twins_overhaul_renderer_assert(strpos($body, $marker) !== false, $scenario . ' portable body marker is missing');
+    twins_overhaul_renderer_assert(strpos($body, 'LEGACY-BRAND-BODY') === false, $scenario . ' retained its legacy body');
+    twins_overhaul_renderer_assert(stripos($body, '<form') === false, $scenario . ' retained form authority');
 }
 
 if ($scenario === 'elementor-theme-content') {

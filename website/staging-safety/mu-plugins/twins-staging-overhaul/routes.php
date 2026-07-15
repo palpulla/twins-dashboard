@@ -88,11 +88,13 @@ function twins_overhaul_matches_terminal_slug(int $blogId, string $path, string 
 function twins_overhaul_is_known_classification(string $classification): bool {
     return in_array($classification, array(
         'campaign-preserve',
-        'careers-preserve',
-        'team-preserve',
         'catalog-preserve',
         'legal-preserve',
-        'home',
+        'home-brand',
+        'team-brand',
+        'careers-brand',
+        'reviews-brand',
+        'contact-brand',
         'service',
         'location',
         'trust',
@@ -126,10 +128,10 @@ function twins_overhaul_classify_request(int $blogId, string $path, string $post
             return 'campaign-preserve';
         }
         if ($postId === 7341) {
-            return 'careers-preserve';
+            return 'careers-brand';
         }
         if ($postId === 6955) {
-            return 'team-preserve';
+            return 'team-brand';
         }
         if (in_array($postId, array(
             7141,
@@ -173,7 +175,21 @@ function twins_overhaul_classify_request(int $blogId, string $path, string $post
 
     $homes = array(1 => '', 3 => '/ky', 4 => '/wi', 5 => '/il');
     if (rtrim($path, '/') === $homes[$blogId]) {
-        return 'home';
+        return 'home-brand';
+    }
+
+    if ($blogId === 1 && twins_overhaul_matches_terminal_slug($blogId, $path, 'our-team')) {
+        return 'team-brand';
+    }
+    if ($blogId === 1 && twins_overhaul_matches_terminal_slug($blogId, $path, 'careers')) {
+        return 'careers-brand';
+    }
+
+    if (twins_overhaul_matches_terminal_slug($blogId, $path, 'reviews')) {
+        return 'reviews-brand';
+    }
+    if (twins_overhaul_matches_terminal_slug($blogId, $path, 'contact-us')) {
+        return 'contact-brand';
     }
 
     if ($postType === 'location') {
@@ -203,7 +219,7 @@ function twins_overhaul_classify_request(int $blogId, string $path, string $post
         }
     }
 
-    $trustSlugs = array('about-us', 'reviews', 'faqs', 'financing', 'coupons-offers', 'contact-us');
+    $trustSlugs = array('about-us', 'faqs', 'financing', 'coupons-offers');
     foreach ($trustSlugs as $slug) {
         if (twins_overhaul_matches_terminal_slug($blogId, $path, $slug)) {
             return 'trust';

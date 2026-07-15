@@ -57,6 +57,11 @@ function twins_overhaul_render_link_list(array $items): string {
  * @return string
  */
 function twins_overhaul_render_header(array $context): string {
+    $classification = $context['classification'] ?? null;
+    if (is_string($classification) && in_array($classification, array('home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand'), true)) {
+        return twins_overhaul_brand_runtime()->renderHeader($context);
+    }
+
     $region = twins_overhaul_resolve_context($context);
     $logo = twins_overhaul_asset_url('logo');
     $skipTarget = function_exists('is_home') && is_home() ? '#content' : '#twins-overhaul-main';
@@ -113,6 +118,11 @@ function twins_overhaul_render_header(array $context): string {
  * @return string
  */
 function twins_overhaul_render_footer(array $context): string {
+    $classification = $context['classification'] ?? null;
+    if (is_string($classification) && in_array($classification, array('home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand'), true)) {
+        return twins_overhaul_brand_runtime()->renderFooter($context);
+    }
+
     $region = twins_overhaul_resolve_context($context);
     $navigation = twins_overhaul_navigation($region['key']);
     $region_names = array(

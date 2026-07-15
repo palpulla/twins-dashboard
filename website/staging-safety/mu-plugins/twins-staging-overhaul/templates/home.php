@@ -14,6 +14,11 @@ if (!defined('ABSPATH')) {
  * @return string
  */
 function twins_overhaul_render_home_template(array $context, string $content): string {
+    if (($context['classification'] ?? null) === 'home-brand') {
+        unset($content);
+        return twins_overhaul_brand_runtime()->renderHome($context);
+    }
+
     $regions = array(
         'main' => array(
             'name' => 'Twins Garage Doors',

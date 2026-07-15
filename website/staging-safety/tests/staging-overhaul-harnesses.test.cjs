@@ -73,12 +73,19 @@ phpTest('bootstrap harness fails closed for every missing or false gate', () => 
 });
 
 phpTest('renderer harness validates every approved request state', () => {
-  for (const scenario of ['routes', 'hooks', 'blog-index', 'campaign', 'preserve-once', 'family-once', 'ineligible', 'article', 'unknown-blog']) {
+  for (const scenario of ['routes', 'hooks', 'blog-index', 'campaign', 'family-once', 'home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand', 'ineligible', 'article', 'unknown-blog']) {
     assert.equal(
       runPhp('staging-overhaul-renderers-harness.php', [LOADER, scenario]),
       `STAGING_OVERHAUL_RENDERERS_HARNESS_OK:${scenario}`,
     );
   }
+});
+
+phpTest('staging brand adapters are fixed-origin, fail-closed, and invoke no side-effect primitive', () => {
+  assert.equal(
+    runPhp('staging-brand-adapters-harness.php', [LOADER, path.resolve(ROOT, '..', 'twins-brand-experience')]),
+    'STAGING_BRAND_ADAPTERS_HARNESS_OK',
+  );
 });
 
 phpTest('legacy image harness removes only the two pinned stale candidates', () => {

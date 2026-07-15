@@ -465,6 +465,9 @@ function twins_overhaul_filter_body_classes(array $classes): array {
         $classes[] = 'twins-overhaul-singular';
     }
     $classes[] = 'twins-overhaul-region-' . $context['key'];
+    if (in_array($classification, array('home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand'), true)) {
+        $classes[] = 'twins-brand-experience';
+    }
     return array_values(array_unique($classes));
 }
 
@@ -1029,6 +1032,17 @@ function twins_overhaul_enqueue_assets(): void {
     }
 
     wp_enqueue_script('twins-staging-overhaul', twins_overhaul_asset_url('script'), array(), '549faf277bbadc3d', true);
+
+    if (in_array($classification, array('home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand'), true)) {
+        $runtime = twins_overhaul_brand_runtime();
+        $handles = $runtime->assetHandles();
+        if (($handles['style'] ?? null) !== 'twins-brand-experience' || ($handles['script'] ?? null) !== 'twins-brand-experience') {
+            twins_overhaul_refuse_route('portable brand asset handles changed unexpectedly.');
+        }
+        $base = rtrim(content_url('mu-plugins/twins-brand-experience'), '/');
+        wp_enqueue_style('twins-brand-experience', $base . '/assets/css/twins-brand.css', array('twins-staging-overhaul'), '1');
+        wp_enqueue_script('twins-brand-experience', $base . '/assets/js/twins-brand.js', array('twins-staging-overhaul'), '1', true);
+    }
 }
 
 /**
@@ -1093,15 +1107,22 @@ function twins_overhaul_render_classified_content(string $classification, array 
         twins_overhaul_refuse_route('classified content type is outside the fixed renderer map.');
     }
 
-    if ($classification === 'campaign-preserve') {
+    $brandRenderers = array(
+        'home-brand' => 'renderHome',
+        'team-brand' => 'renderTeam',
+        'careers-brand' => 'renderCareers',
+        'reviews-brand' => 'renderReviews',
+        'contact-brand' => 'renderContact',
+    );
+
+    if (isset($brandRenderers[$classification])) {
+        $runtime = twins_overhaul_brand_runtime();
+        $rendered = $runtime->{$brandRenderers[$classification]}($context);
+    } elseif ($classification === 'campaign-preserve') {
         $rendered = twins_overhaul_make_preserved_forms_inert(
             twins_overhaul_remove_campaign_remote_font_links($content)
         );
-    } elseif ($classification === 'careers-preserve') {
-        $rendered = twins_overhaul_wrap_preserved_content(
-            twins_overhaul_make_preserved_forms_inert($content)
-        );
-    } elseif (in_array($classification, array('team-preserve', 'catalog-preserve'), true)) {
+    } elseif ($classification === 'catalog-preserve') {
         $rendered = twins_overhaul_wrap_preserved_content(
             twins_overhaul_make_preserved_forms_inert($content)
         );
@@ -1110,8 +1131,6 @@ function twins_overhaul_render_classified_content(string $classification, array 
             $context,
             twins_overhaul_make_preserved_forms_inert($content)
         );
-    } elseif ($classification === 'home') {
-        $rendered = twins_overhaul_render_home_template($context, $content);
     } elseif ($classification === 'service') {
         $rendered = twins_overhaul_render_service_template($context, $content);
     } elseif ($classification === 'location') {

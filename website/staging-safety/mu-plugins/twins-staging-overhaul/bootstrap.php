@@ -11,6 +11,7 @@ if (!defined('ABSPATH')) {
 
 require_once __DIR__ . '/data.php';
 require_once __DIR__ . '/cost-data.php';
+require_once __DIR__ . '/brand-runtime.php';
 require_once __DIR__ . '/components.php';
 require_once __DIR__ . '/routes.php';
 require_once __DIR__ . '/templates/service.php';
