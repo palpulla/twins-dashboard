@@ -22,6 +22,15 @@ test('header exposes the approved complete navigation and CTA copy', () => {
   assert.match(html, /===\s*['"]external['"]/);
 });
 
+test('header binds booking mode to environment and emits only exact safe external links', () => {
+  const html = source('header.php');
+  assert.match(html, /\$environment\s*===\s*['"]staging['"][\s\S]*?\$bookingMode\s*!==\s*['"]dialog['"]/);
+  assert.match(html, /\$environment\s*===\s*['"]production['"][\s\S]*?\$bookingMode\s*!==\s*['"]external['"]/);
+  assert.match(html, /\$booking\[['"]target['"]\]/);
+  assert.match(html, /\$booking\[['"]rel['"]\]/);
+  assert.equal((html.match(/target="_blank" rel="noopener noreferrer"/g) || []).length, 2);
+});
+
 test('slider emits normalized records but no review schema owner', () => {
   const html = source('review-slider.php');
   assert.match(html, /twins-brand-review-slider/);

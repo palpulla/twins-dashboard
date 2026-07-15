@@ -100,18 +100,16 @@ final class RendererHarnessQuoteAdapter implements Twins\BrandExperience\QuoteAd
 
 final class RendererHarnessBookingAdapter implements Twins\BrandExperience\BookingAdapter
 {
-    private string $mode;
+    private array $action;
+    public int $calls = 0;
     public const EXTERNAL_URL = 'https://booking.example.invalid/schedule';
 
-    public function __construct(string $mode) { $this->mode = $mode; }
+    public function __construct(array $action) { $this->action = $action; }
 
     public function action(array $context): array
     {
-        if ($this->mode === 'dialog') {
-            return ['mode' => 'dialog', 'experienceHtml' => '<div id="booking-dialog-fixture">Private booking fixture</div>'];
-        }
-        if ($this->mode === 'external') return ['mode' => 'external', 'href' => self::EXTERNAL_URL];
-        throw new DomainException('Unknown renderer booking mode.');
+        $this->calls++;
+        return $this->action;
     }
 
     public function assertReady(): void {}
@@ -131,19 +129,20 @@ $expect = static function (bool $condition, string $message): void {
 $root = dirname($argv[1]);
 $markets = new Twins\BrandExperience\MarketRegistry(require $root . '/config/markets.php');
 
-$makeExperience = static function (array $collection, string $bookingMode) use ($markets, $root): array {
+$makeExperience = static function (array $collection, array $bookingAction) use ($markets, $root): array {
     $reviews = new RendererHarnessReviewsProvider($collection);
+    $booking = new RendererHarnessBookingAdapter($bookingAction);
     $experience = new Twins\BrandExperience\Experience(
         new RendererHarnessAssetResolver(),
         new RendererHarnessRouteAdapter(),
         $reviews,
         new RendererHarnessQuoteAdapter(),
-        new RendererHarnessBookingAdapter($bookingMode),
+        $booking,
         new RendererHarnessApplicationAdapter(),
         $markets,
         $root
     );
-    return [$experience, $reviews];
+    return [$experience, $reviews, $booking];
 };
 
 $renderComponent = static function (Twins\BrandExperience\Experience $experience, string $file, array $scope): string {
@@ -219,8 +218,18 @@ $verifiedCollection = Twins\BrandExperience\ReviewCodec::verifyCollection([
     'records' => $records,
 ], new DateTimeImmutable('2026-07-15T00:00:00Z'));
 $verifiedCollection['allowExternalSourceAction'] = true;
+$dialogBookingAction = [
+    'mode' => 'dialog',
+    'experienceHtml' => '<div id="booking-dialog-fixture">Private booking fixture</div>',
+];
+$externalBookingAction = [
+    'mode' => 'external',
+    'href' => RendererHarnessBookingAdapter::EXTERNAL_URL,
+    'target' => '_blank',
+    'rel' => 'noopener noreferrer',
+];
 
-[$stagingExperience] = $makeExperience($verifiedCollection, 'dialog');
+[$stagingExperience] = $makeExperience($verifiedCollection, $dialogBookingAction);
 $header = $stagingExperience->renderHeader(['environment' => 'staging', 'market' => 'main']);
 $expect(substr_count($header, 'aria-label="Primary navigation"') === 1, 'header must contain one primary navigation');
 $expect(strpos($header, 'Request a Quote') !== false, 'header is missing exact quote CTA');
@@ -234,12 +243,40 @@ $expect(substr_count($header, '<button type="button" class="twins-brand-cta twin
 $expect(substr_count($header, 'id="booking-dialog-fixture"') === 1, 'dialog experience must render exactly once');
 $expect(strpos($header, 'Illinois preview') !== false, 'staging header omitted Illinois preview');
 
-[$productionExperience] = $makeExperience($verifiedCollection, 'external');
+[$productionExperience] = $makeExperience($verifiedCollection, $externalBookingAction);
 $productionHeader = $productionExperience->renderHeader(['environment' => 'production', 'market' => 'main']);
 $expect(substr_count($productionHeader, RendererHarnessBookingAdapter::EXTERNAL_URL) === 2, 'external booking URL must render in both approved header actions');
+$expect(substr_count($productionHeader, 'target="_blank" rel="noopener noreferrer"') === 2, 'external booking actions must emit exact safe target and rel values');
 $expect(substr_count($productionHeader, 'data-twins-booking-open') === 0, 'external booking mode rendered dialog triggers');
 $expect(strpos($productionHeader, 'booking-dialog-fixture') === false, 'external booking mode rendered dialog HTML');
 $expect(strpos($productionHeader, 'Illinois preview') === false, 'production header exposed Illinois preview');
+
+$invalidBookingCases = [
+    'staging-missing-mode' => ['environment' => 'staging', 'action' => []],
+    'staging-malformed-mode' => ['environment' => 'staging', 'action' => ['mode' => ['dialog']]],
+    'staging-missing-dialog-html' => ['environment' => 'staging', 'action' => ['mode' => 'dialog']],
+    'staging-malformed-dialog-html' => ['environment' => 'staging', 'action' => ['mode' => 'dialog', 'experienceHtml' => []]],
+    'staging-external-mode-mismatch' => ['environment' => 'staging', 'action' => $externalBookingAction],
+    'production-missing-mode' => ['environment' => 'production', 'action' => []],
+    'production-dialog-mode-mismatch' => ['environment' => 'production', 'action' => $dialogBookingAction],
+    'production-missing-external-href' => ['environment' => 'production', 'action' => ['mode' => 'external', 'target' => '_blank', 'rel' => 'noopener noreferrer']],
+    'production-malformed-external-href' => ['environment' => 'production', 'action' => ['mode' => 'external', 'href' => [], 'target' => '_blank', 'rel' => 'noopener noreferrer']],
+    'production-missing-external-target' => ['environment' => 'production', 'action' => ['mode' => 'external', 'href' => RendererHarnessBookingAdapter::EXTERNAL_URL, 'rel' => 'noopener noreferrer']],
+    'production-wrong-external-target' => ['environment' => 'production', 'action' => ['mode' => 'external', 'href' => RendererHarnessBookingAdapter::EXTERNAL_URL, 'target' => '_self', 'rel' => 'noopener noreferrer']],
+    'production-missing-external-rel' => ['environment' => 'production', 'action' => ['mode' => 'external', 'href' => RendererHarnessBookingAdapter::EXTERNAL_URL, 'target' => '_blank']],
+    'production-wrong-external-rel' => ['environment' => 'production', 'action' => ['mode' => 'external', 'href' => RendererHarnessBookingAdapter::EXTERNAL_URL, 'target' => '_blank', 'rel' => 'opener']],
+];
+foreach ($invalidBookingCases as $scenario => $fixture) {
+    [$invalidExperience, , $invalidBooking] = $makeExperience($verifiedCollection, $fixture['action']);
+    $rejected = false;
+    try {
+        $invalidExperience->renderHeader(['environment' => $fixture['environment'], 'market' => 'main']);
+    } catch (DomainException $expected) {
+        $rejected = true;
+    }
+    $expect($invalidBooking->calls === 1, $scenario . ' did not reach the header component through the fake adapter');
+    $expect($rejected, $scenario . ' was not rejected by the header component');
+}
 
 $footer = $stagingExperience->renderFooter(['environment' => 'staging', 'market' => 'main']);
 $expect(strpos($footer, 'aria-label="Quick actions"') !== false, 'footer is missing mobile quick actions');
@@ -283,7 +320,7 @@ try {
 }
 $expect($closedPicture, 'picture renderer accepted a caller-selected path');
 
-[$stagingReviewExperience, $stagingReviews] = $makeExperience($verifiedCollection, 'dialog');
+[$stagingReviewExperience, $stagingReviews] = $makeExperience($verifiedCollection, $dialogBookingAction);
 $stagingSlider = $renderComponent($stagingReviewExperience, $root . '/components/review-slider.php', [
     'environment' => 'staging',
     'marketKey' => 'main',
@@ -312,7 +349,7 @@ foreach ($records as $index => $record) {
     $expect(html_entity_decode($dateMatch[2], ENT_QUOTES | ENT_HTML5, 'UTF-8') === $record['publishedDate'], 'visible review date bytes changed');
 }
 
-[$productionReviewExperience, $productionReviews] = $makeExperience($verifiedCollection, 'external');
+[$productionReviewExperience, $productionReviews] = $makeExperience($verifiedCollection, $externalBookingAction);
 $productionSlider = $renderComponent($productionReviewExperience, $root . '/components/review-slider.php', [
     'environment' => 'production',
     'marketKey' => 'main',
@@ -328,7 +365,7 @@ foreach (['false' => false, 'absent' => null, 'string' => 'true'] as $scenario =
     $collection = $verifiedCollection;
     if ($scenario === 'absent') unset($collection['allowExternalSourceAction']);
     else $collection['allowExternalSourceAction'] = $permission;
-    [$variantExperience, $variantReviews] = $makeExperience($collection, 'external');
+    [$variantExperience, $variantReviews] = $makeExperience($collection, $externalBookingAction);
     $variant = $renderComponent($variantExperience, $root . '/components/review-slider.php', [
         'environment' => 'production',
         'marketKey' => 'main',
@@ -338,7 +375,7 @@ foreach (['false' => false, 'absent' => null, 'string' => 'true'] as $scenario =
     $expect(strpos($variant, 'href="/reviews/"') !== false, $scenario . ' permission omitted the internal Reviews route');
 }
 
-[$unavailableExperience, $unavailableReviews] = $makeExperience(['status' => 'unavailable', 'reason' => 'private error 90210'], 'dialog');
+[$unavailableExperience, $unavailableReviews] = $makeExperience(['status' => 'unavailable', 'reason' => 'private error 90210'], $dialogBookingAction);
 $unavailable = $renderComponent($unavailableExperience, $root . '/components/review-slider.php', [
     'environment' => 'staging',
     'marketKey' => 'main',

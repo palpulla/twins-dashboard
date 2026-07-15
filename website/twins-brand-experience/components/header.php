@@ -43,16 +43,28 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
     throw new DomainException('Quote action is unavailable.');
 }
 $bookingMode = $booking['mode'] ?? null;
-if ($bookingMode === 'dialog') {
+if ($environment === 'staging') {
+    if ($bookingMode !== 'dialog') {
+        throw new DomainException('Booking action mode does not match staging.');
+    }
     if (!isset($booking['experienceHtml']) || !is_string($booking['experienceHtml'])) {
         throw new DomainException('Booking dialog is unavailable.');
     }
-} elseif ($bookingMode === 'external') {
-    if (!isset($booking['href']) || !is_string($booking['href']) || $booking['href'] === '') {
+} elseif ($environment === 'production') {
+    if ($bookingMode !== 'external') {
+        throw new DomainException('Booking action mode does not match production.');
+    }
+    if (
+        !isset($booking['href']) ||
+        !is_string($booking['href']) ||
+        $booking['href'] === '' ||
+        ($booking['target'] ?? null) !== '_blank' ||
+        ($booking['rel'] ?? null) !== 'noopener noreferrer'
+    ) {
         throw new DomainException('External booking action is unavailable.');
     }
 } else {
-    throw new DomainException('Booking action mode is invalid.');
+    throw new DomainException('Booking environment is invalid.');
 }
 ?>
 <header class="twins-brand-header" data-twins-header>
@@ -81,7 +93,7 @@ if ($bookingMode === 'dialog') {
     <?php if ($bookingMode === 'dialog'): ?>
       <button type="button" class="twins-brand-cta twins-brand-cta--book" data-twins-booking-open>Book Online</button>
     <?php elseif ($bookingMode === 'external'): ?>
-      <a class="twins-brand-cta twins-brand-cta--book" href="<?= htmlspecialchars($booking['href'], ENT_QUOTES, 'UTF-8') ?>">Book Online</a>
+      <a class="twins-brand-cta twins-brand-cta--book" href="<?= htmlspecialchars($booking['href'], ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener noreferrer">Book Online</a>
     <?php endif; ?>
     <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
     <button type="button" class="twins-brand-menu-trigger" aria-expanded="false" aria-controls="twins-brand-drawer">Menu</button>
@@ -102,7 +114,7 @@ if ($bookingMode === 'dialog') {
       <?php if ($bookingMode === 'dialog'): ?>
         <button type="button" class="twins-brand-cta twins-brand-cta--book" data-twins-booking-open>Book Online</button>
       <?php elseif ($bookingMode === 'external'): ?>
-        <a class="twins-brand-cta twins-brand-cta--book" href="<?= htmlspecialchars($booking['href'], ENT_QUOTES, 'UTF-8') ?>">Book Online</a>
+        <a class="twins-brand-cta twins-brand-cta--book" href="<?= htmlspecialchars($booking['href'], ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener noreferrer">Book Online</a>
       <?php endif; ?>
       <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
     </div>
