@@ -10,7 +10,13 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
     <a href="#why-twins">Why Twins</a>
     <a href="#roles">Ways to contribute</a>
     <a href="#process">What happens next</a>
-    <a href="#apply">Application preview</a>
+    <a href="#apply">
+      <?php if ($environment === 'staging'): ?>
+        Application preview
+      <?php else: ?>
+        Apply
+      <?php endif; ?>
+    </a>
   </nav>
 
   <section class="twins-brand-careers-hero" aria-labelledby="twins-brand-careers-page-title">
@@ -18,7 +24,13 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
       <span class="twins-brand-kicker">Careers at Twins Garage Doors</span>
       <h1 id="twins-brand-careers-page-title">Do work you are proud to put your name on.</h1>
       <p>We want dependable people who care about customers, craftsmanship, and showing up ready. Tell us where you could make the crew stronger.</p>
-      <a class="twins-brand-cta" href="#apply">Preview the application</a>
+      <a class="twins-brand-cta" href="#apply">
+        <?php if ($environment === 'staging'): ?>
+          Preview the application
+        <?php else: ?>
+          Start your application
+        <?php endif; ?>
+      </a>
     </div>
     <div class="twins-brand-careers-hero-image">
       <?php
@@ -94,7 +106,14 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
       <?php endif; ?>
     </div>
     <div class="twins-brand-process-grid">
-      <article><strong>01</strong><h3>Share your interest</h3><p>Preview the essentials and the area where you could contribute.</p></article>
+      <article>
+        <strong>01</strong><h3>Share your interest</h3>
+        <?php if ($environment === 'staging'): ?>
+          <p>Preview the essentials and the area where you could contribute.</p>
+        <?php else: ?>
+          <p>Give us the essentials, your preferred market, and where you could contribute.</p>
+        <?php endif; ?>
+      </article>
       <article><strong>02</strong><h3>Quick screen</h3><p>See where job-related screening would fit after an application is received.</p></article>
       <article><strong>03</strong><h3>Meet the team</h3><p>See where an interview would fit for applicants selected to continue.</p></article>
       <article><strong>04</strong><h3>Clear decision</h3><p>See how the intended path reaches a documented next step after an interview.</p></article>

@@ -93,6 +93,23 @@ test('supporting journeys preserve approved copy and adapter boundaries', () => 
   assert.match(reviews, /Verified customer reviews/);
 });
 
+test('careers binds every staging preview label to the normalized environment', () => {
+  const careers = template('careers.php');
+  assert.match(careers, /<a href="#apply">\s*<\?php if \(\$environment === 'staging'\): \?>\s*Application preview\s*<\?php else: \?>\s*Apply\s*<\?php endif; \?>\s*<\/a>/);
+  assert.match(careers, /class="twins-brand-cta" href="#apply">\s*<\?php if \(\$environment === 'staging'\): \?>\s*Preview the application\s*<\?php else: \?>\s*Start your application\s*<\?php endif; \?>\s*<\/a>/);
+  assert.match(careers, /<h3>Share your interest<\/h3>\s*<\?php if \(\$environment === 'staging'\): \?>\s*<p>Preview the essentials[^<]*<\/p>\s*<\?php else: \?>\s*<p>Give us the essentials[^<]*<\/p>\s*<\?php endif; \?>/);
+});
+
+test('renderer safety contract scans full composition and proves unsafe booking rejection', () => {
+  const harness = fs.readFileSync(path.join(root, 'tests/php/renderer-contract-harness.php'), 'utf8');
+  assert.match(harness, /\$stagingDocuments/);
+  assert.match(harness, /\$assertInertComposition/);
+  assert.match(harness, /\$unsafeBookingFragments/);
+  assert.match(harness, /\$assertInertComposition\(\$document/);
+  assert.match(harness, /renderHeader\(\['environment' => 'staging', 'market' => 'main'\]\)/);
+  assert.match(harness, /unsafe booking[^']*was not rejected/i);
+});
+
 test('portable templates contain no direct submission or network primitive', () => {
   const prohibited = /<form\b|type\s*=\s*["'](?:submit|image)["']|\sname\s*=|\sform\s*=|formaction\s*=|https?:\/\/|fetch\s*\(|XMLHttpRequest|sendBeacon\s*\(/i;
   for (const name of ['home.php', 'team.php', 'careers.php', 'contact.php', 'reviews.php']) {
