@@ -6,13 +6,13 @@
 
 **Lease account:** `CHATGPT_PROFILE_1`
 
-**Status:** `BRANCH_PUSH_PENDING`
+**Status:** `READY_FOR_VISUAL_APPROVAL`
 
 This specification defines the finished private-staging experience for the Twins
 Garage Doors WordPress multisite. The live staging implementation and its source
 package have been recovered byte-for-byte. The recovered repository suite and
-staging-host PHP harnesses pass, and both task-created SiteGround SSH keys have
-been removed. Completion now requires only committing and pushing this branch.
+staging-host PHP harnesses pass, both task-created SiteGround SSH keys have been
+removed, and the verified source tree is committed and pushed on this branch.
 
 ## Objective
 
@@ -156,6 +156,6 @@ safety and browser verification. Rollback never means changing production.
 
 ## Approval state
 
-The live staged design is available for review. Repository verification and
-temporary-key cleanup are complete; this document remains
-`BRANCH_PUSH_PENDING` only until the two branch publication steps are confirmed.
+The live staged design is available for review. Repository verification,
+temporary-key cleanup, commit, and branch publication are complete. The current
+state is `READY_FOR_VISUAL_APPROVAL`; this is not production publish authority.

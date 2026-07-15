@@ -6,7 +6,7 @@
 
 **Branch:** `codex/staging-site-safety`
 
-**Status:** `BRANCH_PUSH_PENDING`
+**Status:** `READY_FOR_VISUAL_APPROVAL`
 
 **Production write authority:** `false`
 
@@ -113,11 +113,10 @@ snapshot or destroy/sanitize the clone, keep the safety MU plugin active until
 restored production data is inaccessible, and rerun all safety/browser checks.
 Never use rollback as authority to change production.
 
-## Remaining closure gates
+## Closure state
 
-- Commit and push only `codex/staging-site-safety`.
-- Change this status to `READY_FOR_VISUAL_APPROVAL` after that push is verified.
-
-After that, Daniel's only step is visual approval of the private staged site.
+The exact verified implementation tree is committed and published on
+`codex/staging-site-safety` (package commit `db942b19`). No merge was performed.
+Daniel's only current step is visual approval of the private staged site.
 Production publication, if desired later, requires a new explicit authorization,
 new backups, a deployment plan, and production-specific verification.

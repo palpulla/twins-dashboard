@@ -13,7 +13,7 @@ hosting/server egress policy is mandatory even when every plugin test passes.
 
 ## Current private staging overhaul
 
-**Status:** `BRANCH_PUSH_PENDING`
+**Status:** `READY_FOR_VISUAL_APPROVAL`
 
 **Branch:** `codex/staging-site-safety`
 
@@ -34,8 +34,8 @@ Previously completed live QA recorded 161/161 browser route/viewport visits with
 zero violations and a complete 687-page/1,335-asset crawl with zero failures.
 The exact 819-file live source was recovered into this branch after the cleared
 disposable worktree. The recovered suite has zero failures, all staging-host PHP
-harnesses pass, and both task-created SSH keys are removed. Commit and push are
-the only remaining closure steps before `READY_FOR_VISUAL_APPROVAL`.
+harnesses pass, both task-created SSH keys are removed, and the verified tree is
+committed and pushed. The private clone is `READY_FOR_VISUAL_APPROVAL`.
 
 Primary review routes:
 

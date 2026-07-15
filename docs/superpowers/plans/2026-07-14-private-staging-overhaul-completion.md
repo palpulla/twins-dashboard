@@ -5,7 +5,7 @@
 
 **Branch:** `codex/staging-site-safety`
 
-**Status:** `BRANCH_PUSH_PENDING`
+**Status:** `READY_FOR_VISUAL_APPROVAL`
 
 ## Goal
 
@@ -83,10 +83,10 @@ approval. Production publication is a separate, future authorization.
   keys.
 - [x] Prove the recovery key no longer authenticates and remove its local files.
 - [x] Obtain a final independent implementation/safety review.
-- [ ] Update this plan and the handoff to `READY_FOR_VISUAL_APPROVAL`.
-- [ ] Commit the complete recovered package and evidence on
+- [x] Update this plan and the handoff to `READY_FOR_VISUAL_APPROVAL`.
+- [x] Commit the complete recovered package and evidence on
   `codex/staging-site-safety`.
-- [ ] Push that branch normally; do not merge it into `main`.
+- [x] Push that branch normally; do not merge it into `main`.
 
 ## Acceptance evidence
 
