@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore career opportunities with Twins Garage Doors and share your interest in joining the team.">
+  <meta name="twins-employment-endpoint" content="">
+  <title>Careers | Twins Garage Doors</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #022751;
+      --deep: #010d38;
+      --gold: #fbbd04;
+      --soft: #f2f5f7;
+      --ink: #12233b;
+      --muted: #54677e;
+      --white: #fff;
+      --line: #d9e1e9;
+      --success: #16794c;
+      --danger: #b42318;
+      --shadow: 7px 7px 0 rgba(1, 13, 56, .92);
+      --shadow-small: 4px 4px 0 rgba(1, 13, 56, .92);
+      --radius: 18px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #fff;
+      font-family: "Montserrat", sans-serif;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; max-width: 100%; }
+    button, input, select, textarea { font: inherit; }
+    a { color: inherit; }
+    :focus-visible { outline: 4px solid rgba(251, 189, 4, .72); outline-offset: 3px; }
+    .container { width: min(calc(100% - 40px), var(--max)); margin-inline: auto; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 14px;
+      color: var(--navy);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 26px; height: 5px; background: var(--gold); border-radius: 99px; }
+    .section-title { margin: 0; color: var(--navy); font-size: clamp(32px, 4vw, 54px); line-height: 1.02; letter-spacing: -.035em; }
+    .section-lede { max-width: 650px; margin: 18px 0 0; color: var(--muted); font-size: 18px; }
+    .skip-link { position: fixed; top: 10px; left: 10px; z-index: 99; padding: 10px 14px; background: #fff; transform: translateY(-150%); }
+    .skip-link:focus { transform: none; }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(255, 255, 255, .96);
+      border-bottom: 1px solid rgba(2, 39, 81, .12);
+      backdrop-filter: blur(16px);
+    }
+    .nav { min-height: 78px; display: flex; align-items: center; gap: 28px; }
+    .brand { display: inline-flex; align-items: center; flex: none; text-decoration: none; }
+    .brand img { width: 142px; height: 58px; object-fit: contain; }
+    .nav-links { display: flex; align-items: center; gap: 25px; margin-left: auto; }
+    .nav-links a { color: var(--navy); font-size: 14px; font-weight: 800; text-decoration: none; }
+    .nav-links a:hover { text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 3px; text-underline-offset: 6px; }
+    .button {
+      display: inline-flex;
+      min-height: 50px;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 20px;
+      border: 3px solid var(--deep);
+      border-radius: 12px;
+      background: var(--gold);
+      color: var(--deep);
+      box-shadow: var(--shadow-small);
+      font-size: 14px;
+      font-weight: 900;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .button:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--deep); }
+    .button.secondary { background: #fff; }
+    .button.dark { color: #fff; background: var(--navy); border-color: #fff; box-shadow: 4px 4px 0 var(--gold); }
+    .button.dark:hover { box-shadow: 2px 2px 0 var(--gold); }
+
+    .hero {
+      position: relative;
+      isolation: isolate;
+      min-height: 650px;
+      overflow: hidden;
+      color: #fff;
+      background:
+        radial-gradient(circle at 20% 25%, rgba(251, 189, 4, .13), transparent 25%),
+        repeating-linear-gradient(135deg, rgba(255,255,255,.035) 0 2px, transparent 2px 16px),
+        linear-gradient(120deg, var(--deep), var(--navy));
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      z-index: -1;
+      height: 9px;
+      background: var(--gold);
+    }
+    .hero-grid { min-height: 650px; display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(370px, .88fr); align-items: center; gap: 30px; }
+    .hero-copy { position: relative; z-index: 2; padding: 84px 0 88px; }
+    .hero .eyebrow { color: var(--gold); }
+    .hero .eyebrow::before { background: #fff; }
+    .hero h1 { max-width: 780px; margin: 0; font-size: clamp(50px, 6.5vw, 88px); line-height: .94; letter-spacing: -.055em; text-wrap: balance; }
+    .hero h1 span { color: var(--gold); }
+    .hero-copy > p { max-width: 650px; margin: 25px 0 0; color: #d8e4f1; font-size: clamp(17px, 2vw, 21px); }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 32px; }
+    .hero-note { display: flex; flex-wrap: wrap; gap: 13px 24px; margin-top: 27px; color: #d8e4f1; font-size: 13px; font-weight: 700; }
+    .hero-note span::before { content: "✓"; margin-right: 8px; color: var(--gold); font-weight: 900; }
+    .crew-art { position: relative; align-self: stretch; min-height: 610px; }
+    .crew-art::before {
+      content: "";
+      position: absolute;
+      right: -40px;
+      bottom: 24px;
+      width: 470px;
+      height: 470px;
+      border: 3px dashed rgba(251, 189, 4, .6);
+      border-radius: 50%;
+      transform: rotate(-10deg);
+    }
+    .twin { position: absolute; right: 0; bottom: 0; filter: drop-shadow(10px 14px 0 rgba(1, 13, 56, .42)); transform-origin: bottom center; }
+    .twin.left { right: 218px; z-index: 2; width: min(27vw, 220px); animation: bob 6.5s ease-in-out infinite; }
+    .twin.right { right: -18px; z-index: 1; width: min(33vw, 315px); animation: bob 5.5s ease-in-out .45s infinite; }
+    .hero-sticker {
+      position: absolute;
+      top: 112px;
+      right: 20px;
+      z-index: 4;
+      max-width: 190px;
+      padding: 13px 16px;
+      transform: rotate(6deg);
+      border: 3px dashed var(--deep);
+      border-radius: 12px;
+      background: var(--gold);
+      color: var(--deep);
+      box-shadow: var(--shadow-small);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .09em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+    @keyframes bob { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-11px) rotate(1deg); } }
+
+    .ribbon { background: var(--gold); border-bottom: 3px solid var(--deep); }
+    .ribbon-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+    .ribbon-item { display: flex; align-items: center; justify-content: center; gap: 12px; min-height: 88px; padding: 18px 24px; color: var(--deep); font-size: 14px; font-weight: 900; text-align: center; }
+    .ribbon-item + .ribbon-item { border-left: 2px solid rgba(1, 13, 56, .22); }
+    .ribbon-icon { display: grid; width: 34px; height: 34px; flex: none; place-items: center; border: 2px solid var(--deep); border-radius: 9px; background: #fff; box-shadow: 2px 2px 0 var(--deep); }
+
+    .values { padding: 110px 0; background: var(--soft); }
+    .value-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 46px; }
+    .value-card { position: relative; padding: 30px; border: 3px solid var(--navy); border-radius: var(--radius); background: #fff; box-shadow: 6px 6px 0 var(--gold); }
+    .value-number { display: grid; width: 48px; height: 48px; place-items: center; margin-bottom: 24px; border-radius: 12px; background: var(--gold); color: var(--deep); font-weight: 900; transform: rotate(-3deg); }
+    .value-card:nth-child(2) .value-number { transform: rotate(3deg); }
+    .value-card h3 { margin: 0; color: var(--navy); font-size: 22px; }
+    .value-card p { margin: 12px 0 0; color: var(--muted); }
+
+    .lanes { padding: 110px 0; }
+    .lane-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-top: 42px; }
+    .lane {
+      min-height: 190px;
+      padding: 22px 18px;
+      border: 2px solid var(--line);
+      border-top: 7px solid var(--gold);
+      border-radius: 14px;
+      background: #fff;
+      transition: transform .18s ease, border-color .18s ease;
+    }
+    .lane:hover { transform: translateY(-5px); border-color: var(--navy); }
+    .lane-icon { font-size: 26px; }
+    .lane h3 { margin: 18px 0 8px; color: var(--navy); font-size: 17px; line-height: 1.15; }
+    .lane p { margin: 0; color: var(--muted); font-size: 13px; }
+    .lane-note { margin-top: 24px; color: var(--muted); font-size: 13px; }
+
+    .process { padding: 100px 0; color: #fff; background: var(--navy); }
+    .process .eyebrow, .process .section-title { color: #fff; }
+    .process .eyebrow::before { background: var(--gold); }
+    .process .section-lede { color: #d5e1ee; }
+    .process-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 46px; }
+    .process-step { position: relative; min-height: 188px; padding: 25px; border: 2px solid rgba(255,255,255,.24); border-radius: 15px; background: rgba(255,255,255,.06); }
+    .process-step strong { display: block; color: var(--gold); font-size: 38px; line-height: 1; }
+    .process-step h3 { margin: 20px 0 8px; font-size: 18px; }
+    .process-step p { margin: 0; color: #d5e1ee; font-size: 13px; }
+
+    .application { padding: 110px 0; background: linear-gradient(180deg, #fff, var(--soft)); }
+    .application-shell { display: grid; grid-template-columns: .78fr 1.22fr; gap: 38px; align-items: start; margin-top: 46px; }
+    .form-aside { position: sticky; top: 110px; padding: 34px; border-radius: var(--radius); color: #fff; background: var(--deep); overflow: hidden; }
+    .form-aside::after { content: ""; position: absolute; right: -55px; bottom: -55px; width: 180px; height: 180px; border: 25px solid rgba(251,189,4,.13); border-radius: 50%; }
+    .form-aside h3 { position: relative; z-index: 1; margin: 0; font-size: 28px; line-height: 1.08; }
+    .form-aside p { position: relative; z-index: 1; margin: 15px 0 0; color: #d5e1ee; }
+    .aside-list { position: relative; z-index: 1; display: grid; gap: 16px; margin: 28px 0 0; padding: 0; list-style: none; }
+    .aside-list li { display: grid; grid-template-columns: 35px 1fr; gap: 12px; align-items: start; font-size: 13px; }
+    .aside-list span { display: grid; width: 30px; height: 30px; place-items: center; border: 2px solid var(--gold); border-radius: 9px; color: var(--gold); font-weight: 900; }
+    .form-card { padding: 35px; border: 3px solid var(--navy); border-radius: var(--radius); background: #fff; box-shadow: var(--shadow); }
+    .progress-row { display: flex; align-items: center; gap: 10px; margin-bottom: 34px; }
+    .progress-step { height: 8px; flex: 1; border-radius: 99px; background: #dfe6ed; }
+    .progress-step.active { background: var(--gold); }
+    .progress-label { min-width: 84px; color: var(--muted); font-size: 12px; font-weight: 800; text-align: right; }
+    .form-step[hidden] { display: none; }
+    .form-step h3 { margin: 0; color: var(--navy); font-size: 28px; line-height: 1.1; }
+    .form-step > p { margin: 10px 0 26px; color: var(--muted); }
+    .choice-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .choice { position: relative; }
+    .choice input { position: absolute; opacity: 0; pointer-events: none; }
+    .choice label { display: flex; min-height: 72px; align-items: center; gap: 12px; padding: 14px 16px; border: 2px solid var(--line); border-radius: 12px; color: var(--navy); font-size: 13px; font-weight: 800; cursor: pointer; }
+    .choice label::before { content: ""; width: 18px; height: 18px; flex: none; border: 2px solid #aab7c4; border-radius: 50%; background: #fff; }
+    .choice input:checked + label { border-color: var(--navy); background: #fff9e5; box-shadow: 3px 3px 0 var(--gold); }
+    .choice input:checked + label::before { border: 5px solid var(--navy); background: var(--gold); }
+    .field-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .field { display: grid; gap: 7px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label, .field legend { color: var(--navy); font-size: 13px; font-weight: 800; }
+    .field label span { color: var(--muted); font-weight: 600; }
+    .field input, .field select, .field textarea {
+      width: 100%;
+      min-height: 50px;
+      padding: 12px 13px;
+      border: 2px solid #bec9d4;
+      border-radius: 10px;
+      background: #fff;
+      color: var(--ink);
+    }
+    .field textarea { min-height: 130px; resize: vertical; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--navy); outline: 3px solid rgba(251, 189, 4, .32); }
+    .field [aria-invalid="true"] { border-color: var(--danger); }
+    .error-text { min-height: 18px; color: var(--danger); font-size: 12px; font-weight: 700; }
+    .field-help { margin: 0; color: var(--muted); font-size: 11px; }
+    .form-actions { display: flex; justify-content: space-between; gap: 14px; margin-top: 30px; }
+    .back-button { border-color: var(--line); background: #fff; box-shadow: none; }
+    .review { display: grid; gap: 11px; margin: 22px 0; }
+    .review-row { display: grid; grid-template-columns: 150px 1fr; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+    .review-row dt { color: var(--muted); font-weight: 700; }
+    .review-row dd { margin: 0; color: var(--navy); font-weight: 800; }
+    .consent { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; margin-top: 22px; padding: 16px; border-radius: 10px; background: var(--soft); }
+    .consent input { width: 19px; height: 19px; margin-top: 2px; accent-color: var(--navy); }
+    .consent label { font-size: 11px; color: var(--muted); }
+    .privacy-note { margin: 16px 0 0; color: var(--muted); font-size: 11px; }
+    .honeypot { position: absolute !important; left: -9999px !important; opacity: 0 !important; }
+    .form-alert { display: none; margin-top: 16px; padding: 14px; border-radius: 10px; color: #7a271a; background: #fef3f2; font-size: 13px; font-weight: 700; }
+    .form-alert.show { display: block; }
+    .success-panel { display: none; min-height: 520px; place-items: center; text-align: center; }
+    .success-panel.show { display: grid; }
+    .success-icon { display: grid; width: 80px; height: 80px; margin-inline: auto; place-items: center; border: 3px solid var(--deep); border-radius: 20px; background: var(--gold); box-shadow: var(--shadow-small); color: var(--deep); font-size: 36px; font-weight: 900; transform: rotate(-3deg); }
+    .success-panel h3 { margin: 27px 0 10px; color: var(--navy); font-size: 34px; }
+    .success-panel p { max-width: 520px; margin: 0 auto; color: var(--muted); }
+    .reference { display: inline-block; margin-top: 21px; padding: 9px 12px; border-radius: 8px; background: var(--soft); color: var(--navy); font-size: 12px; font-weight: 800; }
+
+    .closing { position: relative; overflow: hidden; padding: 90px 0; background: var(--gold); border-top: 3px solid var(--deep); border-bottom: 3px solid var(--deep); }
+    .closing-inner { position: relative; z-index: 1; max-width: 760px; margin-inline: auto; text-align: center; }
+    .closing h2 { margin: 0; color: var(--deep); font-size: clamp(34px, 5vw, 60px); line-height: 1; letter-spacing: -.04em; }
+    .closing p { margin: 18px auto 27px; color: var(--navy); font-weight: 700; }
+    .closing .twin-small { position: absolute; bottom: -75px; width: 130px; filter: drop-shadow(5px 7px 0 rgba(1,13,56,.2)); }
+    .closing .twin-small.left { left: max(12px, calc(50% - 570px)); }
+    .closing .twin-small.right { right: max(12px, calc(50% - 570px)); width: 170px; transform: scaleX(-1); }
+
+    .site-footer { padding: 35px 0; color: #cfdbea; background: var(--deep); }
+    .footer-row { display: flex; align-items: center; justify-content: space-between; gap: 30px; }
+    .footer-row img { width: 125px; height: 58px; object-fit: contain; filter: brightness(0) invert(1); }
+    .footer-copy { font-size: 12px; text-align: right; }
+    .footer-copy a { color: var(--gold); font-weight: 800; }
+
+    @media (max-width: 980px) {
+      .nav-links a:not(.button) { display: none; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-copy { padding-bottom: 20px; }
+      .crew-art { min-height: 390px; }
+      .crew-art::before { right: -70px; width: 370px; height: 370px; }
+      .twin.left { right: 205px; width: 165px; }
+      .twin.right { width: 250px; }
+      .hero-sticker { top: 10px; }
+      .value-grid, .process-grid { grid-template-columns: repeat(2, 1fr); }
+      .lane-grid { grid-template-columns: repeat(3, 1fr); }
+      .application-shell { grid-template-columns: 1fr; }
+      .form-aside { position: static; }
+    }
+    @media (max-width: 680px) {
+      .container { width: min(calc(100% - 26px), var(--max)); }
+      .site-header .nav { min-height: 70px; }
+      .brand img { width: 115px; height: 48px; }
+      .nav-links { gap: 0; }
+      .nav-links .button { min-height: 44px; padding: 9px 13px; font-size: 12px; box-shadow: 3px 3px 0 var(--deep); }
+      .hero { min-height: auto; }
+      .hero-grid { min-height: auto; }
+      .hero-copy { padding: 68px 0 16px; }
+      .hero h1 { font-size: clamp(45px, 15vw, 64px); }
+      .hero-actions { display: grid; }
+      .hero-actions .button { width: 100%; }
+      .crew-art { min-height: 350px; }
+      .crew-art::before { right: -110px; bottom: 5px; width: 320px; height: 320px; }
+      .twin.left { right: 48%; width: 135px; }
+      .twin.right { right: 5px; width: 220px; }
+      .hero-sticker { top: 25px; right: 3px; max-width: 150px; padding: 9px; font-size: 10px; }
+      .ribbon-grid { grid-template-columns: 1fr; padding: 10px 0; }
+      .ribbon-item { min-height: 64px; justify-content: flex-start; }
+      .ribbon-item + .ribbon-item { border-top: 1px solid rgba(1,13,56,.2); border-left: 0; }
+      .values, .lanes, .application { padding: 78px 0; }
+      .value-grid, .process-grid, .lane-grid { grid-template-columns: 1fr; }
+      .lane { min-height: auto; }
+      .process { padding: 75px 0; }
+      .form-card { padding: 23px 18px; box-shadow: 5px 5px 0 var(--deep); }
+      .choice-grid, .field-grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      .form-actions { flex-direction: column-reverse; }
+      .form-actions .button { width: 100%; }
+      .review-row { grid-template-columns: 1fr; gap: 4px; }
+      .closing .twin-small { display: none; }
+      .footer-row { flex-direction: column; text-align: center; }
+      .footer-copy { text-align: center; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="https://twinsgaragedoors.com" aria-label="Twins Garage Doors home">
+        <img src="employment-assets/twins-logo.png" alt="Twins Garage Doors">
+      </a>
+      <nav class="nav-links" aria-label="Careers navigation">
+        <a href="#values">Our values</a>
+        <a href="#roles">Ways to contribute</a>
+        <a href="#process">What happens next</a>
+        <a class="button" href="#apply">Start your application</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Careers at Twins Garage Doors</p>
+          <h1>Do work you are <span>proud</span> to put your name on.</h1>
+          <p>We want dependable people who care about customers, craftsmanship, and showing up ready. Tell us where you could make the crew stronger.</p>
+          <div class="hero-actions">
+            <a class="button" href="#apply">Start your application <span aria-hidden="true">→</span></a>
+            <a class="button dark" href="#values">See what matters here</a>
+          </div>
+          <div class="hero-note" aria-label="Application highlights">
+            <span>About five minutes</span>
+            <span>Mobile friendly</span>
+            <span>Clear next steps</span>
+          </div>
+        </div>
+        <div class="crew-art" aria-hidden="true">
+          <div class="hero-sticker">Bring your skills. Build your next chapter.</div>
+          <img class="twin left" src="employment-assets/twin-left.png" alt="">
+          <img class="twin right" src="employment-assets/twin-right.png" alt="">
+        </div>
+      </div>
+    </section>
+
+    <section class="ribbon" aria-label="What applicants can expect">
+      <div class="container ribbon-grid">
+        <div class="ribbon-item"><span class="ribbon-icon">01</span> Clear expectations</div>
+        <div class="ribbon-item"><span class="ribbon-icon">02</span> A customer-first crew</div>
+        <div class="ribbon-item"><span class="ribbon-icon">03</span> Room to learn the craft</div>
+      </div>
+    </section>
+
+    <section class="values" id="values">
+      <div class="container">
+        <p class="eyebrow">What winning looks like here</p>
+        <h2 class="section-title">Skill matters. How you show up matters more.</h2>
+        <p class="section-lede">Garage doors can be taught. Reliability, care, and ownership are the foundation. These are the habits we want every customer and teammate to feel.</p>
+        <div class="value-grid">
+          <article class="value-card">
+            <span class="value-number">01</span>
+            <h3>Own the outcome</h3>
+            <p>Communicate clearly, follow through, and leave the work better than you found it.</p>
+          </article>
+          <article class="value-card">
+            <span class="value-number">02</span>
+            <h3>Treat people right</h3>
+            <p>Respect the customer, respect the crew, and make the next person’s job easier.</p>
+          </article>
+          <article class="value-card">
+            <span class="value-number">03</span>
+            <h3>Keep learning</h3>
+            <p>Ask good questions, practice the details, and stay coachable as the work changes.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="lanes" id="roles">
+      <div class="container">
+        <p class="eyebrow">Find your lane</p>
+        <h2 class="section-title">Where could you help Twins win?</h2>
+        <p class="section-lede">Share your area of interest. If there is a fit now or in the future, the hiring team will follow up with the right next step.</p>
+        <div class="lane-grid">
+          <article class="lane"><span class="lane-icon" aria-hidden="true">🔧</span><h3>Service and repair</h3><p>Diagnose problems, explain options, and restore safe operation.</p></article>
+          <article class="lane"><span class="lane-icon" aria-hidden="true">🏠</span><h3>Installations</h3><p>Deliver clean, careful work on new and replacement doors.</p></article>
+          <article class="lane"><span class="lane-icon" aria-hidden="true">📋</span><h3>Sales and estimates</h3><p>Listen well, educate clearly, and help customers choose confidently.</p></article>
+          <article class="lane"><span class="lane-icon" aria-hidden="true">🎧</span><h3>Customer care and operations</h3><p>Keep communication, scheduling, and the day moving smoothly.</p></article>
+          <article class="lane"><span class="lane-icon" aria-hidden="true">⭐</span><h3>Something else</h3><p>Tell us about a skill set that could make the team stronger.</p></article>
+        </div>
+        <p class="lane-note">Submitting your interest does not guarantee that a position is currently open.</p>
+      </div>
+    </section>
+
+    <section class="process" id="process">
+      <div class="container">
+        <p class="eyebrow">A simple hiring path</p>
+        <h2 class="section-title">No black hole. Just clear next steps.</h2>
+        <p class="section-lede">Every application enters the same organized review process so the right people can respond quickly.</p>
+        <div class="process-grid">
+          <article class="process-step"><strong>01</strong><h3>Share your interest</h3><p>Give us the essentials, your preferred market, and where you could contribute.</p></article>
+          <article class="process-step"><strong>02</strong><h3>Quick screen</h3><p>We may text or email a few job-related questions to understand the fit.</p></article>
+          <article class="process-step"><strong>03</strong><h3>Meet the team</h3><p>Selected applicants receive a link to choose an available interview time.</p></article>
+          <article class="process-step"><strong>04</strong><h3>Clear decision</h3><p>We document the outcome and communicate the next step after the interview.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="application" id="apply">
+      <div class="container">
+        <p class="eyebrow">Start your application</p>
+        <h2 class="section-title">Tell us where you could make an impact.</h2>
+        <p class="section-lede">This first step is intentionally short. If there is a potential fit, we will collect any additional details during screening.</p>
+
+        <div class="application-shell">
+          <aside class="form-aside">
+            <h3>What happens after you apply?</h3>
+            <p>Your application goes directly into the Twins hiring pipeline for organized follow-up.</p>
+            <ol class="aside-list">
+              <li><span>1</span><div><strong>Confirmation</strong><br>We confirm that your application arrived.</div></li>
+              <li><span>2</span><div><strong>Job-related screening</strong><br>Qualified applications receive the next questions automatically.</div></li>
+              <li><span>3</span><div><strong>Human review</strong><br>A team member reviews anything that needs context.</div></li>
+              <li><span>4</span><div><strong>Interview scheduling</strong><br>Selected applicants choose from available times.</div></li>
+            </ol>
+          </aside>
+
+          <div class="form-card">
+            <form id="application-form" novalidate>
+              <div class="progress-row" aria-label="Application progress">
+                <span class="progress-step active"></span><span class="progress-step"></span><span class="progress-step"></span><span class="progress-step"></span>
+                <span class="progress-label" id="progress-label">Step 1 of 4</span>
+              </div>
+
+              <div class="form-step" data-step="0">
+                <h3>Where do you want to contribute?</h3>
+                <p>Choose the area and market that fit you best.</p>
+                <fieldset class="field full" style="border:0;padding:0;margin:0 0 24px">
+                  <legend style="margin-bottom:9px">Area of interest</legend>
+                  <div class="choice-grid" data-required-group="roleInterest">
+                    <div class="choice"><input id="role-service" type="radio" name="roleInterest" value="service-repair" required><label for="role-service">Service and repair</label></div>
+                    <div class="choice"><input id="role-install" type="radio" name="roleInterest" value="installation" required><label for="role-install">Installations</label></div>
+                    <div class="choice"><input id="role-sales" type="radio" name="roleInterest" value="sales-estimates" required><label for="role-sales">Sales and estimates</label></div>
+                    <div class="choice"><input id="role-care" type="radio" name="roleInterest" value="customer-care-operations" required><label for="role-care">Customer care and operations</label></div>
+                    <div class="choice"><input id="role-other" type="radio" name="roleInterest" value="other" required><label for="role-other">Something else</label></div>
+                  </div>
+                  <div class="error-text" data-error-for="roleInterest" aria-live="polite"></div>
+                </fieldset>
+                <fieldset class="field full" style="border:0;padding:0;margin:0">
+                  <legend style="margin-bottom:9px">Preferred market</legend>
+                  <div class="choice-grid" data-required-group="market">
+                    <div class="choice"><input id="market-madison" type="radio" name="market" value="madison-area" required><label for="market-madison">Madison area</label></div>
+                    <div class="choice"><input id="market-milwaukee" type="radio" name="market" value="milwaukee-area" required><label for="market-milwaukee">Milwaukee area</label></div>
+                    <div class="choice"><input id="market-either" type="radio" name="market" value="open-to-either" required><label for="market-either">Open to either</label></div>
+                    <div class="choice"><input id="market-other" type="radio" name="market" value="other" required><label for="market-other">Another area</label></div>
+                  </div>
+                  <div class="error-text" data-error-for="market" aria-live="polite"></div>
+                </fieldset>
+                <div class="form-actions"><span></span><button class="button next-button" type="button">Continue <span aria-hidden="true">→</span></button></div>
+              </div>
+
+              <div class="form-step" data-step="1" hidden>
+                <h3>How can we reach you?</h3>
+                <p>Use the contact information you check most often.</p>
+                <div class="field-grid">
+                  <div class="field"><label for="firstName">First name</label><input id="firstName" name="firstName" autocomplete="given-name" required><div class="error-text"></div></div>
+                  <div class="field"><label for="lastName">Last name</label><input id="lastName" name="lastName" autocomplete="family-name" required><div class="error-text"></div></div>
+                  <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" inputmode="email" autocomplete="email" required><div class="error-text"></div></div>
+                  <div class="field"><label for="phone">Mobile phone</label><input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required><div class="error-text"></div></div>
+                  <div class="field"><label for="city">City</label><input id="city" name="city" autocomplete="address-level2" required><div class="error-text"></div></div>
+                  <div class="field"><label for="state">State</label><select id="state" name="state" autocomplete="address-level1" required><option value="">Choose one</option><option value="WI">Wisconsin</option><option value="IL">Illinois</option><option value="KY">Kentucky</option><option value="OTHER">Other</option></select><div class="error-text"></div></div>
+                  <div class="field full"><label for="preferredContact">Preferred contact method</label><select id="preferredContact" name="preferredContact" required><option value="">Choose one</option><option value="text">Text message</option><option value="email">Email</option><option value="phone">Phone call</option></select><div class="error-text"></div></div>
+                </div>
+                <div class="form-actions"><button class="button back-button" type="button">Back</button><button class="button next-button" type="button">Continue <span aria-hidden="true">→</span></button></div>
+              </div>
+
+              <div class="form-step" data-step="2" hidden>
+                <h3>Tell us about your fit.</h3>
+                <p>Short, honest answers are perfect.</p>
+                <div class="field-grid">
+                  <div class="field"><label for="experience">Related experience</label><select id="experience" name="experience" required><option value="">Choose one</option><option value="none">New to this kind of work</option><option value="under-1">Less than 1 year</option><option value="1-3">1 to 3 years</option><option value="4-7">4 to 7 years</option><option value="8-plus">8 or more years</option></select><div class="error-text"></div></div>
+                  <div class="field"><label for="workType">Work preference</label><select id="workType" name="workType" required><option value="">Choose one</option><option value="full-time">Full-time</option><option value="part-time">Part-time</option><option value="either">Open to either</option></select><div class="error-text"></div></div>
+                  <div class="field"><label for="availableDate">Available to start <span>(optional)</span></label><input id="availableDate" name="availableDate" type="date"><div class="error-text"></div></div>
+                  <div class="field"><label for="resumeUrl">Résumé or profile link <span>(optional)</span></label><input id="resumeUrl" name="resumeUrl" type="url" inputmode="url" placeholder="https://"><div class="error-text"></div><p class="field-help">LinkedIn, Google Drive, Dropbox, or another accessible link.</p></div>
+                  <div class="field full"><label for="whyTwins">Why would you be a strong addition to the Twins crew?</label><textarea id="whyTwins" name="whyTwins" maxlength="1200" required placeholder="A few sentences is plenty."></textarea><div class="error-text"></div></div>
+                </div>
+                <div class="form-actions"><button class="button back-button" type="button">Back</button><button class="button next-button" type="button">Review application <span aria-hidden="true">→</span></button></div>
+              </div>
+
+              <div class="form-step" data-step="3" hidden>
+                <h3>Review and send.</h3>
+                <p>Check the essentials before submitting.</p>
+                <dl class="review" id="review"></dl>
+                <div class="consent">
+                  <input id="contactConsent" name="contactConsent" type="checkbox" value="yes" required>
+                  <label for="contactConsent">I agree that Twins Garage Doors may call, text, or email me about this application using the contact information provided. Message and data rates may apply. Consent is not a condition of employment.</label>
+                </div>
+                <div class="error-text" id="consent-error" aria-live="polite"></div>
+                <p class="privacy-note">Please do not include Social Security numbers, financial information, medical information, or other sensitive personal data in this form.</p>
+                <div class="honeypot" aria-hidden="true"><label for="website">Website</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
+                <input type="hidden" name="sourceUrl" id="sourceUrl">
+                <input type="hidden" name="utmSource" id="utmSource">
+                <input type="hidden" name="utmCampaign" id="utmCampaign">
+                <div class="form-alert" id="form-alert" role="alert"></div>
+                <div class="form-actions"><button class="button back-button" type="button">Back</button><button class="button" id="submit-button" type="submit">Send my application</button></div>
+              </div>
+            </form>
+
+            <div class="success-panel" id="success-panel" aria-live="polite">
+              <div>
+                <div class="success-icon">✓</div>
+                <h3>Application received.</h3>
+                <p>Thank you for your interest in Twins Garage Doors. Watch your phone and inbox for confirmation and any next steps.</p>
+                <span class="reference" id="reference">Reference pending</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing">
+      <img class="twin-small left" src="employment-assets/twin-left.png" alt="" aria-hidden="true">
+      <div class="container closing-inner">
+        <h2>Ready to bring your best work?</h2>
+        <p>Start with a few details. We will take it from there.</p>
+        <a class="button" href="#apply">Start your application</a>
+      </div>
+      <img class="twin-small right" src="employment-assets/twin-right.png" alt="" aria-hidden="true">
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <img src="employment-assets/twins-logo.png" alt="Twins Garage Doors">
+      <div class="footer-copy">Employment inquiries are reviewed through the application above.<br><a href="https://twinsgaragedoors.com">Return to twinsgaragedoors.com</a></div>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      const form = document.querySelector('#application-form');
+      const steps = [...form.querySelectorAll('.form-step')];
+      const bars = [...form.querySelectorAll('.progress-step')];
+      const progressLabel = document.querySelector('#progress-label');
+      const successPanel = document.querySelector('#success-panel');
+      const formAlert = document.querySelector('#form-alert');
+      const submitButton = document.querySelector('#submit-button');
+      let currentStep = 0;
+
+      const labels = {
+        'service-repair': 'Service and repair',
+        'installation': 'Installations',
+        'sales-estimates': 'Sales and estimates',
+        'customer-care-operations': 'Customer care and operations',
+        'other': 'Something else',
+        'madison-area': 'Madison area',
+        'milwaukee-area': 'Milwaukee area',
+        'open-to-either': 'Open to either',
+        'none': 'New to this kind of work',
+        'under-1': 'Less than 1 year',
+        '1-3': '1 to 3 years',
+        '4-7': '4 to 7 years',
+        '8-plus': '8 or more years',
+        'full-time': 'Full-time',
+        'part-time': 'Part-time',
+        'either': 'Open to either',
+        'text': 'Text message',
+        'email': 'Email',
+        'phone': 'Phone call',
+        'WI': 'Wisconsin',
+        'IL': 'Illinois',
+        'KY': 'Kentucky',
+        'OTHER': 'Other'
+      };
+
+      const showStep = (index) => {
+        currentStep = index;
+        steps.forEach((step, i) => { step.hidden = i !== index; });
+        bars.forEach((bar, i) => bar.classList.toggle('active', i <= index));
+        progressLabel.textContent = `Step ${index + 1} of ${steps.length}`;
+        formAlert.classList.remove('show');
+        document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const heading = steps[index].querySelector('h3');
+        if (heading) { heading.setAttribute('tabindex', '-1'); heading.focus({ preventScroll: true }); }
+      };
+
+      const setError = (input, message) => {
+        input.setAttribute('aria-invalid', 'true');
+        const field = input.closest('.field');
+        const target = field?.querySelector('.error-text');
+        if (target) target.textContent = message;
+      };
+
+      const clearErrors = (step) => {
+        step.querySelectorAll('[aria-invalid="true"]').forEach((input) => input.removeAttribute('aria-invalid'));
+        step.querySelectorAll('.error-text').forEach((error) => { error.textContent = ''; });
+      };
+
+      const validateStep = (step) => {
+        clearErrors(step);
+        let valid = true;
+        let firstInvalid = null;
+
+        step.querySelectorAll('[data-required-group]').forEach((group) => {
+          const name = group.dataset.requiredGroup;
+          const checked = group.querySelector(`input[name="${name}"]:checked`);
+          if (!checked) {
+            valid = false;
+            firstInvalid ||= group.querySelector('input');
+            const error = step.querySelector(`[data-error-for="${name}"]`);
+            if (error) error.textContent = 'Please choose one option.';
+          }
+        });
+
+        step.querySelectorAll('input[required]:not([type="radio"]):not([type="checkbox"]), select[required], textarea[required]').forEach((input) => {
+          if (!input.checkValidity()) {
+            valid = false;
+            firstInvalid ||= input;
+            const message = input.validity.typeMismatch ? 'Please enter a valid value.' : 'This field is required.';
+            setError(input, message);
+          }
+        });
+
+        if (!valid && firstInvalid) firstInvalid.focus();
+        return valid;
+      };
+
+      const valueOf = (name) => new FormData(form).get(name) || '';
+      const display = (value) => labels[value] || value || 'Not provided';
+
+      const renderReview = () => {
+        const rows = [
+          ['Area of interest', display(valueOf('roleInterest'))],
+          ['Preferred market', display(valueOf('market'))],
+          ['Name', `${valueOf('firstName')} ${valueOf('lastName')}`.trim()],
+          ['Email', valueOf('email')],
+          ['Mobile phone', valueOf('phone')],
+          ['Location', `${valueOf('city')}, ${display(valueOf('state'))}`],
+          ['Preferred contact', display(valueOf('preferredContact'))],
+          ['Related experience', display(valueOf('experience'))],
+          ['Work preference', display(valueOf('workType'))],
+          ['Available to start', valueOf('availableDate') || 'Not provided']
+        ];
+        const review = document.querySelector('#review');
+        review.innerHTML = rows.map(([term, detail]) => `<div class="review-row"><dt>${term}</dt><dd>${detail}</dd></div>`).join('');
+      };
+
+      form.querySelectorAll('.next-button').forEach((button) => {
+        button.addEventListener('click', () => {
+          if (!validateStep(steps[currentStep])) return;
+          if (currentStep === 2) renderReview();
+          showStep(Math.min(currentStep + 1, steps.length - 1));
+        });
+      });
+
+      form.querySelectorAll('.back-button').forEach((button) => {
+        button.addEventListener('click', () => showStep(Math.max(currentStep - 1, 0)));
+      });
+
+      const params = new URLSearchParams(location.search);
+      document.querySelector('#sourceUrl').value = location.href;
+      document.querySelector('#utmSource').value = params.get('utm_source') || '';
+      document.querySelector('#utmCampaign').value = params.get('utm_campaign') || '';
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        formAlert.classList.remove('show');
+        const consent = document.querySelector('#contactConsent');
+        if (!consent.checked) {
+          document.querySelector('#consent-error').textContent = 'Please confirm how we may contact you about this application.';
+          consent.focus();
+          return;
+        }
+        document.querySelector('#consent-error').textContent = '';
+
+        submitButton.disabled = true;
+        submitButton.textContent = 'Sending...';
+        const data = Object.fromEntries(new FormData(form).entries());
+
+        try {
+          if (data.website) return;
+          const endpoint = document.querySelector('meta[name="twins-employment-endpoint"]').content.trim();
+          let reference = `APP-DEMO-${Date.now().toString().slice(-6)}`;
+
+          if (endpoint) {
+            const response = await fetch(endpoint, {
+              method: 'POST',
+              credentials: 'same-origin',
+              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+              body: JSON.stringify(data)
+            });
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(result?.error?.message || 'We could not send your application. Please try again.');
+            reference = result.applicationId || reference;
+          } else {
+            await new Promise((resolve) => setTimeout(resolve, 700));
+          }
+
+          form.style.display = 'none';
+          document.querySelector('#reference').textContent = `Reference: ${reference}`;
+          successPanel.classList.add('show');
+          successPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } catch (error) {
+          formAlert.textContent = error.message || 'We could not send your application. Please try again.';
+          formAlert.classList.add('show');
+        } finally {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Send my application';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+{
+  "schemaVersion": 1,
+  "generator": {
+    "name": "sharp",
+    "version": "0.34.5",
+    "libvips": "8.17.3",
+    "libwebp": "1.6.0",
+    "settings": {
+      "rotate": true,
+      "withoutEnlargement": true,
+      "webpQuality": 82,
+      "webpEffort": 6,
+      "smartSubsample": true
+    }
+  },
+  "fonts": [
+    {
+      "path": "assets/fonts/lilita-one-regular.woff2",
+      "family": "Lilita One",
+      "weight": "400",
+      "sha256": "8d6cd0f298738a92ca9bf6e13f54a9191afd06ce04ea00ebbf24499c017191b7",
+      "license": "OFL-1.1",
+      "sourceLocator": "https://github.com/google/fonts/blob/main/ofl/lilitaone/OFL.txt",
+      "mime": "font/woff2"
+    },
+    {
+      "path": "assets/fonts/nunito-variable.woff2",
+      "family": "Nunito",
+      "weight": "200-1000",
+      "sha256": "ba344451eab25b217a165363b1982048a5e5830a0daf36577973955a04cac793",
+      "license": "OFL-1.1",
+      "sourceLocator": "https://github.com/google/fonts/blob/main/ofl/nunito/OFL.txt",
+      "mime": "font/woff2"
+    }
+  ],
+  "brandAssets": [
+    {
+      "logicalName": "logo",
+      "path": "assets/images/brand/twins-logo.png",
+      "sha256": "cc63412115076e387953b81e9d936a3d40559afa2edc314b912a66b79d0bc0f0",
+      "mime": "image/png",
+      "width": 711,
+      "height": 325,
+      "sourceLocator": "website/staging-safety/mu-plugins/twins-staging-assets/twins-logo.png"
+    },
+    {
+      "logicalName": "twin-left",
+      "path": "assets/images/brand/twin-left.png",
+      "sha256": "267ce3a33a3bbee09f9517409523c09246ac0488182625baeb9e4cdac84b293a",
+      "mime": "image/png",
+      "width": 196,
+      "height": 534,
+      "sourceLocator": "website/staging-safety/mu-plugins/twins-staging-assets/twin-left.png"
+    },
+    {
+      "logicalName": "twin-right",
+      "path": "assets/images/brand/twin-right.png",
+      "sha256": "29daf3e0c87133635c59a22e4560fb56ac819762a7ac8e84ebfe253bfccf75fe",
+      "mime": "image/png",
+      "width": 297,
+      "height": 538,
+      "sourceLocator": "website/staging-safety/mu-plugins/twins-staging-assets/twin-right.png"
+    },
+    {
+      "logicalName": "truck-original",
+      "path": "assets/images/brand/twins-service-truck-cutout.png",
+      "sha256": "ecd200b41f69334cf97c73bc9d85a3b59288b8174f2e9aae5c30fd27d9940bf3",
+      "mime": "image/png",
+      "width": 1398,
+      "height": 821,
+      "sourceLocator": "website/staging-safety/mu-plugins/twins-staging-assets/twins-service-truck-cutout.png"
+    },
+    {
+      "logicalName": "truck-webp",
+      "path": "assets/images/brand/twins-service-truck-cutout.webp",
+      "sha256": "df91d2f10c7facc90fb336f8dd229d28e80d66c6ce9d79f6d0efdc32d7127e6e",
+      "mime": "image/webp",
+      "width": 1398,
+      "height": 821,
+      "sourceLocator": "website/staging-safety/mu-plugins/twins-staging-assets/twins-service-truck-cutout.webp"
+    }
+  ],
+  "doorBuilderAssets": [
+    {
+      "logicalName": "door-builder-before-after",
+      "source": {
+        "path": "../../docs/website-overhaul/reference-sources/door-builder/twins-before-after-install-source.png",
+        "sha256": "86e5c945b84c38fe5d1fe176024d443669edcdf3c77001f3e99a0a464c22138a",
+        "mime": "image/png",
+        "width": 1080,
+        "height": 1080,
+        "importLocator": "docs/marketing/creative/2026-07-04-meta-challenger/financing_install.png",
+        "sourceEvidence": "docs/marketing/creative/2026-07-04-meta-challenger/README.md:58-63; commit e27c4ae2fb37de2b6da594795b1866689c5e1746"
+      },
+      "derivative": {
+        "path": "assets/images/door-builder/twins-before-after-install.webp",
+        "sha256": "e9a0b6c0d5c1a25b711103a132647ab50cbb4c9b3b120c97124f000537d6e346",
+        "size": 149790,
+        "mime": "image/webp",
+        "width": 1080,
+        "height": 930,
+        "crop": {
+          "left": 0,
+          "top": 0,
+          "width": 1080,
+          "height": 930
+        }
+      },
+      "approvedAlt": "Before and after view of a real Twins garage door installation",
+      "allowedUse": [
+        "home",
+        "door-builder"
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "logicalName": "crew-fleet",
+      "importLocator": "videos/twins-garage-doors-reel/capture/assets/best-garage-door-repair-installation-nea.jpeg",
+      "sourceEvidence": "videos/twins-garage-doors-reel/capture/extracted/tokens.json:701-705",
+      "original": {
+        "path": "assets/images/team/twins-crew-fleet.jpeg",
+        "sha256": "7b961919cbd0fdff119864d29eb66b094aa1ca110fe71d581981ef4a1a780e23",
+        "mime": "image/jpeg",
+        "width": 2560,
+        "height": 1372
+      },
+      "approvedAlt": "The Twins Garage Doors crew with their branded service fleet",
+      "allowedUse": [
+        "home",
+        "careers",
+        "team"
+      ],
+      "derivatives": [
+        {
+          "path": "assets/images/team/twins-crew-fleet-768w.webp",
+          "sha256": "100f33116a50ccea4b53e60a30a66c72aff46745ebc13af846793b088ce9ac94",
+          "mime": "image/webp",
+          "width": 768,
+          "height": 412
+        },
+        {
+          "path": "assets/images/team/twins-crew-fleet-1280w.webp",
+          "sha256": "06a6f86cfe3f9792c2d4989547168080b6f096ebe83fe41ef781d83d445d9fc5",
+          "mime": "image/webp",
+          "width": 1280,
+          "height": 686
+        },
+        {
+          "path": "assets/images/team/twins-crew-fleet-1920w.webp",
+          "sha256": "2b340e04b9cf8dc8f22e72f838f857fee6a9e257071ca42f28b3c8c60ceb2458",
+          "mime": "image/webp",
+          "width": 1920,
+          "height": 1029
+        }
+      ]
+    },
+    {
+      "logicalName": "tal-portrait",
+      "importLocator": "twins-content-engine/assets/instagram/library/Team Photos/tal profile pic.jpeg",
+      "sourceEvidence": "owner-approved Twins team-photo library",
+      "original": {
+        "path": "assets/images/team/tal-joseph.jpeg",
+        "sha256": "1e6f9052110a49e075ed2270c3b14253c1f9f5f8e8d16f9b7068c19d8356c87f",
+        "mime": "image/jpeg",
+        "width": 1066,
+        "height": 1600
+      },
+      "approvedAlt": "Twins Garage Doors co-founder Tal Joseph",
+      "allowedUse": [
+        "home",
+        "team",
+        "team"
+      ],
+      "derivatives": [
+        {
+          "path": "assets/images/team/tal-joseph-480w.webp",
+          "sha256": "9399238e6f7074cb9781f641b54ccc1b05dd7b57807af72e7dcd0d7db840d605",
+          "mime": "image/webp",
+          "width": 480,
+          "height": 720
+        },
+        {
+          "path": "assets/images/team/tal-joseph-768w.webp",
+          "sha256": "18ba8ca91f80321d993496e174228a19abdaaa43d49bc7c9cda2926795d04b70",
+          "mime": "image/webp",
+          "width": 768,
+          "height": 1153
+        },
+        {
+          "path": "assets/images/team/tal-joseph-1066w.webp",
+          "sha256": "d06fc1dc3c3dd8d86d36dd50a0001d501915d589178c09ecf500e7deebb47cf1",
+          "mime": "image/webp",
+          "width": 1066,
+          "height": 1600
+        }
+      ]
+    },
+    {
+      "logicalName": "technician-at-work",
+      "importLocator": "/Users/daniel/Documents/Codex/2026-07-09/twins-garage-doors-brochure-redesign/outputs/assets/technician.png",
+      "sourceEvidence": "owner-approved Twins brochure asset",
+      "original": {
+        "path": "assets/images/team/twins-technician-at-work.png",
+        "sha256": "a6de5842b51fa41449c02013c773c1910829a674b96f70586d12feadd1509b54",
+        "mime": "image/png",
+        "width": 924,
+        "height": 570
+      },
+      "approvedAlt": "A Twins Garage Doors technician working on a garage door",
+      "allowedUse": [
+        "home",
+        "careers",
+        "team"
+      ],
+      "derivatives": [
+        {
+          "path": "assets/images/team/twins-technician-at-work-480w.webp",
+          "sha256": "c0db0f04ab716b952a2737184c1c8b0e396fbcb1ef92d459f71485efa4a7e3b7",
+          "mime": "image/webp",
+          "width": 480,
+          "height": 296
+        },
+        {
+          "path": "assets/images/team/twins-technician-at-work-768w.webp",
+          "sha256": "f5f49c1aa0f871397c9e8fd8615d4a108b244f8d78219fbdc3e4daf7236b5b7f",
+          "mime": "image/webp",
+          "width": 768,
+          "height": 474
+        },
+        {
+          "path": "assets/images/team/twins-technician-at-work-924w.webp",
+          "sha256": "60c93cc1c29a5e876a3da96b9da6e8ac392db8652e876f562c0c20533ab3f68f",
+          "mime": "image/webp",
+          "width": 924,
+          "height": 570
+        }
+      ]
+    }
+  ]
+}
