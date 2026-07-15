@@ -17,6 +17,7 @@ function phpTest(name, harness, args = [], expectedOutput = '') {
 }
 
 phpTest('portable core boots without WordPress', 'portable-core-harness.php', [path.join(root, 'bootstrap.php')]);
+phpTest('shared component renderer contracts', 'renderer-contract-harness.php', [path.join(root, 'bootstrap.php')], 'renderer-contracts-ok');
 
 const reviewScenarios = [
   'valid',

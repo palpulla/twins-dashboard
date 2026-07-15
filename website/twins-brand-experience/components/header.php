@@ -1,2 +1,111 @@
-<?php declare(strict_types=1); ?>
-<header class="twins-brand-header"></header>
+<?php
+declare(strict_types=1);
+
+$serviceAreas = [];
+foreach ($experience->markets()->all($environment) as $key => $availableMarket) {
+    if ($key === 'main') continue;
+    $serviceAreas[] = [$availableMarket['label'], $key];
+}
+
+$nav = [
+    'Services' => [
+        ['All Services', 'services'],
+        ['Garage Door Installation', 'installation'],
+        ['Spring Repair', 'spring-repair'],
+        ['Opener Repair', 'opener-repair'],
+        ['Emergency Service', 'emergency-service'],
+    ],
+    'Garage Doors' => [
+        ['Garage Door Collections', 'garage-doors'],
+        ['Classic Collection', 'classic-collection'],
+        ['Modern Steel', 'modern-steel'],
+        ['Gallery Steel', 'gallery-steel'],
+        ['Design Your Door', 'door-builder'],
+    ],
+    'Service Areas' => $serviceAreas,
+    'Resources' => [
+        ['Reviews', 'reviews'],
+        ['Cost Guide', 'cost-guide'],
+        ['Financing', 'financing'],
+        ['Offers', 'offers'],
+        ['Frequently Asked Questions', 'faqs'],
+        ['Blog', 'blog'],
+    ],
+    'About' => [
+        ['About Twins', 'about'],
+        ['Our Team', 'team'],
+        ['Careers', 'careers'],
+        ['Contact Us', 'contact'],
+    ],
+];
+
+if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '') {
+    throw new DomainException('Quote action is unavailable.');
+}
+$bookingMode = $booking['mode'] ?? null;
+if ($bookingMode === 'dialog') {
+    if (!isset($booking['experienceHtml']) || !is_string($booking['experienceHtml'])) {
+        throw new DomainException('Booking dialog is unavailable.');
+    }
+} elseif ($bookingMode === 'external') {
+    if (!isset($booking['href']) || !is_string($booking['href']) || $booking['href'] === '') {
+        throw new DomainException('External booking action is unavailable.');
+    }
+} else {
+    throw new DomainException('Booking action mode is invalid.');
+}
+?>
+<header class="twins-brand-header" data-twins-header>
+  <div class="twins-brand-utility">
+    <span>Choose your service area</span>
+    <a class="twins-brand-phone" href="<?= htmlspecialchars($market['phoneHref'], ENT_QUOTES, 'UTF-8') ?>">
+      <?= htmlspecialchars($market['phoneDisplay'], ENT_QUOTES, 'UTF-8') ?>
+    </a>
+  </div>
+  <div class="twins-brand-fascia">
+    <a class="twins-brand-logo" href="<?= htmlspecialchars($experience->route('home', $marketKey), ENT_QUOTES, 'UTF-8') ?>" aria-label="Twins Garage Doors home">
+      <img src="<?= htmlspecialchars($experience->asset('logo'), ENT_QUOTES, 'UTF-8') ?>" width="711" height="325" alt="Twins Garage Doors">
+    </a>
+    <nav class="twins-brand-primary-nav" aria-label="Primary navigation">
+      <?php foreach ($nav as $group => $items): ?>
+        <div class="twins-brand-nav-group">
+          <button type="button" class="twins-brand-nav-trigger" aria-expanded="false"><?= htmlspecialchars($group, ENT_QUOTES, 'UTF-8') ?></button>
+          <div class="twins-brand-nav-panel">
+            <?php foreach ($items as [$label, $routeKey]): ?>
+              <a href="<?= htmlspecialchars($experience->route($routeKey, $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($label, ENT_QUOTES, 'UTF-8') ?></a>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      <?php endforeach; ?>
+    </nav>
+    <?php if ($bookingMode === 'dialog'): ?>
+      <button type="button" class="twins-brand-cta twins-brand-cta--book" data-twins-booking-open>Book Online</button>
+    <?php elseif ($bookingMode === 'external'): ?>
+      <a class="twins-brand-cta twins-brand-cta--book" href="<?= htmlspecialchars($booking['href'], ENT_QUOTES, 'UTF-8') ?>">Book Online</a>
+    <?php endif; ?>
+    <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
+    <button type="button" class="twins-brand-menu-trigger" aria-expanded="false" aria-controls="twins-brand-drawer">Menu</button>
+  </div>
+  <div id="twins-brand-drawer" class="twins-brand-drawer" hidden aria-hidden="true">
+    <div class="twins-brand-drawer-panel" role="dialog" aria-modal="true" aria-label="Main menu">
+      <button type="button" class="twins-brand-drawer-close" aria-label="Close menu">Close</button>
+      <nav aria-label="Mobile navigation">
+        <?php foreach ($nav as $group => $items): ?>
+          <div class="twins-brand-drawer-group">
+            <strong><?= htmlspecialchars($group, ENT_QUOTES, 'UTF-8') ?></strong>
+            <?php foreach ($items as [$label, $routeKey]): ?>
+              <a href="<?= htmlspecialchars($experience->route($routeKey, $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($label, ENT_QUOTES, 'UTF-8') ?></a>
+            <?php endforeach; ?>
+          </div>
+        <?php endforeach; ?>
+      </nav>
+      <?php if ($bookingMode === 'dialog'): ?>
+        <button type="button" class="twins-brand-cta twins-brand-cta--book" data-twins-booking-open>Book Online</button>
+      <?php elseif ($bookingMode === 'external'): ?>
+        <a class="twins-brand-cta twins-brand-cta--book" href="<?= htmlspecialchars($booking['href'], ENT_QUOTES, 'UTF-8') ?>">Book Online</a>
+      <?php endif; ?>
+      <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
+    </div>
+  </div>
+  <?php if ($bookingMode === 'dialog') echo $booking['experienceHtml']; ?>
+</header>
