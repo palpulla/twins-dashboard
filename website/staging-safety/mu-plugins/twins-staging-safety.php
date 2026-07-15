@@ -248,11 +248,14 @@ function twins_staging_safety_legacy_redirect_path($path) {
     }
 
     $redirects = array(
+        '/madison/' => '/wi/',
         '/madison/hello-world/' => '/wi/garage-door-services/',
         '/emergency-services/' => '/wi/emergency-garage-services/',
         '/ky/location/lexington/garage-door-installation/' => '/ky/garage-door-installation/',
         '/wi/location/wi/' => '/wi/location/madison/',
         '/wi/maintenance-plans/' => '/wi/protection-plans/',
+        '/wi/careers/' => '/careers/',
+        '/ky/careers/' => '/careers/',
         '/ky/author/' => '/ky/blog/',
         '/wi/author/' => '/wi/blog/',
         '/ky/category/madison/page/2/' => '/ky/category/madison/',
@@ -293,8 +296,66 @@ function twins_staging_safety_redirect_legacy_request() {
         return;
     }
 
-    wp_safe_redirect(network_home_url($destination), 302, 'Twins Staging Safety');
+    $request_method = isset($_SERVER['REQUEST_METHOD'])
+        ? strtoupper(wp_unslash($_SERVER['REQUEST_METHOD']))
+        : '';
+
+    nocache_headers();
+    if (!in_array($request_method, array('GET', 'HEAD'), true)) {
+        status_header(405);
+        header('Allow: GET, HEAD', true);
+        exit;
+    }
+
+    $redirected = wp_safe_redirect(
+        network_home_url($destination),
+        302,
+        'Twins Staging Safety'
+    );
+    if ($redirected === false) {
+        wp_die(
+            'Twins staging safety could not complete a verified same-origin redirect.',
+            'Staging redirect error',
+            array('response' => 503)
+        );
+        exit;
+    }
+
     exit;
+}
+
+/**
+ * Remove two stale responsive-image candidates whose Elementor thumbnail
+ * directories are absent from the private staging copy.
+ *
+ * Valid first-party WordPress variants remain in each srcset. Matching the
+ * exact path keeps this staging-only repair bounded and leaves unrelated
+ * attachment metadata byte-for-byte unchanged.
+ *
+ * @param mixed $sources WordPress responsive-image source candidates.
+ * @return mixed Filtered candidates, or the original non-array input.
+ */
+function twins_staging_safety_filter_broken_legacy_srcset($sources) {
+    if (!is_array($sources)) {
+        return $sources;
+    }
+
+    $missing_paths = array(
+        '/wp-content/uploads/2022/11/elementor/thumbs/Liftmaster-pxvfkw06sw4jutr19cwz68jdicnan2uq0t6tgqr0w0.jpg',
+        '/wp-content/uploads/2023/05/elementor/thumbs/liftmaster-84505r-150x150.png'
+    );
+
+    foreach ($sources as $width => $source) {
+        if (!is_array($source) || !isset($source['url']) || !is_string($source['url'])) {
+            continue;
+        }
+        $path = wp_parse_url($source['url'], PHP_URL_PATH);
+        if (is_string($path) && in_array($path, $missing_paths, true)) {
+            unset($sources[$width]);
+        }
+    }
+
+    return $sources;
 }
 
 /**
@@ -685,6 +746,7 @@ add_action('wp_footer', 'twins_staging_safety_frontend_banner', PHP_INT_MAX);
 add_action('wp_footer', 'twins_staging_safety_wi_phone_preview', PHP_INT_MAX - 1);
 add_action('wp_enqueue_scripts', 'twins_staging_safety_enqueue_visual_preview_styles', PHP_INT_MAX);
 add_action('template_redirect', 'twins_staging_safety_redirect_legacy_request', PHP_INT_MIN);
+add_filter('wp_calculate_image_srcset', 'twins_staging_safety_filter_broken_legacy_srcset', PHP_INT_MAX, 1);
 twins_staging_safety_register_placeholders();
 add_action('plugins_loaded', 'twins_staging_safety_register_placeholders', PHP_INT_MAX);
 add_action('after_setup_theme', 'twins_staging_safety_register_placeholders', PHP_INT_MAX);

@@ -11,6 +11,59 @@ WordPress hooks through direct curl or sockets, PHP mail, vendor SDKs, persisten
 action queues, or code that runs from early WordPress drop-ins. A default-deny
 hosting/server egress policy is mandatory even when every plugin test passes.
 
+## Current private staging overhaul
+
+**Status:** `BRANCH_PUSH_PENDING`
+
+**Branch:** `codex/staging-site-safety`
+
+**Production write authority:** `false`
+
+The complete overhaul is currently live for private visual review at
+`https://danielj140.sg-host.com/`. SiteGround HTTP Basic Authentication must
+remain enabled; credentials are managed outside Git and are never stored here.
+
+The staged package includes the Madison-inspired homepage, revised careers and
+team experiences, Wisconsin cost pages, state/location surfaces for WI/KY and
+private-staging IL, and a local non-submitting door builder. The shared header
+uses a larger crossing logo, high-contrast phone treatment, prominent phone and
+estimate actions, mobile Twin characters, a modern action dock, and motion that
+respects `prefers-reduced-motion`.
+
+Previously completed live QA recorded 161/161 browser route/viewport visits with
+zero violations and a complete 687-page/1,335-asset crawl with zero failures.
+The exact 819-file live source was recovered into this branch after the cleared
+disposable worktree. The recovered suite has zero failures, all staging-host PHP
+harnesses pass, and both task-created SSH keys are removed. Commit and push are
+the only remaining closure steps before `READY_FOR_VISUAL_APPROVAL`.
+
+Primary review routes:
+
+- `/`, `/careers/`, `/our-team/`
+- `/madison-garage-door-repair-lp/`, `/madison-tune-up-lp/`
+- `/wi/garage-door-cost-in-madison-wi/`
+- `/wi/garage-door-cost-in-milwaukee-wi/`
+- `/door-builder/`, `/wi/door-builder/`, `/ky/design-your-door/`
+- `/il/door-builder/`, `/il/`, `/ky/location/lexington/`
+
+Canonical source-recovery archive:
+
+- `/home/customer/staging-safety/final-live-source-recovery-20260715.tar.gz`
+- SHA-256:
+  `3dc6bc90217307da4ecc445857b9bc3e15336192cf7f143df1d7e842b11cfb97`
+
+Pre-overhaul staging database rollback:
+
+- `/home/customer/staging-safety/before-full-overhaul-20260714.sql.gz`
+- SHA-256:
+  `836dd8850730d4772956e041877cebd23d791700800a0a94588ebf1a9e12f374`
+
+This package and every route above are staging-only. They do not authorize a
+production deployment, production integration, DNS change, or real form/message
+test. See
+`docs/handoff/2026-07-14-private-staging-overhaul.md` for the current evidence
+and remaining closure gates.
+
 ## Installation order
 
 Install and verify this package **before restoring the production database** or
