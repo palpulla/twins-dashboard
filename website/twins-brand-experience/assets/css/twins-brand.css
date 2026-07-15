@@ -1,0 +1,725 @@
+@font-face { font-family: 'Lilita One'; src: url('../fonts/lilita-one-regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Nunito'; src: url('../fonts/nunito-variable.woff2') format('woff2'); font-weight: 200 1000; font-style: normal; font-display: swap; }
+
+:root {
+  --twins-navy-950: #071d3b;
+  --twins-navy-900: #0b2a55;
+  --twins-navy-800: #123a70;
+  --twins-navy-700: #195092;
+  --twins-gold: #ffc83d;
+  --twins-gold-strong: #ffb800;
+  --twins-cream: #fff9ed;
+  --twins-white: #ffffff;
+  --twins-ink: #111827;
+  --twins-muted: #4b5563;
+  --twins-logo-expanded: 204px;
+  --twins-logo-compressed: 180px;
+  --twins-radius: 24px;
+  --twins-shadow: 6px 7px 0 rgba(3, 18, 43, .55);
+  --twins-section-space: clamp(72px, 8vw, 124px);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body.twins-brand-experience { margin: 0; }
+[hidden] { display: none !important; }
+.twins-brand-experience {
+  overflow-x: clip;
+  color: var(--twins-ink);
+  background: var(--twins-cream);
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+}
+.twins-brand-experience :where(h1, h2, h3, .twins-brand-kicker) {
+  margin-top: 0;
+  font-family: 'Lilita One', Impact, sans-serif;
+  font-weight: 400;
+  letter-spacing: .01em;
+  line-height: 1.03;
+}
+.twins-brand-experience :where(img) { max-width: 100%; }
+.twins-brand-experience :where(a, button, input, select, textarea) { font: inherit; }
+.twins-brand-experience :where(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid var(--twins-gold);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 7px var(--twins-navy-950);
+}
+.twins-brand-experience :where(button) { cursor: pointer; }
+.twins-brand-skip-link {
+  position: fixed;
+  inset: 8px auto auto 8px;
+  z-index: 9999;
+  padding: 10px 16px;
+  color: var(--twins-navy-950);
+  background: var(--twins-gold);
+  font-weight: 900;
+  transform: translateY(-150%);
+}
+.twins-brand-skip-link:focus { transform: translateY(0); }
+
+/* Header: a compact, branded service fascia rather than a generic site bar. */
+.twins-brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--twins-navy-950);
+  border-bottom: 4px solid var(--twins-gold);
+  box-shadow: 0 8px 24px rgba(3, 18, 43, .22);
+}
+.twins-brand-utility {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 24px;
+  padding: 4px max(28px, calc((100vw - 1500px) / 2));
+  color: var(--twins-navy-950);
+  background: var(--twins-gold);
+  font-size: .8rem;
+  font-weight: 900;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.twins-brand-phone {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
+  color: var(--twins-navy-950);
+  background: var(--twins-gold);
+  border: 2px solid var(--twins-navy-950);
+  border-radius: 999px;
+  font-size: 1.05rem;
+  font-weight: 1000;
+  line-height: 1;
+  text-decoration: none;
+  letter-spacing: .015em;
+}
+.twins-brand-utility .twins-brand-phone {
+  min-height: 30px;
+  padding-block: 3px;
+  border-width: 0;
+  background: transparent;
+}
+.twins-brand-fascia {
+  min-height: 98px;
+  max-width: 1560px;
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 18px;
+  padding: 0 28px;
+  transition: min-height .22s ease;
+}
+.twins-brand-logo {
+  position: relative;
+  z-index: 2;
+  width: var(--twins-logo-expanded);
+  min-width: var(--twins-logo-expanded);
+  margin-bottom: -12px;
+  filter: drop-shadow(0 6px 3px rgba(0, 0, 0, .3));
+  transition: width .22s ease, min-width .22s ease, transform .22s ease;
+}
+.twins-brand-logo img { display: block; width: 100%; height: auto; }
+.twins-brand-header[data-compressed="true"] .twins-brand-fascia { min-height: 80px; }
+.twins-brand-primary-nav { min-width: 0; display: flex; align-items: stretch; justify-content: center; gap: 1px; }
+.twins-brand-nav-group { position: relative; }
+.twins-brand-nav-trigger,
+.twins-brand-menu-trigger {
+  min-width: 44px;
+  min-height: 48px;
+  padding: 9px 10px;
+  border: 0;
+  color: var(--twins-white);
+  background: transparent;
+  font-size: .82rem;
+  font-weight: 900;
+  line-height: 1.15;
+}
+.twins-brand-nav-trigger::after { content: '⌄'; margin-left: 5px; color: var(--twins-gold); }
+.twins-brand-nav-trigger:is(:hover, :focus-visible),
+.twins-brand-nav-trigger[aria-expanded="true"] { color: var(--twins-gold); background: rgba(255, 255, 255, .07); }
+.twins-brand-nav-panel {
+  position: absolute;
+  top: calc(100% + 14px);
+  left: 50%;
+  z-index: 20;
+  min-width: 245px;
+  display: grid;
+  padding: 12px;
+  color: var(--twins-white);
+  background: var(--twins-navy-900);
+  border: 2px solid var(--twins-gold);
+  border-radius: 0 0 18px 18px;
+  box-shadow: 8px 10px 0 rgba(3, 18, 43, .45);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(-50%, -8px);
+  transition: opacity .16s ease, transform .16s ease, visibility .16s;
+}
+.twins-brand-nav-trigger[aria-expanded="true"] + .twins-brand-nav-panel {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}
+.twins-brand-nav-panel a {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 9px 12px;
+  color: var(--twins-white);
+  border-bottom: 1px solid rgba(255, 255, 255, .12);
+  font-weight: 800;
+  text-decoration: none;
+}
+.twins-brand-nav-panel a:is(:hover, :focus-visible) { color: var(--twins-navy-950); background: var(--twins-gold); }
+.twins-brand-menu-trigger { display: none; border: 2px solid var(--twins-gold); border-radius: 999px; color: var(--twins-gold); }
+
+.twins-brand-cta {
+  position: relative;
+  min-width: 44px;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 11px 20px;
+  color: var(--twins-navy-950);
+  background-color: var(--twins-white);
+  border: 3px solid var(--twins-gold);
+  border-radius: 999px;
+  box-shadow: 4px 5px 0 rgba(3, 18, 43, .48);
+  font-weight: 1000;
+  line-height: 1.1;
+  text-align: center;
+  text-decoration: none;
+  transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+}
+.twins-brand-cta--book {
+  color: var(--twins-gold);
+  background-color: var(--twins-navy-900);
+  background-image: linear-gradient(115deg, transparent 34%, rgba(255, 255, 255, .16) 50%, transparent 66%);
+  background-size: 220% 100%;
+}
+.twins-brand-cta--quote {
+  color: var(--twins-navy-950);
+  background-color: var(--twins-gold);
+  background-image: linear-gradient(115deg, transparent 34%, rgba(255, 255, 255, .42) 50%, transparent 66%);
+  background-size: 220% 100%;
+}
+.twins-brand-cta--call { color: var(--twins-white); background: var(--twins-navy-800); border-color: var(--twins-gold); }
+.twins-brand-cta--book::after,
+.twins-brand-cta--quote::after {
+  content: '→';
+  width: 1.75rem;
+  height: 1.75rem;
+  flex: 0 0 1.75rem;
+  display: inline-grid;
+  place-items: center;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  line-height: 1;
+}
+.twins-brand-cta--quote:focus-visible {
+  outline: 3px solid var(--twins-navy-950);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px var(--twins-white);
+}
+.twins-brand-cta--book:focus-visible,
+.twins-brand-cta--call:focus-visible {
+  outline: 3px solid var(--twins-white);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px var(--twins-navy-950);
+}
+.twins-brand-cta--book:focus-visible,
+.twins-brand-cta--quote:focus-visible,
+.twins-brand-cta--call:focus-visible { animation: none; }
+.twins-brand-cta:hover { transform: translateY(-2px); filter: brightness(1.04); }
+.twins-brand-cta:active,
+.twins-brand-cta.twins-brand-test-active { transform: translateY(3px); box-shadow: 2px 2px 0 rgba(3, 18, 43, .72); }
+
+/* Hero uses garage-door panel lines and strong off-center composition from the Madison LP. */
+.twins-brand-hero {
+  position: relative;
+  min-height: min(720px, calc(100vh - 136px));
+  display: grid;
+  grid-template-columns: minmax(0, .98fr) minmax(520px, 1.02fr);
+  align-items: center;
+  gap: 10px;
+  padding: clamp(70px, 7vw, 112px) max(32px, calc((100vw - 1450px) / 2));
+  color: var(--twins-white);
+  background-color: var(--twins-navy-900);
+  background-image:
+    radial-gradient(circle at 92% 15%, rgba(255, 200, 61, .16), transparent 29%),
+    linear-gradient(90deg, rgba(7, 29, 59, .12), rgba(7, 29, 59, .58)),
+    repeating-linear-gradient(0deg, transparent 0 78px, rgba(255, 255, 255, .05) 79px 83px);
+  isolation: isolate;
+  overflow: hidden;
+}
+.twins-brand-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: .23;
+  background-image: linear-gradient(120deg, transparent 0 56%, rgba(255, 200, 61, .14) 56% 57%, transparent 57%);
+}
+.twins-brand-hero-copy { position: relative; z-index: 5; max-width: 760px; }
+.twins-brand-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 16px;
+  color: var(--twins-navy-800);
+  font-size: .98rem;
+  letter-spacing: .095em;
+  text-transform: uppercase;
+}
+.twins-brand-hero .twins-brand-kicker,
+.twins-brand-final-cta .twins-brand-kicker,
+.twins-brand-footer .twins-brand-kicker { color: var(--twins-gold); }
+.twins-brand-kicker::before { content: ''; width: 34px; height: 5px; background: currentColor; transform: skewX(-18deg); }
+.twins-brand-hero h1 {
+  max-width: 790px;
+  margin-bottom: 22px;
+  color: var(--twins-white);
+  font-size: clamp(3.5rem, 5.65vw, 6.35rem);
+  text-transform: uppercase;
+  text-wrap: balance;
+  text-shadow: 3px 4px 0 rgba(3, 18, 43, .38);
+}
+.twins-brand-hero-copy > p { max-width: 660px; margin: 0 0 30px; color: var(--twins-white); font-size: clamp(1.08rem, 1.55vw, 1.34rem); font-weight: 750; }
+.twins-brand-hero-actions { display: flex; flex-wrap: wrap; gap: 18px; }
+.twins-brand-hero-actions .twins-brand-cta { min-width: 190px; }
+.twins-brand-hero-art { position: relative; align-self: stretch; min-height: 540px; }
+.twins-brand-truck--hero {
+  position: absolute;
+  z-index: 1;
+  right: -18%;
+  bottom: 0;
+  width: min(820px, 67vw);
+  opacity: .72;
+  filter: saturate(.9) drop-shadow(0 24px 28px rgba(0, 0, 0, .34));
+}
+.twins-brand-twin { position: absolute; z-index: 3; display: block; height: auto; filter: drop-shadow(10px 16px 7px rgba(0, 0, 0, .34)); transform-origin: 50% 100%; }
+.twins-brand-twin--left { left: 24%; bottom: -10px; width: clamp(145px, 15vw, 218px); }
+.twins-brand-twin--right { right: 4%; bottom: -8px; width: clamp(205px, 21vw, 302px); }
+.twins-brand-mobile-proof { display: none; }
+
+.twins-brand-trust-ribbon,
+.twins-brand-careers-ribbon {
+  display: flex;
+  justify-content: center;
+  gap: clamp(20px, 5vw, 82px);
+  padding: 18px 28px;
+  color: var(--twins-navy-950);
+  background: var(--twins-gold);
+  border-block: 3px solid var(--twins-navy-950);
+  font-weight: 1000;
+}
+.twins-brand-trust-ribbon span::before,
+.twins-brand-careers-ribbon span::before { content: '✓'; margin-right: 8px; color: #12623b; }
+
+.twins-brand-service-pathways,
+.twins-brand-review-proof,
+.twins-brand-market-selector,
+.twins-brand-preview-section { padding: var(--twins-section-space) max(28px, calc((100vw - 1320px) / 2)); }
+.twins-brand-section-heading { max-width: 780px; margin-bottom: 42px; }
+.twins-brand-section-heading h2,
+.twins-brand-team-story h2,
+.twins-brand-door-builder h2,
+.twins-brand-careers h2,
+.twins-brand-final-cta h2 { margin-bottom: 16px; color: var(--twins-navy-950); font-size: clamp(2.4rem, 5vw, 4.7rem); text-transform: uppercase; }
+.twins-brand-section-heading p { max-width: 680px; color: var(--twins-muted); font-size: 1.1rem; }
+.twins-brand-card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.twins-brand-service-card {
+  position: relative;
+  min-height: 320px;
+  padding: 34px 30px;
+  background: var(--twins-white);
+  border: 3px solid var(--twins-navy-950);
+  border-radius: 8px 30px 8px 30px;
+  box-shadow: 9px 10px 0 var(--twins-gold);
+  overflow: hidden;
+}
+.twins-brand-service-card h3 { position: relative; color: var(--twins-navy-900); font-size: 2rem; text-transform: uppercase; }
+.twins-brand-service-card a,
+.twins-brand-team-story a,
+.twins-brand-careers a,
+.twins-brand-text-link { min-height: 44px; display: inline-flex; align-items: center; color: var(--twins-navy-900); font-weight: 1000; text-decoration-thickness: 3px; text-underline-offset: 6px; }
+
+.twins-brand-review-proof { color: var(--twins-white); background: var(--twins-navy-950); }
+.twins-brand-review-proof .twins-brand-section-heading h2 { color: var(--twins-white); }
+.twins-brand-review-proof .twins-brand-section-heading p { color: #dbe8f8; }
+.twins-brand-review-slider { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; overflow: hidden; }
+.twins-brand-review-track { grid-column: 1 / -1; display: flex; align-items: stretch; transform: translate3d(0, 0, 0); transition: transform .42s cubic-bezier(.22, .8, .26, 1); }
+.twins-brand-review-card {
+  flex: 0 0 calc(100% / var(--twins-review-cards, 3));
+  min-height: 310px;
+  padding: 10px 12px 12px;
+}
+.twins-brand-review-card > :where(small, .twins-brand-review-stars, blockquote, footer) {
+  display: block;
+  margin-inline: 8px;
+}
+.twins-brand-review-card {
+  color: var(--twins-ink);
+  background: var(--twins-cream);
+  background-clip: content-box;
+  border-radius: 30px 6px 30px 6px;
+}
+.twins-brand-review-card small { padding-top: 28px; color: #5f6670; font-size: .7rem; font-weight: 800; text-transform: uppercase; }
+.twins-brand-review-stars { padding-top: 12px; color: #9a6200; font-size: 1.4rem; letter-spacing: .15em; }
+.twins-brand-review-card blockquote { min-height: 112px; margin-top: 12px; margin-bottom: 20px; padding-inline: 0; font-size: 1.08rem; font-weight: 750; }
+.twins-brand-review-card footer { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 28px; color: var(--twins-navy-900); }
+.twins-brand-review-slider > [data-review-prev],
+.twins-brand-review-slider > [data-review-next],
+.twins-brand-review-dots button {
+  min-width: 46px;
+  min-height: 46px;
+  color: var(--twins-navy-950);
+  background: var(--twins-gold);
+  border: 2px solid var(--twins-gold);
+  border-radius: 50%;
+  font-weight: 1000;
+}
+.twins-brand-review-slider > [data-review-prev],
+.twins-brand-review-slider > [data-review-next] { margin-top: 25px; }
+.twins-brand-review-slider > [data-review-prev] { justify-self: start; }
+.twins-brand-review-slider > [data-review-next] { justify-self: end; }
+.twins-brand-review-dots { display: flex; justify-content: center; gap: 8px; margin-top: 25px; }
+.twins-brand-review-dots button { min-width: 44px; min-height: 44px; color: var(--twins-white); background: transparent; font-size: 0; }
+.twins-brand-review-dots button::after { content: ''; width: 10px; height: 10px; display: block; margin: auto; background: currentColor; border-radius: 50%; }
+.twins-brand-review-dots button[aria-current="true"] { color: var(--twins-navy-950); background: var(--twins-gold); }
+.twins-brand-review-proof .twins-brand-text-link { color: var(--twins-gold); }
+
+.twins-brand-team-story,
+.twins-brand-door-builder,
+.twins-brand-careers {
+  display: grid;
+  grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+  align-items: center;
+  gap: clamp(42px, 7vw, 100px);
+  padding: var(--twins-section-space) max(28px, calc((100vw - 1320px) / 2));
+}
+.twins-brand-team-story-images { position: relative; min-height: 560px; }
+.twins-brand-team-story-images img { object-fit: cover; border: 5px solid var(--twins-navy-950); box-shadow: 14px 15px 0 var(--twins-gold); }
+.twins-brand-team-story-crew { width: 84%; aspect-ratio: 16 / 9; }
+.twins-brand-team-story-technician { position: absolute; right: 0; bottom: 0; width: 47%; aspect-ratio: 4 / 3; }
+.twins-brand-door-builder { grid-template-columns: 1.05fr .95fr; color: var(--twins-white); background: var(--twins-navy-900); }
+.twins-brand-door-builder h2 { color: var(--twins-white); }
+.twins-brand-door-builder-art { position: relative; }
+.twins-brand-door-builder-art::before { content: 'BEFORE / AFTER'; position: absolute; z-index: 2; top: 20px; left: -14px; padding: 7px 15px; color: var(--twins-navy-950); background: var(--twins-gold); border: 2px solid var(--twins-navy-950); font-family: 'Lilita One', Impact, sans-serif; letter-spacing: .08em; transform: rotate(-3deg); }
+.twins-brand-door-builder-preview { display: block; width: 100%; aspect-ratio: 1080 / 930; object-fit: cover; border: 5px solid var(--twins-gold); box-shadow: 16px 18px 0 rgba(3, 18, 43, .7); }
+.twins-brand-market-selector { background: #f4ead6; }
+.twins-brand-market-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.twins-brand-market-card { min-height: 170px; display: flex; flex-direction: column; justify-content: flex-end; padding: 28px; color: var(--twins-white); background: var(--twins-navy-900); border: 3px solid var(--twins-navy-950); border-radius: 6px 28px 6px 28px; box-shadow: 8px 9px 0 var(--twins-gold); text-decoration: none; }
+.twins-brand-market-card strong { font-family: 'Lilita One', Impact, sans-serif; font-size: 2.1rem; text-transform: uppercase; }
+.twins-brand-market-card--preview { color: var(--twins-navy-950); background: var(--twins-gold); box-shadow: 8px 9px 0 var(--twins-navy-950); }
+.twins-brand-careers { grid-template-columns: 1.05fr .95fr; }
+.twins-brand-careers-image img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border: 5px solid var(--twins-navy-950); box-shadow: 14px 15px 0 var(--twins-gold); }
+
+.twins-brand-preview-section { background: var(--twins-white); }
+.twins-brand-preview-form { max-width: 960px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: clamp(24px, 5vw, 48px); color: var(--twins-white); background: var(--twins-navy-900); border: 4px solid var(--twins-gold); border-radius: 8px 36px 8px 36px; box-shadow: 12px 14px 0 var(--twins-navy-950); }
+.twins-brand-preview-form h3,
+.twins-brand-preview-form [role="status"] { grid-column: 1 / -1; }
+.twins-brand-preview-form h3 { color: var(--twins-white); font-size: 2.2rem; }
+.twins-brand-preview-form label { display: grid; gap: 7px; font-weight: 900; }
+.twins-brand-field-wide { grid-column: 1 / -1; }
+.twins-brand-preview-form :where(input, select, textarea) { width: 100%; min-height: 50px; padding: 10px 12px; color: var(--twins-ink); background: var(--twins-white); border: 2px solid var(--twins-gold); border-radius: 8px; }
+.twins-brand-preview-form textarea { min-height: 120px; resize: vertical; }
+.twins-brand-preview-form [aria-invalid="true"] { border-color: #ff6b6b; box-shadow: 0 0 0 3px rgba(255, 107, 107, .35); }
+.twins-brand-preview-form button,
+[data-booking-finalize] { min-height: 50px; padding: 10px 18px; color: var(--twins-navy-950); background: var(--twins-gold); border: 3px solid var(--twins-navy-950); border-radius: 999px; font-weight: 1000; }
+.twins-brand-preview-form [role="status"],
+[data-booking-status] { padding: 12px 16px; color: var(--twins-navy-950); background: var(--twins-gold); border-radius: 8px; font-weight: 900; }
+
+/* Supporting journeys share the same industrial editorial system. */
+.twins-brand-page-hero {
+  min-height: 500px;
+  display: grid;
+  align-content: center;
+  padding: clamp(80px, 10vw, 150px) max(28px, calc((100vw - 1180px) / 2));
+  color: var(--twins-white);
+  background-color: var(--twins-navy-900);
+  background-image: radial-gradient(circle at 88% 18%, rgba(255, 200, 61, .17), transparent 30%), repeating-linear-gradient(0deg, transparent 0 78px, rgba(255, 255, 255, .05) 79px 83px);
+}
+.twins-brand-page-hero h1,
+.twins-brand-careers-hero h1 { max-width: 980px; margin-bottom: 18px; color: var(--twins-white); font-size: clamp(3.2rem, 7vw, 6.8rem); text-transform: uppercase; }
+.twins-brand-page-hero > p { max-width: 760px; color: #e8f1fb; font-size: 1.18rem; font-weight: 750; }
+.twins-brand-page-hero .twins-brand-cta { justify-self: start; margin-top: 16px; }
+
+.twins-brand-team-crew,
+.twins-brand-team-portraits,
+.twins-brand-team-values,
+.twins-brand-team-page > .twins-brand-team-story,
+.twins-brand-team-careers,
+.twins-brand-contact-markets,
+.twins-brand-contact-quote,
+.twins-brand-reviews-collection,
+.twins-brand-reviews-next,
+.twins-brand-careers-values,
+.twins-brand-careers-roles,
+.twins-brand-careers-process,
+.twins-brand-careers-application {
+  padding: var(--twins-section-space) max(28px, calc((100vw - 1320px) / 2));
+}
+.twins-brand-team-crew { display: grid; grid-template-columns: 1.25fr .75fr; align-items: center; gap: clamp(38px, 7vw, 100px); }
+.twins-brand-team-crew-image img,
+.twins-brand-careers-hero-image img,
+.twins-brand-careers-work-image img { display: block; width: 100%; object-fit: cover; border: 5px solid var(--twins-navy-950); box-shadow: 14px 15px 0 var(--twins-gold); }
+.twins-brand-team-crew-image img { aspect-ratio: 16 / 9; }
+.twins-brand-team-crew-copy h2,
+.twins-brand-team-values h2,
+.twins-brand-team-page > .twins-brand-team-story h2,
+.twins-brand-team-careers h2,
+.twins-brand-careers-page :where(.twins-brand-section-heading h2, .twins-brand-careers-application h2),
+.twins-brand-contact-page h2 { color: var(--twins-navy-950); font-size: clamp(2.4rem, 5vw, 4.7rem); text-transform: uppercase; }
+.twins-brand-team-portraits { display: grid; grid-template-columns: minmax(260px, .42fr) minmax(0, .58fr); gap: clamp(30px, 6vw, 80px); background: #f4ead6; }
+.twins-brand-team-portraits > .twins-brand-section-heading { grid-column: 1 / -1; }
+.twins-brand-person-card { margin: 0; padding: 18px; color: var(--twins-white); background: var(--twins-navy-900); border: 4px solid var(--twins-gold); box-shadow: 12px 14px 0 var(--twins-navy-950); }
+.twins-brand-person-card img { width: 100%; max-height: 660px; display: block; object-fit: cover; object-position: 50% 22%; }
+.twins-brand-person-card h3 { margin: 22px 4px 5px; color: var(--twins-gold); font-size: 2.3rem; text-transform: uppercase; }
+.twins-brand-team-work-photo img { width: 100%; height: 100%; min-height: 520px; display: block; object-fit: cover; border: 5px solid var(--twins-navy-950); }
+.twins-brand-team-values { color: var(--twins-white); background: var(--twins-navy-950); text-align: center; }
+.twins-brand-team-values h2 { max-width: 1050px; margin-inline: auto; color: var(--twins-gold); }
+.twins-brand-team-values p { max-width: 760px; margin-inline: auto; color: #e8f1fb; }
+.twins-brand-team-page > .twins-brand-team-story { display: block; color: var(--twins-ink); background: var(--twins-cream); }
+.twins-brand-team-careers { color: var(--twins-white); background: var(--twins-navy-900); text-align: center; }
+.twins-brand-team-careers h2 { color: var(--twins-white); }
+.twins-brand-team-careers a { color: var(--twins-gold); }
+
+.twins-brand-page-nav { position: sticky; top: 140px; z-index: 25; display: flex; justify-content: center; gap: 8px; padding: 10px 20px; background: rgba(7, 29, 59, .96); border-bottom: 3px solid var(--twins-gold); backdrop-filter: blur(8px); }
+.twins-brand-page-nav a { min-height: 44px; display: inline-flex; align-items: center; padding: 6px 15px; color: var(--twins-white); border-radius: 999px; font-weight: 900; }
+.twins-brand-page-nav a:is(:hover, :focus-visible) { color: var(--twins-navy-950); background: var(--twins-gold); }
+.twins-brand-careers-hero { display: grid; grid-template-columns: .86fr 1.14fr; align-items: center; gap: clamp(40px, 7vw, 100px); padding: clamp(72px, 8vw, 124px) max(28px, calc((100vw - 1320px) / 2)); color: var(--twins-white); background: var(--twins-navy-900); }
+.twins-brand-careers-hero-copy > p { max-width: 660px; color: #e8f1fb; font-size: 1.14rem; }
+.twins-brand-careers-hero-image img { aspect-ratio: 16 / 10; }
+.twins-brand-careers-values { background: var(--twins-cream); }
+.twins-brand-value-grid,
+.twins-brand-role-grid,
+.twins-brand-process-grid { display: grid; gap: 22px; }
+.twins-brand-value-grid { grid-template-columns: repeat(3, 1fr); }
+.twins-brand-role-grid { grid-template-columns: repeat(3, 1fr); }
+.twins-brand-process-grid { grid-template-columns: repeat(4, 1fr); }
+.twins-brand-value-grid article,
+.twins-brand-role-grid article,
+.twins-brand-process-grid article { padding: 30px; background: var(--twins-white); border: 3px solid var(--twins-navy-950); border-radius: 6px 24px 6px 24px; box-shadow: 8px 9px 0 var(--twins-gold); }
+.twins-brand-value-grid h3,
+.twins-brand-role-grid h3,
+.twins-brand-process-grid h3 { color: var(--twins-navy-900); font-size: 1.7rem; text-transform: uppercase; }
+.twins-brand-careers-roles { background: #f4ead6; }
+.twins-brand-role-grid article:last-child { color: var(--twins-white); background: var(--twins-navy-900); }
+.twins-brand-role-grid article:last-child h3 { color: var(--twins-gold); }
+.twins-brand-careers-work-image { max-width: 720px; margin-top: 55px; }
+.twins-brand-careers-work-image img { aspect-ratio: 16 / 10; }
+.twins-brand-careers-process { color: var(--twins-white); background: var(--twins-navy-950); }
+.twins-brand-careers-process .twins-brand-section-heading h2 { color: var(--twins-white); }
+.twins-brand-careers-process .twins-brand-section-heading p { color: #dbe8f8; }
+.twins-brand-process-grid article { color: var(--twins-ink); }
+.twins-brand-process-grid article > strong { display: block; color: var(--twins-gold-strong); font-family: 'Lilita One', Impact, sans-serif; font-size: 3.4rem; line-height: 1; }
+.twins-brand-careers-application { background: var(--twins-white); }
+.twins-brand-careers-application > p { max-width: 760px; }
+.twins-brand-careers-application .twins-brand-preview-form { margin-top: 36px; }
+
+.twins-brand-contact-markets { background: #f4ead6; }
+.twins-brand-contact-market-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.twins-brand-contact-market-grid article { min-height: 220px; display: flex; flex-direction: column; align-items: flex-start; padding: 30px; color: var(--twins-white); background: var(--twins-navy-900); border: 3px solid var(--twins-navy-950); border-radius: 6px 26px 6px 26px; box-shadow: 8px 9px 0 var(--twins-gold); }
+.twins-brand-contact-market-grid h3 { color: var(--twins-gold); font-size: 2rem; text-transform: uppercase; }
+.twins-brand-contact-market-grid a { min-height: 44px; display: inline-flex; align-items: center; color: var(--twins-white); font-weight: 900; }
+.twins-brand-contact-quote { background: var(--twins-white); }
+.twins-brand-contact-quote .twins-brand-preview-form { margin-top: 35px; }
+
+.twins-brand-reviews-collection { color: var(--twins-white); background: var(--twins-navy-950); }
+.twins-brand-reviews-collection .twins-brand-reviews > h2 { color: var(--twins-white); font-size: clamp(2.4rem, 5vw, 4.7rem); text-transform: uppercase; }
+.twins-brand-reviews-collection .twins-brand-google-attribution { color: #dbe8f8; }
+.twins-brand-reviews-collection .twins-brand-reviews > a { min-height: 44px; display: inline-flex; align-items: center; margin: 24px 20px 0 0; color: var(--twins-gold); font-weight: 900; }
+.twins-brand-reviews-next { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; background: #f4ead6; }
+.twins-brand-reviews-next a { min-height: 50px; display: inline-flex; align-items: center; padding: 10px 20px; color: var(--twins-navy-950); background: var(--twins-gold); border: 3px solid var(--twins-navy-950); border-radius: 999px; box-shadow: 4px 5px 0 rgba(3, 18, 43, .45); font-weight: 1000; }
+
+.twins-brand-final-cta { padding: clamp(74px, 10vw, 140px) 28px; color: var(--twins-white); background: var(--twins-navy-950); text-align: center; }
+.twins-brand-final-cta h2 { max-width: 900px; margin-inline: auto; color: var(--twins-white); }
+.twins-brand-final-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; }
+
+.twins-brand-footer { display: grid; grid-template-columns: minmax(260px, .72fr) 1.28fr; gap: 70px; padding: 80px max(28px, calc((100vw - 1320px) / 2)) 28px; color: var(--twins-white); background: #03132a; }
+.twins-brand-footer-intro { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
+.twins-brand-footer-logo { width: 210px; }
+.twins-brand-footer-logo img { display: block; width: 100%; height: auto; }
+.twins-brand-footer-nav { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+.twins-brand-footer-group { display: grid; align-content: start; gap: 9px; }
+.twins-brand-footer-group h2 { color: var(--twins-gold); font-size: 1.35rem; text-transform: uppercase; }
+.twins-brand-footer-group a { min-height: 44px; display: flex; align-items: center; color: var(--twins-white); font-weight: 750; text-decoration-color: transparent; }
+.twins-brand-footer-group a:hover { color: var(--twins-gold); text-decoration-color: currentColor; }
+.twins-brand-footer-legal { grid-column: 1 / -1; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, .18); color: #c8d5e7; }
+.twins-brand-mobile-actions { display: none; }
+
+/* Shared overlays. Hidden overlays cannot intercept the underlying page. */
+.twins-brand-drawer[hidden],
+.twins-brand-booking-dialog[hidden] { display: none !important; pointer-events: none; }
+.twins-brand-drawer,
+.twins-brand-booking-dialog { position: fixed; inset: 0; z-index: 1500; background: rgba(3, 18, 43, .76); backdrop-filter: blur(6px); }
+.twins-brand-drawer-panel { position: absolute; inset: 0 0 0 auto; width: min(92vw, 470px); height: 100%; padding: 24px; overflow-y: auto; color: var(--twins-white); background: var(--twins-navy-950); border-left: 4px solid var(--twins-gold); box-shadow: -18px 0 40px rgba(0, 0, 0, .35); }
+.twins-brand-drawer-close,
+[data-booking-close] { min-width: 48px; min-height: 48px; padding: 8px 14px; color: var(--twins-navy-950); background: var(--twins-gold); border: 2px solid var(--twins-navy-950); border-radius: 999px; font-weight: 1000; }
+.twins-brand-drawer-panel nav { display: grid; gap: 20px; margin-block: 28px; }
+.twins-brand-drawer-group { display: grid; gap: 4px; }
+.twins-brand-drawer-group strong { color: var(--twins-gold); font-family: 'Lilita One', Impact, sans-serif; font-size: 1.25rem; text-transform: uppercase; }
+.twins-brand-drawer-group a { min-height: 44px; display: flex; align-items: center; color: var(--twins-white); border-bottom: 1px solid rgba(255, 255, 255, .15); font-weight: 800; }
+.twins-brand-drawer-panel > .twins-brand-cta { width: 100%; margin-top: 14px; }
+.twins-brand-booking-dialog { display: grid; place-items: center; padding: 20px; }
+.twins-brand-booking-dialog > [role="dialog"] { width: min(100%, 580px); padding: clamp(28px, 6vw, 52px); color: var(--twins-white); background: var(--twins-navy-900); border: 4px solid var(--twins-gold); border-radius: 8px 36px 8px 36px; box-shadow: 14px 16px 0 var(--twins-navy-950); }
+.twins-brand-booking-dialog h2 { margin: 22px 0 14px; color: var(--twins-white); font-size: 3rem; text-transform: uppercase; }
+
+@keyframes twins-brand-float-left { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+@keyframes twins-brand-float-right { 0%, 100% { transform: translateY(0) rotate(-.75deg); } 50% { transform: translateY(-18px) rotate(.75deg); } }
+@keyframes twins-brand-cta-pulse { 0%, 82%, 100% { box-shadow: var(--twins-shadow); background-position: 100% 0; } 88% { box-shadow: 0 0 0 6px rgba(255, 200, 61, .28), var(--twins-shadow); background-position: 0 0; } }
+.twins-brand-twin--left { animation: twins-brand-float-left 4.8s ease-in-out infinite; }
+.twins-brand-twin--right { animation: twins-brand-float-right 6.5s ease-in-out .65s infinite; }
+.twins-brand-cta--book,
+.twins-brand-cta--quote { animation: twins-brand-cta-pulse 8s ease-in-out infinite; }
+.twins-brand-cta:is(:hover, :focus-visible, :active) { animation-play-state: paused; }
+
+@media (min-width: 1201px) {
+  .twins-brand-header[data-compressed="true"] .twins-brand-logo { width: var(--twins-logo-compressed); min-width: var(--twins-logo-compressed); }
+  .twins-brand-truck--mobile-proof { display: none; }
+}
+
+@media (max-width: 1200px) {
+  .twins-brand-logo { width: 190px; min-width: 190px; }
+  .twins-brand-primary-nav,
+  .twins-brand-fascia > .twins-brand-cta { display: none; }
+  .twins-brand-fascia { grid-template-columns: 1fr auto; }
+  .twins-brand-menu-trigger { display: inline-flex; align-items: center; justify-content: center; }
+  .twins-brand-truck--hero { display: none; }
+  .twins-brand-mobile-proof { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 18px; padding: 20px 28px; color: var(--twins-white); background: var(--twins-navy-950); }
+  .twins-brand-mobile-proof img { width: min(520px, 70vw); }
+  .twins-brand-mobile-proof p { max-width: 230px; color: var(--twins-gold); font-family: 'Lilita One', Impact, sans-serif; font-size: 1.5rem; line-height: 1.05; text-transform: uppercase; }
+  .twins-brand-twin { display: block; }
+  .twins-brand-hero { min-height: 620px; grid-template-columns: minmax(0, 1fr) minmax(300px, .65fr); padding-inline: 34px; }
+  .twins-brand-hero-art { min-height: 480px; }
+  .twins-brand-twin--left { left: 0; width: 155px; }
+  .twins-brand-twin--right { right: -3%; width: 225px; }
+}
+
+@media (max-width: 900px) {
+  .twins-brand-trust-ribbon { flex-wrap: wrap; justify-content: flex-start; gap: 9px 28px; }
+  .twins-brand-card-grid,
+  .twins-brand-market-grid { grid-template-columns: 1fr; }
+  .twins-brand-service-card { min-height: 240px; }
+  .twins-brand-team-story,
+  .twins-brand-door-builder,
+  .twins-brand-careers { grid-template-columns: 1fr; }
+  .twins-brand-team-story-copy { order: -1; }
+  .twins-brand-team-story-images { min-height: 440px; }
+  .twins-brand-review-slider { --twins-review-cards: 2; }
+  .twins-brand-footer { grid-template-columns: 1fr; }
+  .twins-brand-team-crew,
+  .twins-brand-careers-hero { grid-template-columns: 1fr; }
+  .twins-brand-team-portraits { grid-template-columns: 1fr; }
+  .twins-brand-team-work-photo img { min-height: 360px; }
+  .twins-brand-value-grid,
+  .twins-brand-role-grid,
+  .twins-brand-process-grid,
+  .twins-brand-contact-market-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 768px) {
+  .twins-brand-logo { width: 176px; min-width: 176px; }
+  .twins-brand-utility { min-height: 42px; justify-content: space-between; padding-inline: 14px; }
+  .twins-brand-utility > span { font-size: .65rem; }
+  .twins-brand-utility .twins-brand-phone { font-size: .92rem; }
+  .twins-brand-fascia { min-height: 88px; padding-inline: 16px; }
+  .twins-brand-header[data-compressed="true"] .twins-brand-fascia { min-height: 78px; }
+  .twins-brand-hero { min-height: auto; grid-template-columns: 1fr; align-items: start; padding: 54px 20px 0; }
+  .twins-brand-hero h1 { font-size: clamp(3.05rem, 13vw, 5rem); }
+  .twins-brand-hero-copy > p { font-size: 1.04rem; }
+  .twins-brand-hero-art { min-height: 320px; margin-top: 4px; }
+  .twins-brand-twin--left { left: 16%; bottom: -2px; width: min(35vw, 160px); }
+  .twins-brand-twin--right { right: 13%; bottom: -2px; width: min(46vw, 220px); }
+  .twins-brand-mobile-proof { grid-template-columns: 1fr; padding: 18px 20px; text-align: center; }
+  .twins-brand-mobile-proof img { width: 100%; margin-inline: auto; }
+  .twins-brand-mobile-proof p { max-width: none; margin: 0; }
+  .twins-brand-trust-ribbon { font-size: .92rem; }
+  .twins-brand-review-slider { --twins-review-cards: 1; }
+  .twins-brand-team-story-images { min-height: 360px; }
+  .twins-brand-preview-form { grid-template-columns: 1fr; }
+  .twins-brand-field-wide,
+  .twins-brand-preview-form h3,
+  .twins-brand-preview-form [role="status"] { grid-column: auto; }
+  .twins-brand-footer-nav { grid-template-columns: 1fr 1fr; }
+  .twins-brand-mobile-actions {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 1100;
+    min-height: calc(66px + env(safe-area-inset-bottom));
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+    background: var(--twins-navy-950);
+    border-top: 3px solid var(--twins-gold);
+  }
+  .twins-brand-mobile-actions a { min-height: 48px; display: grid; place-items: center; padding: 8px; color: var(--twins-white); background: var(--twins-navy-800); border: 2px solid var(--twins-gold); border-radius: 999px; font-weight: 1000; text-align: center; text-decoration: none; }
+  .twins-brand-mobile-actions a:last-child { color: var(--twins-navy-950); background: var(--twins-gold); }
+  .twins-brand-footer { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+  .twins-brand-page-nav { top: 124px; justify-content: flex-start; overflow-x: auto; }
+  .twins-brand-page-nav a { flex: 0 0 auto; }
+  .twins-brand-value-grid,
+  .twins-brand-role-grid,
+  .twins-brand-process-grid,
+  .twins-brand-contact-market-grid { grid-template-columns: 1fr; }
+  .twins-brand-careers-ribbon { flex-wrap: wrap; justify-content: flex-start; }
+}
+
+@media (max-width: 480px) {
+  .twins-brand-experience { font-size: 16px; }
+  .twins-brand-utility > span { display: none; }
+  .twins-brand-utility { justify-content: center; }
+  .twins-brand-hero-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .twins-brand-hero-actions .twins-brand-cta { min-width: 0; padding-inline: 10px; }
+  .twins-brand-cta--book::after,
+  .twins-brand-cta--quote::after { width: 1.45rem; height: 1.45rem; flex-basis: 1.45rem; }
+  .twins-brand-section-heading h2,
+  .twins-brand-team-story h2,
+  .twins-brand-door-builder h2,
+  .twins-brand-careers h2,
+  .twins-brand-final-cta h2 { font-size: 2.5rem; }
+  .twins-brand-team-story-images { min-height: 280px; }
+  .twins-brand-footer-nav { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 390px) {
+  .twins-brand-logo { width: 154px; min-width: 154px; }
+  .twins-brand-hero { padding-inline: 16px; }
+  .twins-brand-hero h1 { font-size: 2.85rem; }
+  .twins-brand-hero-art { min-height: 260px; }
+  .twins-brand-twin--left { left: 13%; width: 112px; }
+  .twins-brand-twin--right { right: 9%; width: 155px; }
+}
+
+@media (max-width: 360px) {
+  .twins-brand-logo { width: 148px; min-width: 148px; }
+  .twins-brand-fascia { padding-inline: 10px; }
+  .twins-brand-hero-actions { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 320px) {
+  .twins-brand-logo { width: 140px; min-width: 140px; }
+  .twins-brand-menu-trigger { padding-inline: 9px; }
+  .twins-brand-hero h1 { font-size: 2.55rem; }
+  .twins-brand-hero-art { min-height: 240px; }
+  .twins-brand-twin--left { left: 10%; width: 101px; }
+  .twins-brand-twin--right { right: 7%; width: 142px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .twins-brand-experience *,
+  .twins-brand-experience *::before,
+  .twins-brand-experience *::after { animation: none !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+  .twins-brand-twin { transform: none !important; }
+}
