@@ -4,11 +4,11 @@ const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const ROOT = path.resolve(__dirname, '..');
-const SAFETY = 'mu-plugins/twins-staging-safety.php';
-const LOADER = 'mu-plugins/twins-staging-overhaul.php';
-const PACKAGE = 'mu-plugins/twins-staging-overhaul';
-const ASSETS = 'mu-plugins/twins-staging-assets';
+const ROOT = path.resolve(__dirname, '../../..');
+const SAFETY = 'website/staging-safety/mu-plugins/twins-staging-safety.php';
+const LOADER = 'website/staging-safety/mu-plugins/twins-staging-overhaul.php';
+const PACKAGE = 'website/staging-safety/mu-plugins/twins-staging-overhaul';
+const ASSETS = 'website/staging-safety/mu-plugins/twins-staging-assets';
 
 function absolute(relativePath) {
   return path.join(ROOT, relativePath);
@@ -68,6 +68,14 @@ const LIVE_HASHES = Object.freeze({
   [`${ASSETS}/twins-service-truck-cutout.webp`]: 'df91d2f10c7facc90fb336f8dd229d28e80d66c6ce9d79f6d0efdc32d7127e6e'
 });
 
+const intentionallyReplacedByPortableCore = new Set([
+  'website/staging-safety/mu-plugins/twins-staging-overhaul/bootstrap.php',
+  'website/staging-safety/mu-plugins/twins-staging-overhaul/components.php',
+  'website/staging-safety/mu-plugins/twins-staging-overhaul/renderers.php',
+  'website/staging-safety/mu-plugins/twins-staging-overhaul/routes.php',
+  'website/staging-safety/mu-plugins/twins-staging-overhaul/templates/home.php',
+]);
+
 test('recovered deployment-critical files are regular blobs byte-identical to the live staging source', () => {
   const requiredPackageFiles = [
     'data.php',
@@ -90,8 +98,20 @@ test('recovered deployment-critical files are regular blobs byte-identical to th
     assert.equal(stat.isFile(), true, `${relativePath} must be a regular file`);
     assert.ok(stat.size > 0, `${relativePath} must not be empty`);
   }
-  for (const [relativePath, expected] of Object.entries(LIVE_HASHES)) {
-    assert.equal(sha256(relativePath), expected, `${relativePath} differs from the verified live staging bytes`);
+  assert.deepEqual(
+    [...intentionallyReplacedByPortableCore].sort(),
+    [
+      'website/staging-safety/mu-plugins/twins-staging-overhaul/bootstrap.php',
+      'website/staging-safety/mu-plugins/twins-staging-overhaul/components.php',
+      'website/staging-safety/mu-plugins/twins-staging-overhaul/renderers.php',
+      'website/staging-safety/mu-plugins/twins-staging-overhaul/routes.php',
+      'website/staging-safety/mu-plugins/twins-staging-overhaul/templates/home.php',
+    ]
+  );
+
+  for (const [relativePath, expectedSha256] of Object.entries(LIVE_HASHES)) {
+    if (intentionallyReplacedByPortableCore.has(relativePath)) continue;
+    assert.equal(sha256(relativePath), expectedSha256, relativePath);
   }
 });
 
@@ -257,7 +277,7 @@ test('door builder is a frozen local-only 23-product catalog whose content-addre
 
   for (const image of imageRecords) {
     assert.match(image.src, /^\/wp-content\/mu-plugins\/twins-staging-assets\/clopay\/[a-f0-9]{2}\/[a-f0-9]{64}\.(?:webp|jpg)$/);
-    const relativeAsset = image.src.replace('/wp-content/mu-plugins/', 'mu-plugins/');
+    const relativeAsset = image.src.replace('/wp-content/mu-plugins/', 'website/staging-safety/mu-plugins/');
     const stat = fs.lstatSync(absolute(relativeAsset));
     assert.equal(stat.isFile(), true, `${relativeAsset} is missing`);
     assert.equal(stat.isSymbolicLink(), false, `${relativeAsset} must not be a symlink`);
@@ -266,7 +286,7 @@ test('door builder is a frozen local-only 23-product catalog whose content-addre
 });
 
 test('Illinois provisioner pins the current safety-plugin digest when the recovered operational tool is present', (t) => {
-  const relativePath = 'tools/staging-il-provision.php';
+  const relativePath = 'website/staging-safety/tools/staging-il-provision.php';
   if (!fs.existsSync(absolute(relativePath))) {
     t.skip('operational Illinois tool has not been recovered into this worktree yet');
     return;

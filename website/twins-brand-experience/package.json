@@ -1,0 +1,22 @@
+{
+  "name": "@twins/brand-experience",
+  "version": "1.0.0",
+  "private": true,
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test:contracts": "node --test tests/contracts/*.test.cjs",
+    "test:php": "node --test tests/php-harnesses.test.cjs",
+    "check:assets": "node tools/build-owned-images.mjs --check",
+    "build:packages": "node tools/build-packages.mjs",
+    "check:packages": "node tools/build-packages.mjs --check",
+    "check:repo": "node tools/check-repository.mjs",
+    "install:browser": "playwright install chromium",
+    "test:browser": "playwright test",
+    "test:crawl": "node tools/crawl-staging.mjs",
+    "test:all": "npm run test:contracts && npm run test:php && npm run check:assets && npm run build:packages && npm run check:packages && npm run check:repo && npm run test:browser && npm run test:crawl"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.61.1",
+    "sharp": "0.34.5"
+  }
+}

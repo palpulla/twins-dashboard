@@ -1,3 +1,7 @@
 .secrets/
 .superpowers/
 .worktrees/
+website/twins-brand-experience/node_modules/
+website/twins-brand-experience/dist/
+website/twins-brand-experience/test-results/
+website/twins-brand-experience/playwright-report/
