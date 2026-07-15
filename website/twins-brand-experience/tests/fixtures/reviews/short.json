@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "sourceUrl": "https://twinsgaragedoors.com/wi/reviews/",
+  "businessReviewsUrl": "https://search.google.com/local/reviews?placeid=ChIJ6WuQE9VSBogRgy76ORRGfHs",
+  "multisitePath": "/wi/",
+  "pageId": 2186,
+  "collectionId": 2178,
+  "providerVersion": "1.9.3",
+  "capturedAt": "2026-07-15T00:00:00Z",
+  "sourceResponseSha256": "4b03a3a26a3f85203cdbf8b9bfd963cc5a2d58c30873e77c977facd546168653",
+  "recordCount": 4,
+  "records": [
+    {
+      "stableId": "9d65188f0dd8c47de232def177f5ddd856dcc72bbb883c7dc9ba84156c9fecb5",
+      "author": "Phil Clark",
+      "rating": 5,
+      "publishedDate": "2026-07-02",
+      "text": "I would highly recommend Twins Garage Doors. They came out promptly to give us an estimate and worked us into the schedule very quickly. Maurice did an excellent job with consultation,  estimate, and the installation. Love the super quiet door. I would use them again.",
+      "sourceRecordUrl": "",
+      "recordSha256": "1068f27a7c6d2290a96b624a73e472e166c5ff4ca99b908316901b8ef20937c8"
+    },
+    {
+      "stableId": "94c8528caa7637f32c703f4909727b098e5cb281e495de9010bb3899b981e11a",
+      "author": "Chad Zembroski",
+      "rating": 5,
+      "publishedDate": "2026-06-30",
+      "text": "Had to have the torsion springs replacing our garage door. Nicholas was great on time honest and a nice repair. Highly recommend.",
+      "sourceRecordUrl": "",
+      "recordSha256": "cb610753c775d16d6a1f91fdbe7de1d1e87c9d3565074a63682320132266ebed"
+    },
+    {
+      "stableId": "c6816e73958fb0d2dfaecfb8119c5db808b580773d14532168065d85edcff0e1",
+      "author": "Brian M",
+      "rating": 5,
+      "publishedDate": "2026-06-22",
+      "text": "Spring broke and screw ripped out of bracket. Quick fix and great service.",
+      "sourceRecordUrl": "",
+      "recordSha256": "57d68f4efdd36017c929335088c0c73e25aaa59125c658fdf64dffa133bf745d"
+    },
+    {
+      "stableId": "b4ff0a0e754d467125c8d6ae369726bc0220593d2f55c8eeb5df6aecaeaa1143",
+      "author": "Nick Pesavento",
+      "rating": 5,
+      "publishedDate": "2026-06-20",
+      "text": "Nick walked me through the quote, was always on time, and repaired everything as he said he would. He made the process quick and easy.",
+      "sourceRecordUrl": "",
+      "recordSha256": "bb5c730ba3130c901ea6e0cc3e49ad2de9a7817b636b71add770ffe94f5bc8be"
+    }
+  ]
+}

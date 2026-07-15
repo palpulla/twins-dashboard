@@ -1,0 +1,797 @@
+{
+  "schemaVersion": 1,
+  "sourceUrl": "https://twinsgaragedoors.com/wi/reviews/",
+  "businessReviewsUrl": "https://search.google.com/local/reviews?placeid=ChIJ6WuQE9VSBogRgy76ORRGfHs",
+  "multisitePath": "/wi/",
+  "pageId": 2186,
+  "collectionId": 2178,
+  "providerVersion": "1.9.3",
+  "capturedAt": "2026-07-15T00:00:00Z",
+  "sourceResponseSha256": "4b03a3a26a3f85203cdbf8b9bfd963cc5a2d58c30873e77c977facd546168653",
+  "recordCount": 87,
+  "records": [
+    {
+      "stableId": "9d65188f0dd8c47de232def177f5ddd856dcc72bbb883c7dc9ba84156c9fecb5",
+      "author": "Phil Clark",
+      "rating": 5,
+      "publishedDate": "2026-07-02",
+      "text": "I would highly recommend Twins Garage Doors. They came out promptly to give us an estimate and worked us into the schedule very quickly. Maurice did an excellent job with consultation,  estimate, and the installation. Love the super quiet door. I would use them again.",
+      "sourceRecordUrl": "http://example.invalid/review",
+      "recordSha256": "3bfec6de90428b5c054b801d8e28e9aaede7a3eecb9e471b6b2b7877d95756b4"
+    },
+    {
+      "stableId": "94c8528caa7637f32c703f4909727b098e5cb281e495de9010bb3899b981e11a",
+      "author": "Chad Zembroski",
+      "rating": 5,
+      "publishedDate": "2026-06-30",
+      "text": "Had to have the torsion springs replacing our garage door. Nicholas was great on time honest and a nice repair. Highly recommend.",
+      "sourceRecordUrl": "",
+      "recordSha256": "cb610753c775d16d6a1f91fdbe7de1d1e87c9d3565074a63682320132266ebed"
+    },
+    {
+      "stableId": "c6816e73958fb0d2dfaecfb8119c5db808b580773d14532168065d85edcff0e1",
+      "author": "Brian M",
+      "rating": 5,
+      "publishedDate": "2026-06-22",
+      "text": "Spring broke and screw ripped out of bracket. Quick fix and great service.",
+      "sourceRecordUrl": "",
+      "recordSha256": "57d68f4efdd36017c929335088c0c73e25aaa59125c658fdf64dffa133bf745d"
+    },
+    {
+      "stableId": "b4ff0a0e754d467125c8d6ae369726bc0220593d2f55c8eeb5df6aecaeaa1143",
+      "author": "Nick Pesavento",
+      "rating": 5,
+      "publishedDate": "2026-06-20",
+      "text": "Nick walked me through the quote, was always on time, and repaired everything as he said he would. He made the process quick and easy.",
+      "sourceRecordUrl": "",
+      "recordSha256": "bb5c730ba3130c901ea6e0cc3e49ad2de9a7817b636b71add770ffe94f5bc8be"
+    },
+    {
+      "stableId": "20151ea368e7586c6d54640681cfbc22c933e212b27670a04ece2c9db4e79d77",
+      "author": "Jamie Dunn",
+      "rating": 5,
+      "publishedDate": "2026-06-11",
+      "text": "Ex collect job from Nick and team. Flawless service",
+      "sourceRecordUrl": "",
+      "recordSha256": "a9c9e02ed8fdc848340a5ee07f97ab86162c6644259abfb98a2a78e5c6a6be07"
+    },
+    {
+      "stableId": "9d87aae26174e789f02413df45426b861780786cb178936fb15eca9deeca581f",
+      "author": "Jennifer L",
+      "rating": 5,
+      "publishedDate": "2026-06-06",
+      "text": "Our garage door stopped working this week and we couldn't figure out why. I called Twins Garage Doors following a general Google search.  A technical was available within hours.  Maurice was highly professional and courteous, not to mention extremely knowledgeable and skilled.  We explored the problem, troubleshooted the issue (which turned out to be driven by an electrical snafu that resulted in the cables being disconnected) and within an hour, he had our door back to being operational.  Maurice showed me how to care for our door over time as well.  Highly recommended and I would gladly call upon Twins again in the future.",
+      "sourceRecordUrl": "",
+      "recordSha256": "6ab5adcd052ba623d22259e5c7d6ad51ac14f379367a4435f87361258f839010"
+    },
+    {
+      "stableId": "9fb230ee7f290f2a926dcd3af7d6a71f839643090002320432afb82df9b1275b",
+      "author": "Quinn Van Acker",
+      "rating": 5,
+      "publishedDate": "2026-06-05",
+      "text": "Maurice Maurice was a very outstanding professional service man for your company. I’d recommend this man to anybody. Thank you for your honesty and your awesome smile.",
+      "sourceRecordUrl": "",
+      "recordSha256": "82571df50bca9910da8d33896887f4d1163557181b85dbd1f4328edde1439b49"
+    },
+    {
+      "stableId": "d9b0a33532f9b33ac8598ca35721c9b7c3c149c41a195b55d77f336b6c526492",
+      "author": "Vivian Schiffman",
+      "rating": 5,
+      "publishedDate": "2026-06-03",
+      "text": "Maurice came out to give us an estimate to replace our garage doors. He did a thorough evaluation and a detailed explanation of our options. He was friendly helpful.",
+      "sourceRecordUrl": "",
+      "recordSha256": "447d0836ec5f14a24185fb92aaad3efac38b52a5ac538485b282e8fa8175501f"
+    },
+    {
+      "stableId": "b9a5f6cd66225dd0323f0898a6297dec1b867bd620c52a0207ff450df240c34a",
+      "author": "Jeffrey Bond",
+      "rating": 5,
+      "publishedDate": "2026-06-03",
+      "text": "Maurice was knowledgeable, professional,  patient, clear, and  friendly. Would absolutely recommend Twins without hesitation or qualification",
+      "sourceRecordUrl": "",
+      "recordSha256": "c94a61b2d3fbe1489aa38ac3777a73f3e526487ad5fb4b12183181f18af0d492"
+    },
+    {
+      "stableId": "2ad2a2087db5155a1da32262ec97c8de3bca431d9859b96d2502c156eb064576",
+      "author": "Shirley Berry",
+      "rating": 5,
+      "publishedDate": "2026-06-01",
+      "text": "A Google search lead me to Twins Garage Door.  The 5 star rating and the fact you serve Deerfield made the decision.  Maurice called to determine the best time to arrive and drove in the yard at exactly that time.  He was able to repair the door, and adjust and lubricate the tracks.  He pointed out some cable stretching that may warrant further service.  He advised me on how frequently and what product to use to lubricate the tracks.  All this, in just one hour.  I’m impressed!  I will certainly contact Twins Garage Door when I need further service as well as recommend them to friends.  Ask for Maurice too.",
+      "sourceRecordUrl": "",
+      "recordSha256": "6000552b92cb48cb83dce5fb2e5b33805d38b1da4a59e8354ab968079ee3a827"
+    },
+    {
+      "stableId": "6d2146d2ba41ba6339303e2e050af6460876382301a17918f303fb4b0f945f70",
+      "author": "Christina Jewell",
+      "rating": 5,
+      "publishedDate": "2026-05-19",
+      "text": "The spring on my garage door broke. Twins had someone out here 2 hours later and it was fixed same day. Works great! Thank you!",
+      "sourceRecordUrl": "",
+      "recordSha256": "7a4abdeb635a8d93e957cff6f755f6a8fb4900fb335a4ec6a7334d4825a90b03"
+    },
+    {
+      "stableId": "979cdca66e3504e9970fa44f1a86dba39ab3d16e90ded2e1cab4ec13bf05a328",
+      "author": "George Wollaeger",
+      "rating": 5,
+      "publishedDate": "2026-05-08",
+      "text": "My garage door spring broke and I scheduled an appointment online right away the next morning. Super simple scheduling, my tech Maurice showed up on time and gave a call to let me know when he would be there, and he repaired it quickly. He also showed me some preventative maintenance I should be doing to keep it running smoothly for years to come. He was very nice and mindful of my cat that likes to squeeze out of the front door if nobody’s watching. Very happy with the service and would recommend to anyone who runs into trouble.",
+      "sourceRecordUrl": "",
+      "recordSha256": "3e906d54849983d6ce371aaa1b88c55d253577907cc99dac3005d30af5f146b7"
+    },
+    {
+      "stableId": "ee16bf57114da8c19b454961e01a1ce821fd9027181ad2580112165300c42151",
+      "author": "Jeffrey Bey",
+      "rating": 4,
+      "publishedDate": "2026-03-23",
+      "text": "Very informative but details are important it’s small things that needs attention but after next visit I would give 80% satisfied but price was costly could have been lower considering your local home improvement store Guru quotes. But Thank you",
+      "sourceRecordUrl": "",
+      "recordSha256": "f614fd5ff112727368f1fcfcbb37e9578893b53bbd3d80bf9aec69e7197d50e4"
+    },
+    {
+      "stableId": "738032351f062ccba40fad7b6e59c70200cdc6bfb347a867a489123e378597f6",
+      "author": "Carol M",
+      "rating": 4,
+      "publishedDate": "2026-03-20",
+      "text": "Very dependable and we were happy with the job completed. I would definitely recommend the company.",
+      "sourceRecordUrl": "",
+      "recordSha256": "139b202e797cedfa7e39e9d66dcde7f19309b4c9b06d13ba775a1e67f1c54c60"
+    },
+    {
+      "stableId": "e7670f5941965e4e1a9a8561fe1d014f3da5822e402b28cf920bce0372d573bf",
+      "author": "Wayne Marsh",
+      "rating": 5,
+      "publishedDate": "2026-03-20",
+      "text": "Charles, thier Senior Technician showed up to diagnose the issues I was having with my new garage door that was installed last spring of a home I recently purchased in November. Charles explained everything in detail as what was going on, as the previous company that installed the new garage door last Spring did not tighten all the bolts, which one snapped off when he tried to tighten it, due to the stress the door had put on the bolt. This previous company also installed a spring that was under rated for the weight of the door, which was causing the door and motor to stress and bind when going up and down over the last year. After I gave Charles the go ahead he installed a new lifetime warrenty spring, new rollers and a bottom seal. All issues are fixed and the garage door operates like it should......nice and smooth 😎 If your looking for a new garage door or repairs look no further than Twin Garage Doors!",
+      "sourceRecordUrl": "",
+      "recordSha256": "7425b9d9832cfc403a358d372c92fc8c70ec2474024811a1119c7a8182b3c938"
+    },
+    {
+      "stableId": "efddb9a9ce1420ca71854c3ce7016176fca72e4529c9fa9110474282593ae697",
+      "author": "r m",
+      "rating": 5,
+      "publishedDate": "2026-03-20",
+      "text": "PERFECT ON TIME GREAT FOLLOWUP",
+      "sourceRecordUrl": "",
+      "recordSha256": "b6417be63b5a6a3ea1ea8f4347ec2a987f03b5b553d4181f2789ea508e25beee"
+    },
+    {
+      "stableId": "29b12fc26bc67eed957f438f1f958f7d4eeaa59d58590cae5d151faa375c4f28",
+      "author": "Jacki Adams",
+      "rating": 5,
+      "publishedDate": "2026-03-19",
+      "text": "Our garage door broke and we were locked out of our garage altogether.  I called Twins Garage Doors and they came out the very next day.  Nicholas got into the garage, figured out the problem and gave us  a couple of ways to fix it, and what it would cost.  We chose what we wanted and he fixed it the same day.They are respectful and their prices are reasonable.We recommend these guys highly.",
+      "sourceRecordUrl": "",
+      "recordSha256": "47068e4cae48da9c9263957e2bd854959946b8cf2cac420f3a35f9fa7dd1be87"
+    },
+    {
+      "stableId": "726dbac776403967a445b07efe78dc3b44426bf25ca060ff7ae967b447e85db9",
+      "author": "David Davies",
+      "rating": 5,
+      "publishedDate": "2026-03-19",
+      "text": "Came and lubricated and troubleshooting my door as stated he would",
+      "sourceRecordUrl": "",
+      "recordSha256": "4f76d7a471d350327c399c2ad0dd5c72983874ad77304aacd4c38fda2a5018f9"
+    },
+    {
+      "stableId": "38a4bd55ea73675ed84952651a12e69a9df1cefbb73b42f55eb714d61fa1c32b",
+      "author": "Francis Young",
+      "rating": 5,
+      "publishedDate": "2026-03-18",
+      "text": "yearly garage door adjustment, oiled bearings, motor apparatus work well.very satisfied with service, would recommend this company any and all customers.",
+      "sourceRecordUrl": "",
+      "recordSha256": "15a875139664dd8883f328f7a972349c1bacfc12525e85e2a2dca6ae902de095"
+    },
+    {
+      "stableId": "09e2ed0f571b638a160107667bba04ad744d6bb4b393876f32c56115d7a6e2ff",
+      "author": "Mary Wang",
+      "rating": 5,
+      "publishedDate": "2026-03-17",
+      "text": "They got me on the schedule the same day I called and then Nicholas called me and told me he was ahead of schedule, so the work was all completed within just a few hours of my call. He didn't try to upsell me and he gave me a lot of useful information about what the problem was, what was NOT a problem and options for the service I'd receive. Very happy.",
+      "sourceRecordUrl": "",
+      "recordSha256": "c212bd4303fd4536d9dd912624f882a3e9ae021b1ffb2099919d4fbc61a24784"
+    },
+    {
+      "stableId": "15c408cc4381325693bd2deb9e447b7c22cdb2498314251cfa5690034a38afa4",
+      "author": "Colton Woyak",
+      "rating": 5,
+      "publishedDate": "2026-03-17",
+      "text": "Amazing customer service. Nicholas helped explain what was broke and WHY. Then he helped me through ways to maintain my garage door to make sure it lasts longer. Highly recommend 👏👏",
+      "sourceRecordUrl": "",
+      "recordSha256": "49ba05f1aca818cd76c5437ce7cc95bf9808aebb5e4e209808bec8b49583eb5f"
+    },
+    {
+      "stableId": "9ba9438f5119d409c3e7514aae5771819643f4ce32c49ae195ff319f28446518",
+      "author": "Brent & Mavis Ransom",
+      "rating": 5,
+      "publishedDate": "2026-03-16",
+      "text": "Our guy did a great job showing us what needed fixed on our garage door. Clear explanation. It was groaning quite loudly. He got it opening smoothly again!Many thanks!",
+      "sourceRecordUrl": "",
+      "recordSha256": "b4eeeac6ddd6fe11378ca9bed2d79233bd48ff4db35e9a183f196a108fb1f239"
+    },
+    {
+      "stableId": "ec1b7ef9ae5d0fc0a60ad701cca2756d14bf36624af22607791e74013d794a35",
+      "author": "Tim Virnig",
+      "rating": 5,
+      "publishedDate": "2026-03-05",
+      "text": "Technician was on time, professional and knowledgeable. He performed the inspection and tune up quickly and made recommendations for follow-up in a no pressure manner.  He took the time to explain what would be beneficial and what could wait.",
+      "sourceRecordUrl": "",
+      "recordSha256": "61462af505c1aeacca9abeacfbc01c5c8760cf1043d59555437e222a9aff2707"
+    },
+    {
+      "stableId": "3ba26c96e2491745d756812220103a95db0d6debc66d7726a6b78476fd3f6369",
+      "author": "Jacob Kirmse",
+      "rating": 5,
+      "publishedDate": "2026-02-07",
+      "text": "Our garage door torsion spring broke on Friday night leaving it inoperable. I contacted Twins Garage Doors that night and they were able to come out on Saturday to repair. Nicholas arrived right at the scheduled time and was very friendly, knowledgeable, and professional. He did a thorough inspection of all components on the garage door and gave me an estimate with different options and explained each in detail. I approved and he was able to complete the repairs in a timely and professional manner. Once repairs were completed, he went over the work he completed with me and showed me how to properly lubricate the garage door.Would definitely recommend Twins Garage Doors. Very thankful Nicholas was able to come out on a weekend and fix our broken garage door on short notice.",
+      "sourceRecordUrl": "",
+      "recordSha256": "e4b34e08e3de2ae85c22ee70f426e688a0011eab1b19400de0e9896d8089e668"
+    },
+    {
+      "stableId": "79bbcb23b12b104481975bd253c38ea2ed37cc3a21ff2549a923a95d18b97961",
+      "author": "Sonja Bell",
+      "rating": 5,
+      "publishedDate": "2026-02-06",
+      "text": "Maurice, was very professional, knowledgeable and honest. I would highly recommend this company. Owners made sure that they took care of me right away.",
+      "sourceRecordUrl": "",
+      "recordSha256": "9a20c7492eea11f9fd51d6d22df977d487329f1813056447de0234457d954a7f"
+    },
+    {
+      "stableId": "e5844e05c0db5e2637781e02a68336b17b4618171ba42e1caf6d5f10aa1afb1b",
+      "author": "Sandy McClain",
+      "rating": 5,
+      "publishedDate": "2026-01-12",
+      "text": "The installers were very professional and thorough. They were very personable and helpful.",
+      "sourceRecordUrl": "",
+      "recordSha256": "4fa3b80c2a6f91ac12f1c6a63bb0eb52533fe5133f4242d24595545e38f7c3cd"
+    },
+    {
+      "stableId": "5a3b58257865056c87e79cb9bbfb6963a6e6effe9f7ea18ce0387bf57fe4a26f",
+      "author": "Jake Stauffacher",
+      "rating": 5,
+      "publishedDate": "2025-12-31",
+      "text": "Very knowledgeable and helpful explaining the problem. Fast and efficient",
+      "sourceRecordUrl": "",
+      "recordSha256": "f0f6dd38764125b825738f24166f4722c1665c600220b88203101caaa6127716"
+    },
+    {
+      "stableId": "776113bb38796bd98149dd352f9611c3991dc9cdb2129899baf405a48c7b66bf",
+      "author": "Craig Halverson",
+      "rating": 5,
+      "publishedDate": "2025-12-05",
+      "text": "These guys know what they are talking about. No pressure, but very informative.",
+      "sourceRecordUrl": "",
+      "recordSha256": "7de72111bf42273a74274820fc8aa42e9bdfb81308aabf8f48a3c50281db4703"
+    },
+    {
+      "stableId": "50f6313bae4da8937f13365a165afadd1c2184455666eca3c3c49903560e4411",
+      "author": "Tim York",
+      "rating": 5,
+      "publishedDate": "2025-12-04",
+      "text": "I had a spring break in the morning on the day before the coldest day of the year. I contacted Twins Garage Doors and got a response back within a few minutes explaining their trip charge, which is waived if you have them do the work.The tech called me with his arrival time, which was early in the time window I had been given. He showed up when he said he would, checked everything out, and gave me options for parts and services he recommended.Once I approved the work, it was done in good time and the tech walked me through the recommended lubricating to ensure I get maximum life of the door.This was an excellent experience and I would use them again and recommend to others.",
+      "sourceRecordUrl": "",
+      "recordSha256": "a51968b1fc4226fbdbbf875104ee17285744683252d146ce7709dc708fdaf5d5"
+    },
+    {
+      "stableId": "f4e324b44cde57c2c8478f5b5dbefd8df5753ba1a9ce0dde754af3f20bef8fe3",
+      "author": "Elaine",
+      "rating": 5,
+      "publishedDate": "2025-12-03",
+      "text": "Honestly, they deserve more than 5 stars. Super responsive, prompt and very fair pricing. Honesty and kindness is super important to me - Charles was great and I highly recommend. Anyone would be very lucky to hire them.",
+      "sourceRecordUrl": "",
+      "recordSha256": "a3c131b6e0413ca9f8db0bbfa1278f66e24bb5f344128181538981016e971d41"
+    },
+    {
+      "stableId": "5bffb3baf7dee6127c4ab4e514ac94da600a9e4d8bb7f25646801691a6332557",
+      "author": "Kirsten B",
+      "rating": 5,
+      "publishedDate": "2025-11-22",
+      "text": "Nicholas came out and fixed my spring, door bracket, cables, and the rollers for my garage door on a Saturday so my car wasn't locked in the garage all weekend! We didn't desperately need to get it out right away but they offered a same day repair, which was really really nice. It didn't take much more than an hour to get it all done, which was also a big surprise. Thanks!!",
+      "sourceRecordUrl": "",
+      "recordSha256": "054b4dbc8569c8396c9ec9f32d7b410241af60dca539e8c58b07ea5ab3be7d53"
+    },
+    {
+      "stableId": "98bf00f737d8f79d353396ebf3fda0615b298da7ac5f81daab3340ef28ddbe8c",
+      "author": "Bill Barbiaux",
+      "rating": 5,
+      "publishedDate": "2025-11-20",
+      "text": "The experience from quickly fixing a broken spring to installing a new door was very smooth, thanks to Charles.",
+      "sourceRecordUrl": "",
+      "recordSha256": "7dc6d29af26030cd291fb73f8162dee08d2e1c982b650e3b8226ee53a6542bc2"
+    },
+    {
+      "stableId": "8e25216c497fdf6f6cc06c42f6f5f85e18aab49f8f6474661fe52d2de025abf6",
+      "author": "Ryan Colvin",
+      "rating": 5,
+      "publishedDate": "2025-10-31",
+      "text": "Charles at Twins Garage Doors is first class. Super helpful and knowledgeable. On time and communicated well. They'll always have our business.",
+      "sourceRecordUrl": "",
+      "recordSha256": "47d87b610e015f760a9fad149e9acb576c6d09ceeca3b6b4fa2eecc72849f537"
+    },
+    {
+      "stableId": "df2d3399fde4160be27dbf77e82b6db068e3f6ee5768454c6c65af1ed2803b4c",
+      "author": "Liz Buske",
+      "rating": 5,
+      "publishedDate": "2025-10-15",
+      "text": "We had used Twins Garage Doors in the past and decided to go with them again. They are great to work with! Charles arrived at the time they planned. He was very knowledgeable and able to answered my questions regarding the issues with my garage door. He was upfront with the costs before the work was performed so I was not surprised at the end when I received a bill. Could not be happier with how things turned out.",
+      "sourceRecordUrl": "",
+      "recordSha256": "365cf63daafd0e39afb6fd9ffad712540990d084659b90d51e21146d05c7c4a5"
+    },
+    {
+      "stableId": "accbe4e8f62a17fe2583f9de4bdb5afd0a551364ceb26108be90bc3a07418dac",
+      "author": "Marsha Stewart",
+      "rating": 5,
+      "publishedDate": "2025-10-12",
+      "text": "The spring on our garage broke and it was impossible to raise the door.  Charles came and within 2 minutes he saw the problem.. He went through all the choices of new springs and answered all out questions.  I would hope that Charles would be the person to return if we had more issues. He was EXCELLENT. LOVE HIM.",
+      "sourceRecordUrl": "",
+      "recordSha256": "3afa3211e14211a8b7674280382d0c201f89a944cbd6424d27099d4e152279f6"
+    },
+    {
+      "stableId": "f7340e3ff4d47c319d68a8d664506780876a5375c341b75af4e454544eb64519",
+      "author": "Mark Curran",
+      "rating": 5,
+      "publishedDate": "2025-10-01",
+      "text": "Excellent, fast service.",
+      "sourceRecordUrl": "",
+      "recordSha256": "1f274f26a8efc9e0973a420bbffe286684e709d9707914007578671341e492f6"
+    },
+    {
+      "stableId": "ed01dd7b1adf165db65b91a3f193a9cfb2a1c384b58a2ab0540495e0202a8b8e",
+      "author": "Scott Jones",
+      "rating": 5,
+      "publishedDate": "2025-09-30",
+      "text": "Excellent service and good communication on arrival time highly recommend.",
+      "sourceRecordUrl": "",
+      "recordSha256": "3f106d7b21273b81ba266b12d59f46a131e31ce293c80ef6e5060cbf7772d355"
+    },
+    {
+      "stableId": "b46883bf639df0ab7526a670d9ff036d49f88b6d6b15de520a9bd4f09ea37984",
+      "author": "Matthew Patterson",
+      "rating": 5,
+      "publishedDate": "2025-09-30",
+      "text": "We had a great experience with Twin Garage Doors. We called and they were able to come early the next day and fix everything within a couple hours. The technician was very professional and helped us understand all recommendations. We would highly recommend this company!",
+      "sourceRecordUrl": "",
+      "recordSha256": "9cfd136e7e456ed7df527e215d342e345fbe10dd59a76ad4de77f7c134aad7f1"
+    },
+    {
+      "stableId": "b1a6e68d3ac5f46f8869fb1fb96eea21b201c3220fd57c3464aa5f6c84a27c13",
+      "author": "RushTwig75",
+      "rating": 5,
+      "publishedDate": "2025-09-29",
+      "text": "Charles was very communicative about the process. The pricing was transparent. Would recommend again.",
+      "sourceRecordUrl": "",
+      "recordSha256": "f7a21935ddd567e0058320e33b6e53e4439ed4fea099bbe91ff1808c1b7803ad"
+    },
+    {
+      "stableId": "328fe0b9f9e8534cec320646901ce0cdaf3390d50c92e8f7d870ec6a42143e43",
+      "author": "Aneesh Abraham",
+      "rating": 5,
+      "publishedDate": "2025-09-23",
+      "text": "I had an excellent experience working with Twins Garage Doors recently. From the initial quote to the completion of the work, the entire process was smooth and hassle-free. Nick was punctual when giving me the quote and took the time to explain the different options available. He also handled most of the installation himself. Charles did an excellent job coordinating communication throughout. At every stage, they were transparent and honest with us. I highly recommend this company for their professionalism and integrity.",
+      "sourceRecordUrl": "",
+      "recordSha256": "8abd1a64c0fe60e6a63a01ef124fbbc872bcafdcac51a9b0a7eea3321979372e"
+    },
+    {
+      "stableId": "a936a41639af66a99b56cc6ed3b4edb2fdf97c0a5b24d7da98951c32a7237dc6",
+      "author": "Sean Davis",
+      "rating": 5,
+      "publishedDate": "2025-09-23",
+      "text": "Charles was super helpful, very explanatory and gave a ton of insight into what the issue was.",
+      "sourceRecordUrl": "",
+      "recordSha256": "7d5b4f6177c4606349a6aa3fc46d2bc880ce37b77500f2e430d71851ad9ac43d"
+    },
+    {
+      "stableId": "1ea99840371a1497f141419b628677f4f6bcadfee9776b666cf6ecc133254444",
+      "author": "Jennifer Hendrix",
+      "rating": 5,
+      "publishedDate": "2025-09-22",
+      "text": "Same day service, with a kind and knowledgeable team.",
+      "sourceRecordUrl": "",
+      "recordSha256": "154d6ff6347be1a0134b2b11fe2a191034fcc70cf9ae2bc347fb1eb8846ce443"
+    },
+    {
+      "stableId": "bd8194319ad328713cb967e6252e9a768fef56b4ea1a1e02b694dd367d812fb9",
+      "author": "Kim Henderson",
+      "rating": 5,
+      "publishedDate": "2025-09-22",
+      "text": "Your team is always pleasant and very nice.  They answer my questions thoroughly and I appreciate that!",
+      "sourceRecordUrl": "",
+      "recordSha256": "86e2b3fe86b89910f88ea1a758b6f8c710cebe44fb6e5fdb9b6dd083808f15ea"
+    },
+    {
+      "stableId": "9054bada383675816117977bb275f98c9f76a305e9c07edb4b8eb0b49a750031",
+      "author": "Kyle Austin",
+      "rating": 5,
+      "publishedDate": "2025-09-20",
+      "text": "Came out right away on a Saturday to replace broken springs on the garage door. It’s not easy to find someone on a weekend. Nicholas was awesome, friendly and answered all my questions. Gave me three different quotes based on the level of repair. I really appreciated the service and responsiveness.",
+      "sourceRecordUrl": "",
+      "recordSha256": "ca0a620647a83c0dfc1f4198b50a525d86f1f1a755e54f995ef0db764ffe93f7"
+    },
+    {
+      "stableId": "a8586bfc3448a279789573fd2d8fd1642ecf4424962195d9513af44b4bc5bbee",
+      "author": "Scott Baker",
+      "rating": 5,
+      "publishedDate": "2025-09-17",
+      "text": "Charles did a great job installing a garage door for us on a non-standard detached garage. Fast work and just as advertised.",
+      "sourceRecordUrl": "",
+      "recordSha256": "f72df97f4f2241088471ca3cd444dbcc29b888dfc85000d9c954333990f9ae67"
+    },
+    {
+      "stableId": "273f8e0e8ec5506d2851d92ee3346ddbf32486582df264e8a0944df1bb2af194",
+      "author": "Michael Bonsignore",
+      "rating": 5,
+      "publishedDate": "2025-09-17",
+      "text": "Timely response, responded same day, only took an hour to repair, our service man was experienced and did a great job!",
+      "sourceRecordUrl": "",
+      "recordSha256": "633b4c39ce5fb823da6be42f8ba099e9b3d16a216ec7e1832b978dbab8e11438"
+    },
+    {
+      "stableId": "22800e0bea4a687e357bab83bcbe674561debc05f88fda3e63e3c17015bb48fd",
+      "author": "Susan Mayer",
+      "rating": 5,
+      "publishedDate": "2025-09-12",
+      "text": "After having three separate companies come to our home to discuss replacing our garage door--Charlie stood out to us.  He answered our questions, educated us about his product and completely kept us update about installation process.  Highly recommended.",
+      "sourceRecordUrl": "",
+      "recordSha256": "c5046a1026e8aa064d9faef402fdefd1856c4a6464fd59c6c8fa7220d8d3ffcc"
+    },
+    {
+      "stableId": "b73c46c04a3b7d1072cccfcb7ebc038f696849d6c1011b5c99d554ac58cb1a7f",
+      "author": "Kenneth Mayer",
+      "rating": 5,
+      "publishedDate": "2025-09-11",
+      "text": "Everything was great- good value, Charles was amazing, straightforward, easy process. Very happy with it.  10/10",
+      "sourceRecordUrl": "",
+      "recordSha256": "08b1952da22017d60443dd795c4d5721345b596bd9891b075b20adbc039b0096"
+    },
+    {
+      "stableId": "bf8f04e4acc55e9de3c23ce40862129b1cc5dcdd72125894f5c93663ccc8e07d",
+      "author": "Dian Phelan",
+      "rating": 5,
+      "publishedDate": "2025-09-10",
+      "text": "Check over entire door and fixed problem. Same day service. Courteous and professional. Made sure I was happy with the service. Would recommend to friends and family.",
+      "sourceRecordUrl": "",
+      "recordSha256": "98a1778603ca3f449d0308a0647451054a6f741f082b439d89032cd34cb67a31"
+    },
+    {
+      "stableId": "cc032c1ce6e8f89a8456cf9b7683682006ae9f14750728cb34e3b7fea838c90c",
+      "author": "Rick Martingilio",
+      "rating": 5,
+      "publishedDate": "2025-09-10",
+      "text": "A very good experience throughout the entire process. Our CLASSIC STEEL PREMIUM looks fantastic and very quiet too. Charles was great to work with from initial contact through replacement of the door.",
+      "sourceRecordUrl": "",
+      "recordSha256": "7ec4ef801eff2694e4981cf227ded2086a5f9080b23c1be305d8712747ce435c"
+    },
+    {
+      "stableId": "9bf2c4462cd8e01b6c1fd7773694632240b0fd2ed4b15fae862c3afcbbd2ced7",
+      "author": "Steve Moran",
+      "rating": 5,
+      "publishedDate": "2025-09-09",
+      "text": "Nick was a very knowledgeable technician. Told me up front what was needed. Gave me a price installed and I had him do it. No need to shop around.",
+      "sourceRecordUrl": "",
+      "recordSha256": "aa5a0ee8704c6a070239bccac47b4d455888c47f82a67548bbc646d9e19b18d5"
+    },
+    {
+      "stableId": "7f05ae402e0c0dbac804dd3e4ebeadf5786768ad786aef30210af2252474593c",
+      "author": "Rita C",
+      "rating": 5,
+      "publishedDate": "2025-09-08",
+      "text": "Nicholas did an excellent job. Ontime, knowledgeable, pleasant and cleaned up after he finished. I would highly recommend Twins garage doors.",
+      "sourceRecordUrl": "",
+      "recordSha256": "985b071b96fbfbe50b91a70ec2e68254817da4baf10636f7f8f1869381a96ac4"
+    },
+    {
+      "stableId": "4b57650f557b17932dd335e49e4876937a0830455e40e4ab1e2e3dea69bf6da0",
+      "author": "Duke Miller",
+      "rating": 5,
+      "publishedDate": "2025-08-27",
+      "text": "Charles came next day to inspect a loud squeak I was having and couldn't solve. He was easy to work with and talk to, arrived right on time and was able to get it resolved! He certainly wanted to make sure it was taken care of. Grateful for the help!",
+      "sourceRecordUrl": "",
+      "recordSha256": "1781535aeb6034cae564899202aab186008c3a5466cac98c70ee9f4ba2cedda8"
+    },
+    {
+      "stableId": "86d4879789199741eeeff20ed388efa6508045675d17200c56dff6b8edc80680",
+      "author": "Shua Xiong",
+      "rating": 5,
+      "publishedDate": "2025-08-18",
+      "text": "Nicholas did an awesome job swapping out a broken spring in under an hour!",
+      "sourceRecordUrl": "",
+      "recordSha256": "bd8576691b47e70f72be8479dce20a43d30994d9e09a60875f7a6950fc0b8b0c"
+    },
+    {
+      "stableId": "adaac095eaf28ff4f7b8ded5bf86ee3f19fe2dafadec3a1e57ffa875006ff915",
+      "author": "Ana Geyer",
+      "rating": 5,
+      "publishedDate": "2025-08-14",
+      "text": "Charles was terrific!  He explained really well and is obviously very skilled.",
+      "sourceRecordUrl": "",
+      "recordSha256": "71b8df64c176bbbae555384bbb2a1efc164604343472c66e967cb97dc4757501"
+    },
+    {
+      "stableId": "8e227c9805c2fbdbe52cea196caf2aee7030999523c3ae2b05932b3c5af534e0",
+      "author": "Connor Belanger",
+      "rating": 5,
+      "publishedDate": "2025-08-06",
+      "text": "Charles was able to come right away to fix a broken garage door. He was able to take care of the problem quickly and identify further areas needing maintenance. Timely, friendly, and professional.",
+      "sourceRecordUrl": "",
+      "recordSha256": "52e868fab12c34bd23917e2e5f64178310134dea8cdf26a7206489514f12f1d4"
+    },
+    {
+      "stableId": "5924e1101e5326fd45d0dd73159811851fce9019b9651bfdaea5cff683a438ac",
+      "author": "Scott Sime",
+      "rating": 4,
+      "publishedDate": "2025-08-04",
+      "text": "Great service",
+      "sourceRecordUrl": "",
+      "recordSha256": "b6341df6a715df3f2c7c865aac1f685561e81c3857c641532ea7ad03625011d2"
+    },
+    {
+      "stableId": "1967ca69e8e6cd0a4ab7a2253f09262c4c6837a856de6ce9615cc60e95e1add4",
+      "author": "John Hosek",
+      "rating": 5,
+      "publishedDate": "2025-08-01",
+      "text": "Charles did an amazing job!!! So fast and knowledgeable! 🤗",
+      "sourceRecordUrl": "",
+      "recordSha256": "9cb0344a1a1cc3f9fa4856bd26c6c0694c2c209337d2403322f9dcfcbdfdd1c6"
+    },
+    {
+      "stableId": "a7da8c32cd0675a8ce778eb2aafd1be73f542908bbd0532b4760928ce11083f7",
+      "author": "Ronko Plus",
+      "rating": 5,
+      "publishedDate": "2025-07-29",
+      "text": "In contact with me quickly and kept clear communication. Arrived exactly as I was told. Offered simple clear options then performed the repair within one hour. Price was very fair.You will enjoy meeting Charles. This is a Good Company.",
+      "sourceRecordUrl": "",
+      "recordSha256": "d96035392482f20a0ca17f3e11926e955fae34a24b0667c36c9481d514964778"
+    },
+    {
+      "stableId": "78944c793e51ad1f7f90ca324f559b6d27cdee11dd3f5a58fe843d0b59bf140a",
+      "author": "Joyce BurnsMorgan",
+      "rating": 5,
+      "publishedDate": "2025-07-25",
+      "text": "Very polite. Kept me informed of the progress and didn't push on new purchases.",
+      "sourceRecordUrl": "",
+      "recordSha256": "e275ae0fd5566c068877cf0182e40cb680a4efb1b16bfc6eff721eb60cf4be93"
+    },
+    {
+      "stableId": "3f49e95d96c5a00302a8df0071226e57ab70c05fc92dd83b6dbba371c4c5ff5e",
+      "author": "Christy Edwards",
+      "rating": 5,
+      "publishedDate": "2025-07-24",
+      "text": "Nicholas arrived right on time, he was very kind and explained his repairs simply.  I would highly recommend them.",
+      "sourceRecordUrl": "",
+      "recordSha256": "d70bd81e3a2deb3ab3c81a8921a852c91946926d174fe3259e3791ae5612a4f4"
+    },
+    {
+      "stableId": "df62fefc34bf8a4d89318588e363de2350cce84baa0929121117c0d441bed373",
+      "author": "Richard Burger",
+      "rating": 5,
+      "publishedDate": "2025-07-23",
+      "text": "They bailed us out on an hour's notice on a weekend. Can't beat that!",
+      "sourceRecordUrl": "",
+      "recordSha256": "22267c25ccf5d06676f3f8e07cc752524620bffdf2da71ee130d5bcdf2b694c2"
+    },
+    {
+      "stableId": "6e55987d1fc118eeea722a22bace7bd27f7cda9499b26afb8df230f9b3184114",
+      "author": "L Wright",
+      "rating": 5,
+      "publishedDate": "2025-07-23",
+      "text": "I've used this company before and they've always been timely and provide quality service. Really glad my garage door works well.",
+      "sourceRecordUrl": "",
+      "recordSha256": "2e9e3eb6c474fb876f82936fd9c070666d5f8a765837df2eed76a3eb28d6307a"
+    },
+    {
+      "stableId": "ce226446714fe38eff827810fb2046f2cbee3987b61a94fa7bee8f2df887c137",
+      "author": "Sara Asendorf",
+      "rating": 5,
+      "publishedDate": "2025-07-22",
+      "text": "Charles was so helpful and great to work with!",
+      "sourceRecordUrl": "",
+      "recordSha256": "ea0765b11d239cdfd68808c4dd281ff3b4148d3a2293e96f06b667e5352c303a"
+    },
+    {
+      "stableId": "5d76554498f3ab2bae527f1e7e2b3b76e615cbe94f4bfad316f00d7f859dbf53",
+      "author": "Lee Stock",
+      "rating": 5,
+      "publishedDate": "2025-07-22",
+      "text": "Excellent service.",
+      "sourceRecordUrl": "",
+      "recordSha256": "31b0c8b185ba9c1f46069abee1e33a782440989cb05615d49b767fb4f3244577"
+    },
+    {
+      "stableId": "a4ee34a7dc47d832f4bf3a085413dc1dc4a6d0691cd603afd7223abe614b444b",
+      "author": "lynn hanson",
+      "rating": 5,
+      "publishedDate": "2025-07-18",
+      "text": "Nicholas was very friendly and professional.  He replaced parts for my garage door and installed a new opener on the same day that I got the estimate!  Highly recommend this business!",
+      "sourceRecordUrl": "",
+      "recordSha256": "bc01e7e24110e2ef7cab8791944702435c563505732a59fb135d342e72ab22d3"
+    },
+    {
+      "stableId": "9264db73766cecc6f8a044bfed98c20ca816e9c5012b6b1cb1cb8e4dbb9aa581",
+      "author": "Cindy Phillips",
+      "rating": 5,
+      "publishedDate": "2025-07-15",
+      "text": "Charles was very knowledgeable and respectful. Did the work in a timely manner and answered all questions.",
+      "sourceRecordUrl": "",
+      "recordSha256": "7203e1c5b384a7a08666ce5c4c1c412d7c7db838dbcfc0944eeb307c1b7ee8cf"
+    },
+    {
+      "stableId": "1167c072a86b38fc09894051142747814c3b85ccec002f737421a4db965de7ab",
+      "author": "Mike Lynn",
+      "rating": 5,
+      "publishedDate": "2025-07-04",
+      "text": "Great speedy work! Charles was very helpful in figuring out a solution with some recent water damage making the reinstallation a bit more tedious. Highly recommend!",
+      "sourceRecordUrl": "",
+      "recordSha256": "810ca72a03d7078939dd88852d44713db7a34d24f6044869f2ba625f9850f973"
+    },
+    {
+      "stableId": "6f17b5d01cef38a9ea073c8bd3a24bc51ea2f1d1bcc282dea5dbb79ee45bb7a2",
+      "author": "Shannon",
+      "rating": 5,
+      "publishedDate": "2025-07-03",
+      "text": "Matt was very confident in what he was speaking about and what was wrong with my Garage Door. He was very kind, reliable and made sure I understood what was going on and my options.",
+      "sourceRecordUrl": "",
+      "recordSha256": "f956544e40031610385cad990896042cc89981a90baa7ebda6825c1e994be796"
+    },
+    {
+      "stableId": "7fc673ea3d7e63ba692141882cf97f8070f6403597976e0385fe1c83d185c1cf",
+      "author": "Jennifer E",
+      "rating": 5,
+      "publishedDate": "2025-07-01",
+      "text": "We were thrilled with our experience. It's never a fun day when your garage door breaks but their fast and friendly service made the repair process feel smooth and easy. They were very easy to schedule with online and Nicholas did a great job walking me through my options, explaining all the parts and making sure I got what we needed for a reasonable price. And he was fast and friendly! Can't beat it, highly recommend these guys.",
+      "sourceRecordUrl": "",
+      "recordSha256": "fbe8b3a06a4ff515cad93dde7686db51393e3d1324c78613b60dbf346d25b3d5"
+    },
+    {
+      "stableId": "614e9a162d7cf89fb7f7ba8f2699b74c57f117be24742e6419489b3b90f3c3be",
+      "author": "Terri Maring",
+      "rating": 5,
+      "publishedDate": "2025-06-27",
+      "text": "Charles was a pleasure to work with, extremely knowledgeable, communicated the options and helped me find the right solution. Highly recommend.",
+      "sourceRecordUrl": "",
+      "recordSha256": "d557b253625d4684804c11bc9b74ea2f72a193b67f6a4d7f36e01e88d9612496"
+    },
+    {
+      "stableId": "ad71708b14bde830635df938eaadb8abdd769832efc312072c1822bf96b4c04d",
+      "author": "Sonya Hindman",
+      "rating": 5,
+      "publishedDate": "2025-06-27",
+      "text": "Excellent service! Charles was very professional knowledgeable, thorough, prompt, helpful, and friendly. I recommend his high-quality service.",
+      "sourceRecordUrl": "",
+      "recordSha256": "41591fc03a15547c2a3ff1cf80736a8d582dd62d72fb2755a422dc16e8bf5bb8"
+    },
+    {
+      "stableId": "58c5a2f9c6d09e3451fc6e1d97a900f572a5c3660e40a8d981090e7496626fe0",
+      "author": "Tina Baker",
+      "rating": 5,
+      "publishedDate": "2025-06-25",
+      "text": "Was very happy with the quick response I received from Twin Garages.  They had a Tech (Nicholas) at my house by 10:15.  He did a great job and was very professional.",
+      "sourceRecordUrl": "",
+      "recordSha256": "e3367e8c891dbcd1dc565cf3a06bcc8926e4201c0e164b0d34ab3d3bd7868965"
+    },
+    {
+      "stableId": "8fd31cc2436fe3796a093bf4d94ee74785fa01c81781e3079f39ba24e5732c94",
+      "author": "Jonathan Trainor",
+      "rating": 5,
+      "publishedDate": "2025-06-25",
+      "text": "This company is awesome!! I would recommend them to everyone who needs their services.",
+      "sourceRecordUrl": "",
+      "recordSha256": "5d097f482c75185b75d9e428c8c5950e48861ff7ecd4ed7d8c6c836440661fd1"
+    },
+    {
+      "stableId": "6b14d81a02de8c45747bd195c84ad058d3ffe6ac43033a310850397366b7807f",
+      "author": "Pixilated_ Fairy",
+      "rating": 5,
+      "publishedDate": "2025-06-25",
+      "text": "Excellent Service!!! We had a new garage door opener installed due to the previous one sounding horribly loud. We are pleased that we have decided to have a new garage door installed via Twins Garage",
+      "sourceRecordUrl": "",
+      "recordSha256": "15926b817bcc00e740396ebcf93bb703635368b5abb7a1a7052dd87d8bccae83"
+    },
+    {
+      "stableId": "3acfbd86258deee36badc9d47e065ece01d3021294de58fa7a38683382c1b7b1",
+      "author": "Any Schneller",
+      "rating": 5,
+      "publishedDate": "2025-06-25",
+      "text": "Great and friendly service and good price. Charles was great!",
+      "sourceRecordUrl": "",
+      "recordSha256": "937e06504bbe3c526a6ca9dd6d8b905a1c4d20c4c168542985b126e0843b1f4a"
+    },
+    {
+      "stableId": "d4e3e1ac66205cc590b054def90e3d5c205cfed6a7d044b58f19670fed50d211",
+      "author": "John Keenan",
+      "rating": 5,
+      "publishedDate": "2025-06-21",
+      "text": "I had a fantastic experience with twin garage doors. My technician updated my 30+ year old garage door in one day. I was impressed with the transparency, worth ethic, and quality of service. It was a great experience from start to finish.",
+      "sourceRecordUrl": "",
+      "recordSha256": "8bf5d1d9fa238df80e7922659c356652b678802415ff5e635440feaccf0668c1"
+    },
+    {
+      "stableId": "7dec8e15d98867680776717e91808724aaac28b8b57ff6a7b6e004eedae12bb1",
+      "author": "David Mq",
+      "rating": 5,
+      "publishedDate": "2025-06-19",
+      "text": "Great at every step!  Easy to contact and schedule, friendly and competent, reasonable prices.  Thanks, Charles & Nicholas!",
+      "sourceRecordUrl": "",
+      "recordSha256": "e08e4f932f383a57fd49e85dae6124dd13697410dd0eabd72482b6d03253cbaa"
+    },
+    {
+      "stableId": "199c088ee4d739975c3320df2120d34c2f5a67a9e7169d430688fa50381aee4b",
+      "author": "DYP76 Sims",
+      "rating": 5,
+      "publishedDate": "2025-06-18",
+      "text": "I would highly recommend Twins Garage Doors for anyone in need of service or replacement. From start to finish Nicholas was very professional and took the time to explain  both problems/solutions for my garage door.  Also, they worked me in without a problem which I definitely appreciated. I'll be a returning customer for sure!Dee",
+      "sourceRecordUrl": "",
+      "recordSha256": "1416409944734f2df7a96da4d9df37d4b997527e0e5616dfc54b9d0a6d7f2577"
+    },
+    {
+      "stableId": "4f719290326b68d72be3ee29d4bb3260f7f7cccd0762e5304f5571c4c6a9b75c",
+      "author": "James Miller",
+      "rating": 5,
+      "publishedDate": "2025-06-17",
+      "text": "The service was on time, friendly and completed in one day.  Our options were explained to us and were easy to understand.  We highly recommend this company!",
+      "sourceRecordUrl": "",
+      "recordSha256": "f457371a345a38c292bec40ee043fc71762337c58c7e9975aa7c68d9bab6d3d2"
+    },
+    {
+      "stableId": "47c16326301ee75af703e8e9be48443fd2605617cdf4601bd96fb432dca3710e",
+      "author": "Renee Copes",
+      "rating": 5,
+      "publishedDate": "2025-06-17",
+      "text": "Prompt, professional, and great job done",
+      "sourceRecordUrl": "",
+      "recordSha256": "32132b9bf4460859a6ac248d5adc996f67b9e19b6f982d56569561c838004781"
+    },
+    {
+      "stableId": "cacbe2679a7066667472da28ced1d9ffaf6922ffadbd00188ab91334e93f42ed",
+      "author": "Ben Smithart",
+      "rating": 5,
+      "publishedDate": "2025-06-09",
+      "text": "Super friendly and professional! Wholesale replaced our aging garage door system (tracks and all), and it's working good as new.Bonus: He left our garage swept and clean. Highly recommend!",
+      "sourceRecordUrl": "",
+      "recordSha256": "cf2ac362801c14b5656734cbbd62e5dd1e634f16e9c8079ae5e502c716deb482"
+    },
+    {
+      "stableId": "515e0b4323e7f1dafa5e4fa62255d3f33d02e1f07f09b4035eec1c640604e2cd",
+      "author": "Kara Maguire",
+      "rating": 5,
+      "publishedDate": "2025-06-03",
+      "text": "The initial service call was for a failing garage door opener, but the service provided went above the diagnostics and replacement. Nicholas did a great job of providing information on the prevention of future issues and performed maintenance on all the mechanisms of the garage door.  Service call was early, clean, thorough, and efficient. Additionally, Twins fixed and tuned up a previous company's service which had been hastily done. Our new belt-driven opener is silent and works so smoothly we wish we would have replaced the old chain-driven, metal-wheeled one sooner.",
+      "sourceRecordUrl": "",
+      "recordSha256": "ab38eb546d46d8cb264eddef3b3d23ba719699fdfbe89484e35b9cd3d005d4bd"
+    },
+    {
+      "stableId": "a2fc4831238da4e29da23c9cf8ca912d3737b492386a488947e98f12913df549",
+      "author": "Shannon Siirila",
+      "rating": 5,
+      "publishedDate": "2025-06-02",
+      "text": "The technicians did an excellent job. They definitely know what they are talking about and definitely specialized in garage door safety.",
+      "sourceRecordUrl": "",
+      "recordSha256": "1f34ca6615e9215f11228d1f4a3c23ef44c94c4394cec71c93f09412f9b2c9f7"
+    },
+    {
+      "stableId": "67cc2fdc212ee3d51ed7a25d422f1f9366fa29b41a5bb7c9bf2adbb5ea2714b5",
+      "author": "Elisabeth Schultz",
+      "rating": 5,
+      "publishedDate": "2025-05-29",
+      "text": "Great communication and installation! I’m really happy with our new garage door.",
+      "sourceRecordUrl": "",
+      "recordSha256": "6c1f17f08f2ddd9a42fb5f276862b43e770b5d1068c3eb3246bdd97065e34dfb"
+    },
+    {
+      "stableId": "34302f2d964dad5287b33de9c6208be8ef882987e204a2171dc495157b6a3a93",
+      "author": "Carol Harm",
+      "rating": 5,
+      "publishedDate": "2025-05-26",
+      "text": "Charles from Twins Garage Doors did a great job installing my new garage door. It looks and works great! No more rust!",
+      "sourceRecordUrl": "",
+      "recordSha256": "478c22eecd5929cb122871f9fb9773c01ce4c2491cec9002e0cd3c253789566d"
+    },
+    {
+      "stableId": "92b1fc4c4377bcad109740b72fbe42de96a2e4f6a80e916a49ad9c5318abf3a3",
+      "author": "Erin R",
+      "rating": 5,
+      "publishedDate": "2025-05-22",
+      "text": "Charles and his brother Nick are just wonderful and from start to finish true gems!!So great in fact, they are doing more garage door work for us at another location.I will share photos once siding is complete.Thanks Guys!!",
+      "sourceRecordUrl": "",
+      "recordSha256": "10589daf613df542b8afc81aa3e993f0791ea3dd50d92a1182fe6483aa520bf5"
+    }
+  ]
+}
