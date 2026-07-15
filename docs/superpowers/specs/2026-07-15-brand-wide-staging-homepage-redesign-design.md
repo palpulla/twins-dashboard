@@ -2,7 +2,7 @@
 
 Date: 2026-07-15
 
-Status: design approved; awaiting written-spec review
+Status: approved for implementation by Daniel on 2026-07-15
 
 Target: private staging only (`danielj140.sg-host.com`)
 
