@@ -44,3 +44,22 @@ for (const scenario of reviewScenarios) {
     scenario === 'valid' ? 'review-codec-ok' : 'review-codec-rejected',
   );
 }
+
+const deploymentScenarios = [
+  'dry-run',
+  'absent-core-install',
+  'prerequisite-drift',
+  'unexpected-core',
+  'core-boot-failure',
+  'activation-failure',
+  'rollback-absent-core',
+  'non-regular-rejected',
+];
+for (const scenario of deploymentScenarios) {
+  phpTest(
+    `private staging deploy ${scenario}`,
+    'private-staging-deploy-harness.php',
+    [path.join(root, 'tools/private-staging-deploy.php'), scenario],
+    `${scenario}-ok`,
+  );
+}

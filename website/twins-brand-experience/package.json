@@ -12,6 +12,11 @@
     "check:repo": "node tools/check-repository.mjs",
     "install:browser": "playwright install chromium",
     "test:browser": "playwright test",
+    "verify:staging-live": "playwright test tests/browser/live-private-staging.spec.cjs",
+    "deploy:staging:dry-run": "node tools/deploy-private-staging.mjs --dry-run",
+    "deploy:staging:capture": "node tools/deploy-private-staging.mjs --capture-expected-old",
+    "deploy:staging:release": "node tools/deploy-private-staging.mjs --deploy",
+    "deploy:staging:rollback": "node tools/deploy-private-staging.mjs --rollback",
     "test:crawl": "node tools/crawl-staging.mjs",
     "test:all": "npm run test:contracts && npm run test:php && npm run check:assets && npm run build:packages && npm run check:packages && npm run check:repo && npm run test:browser && npm run test:crawl"
   },
