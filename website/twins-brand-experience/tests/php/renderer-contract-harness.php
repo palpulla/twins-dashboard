@@ -17,6 +17,9 @@ final class RendererHarnessAssetResolver implements Twins\BrandExperience\AssetR
 {
     private const ASSETS = [
         'logo' => '/brand/twins-logo.png',
+        'twin-left' => '/brand/twin-left.png',
+        'twin-right' => '/brand/twin-right.png',
+        'truck-webp' => '/brand/twins-service-truck-cutout.webp',
         'crew-fleet-original' => '/team/twins-crew-fleet.jpeg',
         'crew-fleet-768w' => '/team/twins-crew-fleet-768w.webp',
         'crew-fleet-1280w' => '/team/twins-crew-fleet-1280w.webp',
@@ -93,8 +96,11 @@ final class RendererHarnessReviewsProvider implements Twins\BrandExperience\Revi
 
 final class RendererHarnessQuoteAdapter implements Twins\BrandExperience\QuoteAdapter
 {
-    public function action(array $context): array { return ['href' => '/request-a-quote/']; }
-    public function renderExperience(array $context): string { return '<div id="quote-fixture"></div>'; }
+    public function action(array $context): array { return ['href' => '/contact-us/']; }
+    public function renderExperience(array $context): string
+    {
+        return '<div id="quote-fixture" role="form"><label>Full name <input type="text" autocomplete="name"></label><button type="button">Review quote on staging</button></div>';
+    }
     public function assertReady(): void {}
 }
 
@@ -118,7 +124,10 @@ final class RendererHarnessBookingAdapter implements Twins\BrandExperience\Booki
 final class RendererHarnessApplicationAdapter implements Twins\BrandExperience\ApplicationAdapter
 {
     public function clientContract(array $context): array { return ['mode' => 'fixture']; }
-    public function renderExperience(array $context): string { return '<div id="application-fixture"></div>'; }
+    public function renderExperience(array $context): string
+    {
+        return '<div id="application-fixture" role="form"><label>Full name <input type="text" autocomplete="name"></label><button type="button">Review application on staging</button></div>';
+    }
     public function assertReady(): void {}
 }
 
@@ -384,5 +393,61 @@ $expect($unavailableReviews->calls === 1, 'unavailable slider did not request th
 $expect(strpos($unavailable, 'Reviews are temporarily unavailable.') !== false, 'unavailable slider omitted its generic notice');
 $expect(strpos($unavailable, 'private error 90210') === false, 'unavailable slider leaked provider detail');
 $expect(strpos($unavailable, 'data-review-count') === false, 'unavailable slider emitted a numbered collection');
+
+$bodyMethods = ['renderHome', 'renderTeam', 'renderCareers', 'renderContact', 'renderReviews'];
+$stagingBodies = [];
+foreach ($bodyMethods as $method) {
+    $body = $stagingExperience->{$method}(['environment' => 'staging', 'market' => 'main']);
+    $stagingBodies[$method] = $body;
+    $expect(substr_count($body, 'id="twins-overhaul-main"') === 1, $method . ' must own exactly one main landmark');
+    $expect(strpos($body, 'Request a Quote') !== false, $method . ' is missing exact quote copy');
+    $expect(strpos($body, 'Get an Estimate') === false, $method . ' contains prohibited legacy quote copy');
+}
+$expect(substr_count($header, 'id="twins-overhaul-main"') === 0, 'header must not own the body main landmark');
+$expect(substr_count($footer, 'id="twins-overhaul-main"') === 0, 'footer must not own the body main landmark');
+
+foreach ($stagingBodies as $method => $body) {
+    $document = $header . $body . $footer;
+    $expect(substr_count($document, '<header class="twins-brand-header"') === 1, $method . ' composition duplicated the shared header');
+    $expect(substr_count($document, '<footer class="twins-brand-footer"') === 1, $method . ' composition duplicated the shared footer');
+    $expect(substr_count($document, 'id="twins-overhaul-main"') === 1, $method . ' composition duplicated the main landmark');
+    $expect(substr_count($document, 'aria-label="Primary navigation"') === 1, $method . ' composition duplicated primary navigation');
+}
+
+$inertPatterns = [
+    '/<form\b/i' => 'form element',
+    '/type\s*=\s*["\'](?:submit|image)["\']/i' => 'submitting control',
+    '/\sname\s*=/i' => 'named field',
+    '/\sform\s*=/i' => 'form owner',
+    '/formaction\s*=/i' => 'form action',
+    '/https?:\/\//i' => 'external URL',
+    '/fetch\s*\(/i' => 'fetch primitive',
+    '/XMLHttpRequest/i' => 'XHR primitive',
+    '/sendBeacon\s*\(/i' => 'beacon primitive',
+];
+foreach ($stagingBodies as $method => $body) {
+    foreach ($inertPatterns as $pattern => $label) {
+        $expect(preg_match($pattern, $body) === 0, $method . ' exposed a staging ' . $label);
+    }
+}
+
+$home = $stagingBodies['renderHome'];
+$homeMarkers = ['brand-hero', 'trust-ribbon', 'service-pathways', 'review-slider', 'team-story', 'door-builder', 'market-selector', 'careers', 'final-cta'];
+$homeCursor = -1;
+foreach ($homeMarkers as $marker) {
+    $next = strpos($home, $marker);
+    $expect($next !== false && $next > $homeCursor, 'home section missing or out of order: ' . $marker);
+    $homeCursor = $next;
+}
+$expect(strpos($home, 'Illinois preview') !== false, 'staging home omitted Illinois preview');
+$productionHome = $productionExperience->renderHome(['environment' => 'production', 'market' => 'main']);
+$expect(strpos($productionHome, 'Illinois preview') === false, 'production home exposed Illinois preview');
+$expect(strpos($productionHome, 'Private staging preview') === false, 'production home exposed staging-only preview copy');
+$expect(strpos($stagingBodies['renderCareers'], 'id="application-fixture"') !== false, 'careers did not delegate to the application adapter');
+$expect(strpos($stagingBodies['renderContact'], 'id="quote-fixture"') !== false, 'contact did not delegate to the quote adapter');
+foreach ($records as $record) {
+    $encodedAuthor = htmlspecialchars($record['author'], ENT_QUOTES, 'UTF-8');
+    $expect(strpos($stagingBodies['renderReviews'], $encodedAuthor) !== false, 'reviews page omitted verified record ' . $record['stableId']);
+}
 
 echo 'renderer-contracts-ok';
