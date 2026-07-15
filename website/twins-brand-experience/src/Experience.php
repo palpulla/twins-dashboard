@@ -36,20 +36,20 @@ final class Experience
 
     private function render(string $template, array $context): string
     {
-        $context = $this->routes->normalizeContext($context);
-        if (!isset($context['environment'], $context['market']) || !is_string($context['environment']) || !is_string($context['market'])) {
-            throw new \DomainException('Normalized render context is incomplete.');
-        }
-        if (!in_array($context['environment'], ['staging', 'production'], true)) {
-            throw new \DomainException('Normalized render environment is invalid.');
-        }
-        $marketKey = $context['market'];
-        $environment = $context['environment'];
-        $market = $this->markets->resolve($marketKey, $environment);
-        $experience = $this;
         $bufferLevel = ob_get_level();
         ob_start();
         try {
+            $context = $this->routes->normalizeContext($context);
+            if (!isset($context['environment'], $context['market']) || !is_string($context['environment']) || !is_string($context['market'])) {
+                throw new \DomainException('Normalized render context is incomplete.');
+            }
+            if (!in_array($context['environment'], ['staging', 'production'], true)) {
+                throw new \DomainException('Normalized render environment is invalid.');
+            }
+            $marketKey = $context['market'];
+            $environment = $context['environment'];
+            $market = $this->markets->resolve($marketKey, $environment);
+            $experience = $this;
             $quote = $this->quote->action($context);
             $booking = $template === '../components/header' ? $this->booking->action($context) : null;
             require $this->root . '/templates/' . $template . '.php';

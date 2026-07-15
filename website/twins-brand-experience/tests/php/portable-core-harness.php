@@ -32,8 +32,22 @@ final class PortableHarnessAssetResolver implements Twins\BrandExperience\AssetR
 final class PortableHarnessRouteAdapter implements Twins\BrandExperience\RouteAdapter
 {
     private array $normalized;
-    public function __construct(array $normalized) { $this->normalized = $normalized; }
-    public function normalizeContext(array $requestContext): array { return $this->normalized; }
+    private bool $throwOnNormalize;
+    public function __construct(array $normalized, bool $throwOnNormalize = false)
+    {
+        $this->normalized = $normalized;
+        $this->throwOnNormalize = $throwOnNormalize;
+    }
+    public function normalizeContext(array $requestContext): array
+    {
+        if ($this->throwOnNormalize) {
+            echo 'LEAKED-NORMALIZER-BYTES';
+            ob_start();
+            echo 'LEAKED-NESTED-NORMALIZER-BYTES';
+            throw new RuntimeException('fixture normalizer failure');
+        }
+        return $this->normalized;
+    }
     public function route(string $routeKey, string $marketKey): string { return '/routes/' . $routeKey . '/' . $marketKey; }
 }
 
@@ -140,10 +154,11 @@ try {
         array $normalized,
         string $root,
         ?PortableHarnessQuoteAdapter $quote = null,
-        ?PortableHarnessBookingAdapter $booking = null
+        ?PortableHarnessBookingAdapter $booking = null,
+        ?PortableHarnessRouteAdapter $routes = null
     ) use ($registry): array {
         $assets = new PortableHarnessAssetResolver();
-        $routes = new PortableHarnessRouteAdapter($normalized);
+        $routes = $routes ?? new PortableHarnessRouteAdapter($normalized);
         $reviews = new PortableHarnessReviewsProvider();
         $quote = $quote ?? new PortableHarnessQuoteAdapter();
         $booking = $booking ?? new PortableHarnessBookingAdapter();
@@ -267,6 +282,30 @@ PHP;
     $strayOutput = (string) ob_get_clean();
     $expect(ob_get_level() === $captureBase, 'adapter scenario leaked an output buffer');
     $expect($cleanOutput === 'clean-fixture' && $strayOutput === '', 'adapter scenario leaked bytes');
+
+    $throwingRoutes = new PortableHarnessRouteAdapter(['environment' => 'staging', 'market' => 'main'], true);
+    [$throwingExperience] = $makeExperience(
+        ['environment' => 'staging', 'market' => 'main'],
+        $fixtureRoot,
+        null,
+        null,
+        $throwingRoutes
+    );
+    $captureBase = ob_get_level();
+    ob_start();
+    $scenarioLevel = ob_get_level();
+    $threw = false;
+    try { $throwingExperience->renderHome([]); } catch (RuntimeException $expected) {
+        $expect($expected->getMessage() === 'fixture normalizer failure', 'unexpected normalizer exception');
+        $threw = true;
+    }
+    $expect($threw, 'throwing route normalizer did not throw');
+    $expect(ob_get_level() === $scenarioLevel, 'throwing route normalizer changed output-buffer level');
+    [$cleanExperience] = $makeExperience(['environment' => 'staging', 'market' => 'main'], $fixtureRoot);
+    $cleanOutput = $cleanExperience->renderHome([]);
+    $strayOutput = (string) ob_get_clean();
+    $expect(ob_get_level() === $captureBase, 'normalizer scenario leaked an output buffer');
+    $expect($cleanOutput === 'clean-fixture' && $strayOutput === '', 'normalizer scenario leaked bytes');
 
     foreach (['staging', 'production'] as $environment) {
         [$actualExperience, , , , $actualQuote, $actualBooking] = $makeExperience(

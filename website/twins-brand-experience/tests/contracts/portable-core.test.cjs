@@ -74,13 +74,26 @@ test('market registry rejects any names outside the fixed four-market boundary',
   assert.match(source, /array_keys\(\$markets\)\s*!==\s*\['main',\s*'wi',\s*'ky',\s*'il-preview'\]/);
 });
 
-test('renderer isolates adapter work inside its output-buffer cleanup boundary', () => {
+test('renderer isolates the full render pipeline inside its output-buffer cleanup boundary', () => {
   const source = fs.readFileSync(path.join(root, 'src/Experience.php'), 'utf8');
   const bufferIndex = source.indexOf('$bufferLevel = ob_get_level();');
   const tryIndex = source.indexOf('try {', bufferIndex);
+  const catchIndex = source.indexOf('} catch (\\Throwable $error)', tryIndex);
+  const normalizeIndex = source.indexOf('$context = $this->routes->normalizeContext($context);');
+  const validationIndex = source.indexOf("if (!isset($context['environment'], $context['market'])");
+  const marketIndex = source.indexOf('$market = $this->markets->resolve($marketKey, $environment);');
   const quoteIndex = source.indexOf('$quote = $this->quote->action($context);');
   const bookingIndex = source.indexOf('$booking = $template ===');
-  assert.ok(bufferIndex >= 0 && tryIndex > bufferIndex);
-  assert.ok(quoteIndex > tryIndex, 'quote adapter must run inside the cleanup boundary');
-  assert.ok(bookingIndex > tryIndex, 'booking adapter must run inside the cleanup boundary');
+  const templateIndex = source.indexOf("require $this->root . '/templates/'");
+  assert.ok(bufferIndex >= 0 && tryIndex > bufferIndex && catchIndex > tryIndex);
+  for (const [step, index] of [
+    ['route normalization', normalizeIndex],
+    ['normalized-context validation', validationIndex],
+    ['market resolution', marketIndex],
+    ['quote adapter', quoteIndex],
+    ['booking adapter', bookingIndex],
+    ['template include', templateIndex],
+  ]) {
+    assert.ok(index > tryIndex && index < catchIndex, `${step} must run inside the cleanup boundary`);
+  }
 });
