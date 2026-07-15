@@ -6,6 +6,8 @@ const test = require('node:test');
 const root = path.resolve(__dirname, '../..');
 const css = fs.readFileSync(path.join(root, 'assets/css/twins-brand.css'), 'utf8');
 const js = fs.readFileSync(path.join(root, 'assets/js/twins-brand.js'), 'utf8');
+const homeTemplate = fs.readFileSync(path.join(root, 'templates/home.php'), 'utf8');
+const browserFixture = fs.readFileSync(path.join(root, 'tests/browser/fixtures/brand-home.html'), 'utf8');
 
 test('CSS pins fonts, logo floors, breakpoints, Twin motion, and reduced motion', () => {
   assert.match(css, /font-family:\s*['"]Lilita One['"]/);
@@ -43,4 +45,15 @@ test('brand stylesheet covers every supporting route surface', () => {
     '.twins-brand-reviews-collection',
     '.twins-brand-reviews-next',
   ]) assert.ok(css.includes(selector), selector);
+});
+
+test('door-builder CTA fixture classes exactly match runtime and use contextual styling', () => {
+  const classesFor = source => {
+    const match = source.match(/<a class="([^"]+)"(?:(?!<\/a>)[\s\S])*?>Design Your Door<\/a>/);
+    assert.ok(match, 'Design Your Door CTA is missing');
+    return match[1].trim().split(/\s+/).sort();
+  };
+  assert.deepEqual(classesFor(browserFixture), classesFor(homeTemplate));
+  assert.deepEqual(classesFor(homeTemplate), ['twins-brand-cta']);
+  assert.match(css, /\.twins-brand-door-builder\s+\.twins-brand-cta\s*\{/);
 });

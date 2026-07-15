@@ -47,6 +47,48 @@ async function computedContrast(locator) {
   return { ratio: ratio(channels(values.color), background), foreground: channels(values.color), background };
 }
 
+function compositeLayers(layers) {
+  let background = { r: 255, g: 255, b: 255, a: 1 };
+  for (const layer of layers.reverse()) background = blend(channels(layer), background);
+  return background;
+}
+
+async function visualSnapshot(locator) {
+  const values = await locator.evaluate(element => {
+    const layers = [];
+    for (let current = element; current; current = current.parentElement) layers.push(getComputedStyle(current).backgroundColor);
+    const style = getComputedStyle(element);
+    return {
+      color: style.color,
+      fontSize: parseFloat(style.fontSize),
+      fontWeight: parseInt(style.fontWeight, 10) || 400,
+      layers,
+      outlineStyle: style.outlineStyle,
+      outlineWidth: parseFloat(style.outlineWidth),
+      outlineColor: style.outlineColor,
+      boxShadow: style.boxShadow,
+      transform: style.transform,
+    };
+  });
+  const controlBackground = compositeLayers([...values.layers]);
+  const adjacentBackground = compositeLayers(values.layers.slice(1));
+  const foreground = channels(values.color);
+  return { ...values, foreground, controlBackground, adjacentBackground };
+}
+
+function textThreshold(snapshot) {
+  const large = snapshot.fontSize >= 24 || (snapshot.fontWeight >= 700 && snapshot.fontSize >= 18.66);
+  return large ? 3 : 4.5;
+}
+
+function ringContrast(color, surface) {
+  return ratio(blend(color, surface), surface);
+}
+
+function isGold(color) {
+  return color.r >= 220 && color.g >= 145 && color.g <= 220 && color.b <= 105;
+}
+
 test('drawer traps focus, closes, restores focus, and stops intercepting clicks', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(fixture);
@@ -162,27 +204,14 @@ test('JavaScript-disabled previews remain structurally incapable of submission',
   await context.close();
 });
 
-test('primary CTAs expose visible focus, circular arrows, sheen, and pressed depth', async ({ page }) => {
+test('primary and contextual base CTAs expose circular arrows and a restrained sheen', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto(fixture);
-  for (const locator of [page.getByRole('button', { name: 'Book Online' }).first(), page.getByRole('link', { name: 'Request a Quote' }).first()]) {
-    await locator.focus();
-    const focus = await locator.evaluate(element => {
-      const style = getComputedStyle(element);
-      const header = element.closest('.twins-brand-header');
-      return {
-        outline: style.outlineStyle,
-        outlineWidth: parseFloat(style.outlineWidth),
-        outlineColor: style.outlineColor,
-        boxShadow: style.boxShadow,
-        controlBackground: style.backgroundColor,
-        adjacentBackground: getComputedStyle(header || element.parentElement).backgroundColor,
-      };
-    });
-    expect(focus.outline !== 'none' || focus.outlineWidth > 0 || focus.boxShadow !== 'none').toBeTruthy();
-    const ringColors = [channels(focus.outlineColor), ...(focus.boxShadow.match(/rgba?\([^)]+\)/g) || []).map(channels)];
-    expect(Math.max(...ringColors.map(color => ratio(color, channels(focus.controlBackground))))).toBeGreaterThanOrEqual(3);
-    expect(Math.max(...ringColors.map(color => ratio(color, channels(focus.adjacentBackground))))).toBeGreaterThanOrEqual(3);
+  for (const locator of [
+    page.getByRole('button', { name: 'Book Online' }).first(),
+    page.getByRole('link', { name: 'Request a Quote' }).first(),
+    page.getByRole('link', { name: 'Design Your Door' }),
+  ]) {
     const after = await locator.evaluate(element => {
       const style = getComputedStyle(element, '::after');
       return { content: style.content, width: parseFloat(style.width), height: parseFloat(style.height), radius: style.borderRadius };
@@ -191,12 +220,6 @@ test('primary CTAs expose visible focus, circular arrows, sheen, and pressed dep
     expect(Math.abs(after.width - after.height)).toBeLessThan(1);
     expect(after.radius).not.toBe('0px');
     expect(await locator.evaluate(element => getComputedStyle(element).backgroundImage)).toContain('linear-gradient');
-    await locator.hover();
-    expect((await computedContrast(locator)).ratio).toBeGreaterThanOrEqual(4.5);
-    await locator.evaluate(element => element.classList.add('twins-brand-test-active'));
-    expect(await locator.evaluate(element => getComputedStyle(element).transform)).not.toBe('none');
-    expect((await computedContrast(locator)).ratio).toBeGreaterThanOrEqual(4.5);
-    await locator.evaluate(element => element.classList.remove('twins-brand-test-active'));
   }
 });
 
@@ -234,6 +257,87 @@ test('seven-width matrix preserves logo floors, contrast, Twins, and determinist
     const scrolledFloor = width >= 1201 ? 180 : expectedInitial;
     expect((await logo.boundingBox()).width).toBeGreaterThanOrEqual(scrolledFloor - 0.5);
     await page.evaluate(() => scrollTo(0, 0));
+  }
+});
+
+test('all visible conversion and preview controls meet contrast in every real browser state and header mode', async ({ page, context }) => {
+  test.setTimeout(120000);
+  const cdp = await context.newCDPSession(page);
+  await cdp.send('DOM.enable');
+  await cdp.send('CSS.enable');
+  const interactiveSelector = [
+    '.twins-brand-phone',
+    '.twins-brand-primary-nav .twins-brand-nav-trigger',
+    '.twins-brand-menu-trigger',
+    '.twins-brand-cta',
+    '.twins-brand-mobile-actions a',
+    '.twins-brand-preview-form input',
+    '.twins-brand-preview-form select',
+    '.twins-brand-preview-form textarea',
+    '.twins-brand-preview-form button',
+  ].join(',');
+  const textSelector = `${interactiveSelector}, .twins-brand-preview-form label`;
+
+  for (const width of widths) {
+    await page.setViewportSize({ width, height: width <= 390 ? 844 : 1000 });
+    await page.goto(fixture);
+    for (const headerMode of ['initial', 'compressed']) {
+      await page.evaluate(mode => scrollTo(0, mode === 'compressed' ? 420 : 0), headerMode);
+      await expect(page.locator('[data-twins-header]')).toHaveAttribute('data-compressed', headerMode === 'compressed' ? 'true' : 'false');
+
+      const probes = await page.evaluate(({ interactiveSelector: controls, textSelector: text }) => {
+        let index = 0;
+        const interactive = new Set(document.querySelectorAll(controls));
+        return [...new Set(document.querySelectorAll(text))]
+          .filter(element => element.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }) && element.getClientRects().length > 0)
+          .map(element => {
+            const token = `${index++}`;
+            element.setAttribute('data-twins-contrast-probe', token);
+            return {
+              token,
+              interactive: interactive.has(element),
+              cta: element.matches('.twins-brand-cta'),
+              label: (element.getAttribute('aria-label') || element.textContent || element.tagName).trim().replace(/\s+/g, ' ').slice(0, 80),
+            };
+          });
+      }, { interactiveSelector, textSelector });
+      expect(probes.length, `${width}px ${headerMode} probe coverage`).toBeGreaterThan(15);
+
+      const documentNode = await cdp.send('DOM.getDocument', { depth: 0 });
+      for (const probe of probes) {
+        const selector = `[data-twins-contrast-probe="${probe.token}"]`;
+        const locator = page.locator(selector);
+        const node = await cdp.send('DOM.querySelector', { nodeId: documentNode.root.nodeId, selector });
+        expect(node.nodeId, `${width}px ${headerMode} ${probe.label}`).toBeTruthy();
+        const states = probe.interactive
+          ? [['normal', []], ['hover', ['hover']], ['focus', ['focus', 'focus-visible']], ['pressed', ['active']]]
+          : [['normal', []]];
+
+        for (const [state, forcedPseudoClasses] of states) {
+          await cdp.send('CSS.forcePseudoState', { nodeId: node.nodeId, forcedPseudoClasses });
+          const snapshot = await visualSnapshot(locator);
+          const textContrast = ratio(snapshot.foreground, snapshot.controlBackground);
+          expect(textContrast, `${width}px ${headerMode} ${state} ${probe.label}`).toBeGreaterThanOrEqual(textThreshold(snapshot));
+          if (isGold(snapshot.controlBackground)) {
+            const isWhite = snapshot.foreground.r >= 245 && snapshot.foreground.g >= 245 && snapshot.foreground.b >= 245;
+            expect(isWhite, `${width}px ${headerMode} ${state} white-on-gold ${probe.label}`).toBeFalsy();
+          }
+
+          if (state === 'focus') {
+            const ringColors = [
+              ...(snapshot.outlineStyle !== 'none' && snapshot.outlineWidth >= 2 ? [channels(snapshot.outlineColor)] : []),
+              ...(snapshot.boxShadow.match(/rgba?\([^)]+\)/g) || []).map(channels),
+            ];
+            expect(ringColors.length, `${width}px ${headerMode} focus indicator ${probe.label}`).toBeGreaterThan(0);
+            expect(Math.max(...ringColors.map(color => ringContrast(color, snapshot.controlBackground))), `${width}px ${headerMode} focus/control ${probe.label}`).toBeGreaterThanOrEqual(3);
+            expect(Math.max(...ringColors.map(color => ringContrast(color, snapshot.adjacentBackground))), `${width}px ${headerMode} focus/adjacent ${probe.label}`).toBeGreaterThanOrEqual(3);
+          }
+          if (state === 'pressed' && probe.cta) expect(snapshot.transform, `${width}px ${headerMode} pressed ${probe.label}`).not.toBe('none');
+        }
+        await cdp.send('CSS.forcePseudoState', { nodeId: node.nodeId, forcedPseudoClasses: [] });
+      }
+      await page.evaluate(() => document.querySelectorAll('[data-twins-contrast-probe]').forEach(element => element.removeAttribute('data-twins-contrast-probe')));
+    }
   }
 });
 
