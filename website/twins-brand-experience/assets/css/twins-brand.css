@@ -839,6 +839,19 @@ body.twins-brand-experience .twins-brand-careers-hero a.twins-brand-cta {
   .twins-brand-hero-actions .twins-brand-cta { min-width: 0; padding-inline: 10px; }
   .twins-brand-cta--book::after,
   .twins-brand-cta--quote::after { width: 1.45rem; height: 1.45rem; flex-basis: 1.45rem; }
+  .twins-brand-review-slider {
+    grid-template-columns: minmax(0, 1fr) minmax(68px, 72px) minmax(0, 1fr);
+    column-gap: 6px;
+  }
+  .twins-brand-review-control {
+    width: 100%;
+    min-width: 0;
+    padding-inline: 6px;
+  }
+  .twins-brand-review-status {
+    width: 100%;
+    min-width: 0;
+  }
   .twins-brand-section-heading h2,
   .twins-brand-team-story h2,
   .twins-brand-door-builder h2,

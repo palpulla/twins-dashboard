@@ -35,6 +35,9 @@ test('review runtime uses bounded status controls and permanently pauses after m
   assert.match(js, /let permanentlyPaused\s*=\s*false/);
   assert.match(js, /const manualGo\s*=/);
   assert.match(js, /permanentlyPaused\s*=\s*true/);
+  assert.match(js, /toggleAttribute\(['"]inert['"]/);
+  assert.match(js, /setAttribute\(['"]aria-hidden['"],\s*['"]true['"]\)/);
+  assert.match(js, /removeAttribute\(['"]aria-hidden['"]\)/);
   assert.match(js, /12000/);
   assert.doesNotMatch(js, /setInterval\([^;]*7000/);
   assert.doesNotMatch(js, /twins-brand-review-dots/);

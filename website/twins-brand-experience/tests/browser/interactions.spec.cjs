@@ -109,6 +109,27 @@ function isGold(color) {
   return color.r >= 220 && color.g >= 145 && color.g <= 220 && color.b <= 105;
 }
 
+async function assertPermanentReviewPause(page, navigate) {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(fixture);
+  const slider = page.locator('[data-twins-review-slider]');
+  const track = slider.locator('.twins-brand-review-track');
+  const status = slider.locator('[data-review-page-status]');
+  const initial = await track.evaluate(element => getComputedStyle(element).transform);
+
+  await navigate(slider);
+  await expect(status).toHaveText('2 of 5');
+  await expect.poll(() => track.evaluate(element => getComputedStyle(element).transform)).not.toBe(initial);
+  await page.getByRole('link', { name: 'Read all reviews' }).focus();
+  await page.mouse.move(1, 1);
+  await expect(slider).toHaveAttribute('data-interaction-paused', 'true');
+  await expect(slider).toHaveAttribute('data-autoplay-paused', 'true');
+  await page.waitForTimeout(500);
+  const afterManual = await track.evaluate(element => getComputedStyle(element).transform);
+  await page.waitForTimeout(12_500);
+  expect(await track.evaluate(element => getComputedStyle(element).transform)).toBe(afterManual);
+}
+
 test('drawer traps focus, closes, restores focus, and stops intercepting clicks', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(fixture);
@@ -237,29 +258,88 @@ test('staging previews validate locally and make zero POST or external requests'
   expect(requests.filter(([, origin]) => origin !== new URL(page.url()).origin)).toEqual([]);
 });
 
-test('featured review slider uses bounded controls and permanently pauses after manual navigation', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto(fixture);
-  const slider = page.locator('[data-twins-review-slider]');
-  const track = slider.locator('.twins-brand-review-track');
-  const status = slider.locator('[data-review-page-status]');
-  await expect(status).toHaveText('1 of 5');
-  await expect(slider.locator('.twins-brand-review-dots')).toHaveCount(0);
-  const initial = await track.evaluate(element => getComputedStyle(element).transform);
-  await slider.getByRole('button', { name: 'Next reviews' }).click();
-  await expect(status).toHaveText('2 of 5');
-  await expect.poll(() => track.evaluate(element => getComputedStyle(element).transform)).not.toBe(initial);
-  await page.waitForTimeout(500);
-  const afterManual = await track.evaluate(element => getComputedStyle(element).transform);
-  await page.waitForTimeout(12_500);
-  expect(await track.evaluate(element => getComputedStyle(element).transform)).toBe(afterManual);
-  await slider.focus();
-  await page.keyboard.press('ArrowRight');
-  await expect(status).toHaveText('3 of 5');
-  await slider.dispatchEvent('touchstart', { touches: [{ identifier: 1, clientX: 280, clientY: 100 }] });
-  await slider.dispatchEvent('touchend', { changedTouches: [{ identifier: 1, clientX: 100, clientY: 100 }] });
-  await expect(slider).toHaveAttribute('data-interaction-paused', 'true');
-  await expect(status).toHaveText('4 of 5');
+test('featured review controls stay fully visible, nonoverlapping, and tappable at narrow widths', async ({ page }) => {
+  for (const width of [360, 320]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto(fixture);
+    const slider = page.locator('[data-twins-review-slider]');
+    const controls = [
+      slider.getByRole('button', { name: 'Previous reviews' }),
+      slider.locator('[data-review-page-status]'),
+      slider.getByRole('button', { name: 'Next reviews' }),
+    ];
+    const sliderBounds = await slider.boundingBox();
+    const bounds = await Promise.all(controls.map(control => control.boundingBox()));
+
+    expect(sliderBounds, `${width}px slider bounds`).not.toBeNull();
+    for (const [index, box] of bounds.entries()) {
+      expect(box, `${width}px control ${index} bounds`).not.toBeNull();
+      expect(box.width, `${width}px control ${index} width`).toBeGreaterThanOrEqual(44);
+      expect(box.height, `${width}px control ${index} height`).toBeGreaterThanOrEqual(44);
+      expect(box.x, `${width}px control ${index} left edge`).toBeGreaterThanOrEqual(sliderBounds.x - 0.5);
+      expect(box.x + box.width, `${width}px control ${index} right edge`).toBeLessThanOrEqual(sliderBounds.x + sliderBounds.width + 0.5);
+      expect(box.x, `${width}px control ${index} viewport left edge`).toBeGreaterThanOrEqual(0);
+      expect(box.x + box.width, `${width}px control ${index} viewport right edge`).toBeLessThanOrEqual(width);
+    }
+    expect(bounds[0].x + bounds[0].width, `${width}px Previous/status overlap`).toBeLessThanOrEqual(bounds[1].x + 0.5);
+    expect(bounds[1].x + bounds[1].width, `${width}px status/Next overlap`).toBeLessThanOrEqual(bounds[2].x + 0.5);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBeTruthy();
+  }
+});
+
+test('featured review pages hide and inert every offscreen card at each responsive page size', async ({ page }) => {
+  for (const { width, visible, pages } of [
+    { width: 390, visible: 1, pages: 5 },
+    { width: 768, visible: 2, pages: 3 },
+    { width: 1440, visible: 3, pages: 2 },
+  ]) {
+    await page.setViewportSize({ width, height: width === 390 ? 844 : 1000 });
+    await page.goto(fixture);
+    const slider = page.locator('[data-twins-review-slider]');
+    const cards = slider.locator('.twins-brand-review-card');
+    const status = slider.locator('[data-review-page-status]');
+    await expect(cards).toHaveCount(5);
+    await expect(slider.locator('details, summary')).toHaveCount(0);
+    await expect(status).toHaveText(`1 of ${pages}`);
+
+    const initialStates = await cards.evaluateAll(elements => elements.map(card => ({
+      ariaHidden: card.getAttribute('aria-hidden'),
+      inert: card.hasAttribute('inert'),
+    })));
+    expect(initialStates).toEqual(Array.from({ length: 5 }, (_, index) => ({
+      ariaHidden: index < visible ? null : 'true',
+      inert: index >= visible,
+    })));
+
+    await slider.getByRole('button', { name: 'Next reviews' }).click();
+    await expect(status).toHaveText(`2 of ${pages}`);
+    const nextStates = await cards.evaluateAll(elements => elements.map(card => ({
+      ariaHidden: card.getAttribute('aria-hidden'),
+      inert: card.hasAttribute('inert'),
+    })));
+    expect(nextStates).toEqual(Array.from({ length: 5 }, (_, index) => ({
+      ariaHidden: index >= visible && index < Math.min(visible * 2, 5) ? null : 'true',
+      inert: index < visible || index >= Math.min(visible * 2, 5),
+    })));
+  }
+});
+
+test('review button navigation permanently pauses autoplay in an isolated fixture', async ({ page }) => {
+  await assertPermanentReviewPause(page, slider => slider.getByRole('button', { name: 'Next reviews' }).click());
+});
+
+test('review keyboard navigation permanently pauses autoplay in an isolated fixture', async ({ page }) => {
+  await assertPermanentReviewPause(page, async slider => {
+    await slider.focus();
+    await page.keyboard.press('ArrowRight');
+  });
+});
+
+test('review swipe navigation permanently pauses autoplay in an isolated fixture', async ({ page }) => {
+  await assertPermanentReviewPause(page, async slider => {
+    await slider.dispatchEvent('touchstart', { touches: [{ identifier: 1, clientX: 280, clientY: 100 }] });
+    await slider.dispatchEvent('touchend', { changedTouches: [{ identifier: 1, clientX: 100, clientY: 100 }] });
+  });
 });
 
 test('Reviews page keeps the complete verified collection static without autoplay markup', async ({ page }) => {
@@ -269,6 +349,9 @@ test('Reviews page keeps the complete verified collection static without autopla
   await expect(list).toBeVisible();
   await expect(list.locator('.twins-brand-review-card')).toHaveCount(3);
   await expect(page.locator('[data-twins-review-slider], .twins-brand-review-track, [data-review-page-status]')).toHaveCount(0);
+  await expect(list.locator('details')).toHaveCount(1);
+  await expect(list.locator('details blockquote')).toHaveText('The technician explained every option, arrived when promised, worked carefully around our home, and made sure we understood the repair before leaving. The garage door has worked quietly and reliably ever since, and the entire visit felt organized from the first call through the final walkthrough.');
+  expect(await list.locator('.twins-brand-review-card').evaluateAll(cards => cards.every(card => !card.hasAttribute('inert') && !card.hasAttribute('aria-hidden')))).toBeTruthy();
   const initial = await list.evaluate(element => getComputedStyle(element).transform);
   await page.waitForTimeout(12_500);
   expect(await list.evaluate(element => getComputedStyle(element).transform)).toBe(initial);

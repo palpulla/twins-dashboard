@@ -47,12 +47,14 @@ $renderReviewCard = static function (array $review, int $index, bool $listMode):
 ?>
   <article class="<?= $class ?>" data-review-stable-id="<?= htmlspecialchars($review['stableId'], ENT_QUOTES, 'UTF-8') ?>" data-review-index="<?= $index ?>">
     <div class="twins-brand-review-stars" aria-label="<?= (int) $review['rating'] ?> out of 5 stars"><?= str_repeat('★', (int) $review['rating']) ?></div>
-    <?php if ($isLong): ?>
+    <?php if ($listMode && $isLong): ?>
       <p class="twins-brand-review-excerpt"><?= htmlspecialchars($excerpt, ENT_QUOTES, 'UTF-8') ?>…</p>
       <details class="twins-brand-review-details">
         <summary>Read full review</summary>
         <blockquote><?= nl2br(htmlspecialchars($review['text'], ENT_QUOTES, 'UTF-8')) ?></blockquote>
       </details>
+    <?php elseif ($isLong): ?>
+      <p class="twins-brand-review-excerpt"><?= htmlspecialchars($excerpt, ENT_QUOTES, 'UTF-8') ?>…</p>
     <?php else: ?>
       <blockquote><?= nl2br(htmlspecialchars($review['text'], ENT_QUOTES, 'UTF-8')) ?></blockquote>
     <?php endif; ?>

@@ -173,6 +173,7 @@ $renderComponent = static function (Twins\BrandExperience\Experience $experience
     }
 };
 
+$longReviewText = 'From the first phone call through the final walkthrough, the Twins team communicated clearly, arrived when promised, protected the surrounding space, explained every repair choice without pressure, completed the work carefully, tested the door several times, cleaned up every tool and scrap, and left us with a quiet, reliable garage door and complete confidence in the result.';
 $records = [
     [
         'stableId' => 'review-alpha<&"',
@@ -187,7 +188,7 @@ $records = [
         'author' => 'M. Rivera, Jr.',
         'rating' => 5,
         'publishedDate' => '2026-07-02',
-        'text' => '“Excellent” work; clean, prompt, and friendly.',
+        'text' => $longReviewText,
         'sourceRecordUrl' => 'https://records.example.invalid/review-beta',
     ],
     [
@@ -213,6 +214,54 @@ $records = [
         'publishedDate' => '2026-06-10',
         'text' => 'Straight answers; excellent follow-through.',
         'sourceRecordUrl' => 'https://records.example.invalid/review-epsilon',
+    ],
+    [
+        'stableId' => 'review-zeta',
+        'author' => 'Alex N.',
+        'rating' => 5,
+        'publishedDate' => '2026-06-08',
+        'text' => 'Prepared, courteous, and easy to work with.',
+        'sourceRecordUrl' => 'https://records.example.invalid/review-zeta',
+    ],
+    [
+        'stableId' => 'review-eta',
+        'author' => 'Taylor W.',
+        'rating' => 5,
+        'publishedDate' => '2026-06-05',
+        'text' => 'The repair was explained clearly and completed carefully.',
+        'sourceRecordUrl' => 'https://records.example.invalid/review-eta',
+    ],
+    [
+        'stableId' => 'review-theta',
+        'author' => 'Chris B.',
+        'rating' => 5,
+        'publishedDate' => '2026-06-03',
+        'text' => 'Friendly service and a garage door that works smoothly again.',
+        'sourceRecordUrl' => 'https://records.example.invalid/review-theta',
+    ],
+    [
+        'stableId' => 'review-iota',
+        'author' => 'Drew H.',
+        'rating' => 4,
+        'publishedDate' => '2026-05-30',
+        'text' => 'Good communication, prompt arrival, and dependable work.',
+        'sourceRecordUrl' => 'https://records.example.invalid/review-iota',
+    ],
+    [
+        'stableId' => 'review-kappa',
+        'author' => 'Jamie P.',
+        'rating' => 5,
+        'publishedDate' => '2026-05-25',
+        'text' => 'Everything was neat, efficient, and professionally handled.',
+        'sourceRecordUrl' => 'https://records.example.invalid/review-kappa',
+    ],
+    [
+        'stableId' => 'review-lambda',
+        'author' => 'Robin C.',
+        'rating' => 5,
+        'publishedDate' => '2026-05-20',
+        'text' => 'A smooth experience from scheduling through the completed repair.',
+        'sourceRecordUrl' => 'https://records.example.invalid/review-lambda',
     ],
 ];
 $businessReviewsUrl = 'https://reviews.example.invalid/twins';
@@ -348,21 +397,48 @@ $expect(strpos($stagingSlider, 'href="/reviews/"') !== false, 'staging slider om
 $expect(strpos($stagingSlider, $businessReviewsUrl) === false, 'staging slider exposed the external business URL');
 foreach ($records as $record) {
     $expect(strpos($stagingSlider, $record['sourceRecordUrl']) === false, 'slider exposed a per-record source URL');
+}
+$featuredRecords = array_slice($records, 0, 9);
+foreach ($featuredRecords as $record) {
     $expect(strpos($stagingSlider, 'aria-label="' . $record['rating'] . ' out of 5 stars"') !== false, 'slider rating label drifted');
 }
 preg_match_all('/<article\b[^>]*>(.*?)<\/article>/s', $stagingSlider, $cards);
-$expect(count($cards[1]) === count($records), 'slider rendered the wrong record count');
-foreach ($records as $index => $record) {
+$expect(count($cards[1]) === 9, 'featured slider did not stay within nine records');
+$expect(strpos($stagingSlider, $records[9]['author']) === false, 'featured slider rendered a record beyond its nine-record cap');
+$expect(strpos($stagingSlider, '<details') === false, 'featured slider exposed a long-review disclosure');
+foreach ($featuredRecords as $index => $record) {
     $card = $cards[1][$index];
-    $expect(preg_match('/<blockquote>(.*?)<\/blockquote>/s', $card, $quoteMatch) === 1, 'review text markup missing');
-    $encodedText = preg_replace('/<br\s*\/?>/i', '', $quoteMatch[1]);
-    $expect(html_entity_decode($encodedText, ENT_QUOTES | ENT_HTML5, 'UTF-8') === $record['text'], 'review text bytes changed');
+    if ($record['stableId'] === 'review-beta') {
+        $words = preg_split('/\s+/u', trim($record['text']));
+        $expect($words !== false, 'long review words were unavailable');
+        $expectedExcerpt = implode(' ', array_slice($words, 0, 42)) . '…';
+        $expect(preg_match('/<p class="twins-brand-review-excerpt">(.*?)<\/p>/s', $card, $quoteMatch) === 1, 'featured long review excerpt is missing');
+        $expect(html_entity_decode($quoteMatch[1], ENT_QUOTES | ENT_HTML5, 'UTF-8') === $expectedExcerpt, 'featured long review excerpt changed');
+        $expect(strpos($card, htmlspecialchars($record['text'], ENT_QUOTES, 'UTF-8')) === false, 'featured long review exposed complete disclosure text');
+    } else {
+        $expect(preg_match('/<blockquote>(.*?)<\/blockquote>/s', $card, $quoteMatch) === 1, 'review text markup missing');
+        $encodedText = preg_replace('/<br\s*\/?>/i', '', $quoteMatch[1]);
+        $expect(html_entity_decode($encodedText, ENT_QUOTES | ENT_HTML5, 'UTF-8') === $record['text'], 'review text bytes changed');
+    }
     $expect(preg_match('/<strong>(.*?)<\/strong>/s', $card, $authorMatch) === 1, 'review author markup missing');
     $expect(html_entity_decode($authorMatch[1], ENT_QUOTES | ENT_HTML5, 'UTF-8') === $record['author'], 'review author bytes changed');
     $expect(preg_match('/<time datetime="([^"]+)">(.*?)<\/time>/s', $card, $dateMatch) === 1, 'review date markup missing');
     $expect(html_entity_decode($dateMatch[1], ENT_QUOTES | ENT_HTML5, 'UTF-8') === $record['publishedDate'], 'review datetime bytes changed');
     $expect(html_entity_decode($dateMatch[2], ENT_QUOTES | ENT_HTML5, 'UTF-8') === $record['publishedDate'], 'visible review date bytes changed');
 }
+
+[$reviewsListExperience, $reviewsListProvider] = $makeExperience($verifiedCollection, $dialogBookingAction);
+$reviewsList = $renderComponent($reviewsListExperience, $root . '/components/review-slider.php', [
+    'environment' => 'staging',
+    'marketKey' => 'main',
+    'context' => ['classification' => 'reviews-brand'],
+]);
+$expect($reviewsListProvider->calls === 1, 'reviews list did not request the collection exactly once');
+preg_match_all('/<article\b[^>]*>(.*?)<\/article>/s', $reviewsList, $reviewListCards);
+$expect(count($reviewListCards[1]) === count($records), 'reviews list did not render the full verified collection');
+$expect(strpos($reviewsList, 'data-twins-review-slider') === false, 'reviews list emitted featured autoplay markup');
+$expect(strpos($reviewsList, '<details class="twins-brand-review-details">') !== false, 'reviews list omitted its long-review disclosure');
+$expect(strpos($reviewsList, htmlspecialchars($longReviewText, ENT_QUOTES, 'UTF-8')) !== false, 'reviews list changed the complete long quote');
 
 [$productionReviewExperience, $productionReviews] = $makeExperience($verifiedCollection, $externalBookingAction);
 $productionSlider = $renderComponent($productionReviewExperience, $root . '/components/review-slider.php', [
@@ -497,5 +573,8 @@ foreach ($records as $record) {
     $encodedAuthor = htmlspecialchars($record['author'], ENT_QUOTES, 'UTF-8');
     $expect(strpos($stagingBodies['renderReviews'], $encodedAuthor) !== false, 'reviews page omitted verified record ' . $record['stableId']);
 }
+preg_match_all('/<article\b[^>]*>(.*?)<\/article>/s', $stagingBodies['renderReviews'], $renderedReviewCards);
+$expect(count($renderedReviewCards[1]) === count($records), 'renderReviews did not retain the full verified collection');
+$expect(strpos($stagingBodies['renderReviews'], htmlspecialchars($longReviewText, ENT_QUOTES, 'UTF-8')) !== false, 'renderReviews changed the complete long quote');
 
 echo 'renderer-contracts-ok';

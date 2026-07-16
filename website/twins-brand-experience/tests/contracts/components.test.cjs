@@ -15,6 +15,11 @@ const templateSource = name => {
   return fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
 };
 
+const phpHarnessSource = name => {
+  const file = path.join(root, 'tests/php', name);
+  return fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
+};
+
 test('header exposes the approved complete navigation and CTA copy', () => {
   const html = source('header.php');
   for (const label of ['Services', 'Garage Doors', 'Service Areas', 'Resources', 'About', 'Our Team', 'Careers', 'Book Online', 'Request a Quote']) {
@@ -53,6 +58,7 @@ test('review component exposes bounded featured and static list modes without do
   assert.match(html, /data-review-page-status/);
   assert.match(html, /twins-brand-review-control/);
   assert.match(html, /count\(\$words\)\s*>\s*42/);
+  assert.match(html, /\$listMode\s*&&\s*\$isLong/);
   assert.match(html, /<details/);
   assert.match(html, /Read full review/);
   assert.doesNotMatch(html, /twins-brand-review-dots/);
@@ -65,6 +71,14 @@ test('review component exposes bounded featured and static list modes without do
   assert.match(html, /===\s*true/);
   assert.doesNotMatch(html, /AggregateRating|ReviewRating|application\/ld\+json/);
   assert.doesNotMatch(html, /sourceRecordUrl|avatar|providerHtml/);
+});
+
+test('PHP renderer harness proves the static Reviews mode keeps the full collection and complete long quote', () => {
+  const harness = phpHarnessSource('renderer-contract-harness.php');
+  assert.match(harness, /reviews list did not render the full verified collection/);
+  assert.match(harness, /reviews list changed the complete long quote/);
+  assert.match(harness, /featured slider did not stay within nine records/);
+  assert.match(harness, /['"]classification['"]\s*=>\s*['"]reviews-brand['"]/);
 });
 
 test('Reviews template explicitly selects static list mode without an autoplay marker', () => {

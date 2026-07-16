@@ -175,6 +175,7 @@
 
       let current = 0;
       let pages = 1;
+      let visibleCards = 1;
       let touchStartX = null;
       let permanentlyPaused = false;
       const pauses = new Set();
@@ -192,6 +193,14 @@
         status.textContent = `${current + 1} of ${pages}`;
         previous.disabled = pages <= 1;
         next.disabled = pages <= 1;
+        const firstVisible = current * visibleCards;
+        const lastVisible = Math.min(firstVisible + visibleCards, cards.length);
+        cards.forEach((card, index) => {
+          const visible = index >= firstVisible && index < lastVisible;
+          card.toggleAttribute('inert', !visible);
+          if (visible) card.removeAttribute('aria-hidden');
+          else card.setAttribute('aria-hidden', 'true');
+        });
       };
       const go = page => {
         current = (page + pages) % pages;
@@ -205,6 +214,7 @@
       };
       const build = () => {
         const count = cardsPerPage();
+        visibleCards = count;
         slider.style.setProperty('--twins-review-cards', String(count));
         pages = Math.max(1, Math.ceil(cards.length / count));
         current = Math.min(current, pages - 1);
