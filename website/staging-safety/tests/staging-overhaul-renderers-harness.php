@@ -684,7 +684,10 @@ if ($scenario === 'hooks') {
     twins_overhaul_renderer_assert(($elementorWidgetHook[2])($legacyTitle, new Twins_Overhaul_Renderer_Widget('heading', 'body-heading-1')) === $legacyTitle, 'nested article body heading was changed by legacy-title isolation');
     $themePostFallback = ($elementorWidgetHook[2])($legacyTitle, new Twins_Overhaul_Renderer_Widget('theme-post-content', 'e031a6d'));
     twins_overhaul_renderer_assert(substr_count($themePostFallback, 'id="twins-overhaul-main"') === 1, 'exact article body widget did not receive the fixed fallback frame');
-    twins_overhaul_renderer_assert(substr_count($themePostFallback, $legacyTitle) === 1, 'exact article body widget content changed during fallback rendering');
+    $preparedLegacyTitle = '<h2>5 Signs That it’s Time to Replace Your Garage Door</h2>';
+    twins_overhaul_renderer_assert(substr_count($themePostFallback, $preparedLegacyTitle) === 1, 'article fallback did not retain the legacy title text as one canonical body heading');
+    twins_overhaul_renderer_assert(substr_count($themePostFallback, '<h1') === 1, 'article fallback did not retain exactly one generated document H1');
+    twins_overhaul_renderer_assert(substr_count($themePostFallback, '<h1 id="twins-brand-editorial-title">') === 1, 'article fallback retained a legacy H1 instead of the generated document title');
 
     twins_overhaul_renderer_set([
         'path' => '/',

@@ -50,7 +50,9 @@ if ($argc !== 3 || !is_dir($argv[1]) || !is_dir($argv[2])) {
 require $argv[1] . '/templates/builder.php';
 $builderScript = @file_get_contents($argv[2] . '/assets/js/twins-builder.js');
 builder_assert(is_string($builderScript) && $builderScript !== '', 'portable builder script missing');
-builder_assert(strpos($builderScript, "['330', '320', '30', '29', '240', '26', '170', '340', '12', '16', '290', '370'") !== false, 'fixed builder order missing');
+$flatBuilderScript = preg_replace('/\s+/', ' ', $builderScript);
+builder_assert(is_string($flatBuilderScript), 'portable builder script normalization failed');
+builder_assert(strpos($flatBuilderScript, "const BUILDER_PRODUCT_ORDER = Object.freeze([ '330', '320', '30', '29', '240', '26', '170', '340', '12', '16', '290', '370', '250', '380', '11', '27', '291', '8', '10', '25', '9', '13', '23', ]);") !== false, 'fixed builder order missing');
 builder_assert(strpos($builderScript, 'BUILDER_LOCAL_IMAGE') !== false, 'local builder image boundary missing');
 builder_assert(strpos($builderScript, 'data-builder-enhanced') !== false, 'builder enhancement marker missing');
 builder_assert(strpos($builderScript, 'Manufacturer reference only.') !== false, 'builder manufacturer truth missing');

@@ -28,24 +28,27 @@ $selectionFamilies = [
     ['key' => 'hardware', 'label' => 'Hardware', 'empty' => 'hardware'],
 ];
 $gallery = $isProduct ? array_slice($product['gallery'], 0, 3) : [];
+$escape = static function (string $value): string {
+    return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+};
 ?>
 <main id="twins-overhaul-main" class="twins-brand-page twins-brand-catalog-page">
   <section class="twins-brand-catalog-hero" aria-labelledby="twins-catalog-title">
     <div class="twins-brand-catalog-hero__copy">
-      <span class="twins-brand-kicker"><?= esc_html($eyebrow) ?></span>
-      <h1 id="twins-catalog-title"><?= esc_html($heading) ?></h1>
-      <p><?= esc_html($lead) ?></p>
+      <span class="twins-brand-kicker"><?= $escape($eyebrow) ?></span>
+      <h1 id="twins-catalog-title"><?= $escape($heading) ?></h1>
+      <p><?= $escape($lead) ?></p>
       <div class="twins-brand-catalog-actions">
-        <a class="twins-brand-cta twins-brand-cta--quote" href="<?= esc_url($builderPath) ?>">Design This Door</a>
-        <a class="twins-brand-cta twins-brand-cta--book" href="<?= esc_url($quotePath) ?>">Request a Quote</a>
+        <a class="twins-brand-cta twins-brand-cta--quote" href="<?= $escape($builderPath) ?>">Design This Door</a>
+        <a class="twins-brand-cta twins-brand-cta--book" href="<?= $escape($quotePath) ?>">Request a Quote</a>
       </div>
     </div>
     <figure class="twins-brand-catalog-hero__image">
       <img
-        src="<?= esc_url($heroImage['src']) ?>"
-        width="<?= esc_attr((string) $heroImage['width']) ?>"
-        height="<?= esc_attr((string) $heroImage['height']) ?>"
-        alt="<?= esc_attr($heroImage['alt']) ?>"
+        src="<?= $escape($heroImage['src']) ?>"
+        width="<?= $escape((string) $heroImage['width']) ?>"
+        height="<?= $escape((string) $heroImage['height']) ?>"
+        alt="<?= $escape($heroImage['alt']) ?>"
         decoding="async"
         fetchpriority="high"
       >
@@ -64,20 +67,20 @@ $gallery = $isProduct ? array_slice($product['gallery'], 0, 3) : [];
           <?php $featuredProduct = $record['product']; ?>
           <article class="twins-brand-catalog-card">
             <img
-              src="<?= esc_url($featuredProduct['showcase']['src']) ?>"
-              width="<?= esc_attr((string) $featuredProduct['showcase']['width']) ?>"
-              height="<?= esc_attr((string) $featuredProduct['showcase']['height']) ?>"
-              alt="<?= esc_attr($featuredProduct['showcase']['alt']) ?>"
+              src="<?= $escape($featuredProduct['showcase']['src']) ?>"
+              width="<?= $escape((string) $featuredProduct['showcase']['width']) ?>"
+              height="<?= $escape((string) $featuredProduct['showcase']['height']) ?>"
+              alt="<?= $escape($featuredProduct['showcase']['alt']) ?>"
               loading="lazy"
               decoding="async"
             >
-            <h3><?= esc_html($featuredProduct['title']) ?></h3>
+            <h3><?= $escape($featuredProduct['title']) ?></h3>
             <dl class="twins-brand-catalog-facts">
               <?php foreach ($factFamilies as $family): ?>
-                <div><dt><?= esc_html($family['label']) ?></dt><dd><?= esc_html((string) count($featuredProduct[$family['key']])) ?></dd></div>
+                <div><dt><?= $escape($family['label']) ?></dt><dd><?= $escape((string) count($featuredProduct[$family['key']])) ?></dd></div>
               <?php endforeach; ?>
             </dl>
-            <a href="<?= esc_url($record['path']) ?>">View manufacturer record</a>
+            <a href="<?= $escape($record['path']) ?>">View manufacturer record</a>
           </article>
         <?php endforeach; ?>
       </div>
@@ -94,15 +97,15 @@ $gallery = $isProduct ? array_slice($product['gallery'], 0, 3) : [];
           <?php $collectionProduct = $record['product']; ?>
           <article class="twins-brand-catalog-card">
             <img
-              src="<?= esc_url($collectionProduct['showcase']['src']) ?>"
-              width="<?= esc_attr((string) $collectionProduct['showcase']['width']) ?>"
-              height="<?= esc_attr((string) $collectionProduct['showcase']['height']) ?>"
-              alt="<?= esc_attr($collectionProduct['showcase']['alt']) ?>"
+              src="<?= $escape($collectionProduct['showcase']['src']) ?>"
+              width="<?= $escape((string) $collectionProduct['showcase']['width']) ?>"
+              height="<?= $escape((string) $collectionProduct['showcase']['height']) ?>"
+              alt="<?= $escape($collectionProduct['showcase']['alt']) ?>"
               loading="lazy"
               decoding="async"
             >
-            <h3><?= esc_html($collectionProduct['title']) ?></h3>
-            <a href="<?= esc_url($record['path']) ?>">View manufacturer record</a>
+            <h3><?= $escape($collectionProduct['title']) ?></h3>
+            <a href="<?= $escape($record['path']) ?>">View manufacturer record</a>
           </article>
         <?php endforeach; ?>
       </div>
@@ -112,11 +115,11 @@ $gallery = $isProduct ? array_slice($product['gallery'], 0, 3) : [];
       <div class="twins-brand-section-heading">
         <span class="twins-brand-kicker">Frozen product facts</span>
         <h2 id="twins-catalog-record">What the frozen record includes</h2>
-        <p>Counts below come directly from the fixed local record for <?= esc_html($product['title']) ?>.</p>
+        <p>Counts below come directly from the fixed local record for <?= $escape($product['title']) ?>.</p>
       </div>
       <dl class="twins-brand-catalog-facts twins-brand-catalog-facts--large">
         <?php foreach ($factFamilies as $family): ?>
-          <div><dt><?= esc_html($family['label']) ?></dt><dd><?= esc_html((string) count($product[$family['key']])) ?></dd></div>
+          <div><dt><?= $escape($family['label']) ?></dt><dd><?= $escape((string) count($product[$family['key']])) ?></dd></div>
         <?php endforeach; ?>
       </dl>
     </section>
@@ -130,7 +133,7 @@ $gallery = $isProduct ? array_slice($product['gallery'], 0, 3) : [];
       <?php if ($product['designs'] !== []): ?>
         <ul class="twins-brand-catalog-labels">
           <?php foreach ($product['designs'] as $design): ?>
-            <li><?= esc_html($design['title']) ?></li>
+            <li><?= $escape($design['title']) ?></li>
           <?php endforeach; ?>
         </ul>
       <?php else: ?>
@@ -147,15 +150,15 @@ $gallery = $isProduct ? array_slice($product['gallery'], 0, 3) : [];
       <div class="twins-brand-catalog-selection-grid">
         <?php foreach ($selectionFamilies as $family): ?>
           <article>
-            <h3><?= esc_html($family['label']) ?> <span><?= esc_html((string) count($product[$family['key']])) ?></span></h3>
+            <h3><?= $escape($family['label']) ?> <span><?= $escape((string) count($product[$family['key']])) ?></span></h3>
             <?php if ($product[$family['key']] !== []): ?>
               <ul>
                 <?php foreach (array_slice($product[$family['key']], 0, 3) as $option): ?>
-                  <li><?= esc_html($option['title']) ?></li>
+                  <li><?= $escape($option['title']) ?></li>
                 <?php endforeach; ?>
               </ul>
             <?php else: ?>
-              <p>No <?= esc_html($family['empty']) ?> records are listed in this frozen product record.</p>
+              <p>No <?= $escape($family['empty']) ?> records are listed in this frozen product record.</p>
             <?php endif; ?>
           </article>
         <?php endforeach; ?>
@@ -173,14 +176,14 @@ $gallery = $isProduct ? array_slice($product['gallery'], 0, 3) : [];
           <?php foreach ($gallery as $photo): ?>
             <figure>
               <img
-                src="<?= esc_url($photo['image']['src']) ?>"
-                width="<?= esc_attr((string) $photo['image']['width']) ?>"
-                height="<?= esc_attr((string) $photo['image']['height']) ?>"
-                alt="<?= esc_attr($photo['image']['alt']) ?>"
+                src="<?= $escape($photo['image']['src']) ?>"
+                width="<?= $escape((string) $photo['image']['width']) ?>"
+                height="<?= $escape((string) $photo['image']['height']) ?>"
+                alt="<?= $escape($photo['image']['alt']) ?>"
                 loading="lazy"
                 decoding="async"
               >
-              <figcaption><?= esc_html($photo['title']) ?></figcaption>
+              <figcaption><?= $escape($photo['title']) ?></figcaption>
             </figure>
           <?php endforeach; ?>
         </div>
@@ -194,8 +197,8 @@ $gallery = $isProduct ? array_slice($product['gallery'], 0, 3) : [];
         <p>Open the private builder to compare the product and the selection references present in this frozen record.</p>
       </div>
       <div class="twins-brand-catalog-actions">
-        <a class="twins-brand-cta twins-brand-cta--quote" href="<?= esc_url($builderPath) ?>">Design This Door</a>
-        <a class="twins-brand-cta twins-brand-cta--book" href="<?= esc_url($quotePath) ?>">Request a Quote</a>
+        <a class="twins-brand-cta twins-brand-cta--quote" href="<?= $escape($builderPath) ?>">Design This Door</a>
+        <a class="twins-brand-cta twins-brand-cta--book" href="<?= $escape($quotePath) ?>">Request a Quote</a>
       </div>
     </section>
   <?php endif; ?>

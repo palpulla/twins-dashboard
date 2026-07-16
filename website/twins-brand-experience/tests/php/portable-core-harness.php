@@ -53,7 +53,23 @@ final class PortableHarnessRouteAdapter implements Twins\BrandExperience\RouteAd
 
 final class PortableHarnessReviewsProvider implements Twins\BrandExperience\ReviewsProvider
 {
-    public function collection(): array { return ['status' => 'fixture']; }
+    private bool $renderable;
+    public function __construct(bool $renderable = false) { $this->renderable = $renderable; }
+    public function collection(): array
+    {
+        if (!$this->renderable) return ['status' => 'fixture'];
+        return [
+            'status' => 'verified',
+            'allowExternalSourceAction' => false,
+            'records' => [[
+                'stableId' => 'fixture-review',
+                'rating' => 5,
+                'text' => 'The fixture review verifies the portable reviews template without external access.',
+                'author' => 'Fixture Customer',
+                'publishedDate' => '2026-07-15',
+            ]],
+        ];
+    }
 }
 
 final class PortableHarnessQuoteAdapter implements Twins\BrandExperience\QuoteAdapter
@@ -79,9 +95,16 @@ final class PortableHarnessQuoteAdapter implements Twins\BrandExperience\QuoteAd
 final class PortableHarnessBookingAdapter implements Twins\BrandExperience\BookingAdapter
 {
     public int $actionCalls = 0;
+    private bool $environmentModes;
+    public function __construct(bool $environmentModes = false) { $this->environmentModes = $environmentModes; }
     public function action(array $context): array
     {
         $this->actionCalls++;
+        if ($this->environmentModes) {
+            return ($context['environment'] ?? null) === 'production'
+                ? ['mode' => 'external', 'href' => 'https://example.invalid/book/', 'target' => '_blank', 'rel' => 'noopener noreferrer']
+                : ['mode' => 'dialog', 'experienceHtml' => '<div>fixture booking dialog</div>'];
+        }
         return ['mode' => 'fixture'];
     }
     public function assertReady(): void {}
@@ -146,7 +169,7 @@ try {
         )
     ));
     sort($publicMethods);
-    $expectedMethods = ['applicationAdapter', 'asset', 'assetHandles', 'bookingAdapter', 'markets', 'quoteAdapter', 'renderCareers', 'renderCatalog', 'renderContact', 'renderEditorial', 'renderFooter', 'renderHeader', 'renderHome', 'renderReviews', 'renderService', 'renderTeam', 'reviewCollection', 'route'];
+    $expectedMethods = ['applicationAdapter', 'asset', 'assetHandles', 'bookingAdapter', 'contextualRouteLabel', 'markets', 'quoteAdapter', 'renderCareers', 'renderCatalog', 'renderContact', 'renderEditorial', 'renderFooter', 'renderHeader', 'renderHome', 'renderReviews', 'renderService', 'renderTeam', 'reviewCollection', 'route'];
     sort($expectedMethods);
     $expect($publicMethods === $expectedMethods, 'portable Experience surface drift: ' . json_encode($publicMethods));
 
@@ -170,11 +193,12 @@ try {
         string $root,
         ?PortableHarnessQuoteAdapter $quote = null,
         ?PortableHarnessBookingAdapter $booking = null,
-        ?PortableHarnessRouteAdapter $routes = null
+        ?PortableHarnessRouteAdapter $routes = null,
+        ?PortableHarnessReviewsProvider $reviews = null
     ) use ($registry): array {
         $assets = new PortableHarnessAssetResolver();
         $routes = $routes ?? new PortableHarnessRouteAdapter($normalized);
-        $reviews = new PortableHarnessReviewsProvider();
+        $reviews = $reviews ?? new PortableHarnessReviewsProvider();
         $quote = $quote ?? new PortableHarnessQuoteAdapter();
         $booking = $booking ?? new PortableHarnessBookingAdapter();
         $applications = new PortableHarnessApplicationAdapter();
@@ -340,9 +364,15 @@ PHP;
     $expect($cleanOutput === 'clean-fixture' && $strayOutput === '', 'normalizer scenario leaked bytes');
 
     foreach (['staging', 'production'] as $environment) {
+        $environmentBooking = new PortableHarnessBookingAdapter(true);
+        $renderableReviews = new PortableHarnessReviewsProvider(true);
         [$actualExperience, , , , $actualQuote, $actualBooking] = $makeExperience(
             ['environment' => $environment, 'market' => 'main'],
-            dirname($argv[1])
+            dirname($argv[1]),
+            null,
+            $environmentBooking,
+            null,
+            $renderableReviews
         );
         foreach ($renderMethods as $method) $actualExperience->{$method}([]);
         $expect($actualQuote->actionCalls === 7 && $actualBooking->actionCalls === 1, 'regular templates did not render in ' . $environment);

@@ -6,7 +6,7 @@
 
 **Branch:** `codex/staging-site-safety`
 
-**Status:** `TASK_9_LOCAL_VERIFICATION_COMPLETE — LIVE DEPLOYMENT PENDING`
+**Status:** `REMOTE_PREFLIGHT_COMPLETE — ONE-TIME STAGING DEPLOYMENT PENDING`
 
 **Write authority:** `false`
 
@@ -20,22 +20,25 @@ experience, answer-first service pages, and the frozen local Clopay
 catalog/builder presentation.
 
 Task 9 adds the sealed, single-attempt staging release and read-only live
-verification layer. Nothing in this local phase was deployed to SiteGround,
-WordPress, or production. The private staging URL must not be presented as
+verification layer. The exact candidate has passed the PHP-enabled SiteGround
+preflight, but it has not yet been deployed into the private staging web root.
+Production remains untouched. The private staging URL must not be presented as
 updated until every live gate below is completed.
 
 ## Candidate identity
 
-- Local verification base: `40810b96` (`fix(staging): resolve navigation and contrast blockers`)
-- Task 9 local verification commit: the commit containing this handoff
+- Local verification base: `3ff2c2305482` (`fix(staging): verify uploaded host bundle root`)
+- Task 9 remote-preflight commit: the commit containing this handoff
 - Deployed commit: `PENDING`
 - Application identity: `https://danielj140.sg-host.com/`
 - Candidate deploy package SHA-256:
-  `1452014968413512edb23fbf70c2a7d08137d283dcd7d60e6c453f16a9d42603`
+  `c7ecfb396c829c08f62d1b7fb4eab63ad44e1b849d49a2d622b18bfde3884aaf`
 - Candidate prerequisite-set SHA-256:
   `dadf04d0f2df09f7722451f6fb740ee66640247f781b9aaebf9a49598f9c5a77`
 - Candidate host-verification SHA-256:
-  `d02113f4da07db501dcbfd12aab6cb460dfe3ee9781d266f82b362e2a9917a7f`
+  `42e611d3bcd5758ed28c64094729075921d3532e2e1a8e71c79c1ba935f0c8bc`
+- Candidate manifest SHA-256:
+  `5c573314c8f9e1dfedae7d20f59652cd359dbcbd9c6d55e71b7abdb183e1d656`
 - Deployed package identity: `PENDING — must be captured from the one successful deployment`
 
 ## Exact live verification matrix
@@ -98,11 +101,18 @@ Current live evidence: `PENDING`
   `PRIVATE_STAGING_CRAWL_SKIPPED`,
   `writeAuthority:false`, `productionWriteAuthority:false`,
   `stagingMutation:false`.
-- Deployment dry-run without transport authority failed closed as
-  `TRANSPORT_CONFIGURATION_REQUIRED`; no network or host access occurred.
+- Temporary staging-only SSH identity was accepted for the fixed staging host;
+  the independently confirmed host-key fingerprint is
+  `SHA256:HlFY3XZvLg3jVR6hUb/G5YQzCs81HtAc1+XvqSRbPo4`.
+- PHP 8.2 SiteGround host verification: **passed** for the portable core,
+  renderer contracts, review codec, 21 deployment-safety scenarios, foundation,
+  overhaul, builder, cost, bootstrap, all 20 renderer scenarios, owned brand
+  assets, adapters, legacy image isolation, Illinois provisioning, chrome
+  transition, and WordPress safety report.
+- Fixed-target remote dry-run: `PRIVATE_STAGING_DRY_RUN_PASSED`,
+  `writeAuthority:false`, `productionWriteAuthority:false`.
 
-The PHP-backed host verification, remote dry-run, live browser matrix, and live
-crawler remain pending.
+The one-time deployment, live browser matrix, and live crawler remain pending.
 
 ## Release safety implemented
 
@@ -149,24 +159,26 @@ The full disposition is recorded in
 
 ## Remaining live gates
 
-All items below are still pending:
+Completed live prerequisites:
 
-1. Create one temporary staging-only SSH key.
-2. Import only its public key into SiteGround.
-3. Confirm the SSH fingerprint through approved SiteGround evidence.
-4. Run the remote staging dry-run and PHP-enabled host verification.
-5. Capture the exact expected-old staging release.
-6. Deploy the tested candidate exactly once with no automatic retry.
-7. If the attempt conflicts or is indeterminate, stop; do not retry.
-8. Purge only the private staging cache.
-9. Run the authenticated 63-visit Playwright matrix.
-10. Run the authenticated 63-visit crawler and capture the 36 success
+1. Created and imported one temporary staging-only SSH key.
+2. Confirmed the fixed staging host fingerprint.
+3. Ran the full PHP-enabled remote preflight successfully.
+
+Remaining live gates:
+
+1. Capture the exact expected-old staging release.
+2. Deploy the tested candidate exactly once with no automatic retry.
+3. If the attempt conflicts or is indeterminate, stop; do not retry.
+4. Purge only the private staging cache.
+5. Run the authenticated 63-visit Playwright matrix.
+6. Run the authenticated 63-visit crawler and capture the 36 success
     screenshots.
-11. Record package identity, test output, and evidence paths here.
-12. Remove the public key from SiteGround and delete the temporary local key.
-13. Confirm the private staging site remains protected by HTTP Basic
+7. Record package identity, test output, and evidence paths here.
+8. Remove the public key from SiteGround and delete the temporary local key.
+9. Confirm the private staging site remains protected by HTTP Basic
     Authentication.
-14. Perform owner visual review before any separate production-publication
+10. Perform owner visual review before any separate production-publication
     plan is considered.
 
 `TWINS_STAGE_USER` and `TWINS_STAGE_PASSWORD` must be supplied only through the
@@ -175,9 +187,10 @@ screenshots, test artifacts, or logs.
 
 ## Safety boundary
 
-The local Task 9 work did not access SiteGround, WordPress administration, DNS,
-production hosting, forms, booking, email, SMS, leads, analytics destinations,
-or other production integrations.
+The remote preflight accessed only the fixed private-staging SSH transaction
+directory and read-only verification inputs. It did not modify the staging web
+root, access WordPress administration, change DNS, or contact forms, booking,
+email, SMS, leads, analytics destinations, or other production integrations.
 
 Production pages, files, database state, menus, DNS, submissions, email, leads,
 booking, and integrations remain unchanged by this local phase. Final live
