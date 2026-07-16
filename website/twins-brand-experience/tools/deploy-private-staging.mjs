@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const APPLICATION_IDENTITY = 'https://danielj140.sg-host.com/';
 const WEB_ROOT = '/home/customer/www/danielj140.sg-host.com/public_html';
-const TRANSACTION_ROOT = '/home/customer/staging-safety/brand-wide-20260715';
+const TRANSACTION_ROOT = '/home/customer/staging-safety/staging-unification-20260716';
 const SSH_PORT = '18765';
 const allowed = new Set(['--dry-run', '--capture-expected-old', '--deploy', '--rollback']);
 const operation = process.argv[2] || '';
@@ -31,9 +31,10 @@ let keyStat;
 try { keyStat = fs.lstatSync(key); } catch { finish('TRANSPORT_KEY_UNAVAILABLE', 1); }
 if (!keyStat.isFile() || keyStat.isSymbolicLink()) finish('TRANSPORT_KEY_INVALID', 1);
 
-const stateRoot = path.join(root, 'dist/.staging-deploy');
+const stateRoot = path.join(root, 'dist/.staging-deploy/staging-unification-20260716');
 const knownHosts = path.join(stateRoot, 'known_hosts');
 const transportState = path.join(stateRoot, 'transport.json');
+const deployAttempt = path.join(stateRoot, 'deploy-attempt.json');
 const targetHash = crypto.createHash('sha256').update(target).digest('hex');
 const host = target.slice(target.indexOf('@') + 1);
 
@@ -45,12 +46,75 @@ function run(command, args, options = {}) {
     input: options.input,
     maxBuffer: 1024 * 1024,
   });
-  if (result.status !== 0) finish(options.failure || 'TRANSPORT_OPERATION_FAILED', 1);
-  return result.stdout || '';
+  const stdout = typeof result.stdout === 'string' ? result.stdout : '';
+  const stderr = typeof result.stderr === 'string' ? result.stderr : '';
+  const keyscanCommentsOnly = options.stderrPolicy === 'keyscan-comments' &&
+    stderr.trim().split(/\r?\n/).every(line => line.startsWith('# '));
+  if (result.error || result.signal || result.status !== 0 ||
+      (stderr.trim() !== '' && !keyscanCommentsOnly)) {
+    finish(options.failure || 'TRANSPORT_OPERATION_FAILED', 1);
+  }
+  return stdout;
+}
+
+function readRegularText(file, failure) {
+  let stat;
+  try { stat = fs.lstatSync(file); } catch { finish(failure, 1); }
+  if (!stat.isFile() || stat.isSymbolicLink() || stat.size < 1 || stat.size > 1024 * 1024) finish(failure, 1);
+  try { return fs.readFileSync(file, 'utf8'); } catch { finish(failure, 1); }
+}
+
+function packageIdentity() {
+  let metadata;
+  const metadataBytes = readRegularText(
+    path.join(root, 'dist/staging-runtime/package-metadata.json'),
+    'PACKAGE_IDENTITY_INVALID',
+  );
+  const manifestPath = path.join(root, 'dist/staging-runtime/staging-runtime.json');
+  const manifestBytes = readRegularText(manifestPath, 'PACKAGE_IDENTITY_INVALID');
+  try { metadata = JSON.parse(metadataBytes); } catch { finish('PACKAGE_IDENTITY_INVALID', 1); }
+  const hashes = ['deployPackageSha256', 'prerequisiteSetSha256', 'hostVerificationSha256'];
+  if (!metadata || Array.isArray(metadata) || metadata.schemaVersion !== 1 ||
+      metadata.productionWriteAuthority !== false ||
+      !hashes.every(name => typeof metadata[name] === 'string' && /^[a-f0-9]{64}$/.test(metadata[name]))) {
+    finish('PACKAGE_IDENTITY_INVALID', 1);
+  }
+  return {
+    manifestSha256: crypto.createHash('sha256').update(manifestBytes).digest('hex'),
+    deployPackageSha256: metadata.deployPackageSha256,
+    prerequisiteSetSha256: metadata.prerequisiteSetSha256,
+    hostVerificationSha256: metadata.hostVerificationSha256,
+  };
+}
+
+function validateRemoteReport(stdout, expectedStatus, expectedOperation, identity) {
+  let report;
+  try { report = JSON.parse(stdout.trim()); } catch { finish('REMOTE_RESULT_INVALID', 1); }
+  const expected = {
+    status: expectedStatus,
+    operation: expectedOperation,
+    applicationIdentity: APPLICATION_IDENTITY,
+    environment: 'staging',
+    manifestSha256: identity.manifestSha256,
+    deployPackageSha256: identity.deployPackageSha256,
+    prerequisiteSetSha256: identity.prerequisiteSetSha256,
+    writeAuthority: false,
+    productionWriteAuthority: false,
+  };
+  if (!report || Array.isArray(report) ||
+      JSON.stringify(Object.keys(report).sort()) !== JSON.stringify(Object.keys(expected).sort()) ||
+      Object.entries(expected).some(([name, value]) => report[name] !== value)) {
+    finish('REMOTE_RESULT_INVALID', 1);
+  }
+  return report;
 }
 
 function verifyHostKey() {
-  const scanned = run('ssh-keyscan', ['-p', SSH_PORT, '-T', '8', host], { failure: 'HOST_KEY_SCAN_FAILED', timeout: 15000 });
+  const scanned = run('ssh-keyscan', ['-p', SSH_PORT, '-T', '8', host], {
+    failure: 'HOST_KEY_SCAN_FAILED',
+    timeout: 15000,
+    stderrPolicy: 'keyscan-comments',
+  });
   const lines = scanned.split(/\r?\n/).filter(line => line && !line.startsWith('#'));
   const matching = [];
   for (const line of lines) {
@@ -62,18 +126,41 @@ function verifyHostKey() {
   fs.writeFileSync(knownHosts, `${matching[0]}\n`, { mode: 0o600 });
 }
 
+run(process.execPath, [path.join(root, 'tools/build-packages.mjs'), '--check'], {
+  failure: 'PACKAGE_CHECK_FAILED',
+  timeout: 180000,
+});
+const identity = packageIdentity();
 verifyHostKey();
 if (operation === '--dry-run') {
   if (fs.existsSync(transportState)) finish('TRANSPORT_STATE_ALREADY_EXISTS', 1);
 } else {
   let state;
   try { state = JSON.parse(fs.readFileSync(transportState, 'utf8')); } catch { finish('TRANSPORT_DRY_RUN_REQUIRED', 1); }
-  if (state.targetSha256 !== targetHash || state.hostKeySha256 !== fingerprint || state.sshPort !== SSH_PORT) {
+  if (state.targetSha256 !== targetHash || state.hostKeySha256 !== fingerprint || state.sshPort !== SSH_PORT ||
+      state.manifestSha256 !== identity.manifestSha256 ||
+      state.deployPackageSha256 !== identity.deployPackageSha256 ||
+      state.prerequisiteSetSha256 !== identity.prerequisiteSetSha256 ||
+      state.hostVerificationSha256 !== identity.hostVerificationSha256) {
     finish('TRANSPORT_IDENTITY_DRIFT', 1);
   }
 }
 
-run(process.execPath, [path.join(root, 'tools/build-packages.mjs'), '--check'], { failure: 'PACKAGE_CHECK_FAILED', timeout: 180000 });
+if (operation === '--deploy') {
+  try {
+    fs.writeFileSync(deployAttempt, `${JSON.stringify({
+      schemaVersion: 1,
+      transactionRoot: TRANSACTION_ROOT,
+      targetSha256: targetHash,
+      hostKeySha256: fingerprint,
+      ...identity,
+      writeAuthority: false,
+      productionWriteAuthority: false,
+    }, null, 2)}\n`, { mode: 0o600, flag: 'wx' });
+  } catch (error) {
+    finish(error && error.code === 'EEXIST' ? 'DEPLOY_ATTEMPT_ALREADY_RECORDED' : 'DEPLOY_ATTEMPT_RECORD_FAILED', 1);
+  }
+}
 
 const transportOptions = [
   '-i', key,
@@ -97,20 +184,29 @@ const remoteCommand = op => `php '${remoteScript}' '${op}'`;
 if (operation === '--dry-run') {
   run('ssh', [...sshOptions, target, `mkdir -p '${TRANSACTION_ROOT}' && chmod 700 '${TRANSACTION_ROOT}' && rm -rf '${TRANSACTION_ROOT}/verification.incoming'`], { failure: 'REMOTE_PREFLIGHT_FAILED' });
   run('scp', [...scpOptions, '-r', path.join(root, 'dist/host-verification'), `${target}:${TRANSACTION_ROOT}/verification.incoming`], { failure: 'VERIFICATION_UPLOAD_FAILED' });
-  run('ssh', [...sshOptions, target, `rm -rf '${TRANSACTION_ROOT}/verification' && mv '${TRANSACTION_ROOT}/verification.incoming' '${TRANSACTION_ROOT}/verification' && ${remoteCommand(operation)}`], { failure: 'REMOTE_DRY_RUN_FAILED' });
-  fs.writeFileSync(transportState, `${JSON.stringify({ targetSha256: targetHash, hostKeySha256: fingerprint, sshPort: SSH_PORT }, null, 2)}\n`, { mode: 0o600 });
-  finish('PRIVATE_STAGING_DRY_RUN_PASSED');
+  const stdout = run('ssh', [...sshOptions, target, `rm -rf '${TRANSACTION_ROOT}/verification' && mv '${TRANSACTION_ROOT}/verification.incoming' '${TRANSACTION_ROOT}/verification' && ${remoteCommand(operation)}`], { failure: 'REMOTE_DRY_RUN_FAILED' });
+  const report = validateRemoteReport(stdout, 'PRIVATE_STAGING_DRY_RUN_PASSED', operation, identity);
+  fs.writeFileSync(transportState, `${JSON.stringify({
+    targetSha256: targetHash,
+    hostKeySha256: fingerprint,
+    sshPort: SSH_PORT,
+    ...identity,
+  }, null, 2)}\n`, { mode: 0o600 });
+  finish('PRIVATE_STAGING_DRY_RUN_PASSED', 0, report);
 }
 
 if (operation === '--deploy') {
   run('ssh', [...sshOptions, target, `rm -rf '${TRANSACTION_ROOT}/candidate.incoming' '${TRANSACTION_ROOT}/verification.incoming'`], { failure: 'REMOTE_UPLOAD_PREP_FAILED' });
   run('scp', [...scpOptions, '-r', path.join(root, 'dist/staging-runtime'), `${target}:${TRANSACTION_ROOT}/candidate.incoming`], { failure: 'CANDIDATE_UPLOAD_FAILED' });
   run('scp', [...scpOptions, '-r', path.join(root, 'dist/host-verification'), `${target}:${TRANSACTION_ROOT}/verification.incoming`], { failure: 'VERIFICATION_UPLOAD_FAILED' });
-  run('ssh', [...sshOptions, target, `rm -rf '${TRANSACTION_ROOT}/candidate' '${TRANSACTION_ROOT}/verification' && mv '${TRANSACTION_ROOT}/candidate.incoming' '${TRANSACTION_ROOT}/candidate' && mv '${TRANSACTION_ROOT}/verification.incoming' '${TRANSACTION_ROOT}/verification' && ${remoteCommand(operation)}`], { failure: 'REMOTE_DEPLOY_FAILED' });
-  finish('PRIVATE_STAGING_DEPLOYED');
+  const stdout = run('ssh', [...sshOptions, target, `rm -rf '${TRANSACTION_ROOT}/candidate' '${TRANSACTION_ROOT}/verification' && mv '${TRANSACTION_ROOT}/candidate.incoming' '${TRANSACTION_ROOT}/candidate' && mv '${TRANSACTION_ROOT}/verification.incoming' '${TRANSACTION_ROOT}/verification' && ${remoteCommand(operation)}`], { failure: 'REMOTE_DEPLOY_FAILED' });
+  const report = validateRemoteReport(stdout, 'PRIVATE_STAGING_DEPLOYED', operation, identity);
+  finish('PRIVATE_STAGING_DEPLOYED', 0, report);
 }
 
-run('ssh', [...sshOptions, target, remoteCommand(operation)], {
+const stdout = run('ssh', [...sshOptions, target, remoteCommand(operation)], {
   failure: operation === '--rollback' ? 'REMOTE_ROLLBACK_FAILED' : 'EXPECTED_OLD_CAPTURE_FAILED',
 });
-finish(operation === '--rollback' ? 'PRIVATE_STAGING_ROLLED_BACK' : 'EXPECTED_OLD_CAPTURED');
+const finalStatus = operation === '--rollback' ? 'PRIVATE_STAGING_ROLLED_BACK' : 'EXPECTED_OLD_CAPTURED';
+const report = validateRemoteReport(stdout, finalStatus, operation, identity);
+finish(finalStatus, 0, report);

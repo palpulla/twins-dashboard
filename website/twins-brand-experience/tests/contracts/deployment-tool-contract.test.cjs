@@ -7,6 +7,9 @@ const test = require('node:test');
 const root = path.resolve(__dirname, '../..');
 const nodeTool = path.join(root, 'tools/deploy-private-staging.mjs');
 const phpTool = path.join(root, 'tools/private-staging-deploy.php');
+const phpHarness = path.join(root, 'tests/php/private-staging-deploy-harness.php');
+const phpHarnessRegistry = path.join(root, 'tests/php-harnesses.test.cjs');
+const releaseRoot = '/home/customer/staging-safety/staging-unification-20260716';
 
 test('deployment CLI accepts only four fixed operations and no caller-selected target fields', () => {
   for (const invalid of ['--host=x', '--port=22', '--root=/tmp/x', '--manifest=x', '--expected-old=x', '--retry=2', '--deploy=x']) {
@@ -34,8 +37,183 @@ test('deployment source fixes application identity, paths, safe transport, and o
   assert.match(nodeSource, /const scpOptions = \[\s*'-P', SSH_PORT,/);
   assert.doesNotMatch(nodeSource, /TWINS_STAGE_SSH_PORT/);
   assert.match(nodeSource, /shell:\s*false/);
+  assert.equal(nodeSource.includes(releaseRoot), true);
+  assert.equal(phpSource.includes(releaseRoot), true);
+  assert.doesNotMatch(combined, /brand-wide-20260715/);
+  assert.match(nodeSource, /dist\/\.staging-deploy\/staging-unification-20260716/);
+  assert.match(nodeSource, /DEPLOY_ATTEMPT_ALREADY_RECORDED/);
+  assert.match(nodeSource, /flag:\s*'wx'/);
+  assert.match(nodeSource, /REMOTE_RESULT_INVALID/);
+  assert.match(nodeSource, /validateRemoteReport/);
+  assert.match(nodeSource, /manifestSha256/);
+  assert.match(nodeSource, /deployPackageSha256/);
+  assert.match(nodeSource, /prerequisiteSetSha256/);
+  assert.match(nodeSource, /trim\(\$?\w*stderr\)\s*!==\s*''|stderr\.trim\(\)\s*!==\s*''/);
+  assert.match(phpSource, /DEPLOY_ATTEMPT_ALREADY_RECORDED/);
+  assert.match(phpSource, /fopen\([^,]+,\s*'x'\)/);
   assert.doesNotMatch(combined, /twinsgaragedoors\.com|wp-config|ALTER\s+TABLE|UPDATE\s+wp_/i);
   assert.doesNotMatch(combined, /for\s*\([^)]*(?:retry|attempt)|while\s*\([^)]*(?:retry|attempt)/i);
+});
+
+test('subsequent release captures existing fixed targets and remains exact-CAS, closed, and rollback-safe', () => {
+  const phpSource = fs.readFileSync(phpTool, 'utf8');
+  const harnessSource = fs.readFileSync(phpHarness, 'utf8');
+  const registrySource = fs.readFileSync(phpHarnessRegistry, 'utf8');
+  assert.doesNotMatch(phpSource, /UNEXPECTED_EXISTING_CORE/);
+  assert.match(phpSource, /\$names !== \['twins-brand-experience', 'twins-staging-overhaul'\]/);
+  assert.match(phpSource, /CANDIDATE_EMPTY/);
+  assert.match(phpSource, /CANDIDATE_NOT_CLOSED/);
+  assert.match(phpSource, /EXPECTED_OLD_CONFLICT/);
+  assert.equal(
+    (phpSource.match(/\$this->assertExpectedOldCurrent\(\$snapshot\);/g) || []).length >= 2,
+    true,
+    'deploy must repeat the expected-old CAS immediately before mutation',
+  );
+  assert.match(phpSource, /\$mutationStarted\s*=\s*false/);
+  assert.match(phpSource, /\$activationProgress/);
+  assert.match(phpSource, /'unprocessed'/);
+  assert.match(phpSource, /'backed-up'/);
+  assert.match(phpSource, /'activated'/);
+  assert.match(phpSource, /assertActivationEnvelope/);
+  assert.match(phpSource, /after-backup/);
+  assert.match(phpSource, /call_user_func\(\$this->activationProbe\);[\s\S]{0,120}\$this->assertCurrentMatchesCandidate\(\$manifest\);/);
+  assert.match(phpSource, /\$this->assertCurrentMatchesCandidate\(\$manifest\);[\s\S]{0,160}\$this->restoreSnapshot\(\$snapshot\);/);
+  assert.match(phpSource, /ROLLBACK_CONFLICT/);
+  assert.match(phpSource, /ROLLBACK_ARCHIVE_DRIFT/);
+  assert.match(phpSource, /ROLLBACK_VERIFY_FAILED/);
+  assert.match(phpSource, /verifyCandidatePhp\(\)/);
+  assert.match(phpSource, /twins-brand-experience\/bootstrap\.php/);
+  assert.match(phpSource, /expected old core/);
+  for (const scenario of [
+    'existing-core-capture',
+    'existing-core-install',
+    'expected-old-drift',
+    'late-expected-old-drift',
+    'second-deploy-conflict',
+    'rollback-existing-core',
+    'rollback-drift',
+    'incoming-copy-failure',
+    'incoming-copy-drift',
+    'partial-activation-failure',
+    'activation-deletion-drift',
+    'activation-success-drift',
+    'activation-failure-drift',
+    'empty-candidate',
+    'candidate-not-closed',
+    'target-set-invalid',
+  ]) {
+    assert.equal(harnessSource.includes(scenario) || phpSource.includes(scenario), true, `${scenario} harness branch missing`);
+    assert.equal(registrySource.includes(`'${scenario}'`), true, `${scenario} is not registered`);
+  }
+});
+
+test('remote dry-run lints the fixed deploy tooling and executes every fixed PHP harness scenario', () => {
+  const phpSource = fs.readFileSync(phpTool, 'utf8');
+  const harnessSource = fs.readFileSync(phpHarness, 'utf8');
+  const registrySource = fs.readFileSync(phpHarnessRegistry, 'utf8');
+  const scenarioBlock = phpSource.match(/private const HOST_VERIFICATION_SCENARIOS = \[([\s\S]*?)\];/);
+  const harnessBlock = harnessSource.match(/\$allowed = \[([\s\S]*?)\];/);
+  assert.notEqual(scenarioBlock, null);
+  assert.notEqual(harnessBlock, null);
+  assert.match(phpSource, /\$operation === '--dry-run'[\s\S]{0,240}\$this->verifyHostTooling\(\)/);
+  assert.match(phpSource, /foreach\s*\(\$this->listTree\(\$verificationRoot\)/);
+  assert.match(phpSource, /PHP_BINARY,\s*'-l',\s*\$verificationRoot\s*\.\s*'\/'\s*\.\s*\$relative/);
+  assert.match(phpSource, /function runPhpExact\(/);
+  assert.match(phpSource, /trim\(\$stdout\)\s*!==\s*\$expected/);
+  assert.match(phpSource, /function runPhpJson\(/);
+  assert.match(phpSource, /function verifyBootstrapReport\(/);
+  assert.match(phpSource, /function verifyWordPressReport\(/);
+  assert.match(phpSource, /self::MAX_FILE_SIZE\s*\+\s*1/);
+  assert.match(phpSource, /trim\(\$stderr\)\s*!==\s*''/);
+  for (const scenario of [
+    'dry-run',
+    'existing-core-capture',
+    'existing-core-install',
+    'prerequisite-drift',
+    'expected-old-drift',
+    'late-expected-old-drift',
+    'second-deploy-conflict',
+    'empty-candidate',
+    'candidate-not-closed',
+    'incoming-copy-failure',
+    'incoming-copy-drift',
+    'partial-activation-failure',
+    'activation-deletion-drift',
+    'activation-success-drift',
+    'target-set-invalid',
+    'core-boot-failure',
+    'activation-failure',
+    'activation-failure-drift',
+    'rollback-existing-core',
+    'rollback-drift',
+    'non-regular-rejected',
+  ]) {
+    assert.equal(scenarioBlock[1].includes(`'${scenario}'`), true, `${scenario} is missing from remote dry-run`);
+    assert.equal(harnessBlock[1].includes(`'${scenario}'`), true, `${scenario} is missing from remote harness`);
+    assert.equal(registrySource.includes(`'${scenario}'`), true, `${scenario} is missing from local registry`);
+  }
+  for (const fixedHarness of [
+    'portable-core-harness.php',
+    'renderer-contract-harness.php',
+    'review-codec-harness.php',
+    'staging-overhaul-foundation-harness.php',
+    'staging-overhaul-harness.php',
+    'staging-overhaul-builder-harness.php',
+    'staging-overhaul-cost-harness.php',
+    'staging-overhaul-bootstrap-harness.php',
+    'staging-overhaul-renderers-harness.php',
+    'staging-overhaul-brand-asset-harness.php',
+    'staging-brand-adapters-harness.php',
+    'staging-legacy-image-srcset-harness.php',
+    'staging-il-provision-harness.php',
+    'staging-chrome-transition-harness.php',
+    'wordpress-harness.php',
+  ]) {
+    assert.equal(phpSource.includes(fixedHarness), true, `${fixedHarness} is absent from remote dry-run`);
+  }
+  for (const fixedTool of ['staging-il-provision.php', 'staging-chrome-transition.php']) {
+    assert.equal(phpSource.includes(fixedTool), true, `${fixedTool} is absent from remote dry-run`);
+  }
+  for (const scenario of [
+    'valid',
+    'bad-record-hash',
+    'bad-source-hash',
+    'bad-record-count',
+    'bad-business-url',
+    'bad-source-record-url',
+    'impossible-date',
+    'stale',
+    'short',
+    'relative-date',
+    'missingEnvironment',
+    'wrongEnvironment',
+    'missingSafetyFlag',
+    'falseSafetyFlag',
+    'missingCronDisable',
+    'falseCronDisable',
+    'routes',
+    'asset-versions',
+    'hooks',
+    'blog-index',
+    'campaign',
+    'family-once',
+    'path-contact-context',
+    'service-brand-chrome',
+    'catalog-brand-chrome',
+    'home-brand',
+    'team-brand',
+    'careers-brand',
+    'reviews-brand',
+    'contact-brand',
+    'ineligible',
+    'article',
+    'unknown-blog',
+    'elementor-theme-content',
+    'elementor-document-content',
+    'legacy-location-document',
+  ]) {
+    assert.equal(phpSource.includes(`'${scenario}'`), true, `${scenario} is absent from remote dry-run matrix`);
+  }
 });
 
 test('missing transport secrets fails closed without revealing values', () => {

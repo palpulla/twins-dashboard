@@ -47,12 +47,25 @@ for (const scenario of reviewScenarios) {
 
 const deploymentScenarios = [
   'dry-run',
-  'absent-core-install',
+  'existing-core-capture',
+  'existing-core-install',
   'prerequisite-drift',
-  'unexpected-core',
+  'expected-old-drift',
+  'late-expected-old-drift',
+  'second-deploy-conflict',
+  'empty-candidate',
+  'candidate-not-closed',
+  'incoming-copy-failure',
+  'incoming-copy-drift',
+  'partial-activation-failure',
+  'activation-deletion-drift',
+  'activation-success-drift',
+  'target-set-invalid',
   'core-boot-failure',
   'activation-failure',
-  'rollback-absent-core',
+  'activation-failure-drift',
+  'rollback-existing-core',
+  'rollback-drift',
   'non-regular-rejected',
 ];
 for (const scenario of deploymentScenarios) {

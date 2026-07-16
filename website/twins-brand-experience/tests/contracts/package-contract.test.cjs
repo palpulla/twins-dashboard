@@ -59,8 +59,25 @@ test('host verification manifest is separate, closed, and non-deployable', () =>
   const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifests/host-verification.json'), 'utf8'));
   assert.equal(manifest.schemaVersion, 1);
   assert.equal(manifest.productionWriteAuthority, false);
-  assert.equal(manifest.remoteDirectory, '/home/customer/staging-safety/brand-wide-20260715/verification/');
+  assert.equal(manifest.remoteDirectory, '/home/customer/staging-safety/staging-unification-20260716/verification/');
   assert.equal(manifest.files.some(file => file.source.endsWith('private-staging-deploy-harness.php')), true);
   assert.equal(manifest.files.some(file => file.source.endsWith('private-staging-deploy.php')), true);
+  for (const required of [
+    'staging-safety/tools/staging-il-provision.php',
+    'staging-safety/tools/staging-chrome-transition.php',
+    'staging-safety/mu-plugins/twins-staging-assets/clopay-products.json',
+    'staging-safety/tests/staging-il-provision-harness.php',
+    'staging-safety/tests/staging-chrome-transition-harness.php',
+    'staging-safety/tests/wordpress-harness.php',
+    'twins-brand-experience/assets/css/twins-brand.css',
+    'twins-brand-experience/assets/css/twins-brand-families.css',
+    'twins-brand-experience/assets/js/twins-brand.js',
+    'twins-brand-experience/assets/js/twins-builder.js',
+    'twins-brand-experience/tests/php/portable-core-harness.php',
+    'twins-brand-experience/tests/php/renderer-contract-harness.php',
+    'twins-brand-experience/tests/php/review-codec-harness.php',
+  ]) {
+    assert.equal(manifest.files.some(file => file.source === required), true, `${required} is missing from host verification`);
+  }
   manifest.files.forEach(entry => verifyEntry(entry, false));
 });
