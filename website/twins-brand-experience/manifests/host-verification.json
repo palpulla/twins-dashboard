@@ -229,7 +229,7 @@
       "role": "verify",
       "source": "twins-brand-experience/manifests/staging-runtime.json",
       "size": 356029,
-      "sha256": "c3cefb124c6eb9558d13eabfe1d4b15bdc92cd404a18cf2c092a76ac3f6ea903"
+      "sha256": "0b993e52e9a16fbe29d8374450cd750d00ee587eec0803b88d1240e59a282103"
     },
     {
       "role": "verify",
