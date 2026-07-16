@@ -1,8 +1,8 @@
 # Claude Content Integration Review
 
-Date: 2026-07-16  
-Account: `CHATGPT_PROFILE_1`  
-Target branch: `codex/staging-site-safety`  
+Date: 2026-07-16
+Account: `CHATGPT_PROFILE_1`
+Target branch: `codex/staging-site-safety`
 Claude review branch: `claude/staging-content-aeo`
 
 ## Outcome
@@ -80,7 +80,7 @@ classifier at Claude's base contains 15 fixed classifications:
 
 - 5 brand classifications;
 - 9 other chrome-enabled classifications; and
-- 1 no-chrome legal classification.
+- 1 no-chrome campaign-preserve classification.
 
 The proposed shared-header test also hard-codes `known.length === 16`, so its
 first failure is the wrong route-count assertion instead of the intended header
