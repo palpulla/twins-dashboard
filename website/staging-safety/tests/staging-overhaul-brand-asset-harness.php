@@ -85,7 +85,9 @@ $temporaryRoot = sys_get_temp_dir() . '/twins-overhaul-brand-assets-' . bin2hex(
 $rendererDirectory = $temporaryRoot . '/staging-safety/mu-plugins/twins-staging-overhaul';
 $assetRoot = $temporaryRoot . '/twins-brand-experience';
 $cssPath = $assetRoot . '/assets/css/twins-brand.css';
+$familyCssPath = $assetRoot . '/assets/css/twins-brand-families.css';
 $scriptPath = $assetRoot . '/assets/js/twins-brand.js';
+$builderScriptPath = $assetRoot . '/assets/js/twins-builder.js';
 $rendererPath = $rendererDirectory . '/renderers.php';
 
 try {
@@ -95,9 +97,13 @@ try {
     twins_overhaul_brand_asset_assert(copy($argv[1], $rendererPath), 'renderer source was not copied');
 
     $cssBytes = "body{color:#123456}\n";
+    $familyCssBytes = "body.route{color:#234567}\n";
     $scriptBytes = "window.TwinsBrandTest=true;\n";
+    $builderScriptBytes = "window.TwinsBuilderTest=true;\n";
     twins_overhaul_brand_asset_assert(file_put_contents($cssPath, $cssBytes) === strlen($cssBytes), 'temporary CSS was not written');
+    twins_overhaul_brand_asset_assert(file_put_contents($familyCssPath, $familyCssBytes) === strlen($familyCssBytes), 'temporary family CSS was not written');
     twins_overhaul_brand_asset_assert(file_put_contents($scriptPath, $scriptBytes) === strlen($scriptBytes), 'temporary script was not written');
+    twins_overhaul_brand_asset_assert(file_put_contents($builderScriptPath, $builderScriptBytes) === strlen($builderScriptBytes), 'temporary builder script was not written');
 
     require $rendererPath;
 
@@ -108,6 +114,14 @@ try {
     twins_overhaul_brand_asset_assert(
         twins_overhaul_brand_asset_version('assets/js/twins-brand.js') === substr(hash('sha256', $scriptBytes), 0, 16),
         'script version is not the independent SHA-256 prefix'
+    );
+    twins_overhaul_brand_asset_assert(
+        twins_overhaul_brand_asset_version('assets/css/twins-brand-families.css') === substr(hash('sha256', $familyCssBytes), 0, 16),
+        'family CSS version is not the independent SHA-256 prefix'
+    );
+    twins_overhaul_brand_asset_assert(
+        twins_overhaul_brand_asset_version('assets/js/twins-builder.js') === substr(hash('sha256', $builderScriptBytes), 0, 16),
+        'builder script version is not the independent SHA-256 prefix'
     );
 
     foreach (['', '../assets/css/twins-brand.css', '/assets/css/twins-brand.css', 'assets/css/twins-brand.css?x=1'] as $unsafePath) {

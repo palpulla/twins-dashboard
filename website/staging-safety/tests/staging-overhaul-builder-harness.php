@@ -42,12 +42,20 @@ function builder_assert(bool $condition, string $message): void {
     if (!$condition) throw new RuntimeException($message);
 }
 
-if ($argc !== 2 || !is_dir($argv[1])) {
+if ($argc !== 3 || !is_dir($argv[1]) || !is_dir($argv[2])) {
     fwrite(STDERR, "STAGING_OVERHAUL_BUILDER_PACKAGE_MISSING\n");
     exit(2);
 }
 
 require $argv[1] . '/templates/builder.php';
+$builderScript = @file_get_contents($argv[2] . '/assets/js/twins-builder.js');
+builder_assert(is_string($builderScript) && $builderScript !== '', 'portable builder script missing');
+builder_assert(strpos($builderScript, "['330', '320', '30', '29', '240', '26', '170', '340', '12', '16', '290', '370'") !== false, 'fixed builder order missing');
+builder_assert(strpos($builderScript, 'BUILDER_LOCAL_IMAGE') !== false, 'local builder image boundary missing');
+builder_assert(strpos($builderScript, 'data-builder-enhanced') !== false, 'builder enhancement marker missing');
+builder_assert(strpos($builderScript, 'Manufacturer reference only.') !== false, 'builder manufacturer truth missing');
+builder_assert(!preg_match('/\b(?:fetch|XMLHttpRequest|WebSocket|EventSource|sendBeacon|requestSubmit|localStorage|sessionStorage|indexedDB)\b|\.submit\s*\(/', $builderScript), 'builder script has prohibited authority');
+builder_assert(!preg_match('/ZIP_ROUTES|initZip|initMenu|initPreservedForms|initReveal|TwinsOverhaulPreview/', $builderScript), 'builder script contains unrelated legacy behavior');
 
 $catalog = twins_overhaul_builder_catalog();
 builder_assert(($catalog['schemaVersion'] ?? null) === 1, 'catalog schema mismatch');
@@ -58,6 +66,12 @@ foreach ($phones as $blogId => $phone) {
     $GLOBALS['twins_builder_blog_id'] = $blogId;
     $markup = twins_overhaul_render_builder(array('phone' => '(000) 000-0000', 'base' => '/spoof/'));
     builder_assert(preg_match_all('/<h1\b/i', $markup) === 1, 'builder must have one H1 for blog ' . $blogId);
+    builder_assert(strpos($markup, 'class="twins-brand-page twins-overhaul-main twins-builder-page"') !== false, 'shared brand page shell missing');
+    builder_assert(strpos($markup, 'Frozen Clopay builder') !== false, 'frozen builder eyebrow missing');
+    builder_assert(strpos($markup, 'fixed local 23-product catalog') !== false, 'bounded builder lead missing');
+    builder_assert(strpos($markup, 'twins-builder__notice') === false, 'large debug-style builder notice survived');
+    builder_assert(strpos($markup, 'Manufacturer reference only.') !== false, 'manufacturer truth missing');
+    builder_assert(strpos($markup, 'This private staging preview does not submit or store lead information.') !== false, 'compact staging preview note missing');
     builder_assert(strpos($markup, $phone) !== false, 'fixed phone missing for blog ' . $blogId);
     builder_assert(strpos($markup, '(000) 000-0000') === false && strpos($markup, '/spoof/') === false, 'spoofed context trusted');
     foreach (array('Collection','Design','Color','Windows','Glass','Hardware','Summary','Contact Preview') as $stage) {

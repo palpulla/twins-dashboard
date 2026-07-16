@@ -9,6 +9,7 @@ const SAFETY = 'website/staging-safety/mu-plugins/twins-staging-safety.php';
 const LOADER = 'website/staging-safety/mu-plugins/twins-staging-overhaul.php';
 const PACKAGE = 'website/staging-safety/mu-plugins/twins-staging-overhaul';
 const ASSETS = 'website/staging-safety/mu-plugins/twins-staging-assets';
+const BRAND = 'website/twins-brand-experience';
 
 function absolute(relativePath) {
   return path.join(ROOT, relativePath);
@@ -74,6 +75,7 @@ const intentionallyReplacedByPortableCore = new Set([
   'website/staging-safety/mu-plugins/twins-staging-overhaul/renderers.php',
   'website/staging-safety/mu-plugins/twins-staging-overhaul/routes.php',
   'website/staging-safety/mu-plugins/twins-staging-overhaul/templates/home.php',
+  'website/staging-safety/mu-plugins/twins-staging-overhaul/templates/builder.php',
 ]);
 
 test('recovered deployment-critical files are regular blobs byte-identical to the live staging source', () => {
@@ -108,6 +110,7 @@ test('recovered deployment-critical files are regular blobs byte-identical to th
       'website/staging-safety/mu-plugins/twins-staging-overhaul/components.php',
       'website/staging-safety/mu-plugins/twins-staging-overhaul/renderers.php',
       'website/staging-safety/mu-plugins/twins-staging-overhaul/routes.php',
+      'website/staging-safety/mu-plugins/twins-staging-overhaul/templates/builder.php',
       'website/staging-safety/mu-plugins/twins-staging-overhaul/templates/home.php',
     ]
   );
@@ -153,10 +156,16 @@ test('the preview has no production-domain or outbound submission authority', ()
     `${PACKAGE}/adapters/BrandStagingAdapters.php`,
     `${PACKAGE}/adapters/BrandStagingPreviews.php`,
     ...fs.readdirSync(absolute(`${PACKAGE}/templates`)).filter((file) => file.endsWith('.php')).map((file) => `${PACKAGE}/templates/${file}`),
-    `${ASSETS}/twins-overhaul.js`
+    `${ASSETS}/twins-overhaul.js`,
+    `${BRAND}/assets/js/twins-brand.js`,
+    `${BRAND}/assets/js/twins-builder.js`,
   ];
   const combined = sourceFiles.map(read).join('\n');
   const javascript = read(`${ASSETS}/twins-overhaul.js`);
+  const portableJavascript = [
+    read(`${BRAND}/assets/js/twins-brand.js`),
+    read(`${BRAND}/assets/js/twins-builder.js`),
+  ].join('\n');
   const safety = read(SAFETY);
 
   assert.doesNotMatch(combined, /(?:https?:\/\/)?(?:www\.)?twinsgaragedoors\.com/i);
@@ -166,6 +175,8 @@ test('the preview has no production-domain or outbound submission authority', ()
   );
   assert.doesNotMatch(javascript, /\b(?:fetch|XMLHttpRequest|WebSocket|EventSource|sendBeacon|requestSubmit)\b|\.submit\s*\(/);
   assert.doesNotMatch(javascript, /\b(?:localStorage|sessionStorage|indexedDB)\b/);
+  assert.doesNotMatch(portableJavascript, /\b(?:fetch|XMLHttpRequest|WebSocket|EventSource|sendBeacon|requestSubmit)\b|\.submit\s*\(/);
+  assert.doesNotMatch(portableJavascript, /\b(?:localStorage|sessionStorage|indexedDB)\b/);
   assert.match(javascript, /form\.removeAttribute\('action'\)/);
   assert.match(javascript, /form\.removeAttribute\('method'\)/);
   assert.match(javascript, /form\.addEventListener\('submit'[\s\S]*?event\.preventDefault\(\)[\s\S]*?event\.stopImmediatePropagation\(\)/);
@@ -313,7 +324,7 @@ test('door builder is a frozen local-only 23-product catalog whose content-addre
   const catalogBytes = read(catalogPath);
   const catalog = JSON.parse(catalogBytes);
   const builderPhp = read(`${PACKAGE}/templates/builder.php`);
-  const builderJs = read(`${ASSETS}/twins-overhaul.js`);
+  const builderJs = read(`${BRAND}/assets/js/twins-builder.js`);
   const expectedOrder = [
     '330', '320', '30', '29', '240', '26', '170', '340', '12', '16', '290', '370',
     '250', '380', '11', '27', '291', '8', '10', '25', '9', '13', '23'

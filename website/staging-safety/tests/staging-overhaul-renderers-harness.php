@@ -439,23 +439,45 @@ if ($scenario === 'routes') {
         'title' => 'Garage Door Cost in Madison, WI',
     ]);
     twins_overhaul_enqueue_assets();
-    twins_overhaul_renderer_assert(count($GLOBALS['twins_overhaul_renderer_assets']) === 4, 'cost route did not retain exactly two legacy support assets plus two portable assets');
-    twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][0][1] === 'twins-staging-overhaul', 'cost support stylesheet handle changed');
-    twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][1][1] === 'twins-staging-overhaul', 'cost support script handle changed');
-    twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][2][1] === 'twins-brand-experience', 'cost portable stylesheet handle changed');
-    twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][3][1] === 'twins-brand-experience', 'cost portable script handle changed');
-    twins_overhaul_renderer_assert(!in_array('twins-staging-twx-v2', $GLOBALS['twins_overhaul_renderer_dequeued_styles'], true), 'cost route lost its temporary visual-kit support');
+    twins_overhaul_renderer_assert(count($GLOBALS['twins_overhaul_renderer_assets']) === 3, 'cost route did not enqueue exactly two portable styles and the shared portable script');
+    twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][0][1] === 'twins-brand-experience', 'cost portable base stylesheet handle changed');
+    twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][1][1] === 'twins-brand-families', 'cost portable family stylesheet handle changed');
+    twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][2][1] === 'twins-brand-experience', 'cost portable script handle changed');
+    twins_overhaul_renderer_assert(in_array('twins-staging-twx-v2', $GLOBALS['twins_overhaul_renderer_dequeued_styles'], true), 'cost route retained the recovered visual kit');
     twins_overhaul_renderer_assert(
-        twins_overhaul_filter_isolated_style_tag('<link id="twins-staging-twx-v2-css">', 'twins-staging-twx-v2', '/local.css', 'all') === '<link id="twins-staging-twx-v2-css">',
-        'cost route late-filtered its temporary visual-kit support'
+        twins_overhaul_filter_isolated_style_tag('<link id="twins-staging-twx-v2-css">', 'twins-staging-twx-v2', '/local.css', 'all') === '',
+        'cost route retained its temporary visual-kit support'
     );
+
+    $GLOBALS['twins_overhaul_renderer_assets'] = [];
+    $GLOBALS['twins_overhaul_renderer_dequeued_styles'] = [];
+    twins_overhaul_renderer_set([
+        'blogId' => 1,
+        'path' => '/door-builder/',
+        'postType' => 'page',
+        'postId' => 7129,
+        'renderedPostType' => 'page',
+        'renderedPostId' => 7129,
+        'title' => 'Door Builder',
+    ]);
+    twins_overhaul_enqueue_assets();
+    twins_overhaul_renderer_assert(count($GLOBALS['twins_overhaul_renderer_assets']) === 4, 'builder route did not enqueue the bounded four-asset portable set');
+    twins_overhaul_renderer_assert(
+        array_column($GLOBALS['twins_overhaul_renderer_assets'], 1) === ['twins-brand-experience', 'twins-brand-families', 'twins-brand-experience', 'twins-builder'],
+        'builder portable asset order or handles changed'
+    );
+    foreach ($GLOBALS['twins_overhaul_renderer_assets'] as $asset) {
+        twins_overhaul_renderer_assert($asset[1] !== 'twins-staging-overhaul', 'builder retained a recovered global asset');
+    }
 }
 
 if ($scenario === 'asset-versions') {
     $brandRoot = dirname($argv[1], 3) . '/twins-brand-experience/';
     $assets = [
         'assets/css/twins-brand.css',
+        'assets/css/twins-brand-families.css',
         'assets/js/twins-brand.js',
+        'assets/js/twins-builder.js',
     ];
     foreach ($assets as $relativePath) {
         $bytes = @file_get_contents($brandRoot . $relativePath);
@@ -789,6 +811,91 @@ if (in_array($scenario, ['service-brand-chrome', 'catalog-brand-chrome'], true))
     twins_overhaul_renderer_assert(strpos($header, 'class="twins-brand-header"') !== false, 'portable brand header missing');
     twins_overhaul_renderer_assert(strpos($header, 'twins-overhaul-header') === false, 'legacy public header survived');
     twins_overhaul_renderer_assert(strpos($footer, 'class="twins-brand-footer"') !== false, 'portable brand footer missing');
+
+    if ($scenario === 'catalog-brand-chrome') {
+        twins_overhaul_enqueue_assets();
+        twins_overhaul_renderer_assert(
+            array_column($GLOBALS['twins_overhaul_renderer_assets'], 1) === ['twins-brand-experience', 'twins-brand-families', 'twins-brand-experience'],
+            'catalog route did not enqueue only the portable base, family, and shared behavior assets'
+        );
+        $legacyOverview = '<section data-twins-original-content><h1>Legacy catalog</h1><iframe src="https://remote.example"></iframe><form action="/lead"><button type="submit">Send</button></form></section>';
+        $renderedOverview = twins_overhaul_render_classified_content($classification, $context, $legacyOverview);
+        twins_overhaul_renderer_assert(substr_count($renderedOverview, '<h1') === 1, 'catalog overview H1 count changed');
+        twins_overhaul_renderer_assert(strpos($renderedOverview, 'All 23 frozen product records') !== false, 'catalog overview lost the fixed ordered catalog');
+        twins_overhaul_renderer_assert(strpos($renderedOverview, 'Modern Steel') !== false, 'catalog overview lost the first featured record');
+        twins_overhaul_renderer_assert(strpos($renderedOverview, 'Gallery') !== false, 'catalog overview lost the second featured record');
+        twins_overhaul_renderer_assert(strpos($renderedOverview, 'Classic') !== false, 'catalog overview lost the third featured record');
+        twins_overhaul_renderer_assert(strpos($renderedOverview, 'data-twins-original-content') === false, 'legacy catalog body survived');
+        twins_overhaul_renderer_assert(strpos($renderedOverview, 'https://') === false, 'remote catalog URL survived');
+        twins_overhaul_renderer_assert(stripos($renderedOverview, '<iframe') === false && stripos($renderedOverview, '<form') === false, 'active legacy catalog markup survived');
+
+        $paths = array(
+            '/clopay-canyon-ridge-elements/' => '330',
+            '/clopay-canyon-ridge-chevron/' => '320',
+            '/clopay-canyon-ridge-carriage-house-5-layer/' => '30',
+            '/clopay-canyon-ridge-carriage-house-4-layer/' => '29',
+            '/clopay-canyon-ridge-louver/' => '240',
+            '/clopay-canyon-ridge-modern/' => '26',
+            '/clopay-modern-steel/' => '170',
+            '/clopay-modern-steel-ultra-grain-plank/' => '340',
+            '/clopay-gallery-steel/' => '12',
+            '/clopay-avante/' => '16',
+            '/clopay-avante-sleek/' => '290',
+            '/clopay-vertistack-avante/' => '370',
+            '/clopay-bridgeport-steel/' => '250',
+            '/clopay-bridgeport-inlay/' => '380',
+            '/clopay-coachman/' => '11',
+            '/clopay-grand-harbor/' => '27',
+            '/clopay-reserve-wood-extira/' => '291',
+            '/clopay-reserve-wood-custom/' => '8',
+            '/clopay-reserve-wood-limited-edition/' => '10',
+            '/clopay-reserve-wood-modern/' => '25',
+            '/clopay-reserve-wood-semi-custom/' => '9',
+            '/clopay-classic-collection/' => '13',
+            '/clopay-classic-wood/' => '23',
+        );
+        foreach ($paths as $catalogPath => $productId) {
+            twins_overhaul_renderer_set(['path' => $catalogPath]);
+            $mapped = twins_overhaul_catalog_view(array_replace($context, [
+                'path' => $catalogPath,
+                'productId' => '999999',
+                'product' => ['id' => '999999'],
+            ]));
+            twins_overhaul_renderer_assert(($mapped['mode'] ?? null) === 'product', 'catalog product mode changed: ' . $catalogPath);
+            twins_overhaul_renderer_assert(($mapped['product']['id'] ?? null) === $productId, 'catalog path mapped to the wrong frozen product: ' . $catalogPath);
+        }
+
+        twins_overhaul_renderer_set([
+            'path' => '/clopay-gallery-steel/',
+            'postId' => 6065,
+            'renderedPostId' => 6065,
+            'title' => 'Clopay Gallery Steel',
+        ]);
+        $galleryContext = twins_overhaul_current_context('catalog-preserve');
+        $rendered = twins_overhaul_render_classified_content(
+            'catalog-preserve',
+            $galleryContext,
+            '<section data-twins-original-content><h1>Legacy Gallery</h1><iframe src="https://remote.example"></iframe></section>'
+        );
+        twins_overhaul_renderer_assert(strpos($rendered, 'Clopay Gallery') !== false, 'Gallery title missing');
+        twins_overhaul_renderer_assert(substr_count($rendered, '<h1') === 1, 'catalog H1 count changed');
+        twins_overhaul_renderer_assert(strpos($rendered, 'data-twins-original-content') === false, 'legacy catalog body survived');
+        twins_overhaul_renderer_assert(strpos($rendered, 'https://') === false, 'remote catalog URL survived');
+
+        twins_overhaul_renderer_set([
+            'path' => '/spoofed-catalog-path/',
+            'postId' => 6065,
+            'renderedPostId' => 6065,
+        ]);
+        $catalogRefusal = null;
+        try {
+            twins_overhaul_catalog_view(twins_overhaul_current_context('catalog-preserve'));
+        } catch (Twins_Overhaul_Renderer_Refusal $exception) {
+            $catalogRefusal = $exception;
+        }
+        twins_overhaul_renderer_assert($catalogRefusal instanceof Twins_Overhaul_Renderer_Refusal, 'unknown catalog path did not fail closed');
+        twins_overhaul_renderer_assert($catalogRefusal->response === 503, 'unknown catalog path refusal did not use 503');
+    }
 }
 
 if ($scenario === 'family-once') {

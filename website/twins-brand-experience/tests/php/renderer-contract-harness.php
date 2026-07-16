@@ -485,6 +485,26 @@ foreach ($bodyMethods as $method) {
     $expect(strpos($body, 'Request a Quote') !== false, $method . ' is missing exact quote copy');
     $expect(strpos($body, 'Get an Estimate') === false, $method . ' contains prohibited legacy quote copy');
 }
+$catalogProduct = [
+    'id' => 'fixture',
+    'title' => 'Fixture Steel',
+    'showcase' => ['src' => '/clopay/fixture.webp', 'width' => 1190, 'height' => 692, 'alt' => 'Fixture steel reference'],
+    'designs' => [],
+    'colors' => [],
+    'windows' => [],
+    'glass' => [],
+    'hardware' => [],
+    'gallery' => [],
+];
+$catalogBody = $stagingExperience->renderCatalog(
+    ['environment' => 'staging', 'market' => 'main'],
+    ['mode' => 'product', 'product' => $catalogProduct, 'builderPath' => '/door-builder/']
+);
+$stagingBodies['renderCatalog'] = $catalogBody;
+$expect(substr_count($catalogBody, 'id="twins-overhaul-main"') === 1, 'renderCatalog must own exactly one main landmark');
+$expect(substr_count($catalogBody, '<h1') === 1, 'renderCatalog must own exactly one H1');
+$expect(strpos($catalogBody, 'Request a Quote') !== false, 'renderCatalog is missing exact quote copy');
+$expect(strpos($catalogBody, 'https://') === false, 'renderCatalog exposed a remote URL');
 $expect(substr_count($header, 'id="twins-overhaul-main"') === 0, 'header must not own the body main landmark');
 $expect(substr_count($footer, 'id="twins-overhaul-main"') === 0, 'footer must not own the body main landmark');
 

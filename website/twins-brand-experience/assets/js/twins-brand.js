@@ -1,9 +1,63 @@
 (() => {
   'use strict';
 
+  const ZIP_ROUTES = Object.freeze({
+    '537': '/wi/garage-door-cost-in-madison-wi/',
+    '531': '/wi/garage-door-cost-in-milwaukee-wi/',
+    '532': '/wi/garage-door-cost-in-milwaukee-wi/',
+  });
+  const ZIP_FALLBACK = '/wi/contact-us/';
   const focusables = root => [...root.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')]
     .filter(element => !element.closest('[hidden]'));
   const setExpanded = (button, value) => button.setAttribute('aria-expanded', String(value));
+
+  function safeLocalPath(path) {
+    return typeof path === 'string'
+      && path.startsWith('/')
+      && !path.startsWith('//')
+      && !path.includes('..')
+      && !path.includes('\\')
+      && !/[\u0000-\u001f\u007f]/.test(path)
+      ? path
+      : '';
+  }
+
+  function initZip(root) {
+    root.querySelectorAll('[data-twins-overhaul-zip]').forEach(widget => {
+      const input = widget.querySelector('[data-twins-zip-input]');
+      const control = widget.querySelector('[data-twins-zip-route]');
+      const status = widget.querySelector('[data-twins-zip-status]');
+      if (!input || !control || !status) return;
+
+      const routeZip = () => {
+        const zip = String(input.value || '').trim();
+        if (!/^\d{5}$/.test(zip)) {
+          input.setAttribute('aria-invalid', 'true');
+          status.textContent = 'Enter a valid 5-digit ZIP code.';
+          return;
+        }
+
+        input.removeAttribute('aria-invalid');
+        const destination = safeLocalPath(ZIP_ROUTES[zip.slice(0, 3)] || ZIP_FALLBACK);
+        if (!destination) {
+          input.setAttribute('aria-invalid', 'true');
+          status.textContent = 'The local guide is unavailable.';
+          return;
+        }
+        status.textContent = destination === ZIP_FALLBACK
+          ? 'Opening the Wisconsin contact guide for a service-area check.'
+          : 'Opening the matching local cost guide.';
+        window.location.href = destination;
+      };
+
+      control.addEventListener('click', routeZip);
+      input.addEventListener('keydown', event => {
+        if (event.key !== 'Enter') return;
+        event.preventDefault();
+        routeZip();
+      });
+    });
+  }
 
   function trapTab(event, root) {
     if (event.key !== 'Tab') return;
@@ -15,6 +69,7 @@
   }
 
   function start() {
+    initZip(document);
     const header = document.querySelector('[data-twins-header]');
     const menuTrigger = document.querySelector('.twins-brand-menu-trigger');
     const drawer = document.querySelector('#twins-brand-drawer');

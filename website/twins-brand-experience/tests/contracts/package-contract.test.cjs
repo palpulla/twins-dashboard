@@ -39,7 +39,10 @@ test('staging manifest is closed, hash-pinned, and has no production payload', (
   const deploy = new Set(manifest.files.filter(file => file.role === 'deploy').map(file => file.destination));
   const prerequisites = new Set(manifest.files.filter(file => file.role === 'verify-prerequisite').map(file => file.destination));
   assert.equal(deploy.has('twins-brand-experience/bootstrap.php'), true);
+  assert.equal(deploy.has('twins-brand-experience/assets/css/twins-brand-families.css'), true);
+  assert.equal(deploy.has('twins-brand-experience/assets/js/twins-builder.js'), true);
   assert.equal(deploy.has('twins-brand-experience/assets/images/door-builder/twins-before-after-install.webp'), true);
+  assert.equal(deploy.has('twins-brand-experience/templates/catalog.php'), true);
   assert.equal(deploy.has('twins-staging-overhaul/brand-runtime.php'), true);
   assert.equal(deploy.has('twins-staging-overhaul/adapters/BrandStagingAdapters.php'), true);
   assert.equal(deploy.has('twins-staging-overhaul/adapters/BrandStagingPreviews.php'), true);

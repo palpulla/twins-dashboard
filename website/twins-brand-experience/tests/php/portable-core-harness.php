@@ -70,7 +70,7 @@ final class PortableHarnessQuoteAdapter implements Twins\BrandExperience\QuoteAd
             echo 'LEAKED-NESTED-ADAPTER-BYTES';
             throw new RuntimeException('fixture adapter failure');
         }
-        return ['mode' => 'fixture'];
+        return ['mode' => 'fixture', 'href' => '/quote/main/'];
     }
     public function renderExperience(array $context): string { return '<div class="quote-fixture"></div>'; }
     public function assertReady(): void {}
@@ -146,7 +146,7 @@ try {
         )
     ));
     sort($publicMethods);
-    $expectedMethods = ['applicationAdapter', 'asset', 'assetHandles', 'bookingAdapter', 'markets', 'quoteAdapter', 'renderCareers', 'renderContact', 'renderEditorial', 'renderFooter', 'renderHeader', 'renderHome', 'renderReviews', 'renderService', 'renderTeam', 'reviewCollection', 'route'];
+    $expectedMethods = ['applicationAdapter', 'asset', 'assetHandles', 'bookingAdapter', 'markets', 'quoteAdapter', 'renderCareers', 'renderCatalog', 'renderContact', 'renderEditorial', 'renderFooter', 'renderHeader', 'renderHome', 'renderReviews', 'renderService', 'renderTeam', 'reviewCollection', 'route'];
     sort($expectedMethods);
     $expect($publicMethods === $expectedMethods, 'portable Experience surface drift: ' . json_encode($publicMethods));
 
@@ -223,6 +223,17 @@ PHP;
         $expect(file_put_contents($path, $requiredScope) === strlen($requiredScope), 'could not write ' . $template . ' fixture');
         $fixtureFiles[] = $path;
     }
+    $catalogScope = <<<'PHP'
+<?php
+if (!isset($experience, $marketKey, $environment, $market, $quote, $quotePath, $catalogView)) throw new RuntimeException('missing catalog render scope');
+if ($catalogView['mode'] !== 'product' || $catalogView['builderPath'] !== '/door-builder/') throw new RuntimeException('invalid catalog view scope');
+if ($quotePath !== '/quote/main/') throw new RuntimeException('invalid catalog quote scope');
+?>
+<main id="twins-overhaul-main" class="twins-brand-catalog-page"></main>
+PHP;
+    $catalogPath = $fixtureRoot . '/templates/catalog.php';
+    $expect(file_put_contents($catalogPath, $catalogScope) === strlen($catalogScope), 'could not write catalog fixture');
+    $fixtureFiles[] = $catalogPath;
     $footerScope = str_replace(
         '<main id="twins-overhaul-main" class="twins-brand-page"></main>',
         '<footer class="twins-brand-footer"></footer>',
@@ -249,7 +260,13 @@ PHP;
         $output = $experience->{$method}([]);
         $expect(strpos($output, 'twins-brand-') !== false, $method . ' did not render its semantic fixture');
     }
-    $expect($quote->actionCalls === 7, 'quote action did not run for every public render surface');
+    $catalogOutput = $experience->renderCatalog([], [
+        'mode' => 'product',
+        'product' => ['id' => 'fixture'],
+        'builderPath' => '/door-builder/',
+    ]);
+    $expect(strpos($catalogOutput, 'twins-brand-catalog-page') !== false, 'renderCatalog did not render its bounded fixture');
+    $expect($quote->actionCalls === 8, 'quote action did not run for every public render surface');
     $expect($booking->actionCalls === 1, 'booking action was not header-only');
     $expect($experience->assetHandles() === ['style' => 'twins-brand-experience', 'script' => 'twins-brand-experience'], 'asset handles drifted');
     $expect($experience->asset('logo') === '/assets/logo', 'asset facade drifted');

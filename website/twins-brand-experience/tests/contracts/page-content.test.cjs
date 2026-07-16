@@ -147,7 +147,10 @@ test('portable runtime wires registry resolution and classified renderer dispatc
   assert.match(renderers, /twins_overhaul_prepare_family_content\(\$content\)/);
   assert.match(renderers, /\$classification === 'legal-preserve'[\s\S]*twins_overhaul_render_article_template/);
   assert.match(renderers, /\$classification === 'campaign-preserve'[\s\S]*twins_overhaul_remove_campaign_remote_font_links/);
-  assert.match(renderers, /\$classification === 'catalog-preserve'[\s\S]*twins_overhaul_wrap_preserved_content/);
+  assert.match(renderers, /\$classification === 'catalog-preserve'[\s\S]*renderCatalog\([\s\S]*twins_overhaul_catalog_view\(\$context\)/);
+  const catalogBranch = renderers.match(/\} elseif \(\$classification === 'catalog-preserve'\) \{([\s\S]*?)\} elseif/);
+  assert.ok(catalogBranch, 'catalog renderer branch is missing');
+  assert.doesNotMatch(catalogBranch[1], /twins_overhaul_wrap_preserved_content/);
 });
 
 test('renderer harness pins spring safety, one H1, FAQ depth, and raw-body removal', () => {

@@ -49,15 +49,25 @@ test('brand assets use independently derived bounded SHA-256 versions and fail c
       .update(fs.readFileSync(path.join(root, 'website/twins-brand-experience/assets/css/twins-brand.css')))
       .digest('hex')
       .slice(0, 16),
+    familyCss: crypto.createHash('sha256')
+      .update(fs.readFileSync(path.join(root, 'website/twins-brand-experience/assets/css/twins-brand-families.css')))
+      .digest('hex')
+      .slice(0, 16),
     js: crypto.createHash('sha256')
       .update(fs.readFileSync(path.join(root, 'website/twins-brand-experience/assets/js/twins-brand.js')))
+      .digest('hex')
+      .slice(0, 16),
+    builderJs: crypto.createHash('sha256')
+      .update(fs.readFileSync(path.join(root, 'website/twins-brand-experience/assets/js/twins-builder.js')))
       .digest('hex')
       .slice(0, 16),
   };
 
   assert.deepEqual(versions, {
     css: '58db2399da4a5194',
-    js: 'c7da9b6bd5e60508',
+    familyCss: '2dd3b607fc6b744b',
+    js: 'a27a7a219e280a80',
+    builderJs: 'ac571c9244f2fdca',
   });
   assert.match(body, /\$digest\s*=\s*@hash_file\(\s*['"]sha256['"]\s*,\s*\$path\s*\)/);
   assert.match(
@@ -69,11 +79,14 @@ test('brand assets use independently derived bounded SHA-256 versions and fail c
   assert.doesNotMatch(renderers, /twins-brand\.js'[^;]*,\s*['"]1['"]/);
 });
 
-test('ordinary brand routes do not enqueue the recovered global visual kit', () => {
+test('only the exact-preserve campaign keeps the recovered global family assets', () => {
   const renderers = source('website/staging-safety/mu-plugins/twins-staging-overhaul/renderers.php');
-  assert.match(renderers, /campaign-preserve/);
-  assert.match(renderers, /cost-madison|cost-milwaukee|builder/);
-  assert.match(renderers, /in_array\(\s*\$classification\s*,\s*array\(\s*['"]cost-madison['"]\s*,\s*['"]cost-milwaukee['"]\s*,\s*['"]builder['"]\s*\)\s*,\s*true\s*\)/);
+  const legacy = functionBody(renderers, 'twins_overhaul_uses_legacy_family_assets');
+  const enqueue = functionBody(renderers, 'twins_overhaul_enqueue_assets');
+  assert.match(legacy, /return\s+\$classification\s*===\s*['"]campaign-preserve['"]/);
+  assert.doesNotMatch(legacy, /cost-madison|cost-milwaukee|builder|catalog-preserve/);
+  assert.match(enqueue, /twins-brand-families/);
+  assert.match(enqueue, /twins-builder/);
   assert.match(renderers, /wp_dequeue_style\(['"]twins-staging-twx-v2['"]\)/);
 });
 

@@ -148,6 +148,108 @@ function twins_overhaul_current_context(string $classification): array {
 }
 
 /**
+ * Return the complete immutable catalog path map in frozen product order.
+ *
+ * @return array<string,string>
+ */
+function twins_overhaul_catalog_routes(): array {
+    return array(
+        '/clopay-canyon-ridge-elements/' => '330',
+        '/clopay-canyon-ridge-chevron/' => '320',
+        '/clopay-canyon-ridge-carriage-house-5-layer/' => '30',
+        '/clopay-canyon-ridge-carriage-house-4-layer/' => '29',
+        '/clopay-canyon-ridge-louver/' => '240',
+        '/clopay-canyon-ridge-modern/' => '26',
+        '/clopay-modern-steel/' => '170',
+        '/clopay-modern-steel-ultra-grain-plank/' => '340',
+        '/clopay-gallery-steel/' => '12',
+        '/clopay-avante/' => '16',
+        '/clopay-avante-sleek/' => '290',
+        '/clopay-vertistack-avante/' => '370',
+        '/clopay-bridgeport-steel/' => '250',
+        '/clopay-bridgeport-inlay/' => '380',
+        '/clopay-coachman/' => '11',
+        '/clopay-grand-harbor/' => '27',
+        '/clopay-reserve-wood-extira/' => '291',
+        '/clopay-reserve-wood-custom/' => '8',
+        '/clopay-reserve-wood-limited-edition/' => '10',
+        '/clopay-reserve-wood-modern/' => '25',
+        '/clopay-reserve-wood-semi-custom/' => '9',
+        '/clopay-classic-collection/' => '13',
+        '/clopay-classic-wood/' => '23',
+    );
+}
+
+/**
+ * Build one catalog view from the current proven request and frozen builder data.
+ *
+ * Caller-selected IDs, records, paths, and URLs are intentionally ignored.
+ *
+ * @param array $context Proven current request context.
+ * @return array
+ */
+function twins_overhaul_catalog_view(array $context): array {
+    $requestPath = twins_overhaul_current_request_path();
+    if (
+        !isset($context['path'])
+        || !is_string($context['path'])
+        || $context['path'] !== $requestPath
+    ) {
+        twins_overhaul_refuse_route('catalog request path does not match the proven context.');
+    }
+
+    $routes = twins_overhaul_catalog_routes();
+    $catalog = twins_overhaul_builder_catalog();
+    $expectedOrder = array_values($routes);
+    if (($catalog['productOrder'] ?? null) !== $expectedOrder || count($catalog['products'] ?? array()) !== count($routes)) {
+        twins_overhaul_refuse_route('catalog product order does not match the fixed route map.');
+    }
+
+    $byId = array();
+    foreach ($catalog['products'] as $index => $product) {
+        $expectedId = $expectedOrder[$index];
+        $productId = is_array($product) && isset($product['id']) ? $product['id'] : null;
+        if (!is_string($productId) || $productId !== $expectedId || isset($byId[$productId])) {
+            twins_overhaul_refuse_route('catalog product index is noncanonical.');
+        }
+        $byId[$productId] = $product;
+    }
+
+    $region = twins_overhaul_resolve_context($context);
+    $builderPath = $region['base'] . ($region['key'] === 'ky' ? 'design-your-door/' : 'door-builder/');
+    if ($requestPath === '/clopay-garage-doors/') {
+        $collections = array();
+        foreach ($routes as $path => $productId) {
+            $collections[] = array('path' => $path, 'product' => $byId[$productId]);
+        }
+        $featured = array();
+        foreach (array(
+            '/clopay-modern-steel/' => '170',
+            '/clopay-gallery-steel/' => '12',
+            '/clopay-classic-collection/' => '13',
+        ) as $path => $productId) {
+            $featured[] = array('path' => $path, 'product' => $byId[$productId]);
+        }
+        return array(
+            'mode' => 'overview',
+            'productOrder' => $catalog['productOrder'],
+            'collections' => $collections,
+            'featured' => $featured,
+            'builderPath' => $builderPath,
+        );
+    }
+
+    if (!isset($routes[$requestPath]) || !isset($byId[$routes[$requestPath]])) {
+        twins_overhaul_refuse_route('catalog path is outside the fixed product map.');
+    }
+    return array(
+        'mode' => 'product',
+        'product' => $byId[$routes[$requestPath]],
+        'builderPath' => $builderPath,
+    );
+}
+
+/**
  * Return the fixed visible name for a region.
  *
  * @param string $key Fixed region key.
@@ -478,19 +580,13 @@ function twins_overhaul_filter_body_classes(array $classes): array {
 }
 
 /**
- * Keep the recovered family assets only for campaign and the three temporary
- * cost/builder migration exceptions.
+ * Keep the recovered family assets only for the exact-preserve campaign.
  *
  * @param string $classification Fixed classifier outcome.
  * @return bool
  */
 function twins_overhaul_uses_legacy_family_assets(string $classification): bool {
-    return $classification === 'campaign-preserve'
-        || in_array(
-            $classification,
-            array('cost-madison', 'cost-milwaukee', 'builder'),
-            true
-        );
+    return $classification === 'campaign-preserve';
 }
 
 /**
@@ -1050,7 +1146,12 @@ function twins_overhaul_output_local_font_sentinel(): void {
  * @return string
  */
 function twins_overhaul_brand_asset_version(string $relativePath): string {
-    $allowed = array('assets/css/twins-brand.css', 'assets/js/twins-brand.js');
+    $allowed = array(
+        'assets/css/twins-brand.css',
+        'assets/css/twins-brand-families.css',
+        'assets/js/twins-brand.js',
+        'assets/js/twins-builder.js',
+    );
     if (!in_array($relativePath, $allowed, true)) {
         twins_overhaul_refuse_route('brand asset path is outside the fixed allowlist.');
     }
@@ -1075,8 +1176,7 @@ function twins_overhaul_brand_asset_version(string $relativePath): string {
 }
 
 /**
- * Enqueue the isolated campaign assets or portable brand assets on approved
- * requests, retaining only the fixed temporary cost/builder support pair.
+ * Enqueue the isolated campaign assets or bounded portable brand assets.
  *
  * @return void
  */
@@ -1097,9 +1197,7 @@ function twins_overhaul_enqueue_assets(): void {
         return;
     }
 
-    if (!$usesLegacyFamilyAssets) {
-        wp_dequeue_style('twins-staging-twx-v2');
-    }
+    wp_dequeue_style('twins-staging-twx-v2');
 
     $runtime = twins_overhaul_brand_runtime();
     $handles = $runtime->assetHandles();
@@ -1107,13 +1205,25 @@ function twins_overhaul_enqueue_assets(): void {
         twins_overhaul_refuse_route('portable brand asset handles changed unexpectedly.');
     }
     $base = rtrim(content_url('mu-plugins/twins-brand-experience'), '/');
-    $styleDependencies = $usesLegacyFamilyAssets ? array('twins-staging-overhaul') : array();
+    $usesFamilyAssets = in_array(
+        $classification,
+        array('cost-madison', 'cost-milwaukee', 'builder', 'catalog-preserve'),
+        true
+    );
     wp_enqueue_style(
         'twins-brand-experience',
         $base . '/assets/css/twins-brand.css',
-        $styleDependencies,
+        array(),
         twins_overhaul_brand_asset_version('assets/css/twins-brand.css')
     );
+    if ($usesFamilyAssets) {
+        wp_enqueue_style(
+            'twins-brand-families',
+            $base . '/assets/css/twins-brand-families.css',
+            array('twins-brand-experience'),
+            twins_overhaul_brand_asset_version('assets/css/twins-brand-families.css')
+        );
+    }
     wp_enqueue_script(
         'twins-brand-experience',
         $base . '/assets/js/twins-brand.js',
@@ -1121,6 +1231,15 @@ function twins_overhaul_enqueue_assets(): void {
         twins_overhaul_brand_asset_version('assets/js/twins-brand.js'),
         true
     );
+    if ($classification === 'builder') {
+        wp_enqueue_script(
+            'twins-builder',
+            $base . '/assets/js/twins-builder.js',
+            array('twins-brand-experience'),
+            twins_overhaul_brand_asset_version('assets/js/twins-builder.js'),
+            true
+        );
+    }
 }
 
 /**
@@ -1201,8 +1320,10 @@ function twins_overhaul_render_classified_content(string $classification, array 
             twins_overhaul_remove_campaign_remote_font_links($content)
         );
     } elseif ($classification === 'catalog-preserve') {
-        $rendered = twins_overhaul_wrap_preserved_content(
-            twins_overhaul_make_preserved_forms_inert($content)
+        $runtime = twins_overhaul_brand_runtime();
+        $rendered = $runtime->renderCatalog(
+            $context,
+            twins_overhaul_catalog_view($context)
         );
     } elseif ($classification === 'legal-preserve') {
         $rendered = twins_overhaul_render_article_template(

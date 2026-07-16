@@ -52,7 +52,10 @@ phpTest('root overhaul harness validates inert semantic rendering', () => {
 });
 
 phpTest('builder harness validates the fixed local 23-product experience', () => {
-  assert.equal(runPhp('staging-overhaul-builder-harness.php', [PACKAGE]), 'STAGING_OVERHAUL_BUILDER_HARNESS_OK');
+  assert.equal(
+    runPhp('staging-overhaul-builder-harness.php', [PACKAGE, path.resolve(ROOT, '..', 'twins-brand-experience')]),
+    'STAGING_OVERHAUL_BUILDER_HARNESS_OK',
+  );
 });
 
 phpTest('cost harness validates both fixed Wisconsin cost pages', () => {

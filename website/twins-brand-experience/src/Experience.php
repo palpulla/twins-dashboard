@@ -35,7 +35,7 @@ final class Experience
         $this->root = rtrim($root, '/');
     }
 
-    private function render(string $template, array $context): string
+    private function render(string $template, array $context, ?array $catalogView = null): string
     {
         $bufferLevel = ob_get_level();
         ob_start();
@@ -69,6 +69,59 @@ final class Experience
                 }
             }
             $quote = $this->quote->action($context);
+            if ($template === 'catalog') {
+                if (
+                    !is_array($catalogView)
+                    || !isset($catalogView['mode'], $catalogView['builderPath'])
+                    || !is_string($catalogView['mode'])
+                    || !in_array($catalogView['mode'], ['overview', 'product'], true)
+                    || !is_string($catalogView['builderPath'])
+                ) {
+                    throw new \DomainException('Catalog render view is incomplete.');
+                }
+                $catalogView['builderPath'] = $this->rootRelativePath(
+                    $catalogView['builderPath'],
+                    'Catalog builder path is invalid.'
+                );
+                if ($catalogView['mode'] === 'overview') {
+                    if (
+                        !isset($catalogView['productOrder'], $catalogView['collections'], $catalogView['featured'])
+                        || !is_array($catalogView['productOrder'])
+                        || !is_array($catalogView['collections'])
+                        || !is_array($catalogView['featured'])
+                    ) {
+                        throw new \DomainException('Catalog overview view is incomplete.');
+                    }
+                    foreach (array_merge($catalogView['collections'], $catalogView['featured']) as $record) {
+                        if (
+                            !is_array($record)
+                            || !isset($record['path'], $record['product'])
+                            || !is_string($record['path'])
+                            || !is_array($record['product'])
+                        ) {
+                            throw new \DomainException('Catalog overview record is incomplete.');
+                        }
+                        $this->rootRelativePath($record['path'], 'Catalog record path is invalid.');
+                    }
+                } elseif (!isset($catalogView['product']) || !is_array($catalogView['product'])) {
+                    throw new \DomainException('Catalog product view is incomplete.');
+                }
+
+                $quoteParts = parse_url((string) ($quote['href'] ?? ''));
+                $quotePath = is_array($quoteParts) ? (string) ($quoteParts['path'] ?? '') : '';
+                if (
+                    !is_array($quoteParts)
+                    || isset($quoteParts['user'])
+                    || isset($quoteParts['pass'])
+                    || isset($quoteParts['query'])
+                    || isset($quoteParts['fragment'])
+                ) {
+                    throw new \DomainException('Catalog quote action is invalid.');
+                }
+                $quotePath = $this->rootRelativePath($quotePath, 'Catalog quote path is invalid.');
+            } elseif ($catalogView !== null) {
+                throw new \DomainException('Catalog view was supplied to a different template.');
+            }
             $booking = $template === '../components/header' ? $this->booking->action($context) : null;
             require $this->root . '/templates/' . $template . '.php';
             return (string) ob_get_clean();
@@ -86,6 +139,10 @@ final class Experience
     public function renderContact(array $context): string { return $this->render('contact', $context); }
     public function renderReviews(array $context): string { return $this->render('reviews', $context); }
     public function renderService(array $context): string { return $this->render('service', $context); }
+    public function renderCatalog(array $context, array $catalogView): string
+    {
+        return $this->render('catalog', $context, $catalogView);
+    }
 
     public function renderEditorial(array $context, string $content, string $kind): string
     {
@@ -133,6 +190,24 @@ final class Experience
             throw new \DomainException('Normalized contact context does not match.');
         }
         return [$phone, $phoneHref];
+    }
+
+    private function rootRelativePath(string $path, string $message): string
+    {
+        if (
+            $path === ''
+            || strlen($path) > 512
+            || $path[0] !== '/'
+            || strpos($path, '//') !== false
+            || strpos($path, '%') !== false
+            || strpos($path, '\\') !== false
+            || strpos($path, '?') !== false
+            || strpos($path, '#') !== false
+            || preg_match('~(?:^|/)\.\.?(?:/|$)|[\x00-\x20\x7f]~', $path)
+        ) {
+            throw new \DomainException($message);
+        }
+        return $path;
     }
 
     private function pageContent(): PageContentRegistry

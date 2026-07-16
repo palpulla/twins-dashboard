@@ -5,6 +5,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const portableRoot = await realpath(fileURLToPath(new URL('../..', import.meta.url)));
+const stagingAssetsRoot = await realpath(path.resolve(
+  portableRoot,
+  '../staging-safety/mu-plugins/twins-staging-assets',
+));
 const args = process.argv.slice(2);
 const portFlag = args.indexOf('--port');
 const port = portFlag === -1 ? 41739 : Number(args[portFlag + 1]);
@@ -16,6 +20,8 @@ const mime = new Map([
   ['.css', 'text/css; charset=utf-8'],
   ['.js', 'text/javascript; charset=utf-8'],
   ['.png', 'image/png'],
+  ['.jpg', 'image/jpeg'],
+  ['.jpeg', 'image/jpeg'],
   ['.webp', 'image/webp'],
   ['.woff2', 'font/woff2'],
   ['.json', 'application/json; charset=utf-8'],
@@ -54,9 +60,15 @@ const server = createServer(async (request, response) => {
     return;
   }
 
-  const relative = decoded === '/' ? 'tests/browser/fixtures/brand-home.html' : decoded.replace(/^\/+/, '');
-  const candidate = path.resolve(portableRoot, relative);
-  if (candidate !== portableRoot && !candidate.startsWith(`${portableRoot}${path.sep}`)) {
+  const assetPrefix = '/wp-content/mu-plugins/twins-staging-assets/';
+  const selectedRoot = decoded.startsWith(assetPrefix) ? stagingAssetsRoot : portableRoot;
+  const relative = decoded.startsWith(assetPrefix)
+    ? decoded.slice(assetPrefix.length)
+    : decoded === '/'
+      ? 'tests/browser/fixtures/brand-home.html'
+      : decoded.replace(/^\/+/, '');
+  const candidate = path.resolve(selectedRoot, relative);
+  if (candidate !== selectedRoot && !candidate.startsWith(`${selectedRoot}${path.sep}`)) {
     reply(response, 403, 'text/plain; charset=utf-8', 'Forbidden');
     return;
   }
@@ -64,7 +76,7 @@ const server = createServer(async (request, response) => {
   try {
     const resolved = await realpath(candidate);
     const details = await stat(resolved);
-    if (!details.isFile() || (resolved !== portableRoot && !resolved.startsWith(`${portableRoot}${path.sep}`))) {
+    if (!details.isFile() || (resolved !== selectedRoot && !resolved.startsWith(`${selectedRoot}${path.sep}`))) {
       reply(response, 403, 'text/plain; charset=utf-8', 'Forbidden');
       return;
     }
