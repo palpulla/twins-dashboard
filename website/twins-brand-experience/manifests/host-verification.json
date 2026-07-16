@@ -229,7 +229,7 @@
       "role": "verify",
       "source": "twins-brand-experience/manifests/staging-runtime.json",
       "size": 356029,
-      "sha256": "d3b7bee37e936ce39cd01daf81928af42902b9a6bfd60dfe24842684d249f79c"
+      "sha256": "197f3c7ac9a82e5b0b3c5296427470142c764fd690a87ce2a226476b62e42c69"
     },
     {
       "role": "verify",
@@ -258,8 +258,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/templates/careers.php",
-      "size": 6638,
-      "sha256": "d5235652e3f83fecd61bda81bf5de795055f724589f5da3855b8b6dac5843d93"
+      "size": 6661,
+      "sha256": "7f69ee2c8e172509e1c8777ee9c92a431d04c0e00b29f4fc0b6fbea3f260feba"
     },
     {
       "role": "verify",

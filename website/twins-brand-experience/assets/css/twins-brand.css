@@ -583,8 +583,8 @@ body.twins-brand-experience a.twins-brand-market-card--preview:is(:hover, :focus
   background-color: var(--twins-navy-900);
   background-image: radial-gradient(circle at 88% 18%, rgba(255, 200, 61, .17), transparent 30%), repeating-linear-gradient(0deg, transparent 0 78px, rgba(255, 255, 255, .05) 79px 83px);
 }
-.twins-brand-page-hero h1,
-.twins-brand-careers-hero h1 { max-width: 980px; margin-bottom: 18px; color: var(--twins-white); font-size: clamp(3.2rem, 7vw, 6.8rem); text-transform: uppercase; }
+.twins-brand-page-hero h1 { max-width: 980px; margin-bottom: 18px; color: var(--twins-white); font-size: clamp(3.2rem, 7vw, 6.8rem); text-transform: uppercase; }
+.twins-brand-careers-hero h1 { max-width: 980px; margin-bottom: 18px; color: var(--twins-white); font-size: clamp(3.2rem, 4.8vw, 4.1rem); text-transform: uppercase; }
 .twins-brand-page-hero > p { max-width: 760px; color: #e8f1fb; font-size: 1.18rem; font-weight: 750; }
 .twins-brand-page-hero .twins-brand-cta { justify-self: start; margin-top: 16px; }
 
@@ -628,7 +628,7 @@ body.twins-brand-experience a.twins-brand-market-card--preview:is(:hover, :focus
 .twins-brand-team-careers h2 { color: var(--twins-white); }
 .twins-brand-team-careers a { color: var(--twins-gold); }
 
-.twins-brand-page-nav { position: sticky; top: 140px; z-index: 25; display: flex; justify-content: center; gap: 8px; padding: 10px 20px; background: rgba(7, 29, 59, .96); border-bottom: 3px solid var(--twins-gold); backdrop-filter: blur(8px); }
+.twins-brand-page-nav { position: sticky; top: var(--twins-header-height); z-index: 25; display: flex; justify-content: center; gap: 8px; padding: 10px 20px; background: rgba(7, 29, 59, .96); border-bottom: 3px solid var(--twins-gold); backdrop-filter: blur(8px); }
 .twins-brand-page-nav a { min-height: 44px; display: inline-flex; align-items: center; padding: 6px 15px; color: var(--twins-white); border-radius: 999px; font-weight: 900; }
 body.twins-brand-experience .twins-brand-page-nav a:is(:hover, :focus-visible) { color: var(--twins-navy-950); background: var(--twins-gold); }
 .twins-brand-careers-hero { display: grid; grid-template-columns: .86fr 1.14fr; align-items: center; gap: clamp(40px, 7vw, 100px); padding: clamp(72px, 8vw, 124px) max(28px, calc((100vw - 1320px) / 2)); color: var(--twins-white); background: var(--twins-navy-900); }
@@ -810,7 +810,7 @@ body.twins-brand-experience .twins-brand-careers-hero a.twins-brand-cta {
   .twins-brand-mobile-actions a { min-height: 48px; display: grid; place-items: center; padding: 8px; color: var(--twins-white); background: var(--twins-navy-800); border: 2px solid var(--twins-gold); border-radius: 999px; font-weight: 1000; text-align: center; text-decoration: none; }
   .twins-brand-mobile-actions a:last-child { color: var(--twins-navy-950); background: var(--twins-gold); }
   .twins-brand-footer { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
-  .twins-brand-page-nav { top: 124px; justify-content: flex-start; overflow-x: auto; }
+  .twins-brand-page-nav { position: relative; top: auto; justify-content: flex-start; overflow-x: auto; }
   .twins-brand-page-nav a { flex: 0 0 auto; }
   .twins-brand-value-grid,
   .twins-brand-role-grid,

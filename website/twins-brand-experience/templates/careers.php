@@ -24,7 +24,7 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
       <span class="twins-brand-kicker">Careers at Twins Garage Doors</span>
       <h1 id="twins-brand-careers-page-title">Do work you are proud to put your name on.</h1>
       <p>We want dependable people who care about customers, craftsmanship, and showing up ready. Tell us where you could make the crew stronger.</p>
-      <a class="twins-brand-cta" href="#apply">
+      <a class="twins-brand-cta twins-brand-cta--quote" href="#apply">
         <?php if ($environment === 'staging'): ?>
           Preview the application
         <?php else: ?>

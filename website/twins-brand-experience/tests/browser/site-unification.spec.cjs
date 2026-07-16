@@ -55,6 +55,85 @@ async function visibleLocators(locator) {
   return results;
 }
 
+async function prepareCareersFixture(page, width) {
+  await page.setViewportSize({ width, height: 900 });
+  await page.goto(fixture);
+  await page.locator('.twins-brand-page-hero').evaluate(element => element.remove());
+  await page.locator('.twins-brand-page-nav').evaluate(element => {
+    element.setAttribute('aria-label', 'Careers page navigation');
+    element.innerHTML = `
+      <a href="#why-twins">Why Twins</a>
+      <a href="#roles">Ways to contribute</a>
+      <a href="#process">What happens next</a>
+      <a href="#apply">Application preview</a>
+    `;
+  });
+  await page.locator('.twins-brand-careers-hero').evaluate(element => {
+    element.querySelector('h1').textContent = 'Do work you are proud to put your name on.';
+    const cta = element.querySelector('.twins-brand-cta');
+    cta.className = 'twins-brand-cta twins-brand-cta--quote';
+    cta.textContent = 'Preview the application';
+    const image = document.createElement('div');
+    image.className = 'twins-brand-careers-hero-image';
+    image.innerHTML = `
+      <img
+        class="twins-brand-careers-crew-photo"
+        src="/assets/images/team/twins-crew-fleet-1280w.webp"
+        width="1280"
+        height="686"
+        alt="Twins Garage Doors crew standing with branded service vehicles"
+      >
+    `;
+    element.append(image);
+  });
+  await expect(page.locator('.twins-brand-careers-crew-photo')).toBeVisible();
+}
+
+test('Careers navigation and hero remain visible at every supported width', async ({ page }) => {
+  for (const width of widths) {
+    await prepareCareersFixture(page, width);
+
+    const header = await page.locator('.twins-brand-header').boundingBox();
+    const subnav = await page.locator('.twins-brand-page-nav').boundingBox();
+    expect(subnav.y, `${width}px page navigation starts below header`).toBeGreaterThanOrEqual(header.y + header.height - 1);
+
+    const cta = page.locator('.twins-brand-careers-hero .twins-brand-cta');
+    await expect(cta).toHaveText(/Preview the application|Start your application/);
+    expect(await computedContrast(cta), `${width}px Careers CTA contrast`).toBeGreaterThanOrEqual(4.5);
+    const ctaBounds = await cta.boundingBox();
+    if (width === 1440) expect(ctaBounds.y + ctaBounds.height, 'desktop Careers CTA stays inside the first fold').toBeLessThanOrEqual(900);
+
+    const navStyle = await page.locator('.twins-brand-page-nav').evaluate(element => {
+      const style = getComputedStyle(element);
+      return { position: style.position, top: style.top };
+    });
+    if (width <= 768) {
+      expect(navStyle.position, `${width}px page navigation is non-sticky`).toBe('relative');
+      expect(['auto', '0px'], `${width}px page navigation clears sticky offset`).toContain(navStyle.top);
+    } else {
+      await page.evaluate(() => scrollTo(0, 80));
+      await expect(page.locator('.twins-brand-header')).toHaveAttribute('data-compressed', 'true');
+      await page.waitForTimeout(300);
+      const contracts = await page.evaluate(() => ({
+        headerHeight: getComputedStyle(document.body).getPropertyValue('--twins-header-height').trim(),
+        navTop: getComputedStyle(document.querySelector('.twins-brand-page-nav')).top,
+      }));
+      expect(parseFloat(contracts.navTop), `${width}px page navigation consumes header contract`)
+        .toBeCloseTo(parseFloat(contracts.headerHeight), 1);
+      const compressedHeader = await page.locator('.twins-brand-header').boundingBox();
+      const stickySubnav = await page.locator('.twins-brand-page-nav').boundingBox();
+      expect(stickySubnav.y, `${width}px sticky page navigation clears compressed header`)
+        .toBeGreaterThanOrEqual(compressedHeader.y + compressedHeader.height - 1);
+    }
+
+    const headingSize = await page.locator('.twins-brand-careers-hero h1').evaluate(element => parseFloat(getComputedStyle(element).fontSize));
+    if (width === 1440) expect(headingSize, 'desktop Careers heading remains bounded').toBeLessThanOrEqual(90);
+
+    const crew = await page.locator('.twins-brand-careers-crew-photo').boundingBox();
+    if (width === 1440) expect(crew.y + await page.evaluate(() => scrollY), 'owned crew image enters the first 1100 document pixels').toBeLessThan(1100);
+  }
+});
+
 test('branded sections escape Astra wrappers without gaps or horizontal overflow', async ({ page }) => {
   for (const width of widths) {
     await page.setViewportSize({ width, height: 900 });

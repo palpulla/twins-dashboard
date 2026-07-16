@@ -102,8 +102,18 @@ test('contact always renders approved market phones independently from preview s
 test('careers binds every staging preview label to the normalized environment', () => {
   const careers = template('careers.php');
   assert.match(careers, /<a href="#apply">\s*<\?php if \(\$environment === 'staging'\): \?>\s*Application preview\s*<\?php else: \?>\s*Apply\s*<\?php endif; \?>\s*<\/a>/);
-  assert.match(careers, /class="twins-brand-cta" href="#apply">\s*<\?php if \(\$environment === 'staging'\): \?>\s*Preview the application\s*<\?php else: \?>\s*Start your application\s*<\?php endif; \?>\s*<\/a>/);
+  assert.match(careers, /class="twins-brand-cta twins-brand-cta--quote" href="#apply">\s*<\?php if \(\$environment === 'staging'\): \?>\s*Preview the application\s*<\?php else: \?>\s*Start your application\s*<\?php endif; \?>\s*<\/a>/);
   assert.match(careers, /<h3>Share your interest<\/h3>\s*<\?php if \(\$environment === 'staging'\): \?>\s*<p>Preview the essentials[^<]*<\/p>\s*<\?php else: \?>\s*<p>Give us the essentials[^<]*<\/p>\s*<\?php endif; \?>/);
+});
+
+test('careers keeps the eager owned crew image inside the initial hero grid', () => {
+  const careers = template('careers.php');
+  const hero = careers.match(/<section class="twins-brand-careers-hero"[\s\S]*?<\/section>/);
+  assert.ok(hero, 'Careers hero is missing');
+  assert.match(hero[0], /twins-brand-careers-hero-copy[\s\S]*twins-brand-careers-hero-image/);
+  assert.match(hero[0], /\$logicalKey = 'crew-fleet'/);
+  assert.match(hero[0], /\$class = 'twins-brand-careers-crew-photo'/);
+  assert.match(hero[0], /\$loading = 'eager'/);
 });
 
 test('renderer safety contract scans full composition and proves unsafe booking rejection', () => {
