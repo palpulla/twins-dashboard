@@ -26,8 +26,8 @@ test.describe('exact private staging candidate', () => {
     expect(response.status()).toBeLessThan(400);
     expect(response.headers()['x-robots-tag'] || '').toContain('noindex');
     await expect(page.locator('h1')).toHaveText('Garage Door Repair & Installation, Done Right Today.');
-    await expect(page.getByRole('link', { name: 'Request a Quote', exact: true }).first()).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Book Online', exact: true }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /^Request a Quote(?: →)?$/ }).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: /^Book Online(?: →)?$/ }).first()).toBeVisible();
     await expect(page.locator('.twins-brand-logo img')).toBeVisible();
     await expect(page.locator('.twins-brand-twin')).toHaveCount(2);
     await expect(page.locator('[data-section="team-story"] picture')).toHaveCount(2);
@@ -51,9 +51,9 @@ test.describe('exact private staging candidate', () => {
     const methods = [];
     page.on('request', request => methods.push(request.method()));
     await page.goto('/');
-    await page.getByRole('button', { name: 'Book Online', exact: true }).first().click();
-    await expect(page.locator('[role="dialog"]')).toBeVisible();
-    const quote = page.getByRole('link', { name: 'Request a Quote', exact: true }).first();
+    await page.getByRole('button', { name: /^Book Online(?: →)?$/ }).first().click();
+    await expect(page.getByRole('dialog', { name: 'Book with Twins' })).toBeVisible();
+    const quote = page.getByRole('link', { name: /^Request a Quote(?: →)?$/ }).first();
     const href = await quote.getAttribute('href');
     expect(new URL(href, stageUrl).origin).toBe('https://danielj140.sg-host.com');
     expect(methods.every(method => method === 'GET' || method === 'HEAD')).toBe(true);
