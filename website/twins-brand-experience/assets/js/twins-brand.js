@@ -165,30 +165,31 @@
     });
 
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-    document.querySelectorAll('[data-twins-review-slider]').forEach(slider => {
+    document.querySelectorAll('[data-twins-review-slider][data-review-mode="featured"]').forEach(slider => {
       const track = slider.querySelector('.twins-brand-review-track');
       const cards = [...slider.querySelectorAll('.twins-brand-review-card')];
       const previous = slider.querySelector('[data-review-prev]');
       const next = slider.querySelector('[data-review-next]');
-      const dotsRoot = slider.querySelector('.twins-brand-review-dots');
-      if (!track || !cards.length || !previous || !next || !dotsRoot) return;
+      const status = slider.querySelector('[data-review-page-status]');
+      if (!track || !cards.length || !previous || !next || !status) return;
 
       let current = 0;
       let pages = 1;
       let touchStartX = null;
+      let permanentlyPaused = false;
       const pauses = new Set();
       const cardsPerPage = () => matchMedia('(min-width: 1200px)').matches ? 3 : matchMedia('(min-width: 768px)').matches ? 2 : 1;
       const isPaused = () => pauses.size > 0 || document.hidden || reducedMotion.matches;
+      const reportPause = () => {
+        slider.dataset.autoplayPaused = String(permanentlyPaused || isPaused());
+      };
       const setPause = (reason, value) => {
         if (value) pauses.add(reason); else pauses.delete(reason);
-        slider.dataset.autoplayPaused = String(isPaused());
+        reportPause();
       };
       const paint = () => {
         track.style.transform = `translate3d(-${current * 100}%, 0, 0)`;
-        [...dotsRoot.children].forEach((dot, index) => {
-          dot.setAttribute('aria-current', String(index === current));
-          dot.tabIndex = index === current ? 0 : -1;
-        });
+        status.textContent = `${current + 1} of ${pages}`;
         previous.disabled = pages <= 1;
         next.disabled = pages <= 1;
       };
@@ -196,27 +197,25 @@
         current = (page + pages) % pages;
         paint();
       };
+      const manualGo = page => {
+        permanentlyPaused = true;
+        slider.dataset.interactionPaused = 'true';
+        reportPause();
+        go(page);
+      };
       const build = () => {
         const count = cardsPerPage();
         slider.style.setProperty('--twins-review-cards', String(count));
         pages = Math.max(1, Math.ceil(cards.length / count));
         current = Math.min(current, pages - 1);
-        dotsRoot.replaceChildren();
-        for (let index = 0; index < pages; index += 1) {
-          const dot = document.createElement('button');
-          dot.type = 'button';
-          dot.setAttribute('aria-label', `Review page ${index + 1}`);
-          dot.addEventListener('click', () => go(index));
-          dotsRoot.append(dot);
-        }
         paint();
       };
 
-      previous.addEventListener('click', () => go(current - 1));
-      next.addEventListener('click', () => go(current + 1));
+      previous.addEventListener('click', () => manualGo(current - 1));
+      next.addEventListener('click', () => manualGo(current + 1));
       slider.addEventListener('keydown', event => {
-        if (event.key === 'ArrowLeft') { event.preventDefault(); go(current - 1); }
-        if (event.key === 'ArrowRight') { event.preventDefault(); go(current + 1); }
+        if (event.key === 'ArrowLeft') { event.preventDefault(); manualGo(current - 1); }
+        if (event.key === 'ArrowRight') { event.preventDefault(); manualGo(current + 1); }
       });
       slider.addEventListener('mouseenter', () => setPause('hover', true));
       slider.addEventListener('mouseleave', () => setPause('hover', false));
@@ -230,19 +229,23 @@
       slider.addEventListener('touchstart', event => {
         touchStartX = event.touches[0]?.clientX ?? null;
         setPause('touch', true);
-        slider.dataset.interactionPaused = 'true';
       }, { passive: true });
       slider.addEventListener('touchend', event => {
         const endX = event.changedTouches[0]?.clientX ?? touchStartX;
-        if (touchStartX !== null && endX !== null && Math.abs(endX - touchStartX) >= 40) go(current + (endX < touchStartX ? 1 : -1));
+        if (touchStartX !== null && endX !== null && Math.abs(endX - touchStartX) >= 40) {
+          manualGo(current + (endX < touchStartX ? 1 : -1));
+        }
         touchStartX = null;
         setPause('touch', false);
       }, { passive: true });
-      document.addEventListener('visibilitychange', () => slider.dataset.autoplayPaused = String(isPaused()));
-      reducedMotion.addEventListener?.('change', () => slider.dataset.autoplayPaused = String(isPaused()));
+      document.addEventListener('visibilitychange', reportPause);
+      reducedMotion.addEventListener?.('change', reportPause);
       window.addEventListener('resize', build, { passive: true });
       build();
-      setInterval(() => { if (!isPaused()) go(current + 1); }, 7000);
+      reportPause();
+      setInterval(() => {
+        if (!permanentlyPaused && !isPaused()) go(current + 1);
+      }, 12000);
     });
 
     const compressHeader = () => {

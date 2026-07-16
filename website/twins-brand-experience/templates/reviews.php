@@ -4,6 +4,7 @@ declare(strict_types=1);
 if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '') {
     throw new DomainException('Quote action is unavailable.');
 }
+$context['classification'] = 'reviews-brand';
 ?>
 <main id="twins-overhaul-main" class="twins-brand-page twins-brand-reviews-page">
   <section class="twins-brand-page-hero" aria-labelledby="twins-brand-reviews-page-title">

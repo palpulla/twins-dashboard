@@ -486,46 +486,45 @@ body.twins-brand-experience .twins-brand-footer-group h2 {
 .twins-brand-review-proof { color: var(--twins-white); background: var(--twins-navy-950); }
 .twins-brand-review-proof .twins-brand-section-heading h2 { color: var(--twins-white); }
 .twins-brand-review-proof .twins-brand-section-heading p { color: #dbe8f8; }
-.twins-brand-review-slider { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; overflow: hidden; }
-.twins-brand-review-track { grid-column: 1 / -1; display: flex; align-items: stretch; transform: translate3d(0, 0, 0); transition: transform .42s cubic-bezier(.22, .8, .26, 1); }
+.twins-brand-review-slider { display: grid; grid-template-columns: minmax(112px, auto) minmax(90px, 1fr) minmax(112px, auto); align-items: center; overflow: hidden; }
+.twins-brand-review-track { grid-column: 1 / -1; display: flex; align-items: flex-start; transform: translate3d(0, 0, 0); transition: transform .42s cubic-bezier(.22, .8, .26, 1); }
 .twins-brand-review-card {
   flex: 0 0 calc(100% / var(--twins-review-cards, 3));
-  min-height: 310px;
-  padding: 10px 12px 12px;
-}
-.twins-brand-review-card > :where(small, .twins-brand-review-stars, blockquote, footer) {
-  display: block;
-  margin-inline: 8px;
-}
-.twins-brand-review-card {
+  padding: 22px 24px 24px;
   color: var(--twins-ink);
   background: var(--twins-cream);
-  background-clip: content-box;
+  border: 10px solid var(--twins-navy-950);
   border-radius: 30px 6px 30px 6px;
 }
-.twins-brand-review-card small { padding-top: 28px; color: #5f6670; font-size: .7rem; font-weight: 800; text-transform: uppercase; }
-.twins-brand-review-stars { padding-top: 12px; color: #9a6200; font-size: 1.4rem; letter-spacing: .15em; }
-.twins-brand-review-card blockquote { min-height: 112px; margin-top: 12px; margin-bottom: 20px; padding-inline: 0; font-size: 1.08rem; font-weight: 750; }
-.twins-brand-review-card footer { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 28px; color: var(--twins-navy-900); }
-.twins-brand-review-slider > [data-review-prev],
-.twins-brand-review-slider > [data-review-next],
-.twins-brand-review-dots button {
-  min-width: 46px;
+.twins-brand-review-card > :where(small, .twins-brand-review-stars, .twins-brand-review-excerpt, blockquote, details, footer) { margin-inline: 0; }
+.twins-brand-review-card small { color: #5f6670; font-size: .7rem; font-weight: 800; text-transform: uppercase; }
+.twins-brand-review-stars { color: #9a6200; font-size: 1.35rem; letter-spacing: .12em; }
+.twins-brand-review-card blockquote,
+.twins-brand-review-excerpt { margin-top: 12px; margin-bottom: 18px; padding-inline: 0; font-size: 1rem; font-style: normal; font-weight: 700; line-height: 1.52; }
+.twins-brand-review-details { margin: -4px 0 18px; }
+.twins-brand-review-details summary { min-height: 44px; display: inline-flex; align-items: center; color: var(--twins-navy-800); font-weight: 1000; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 5px; cursor: pointer; }
+.twins-brand-review-details[open] summary { margin-bottom: 8px; }
+.twins-brand-review-details blockquote { margin-bottom: 8px; padding-left: 16px; border-left: 4px solid var(--twins-gold-strong); }
+.twins-brand-review-card footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 14px; color: var(--twins-navy-900); }
+.twins-brand-review-control {
+  min-width: 112px;
   min-height: 46px;
+  margin-top: 24px;
+  padding: 9px 18px;
   color: var(--twins-navy-950);
   background: var(--twins-gold);
-  border: 2px solid var(--twins-gold);
-  border-radius: 50%;
+  border: 2px solid var(--twins-navy-950);
+  border-radius: 7px 17px 7px 17px;
+  box-shadow: 3px 4px 0 rgba(255, 255, 255, .2);
   font-weight: 1000;
 }
-.twins-brand-review-slider > [data-review-prev],
-.twins-brand-review-slider > [data-review-next] { margin-top: 25px; }
+.twins-brand-review-control:is(:hover, :focus-visible) { background: #ffda76; }
+.twins-brand-review-control:disabled { cursor: default; opacity: .62; }
 .twins-brand-review-slider > [data-review-prev] { justify-self: start; }
 .twins-brand-review-slider > [data-review-next] { justify-self: end; }
-.twins-brand-review-dots { display: flex; justify-content: center; gap: 8px; margin-top: 25px; }
-.twins-brand-review-dots button { min-width: 44px; min-height: 44px; color: var(--twins-white); background: transparent; font-size: 0; }
-.twins-brand-review-dots button::after { content: ''; width: 10px; height: 10px; display: block; margin: auto; background: currentColor; border-radius: 50%; }
-.twins-brand-review-dots button[aria-current="true"] { color: var(--twins-navy-950); background: var(--twins-gold); }
+.twins-brand-review-status { min-width: 90px; min-height: 46px; display: inline-grid; place-items: center; justify-self: center; margin-top: 24px; color: var(--twins-white); background: var(--twins-navy-800); border: 2px solid var(--twins-gold); border-radius: 999px; font-weight: 1000; }
+.twins-brand-review-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 24px; }
+.twins-brand-review-list .twins-brand-review-card { width: 100%; padding: 26px; background: var(--twins-cream); border: 3px solid var(--twins-gold); box-shadow: 7px 8px 0 rgba(0, 0, 0, .24); }
 .twins-brand-review-proof .twins-brand-text-link { color: var(--twins-gold); }
 
 .twins-brand-team-story,
@@ -789,6 +788,7 @@ body.twins-brand-experience .twins-brand-careers-hero a.twins-brand-cta {
   .twins-brand-mobile-proof p { max-width: none; margin: 0; }
   .twins-brand-trust-ribbon { font-size: .92rem; }
   .twins-brand-review-slider { --twins-review-cards: 1; }
+  .twins-brand-review-list { grid-template-columns: 1fr; }
   .twins-brand-team-story-images { min-height: 360px; }
   .twins-brand-preview-form { grid-template-columns: 1fr; }
   .twins-brand-field-wide,

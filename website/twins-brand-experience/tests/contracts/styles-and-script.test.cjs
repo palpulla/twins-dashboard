@@ -30,6 +30,22 @@ test('runtime script contains no transport, analytics, or external destination',
   for (const marker of ['Escape', 'visibilitychange', 'pointerdown', 'touchstart', 'focusin', 'aria-expanded']) assert.ok(js.includes(marker), marker);
 });
 
+test('review runtime uses bounded status controls and permanently pauses after manual navigation', () => {
+  assert.match(js, /data-review-page-status/);
+  assert.match(js, /let permanentlyPaused\s*=\s*false/);
+  assert.match(js, /const manualGo\s*=/);
+  assert.match(js, /permanentlyPaused\s*=\s*true/);
+  assert.match(js, /12000/);
+  assert.doesNotMatch(js, /setInterval\([^;]*7000/);
+  assert.doesNotMatch(js, /twins-brand-review-dots/);
+  assert.match(css, /\.twins-brand-review-control/);
+  assert.match(css, /\.twins-brand-review-status/);
+  assert.match(css, /\.twins-brand-review-list[\s\S]*align-items:\s*start/);
+  assert.match(css, /\.twins-brand-review-card blockquote[\s\S]*font-style:\s*normal/);
+  assert.doesNotMatch(css, /\.twins-brand-review-card\s*\{[^}]*min-height:\s*310px/s);
+  assert.doesNotMatch(css, /twins-brand-review-dots/);
+});
+
 test('brand stylesheet covers every supporting route surface', () => {
   for (const selector of [
     '.twins-brand-page-hero',

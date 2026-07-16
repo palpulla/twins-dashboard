@@ -1,6 +1,7 @@
 const { test, expect } = require('@playwright/test');
 
 const fixture = '/tests/browser/fixtures/brand-home.html';
+const reviewsFixture = '/tests/browser/fixtures/brand-reviews.html';
 const widths = [1440, 1201, 1024, 768, 390, 360, 320];
 const marketMenuFixture = `
 <details class="twins-brand-market-menu">
@@ -236,27 +237,41 @@ test('staging previews validate locally and make zero POST or external requests'
   expect(requests.filter(([, origin]) => origin !== new URL(page.url()).origin)).toEqual([]);
 });
 
-test('review slider supports buttons, keyboard, touch, dots, and interaction pause', async ({ page }) => {
+test('featured review slider uses bounded controls and permanently pauses after manual navigation', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(fixture);
   const slider = page.locator('[data-twins-review-slider]');
   const track = slider.locator('.twins-brand-review-track');
-  await expect(slider.locator('[role="group"] button')).toHaveCount(5);
+  const status = slider.locator('[data-review-page-status]');
+  await expect(status).toHaveText('1 of 5');
+  await expect(slider.locator('.twins-brand-review-dots')).toHaveCount(0);
   const initial = await track.evaluate(element => getComputedStyle(element).transform);
   await slider.getByRole('button', { name: 'Next reviews' }).click();
+  await expect(status).toHaveText('2 of 5');
   await expect.poll(() => track.evaluate(element => getComputedStyle(element).transform)).not.toBe(initial);
-  const afterButton = await track.evaluate(element => getComputedStyle(element).transform);
+  await page.waitForTimeout(500);
+  const afterManual = await track.evaluate(element => getComputedStyle(element).transform);
+  await page.waitForTimeout(12_500);
+  expect(await track.evaluate(element => getComputedStyle(element).transform)).toBe(afterManual);
   await slider.focus();
   await page.keyboard.press('ArrowRight');
-  await expect.poll(() => track.evaluate(element => getComputedStyle(element).transform)).not.toBe(afterButton);
+  await expect(status).toHaveText('3 of 5');
   await slider.dispatchEvent('touchstart', { touches: [{ identifier: 1, clientX: 280, clientY: 100 }] });
   await slider.dispatchEvent('touchend', { changedTouches: [{ identifier: 1, clientX: 100, clientY: 100 }] });
   await expect(slider).toHaveAttribute('data-interaction-paused', 'true');
-  await slider.hover();
-  await page.waitForTimeout(500);
-  const paused = await track.evaluate(element => getComputedStyle(element).transform);
-  await page.waitForTimeout(7200);
-  expect(await track.evaluate(element => getComputedStyle(element).transform)).toBe(paused);
+  await expect(status).toHaveText('4 of 5');
+});
+
+test('Reviews page keeps the complete verified collection static without autoplay markup', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(reviewsFixture);
+  const list = page.locator('.twins-brand-review-list');
+  await expect(list).toBeVisible();
+  await expect(list.locator('.twins-brand-review-card')).toHaveCount(3);
+  await expect(page.locator('[data-twins-review-slider], .twins-brand-review-track, [data-review-page-status]')).toHaveCount(0);
+  const initial = await list.evaluate(element => getComputedStyle(element).transform);
+  await page.waitForTimeout(12_500);
+  expect(await list.evaluate(element => getComputedStyle(element).transform)).toBe(initial);
 });
 
 test('JavaScript-disabled previews remain structurally incapable of submission', async ({ browser }) => {

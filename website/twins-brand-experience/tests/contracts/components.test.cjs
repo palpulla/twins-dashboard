@@ -10,6 +10,11 @@ const source = name => {
   return fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
 };
 
+const templateSource = name => {
+  const file = path.join(root, 'templates', name);
+  return fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
+};
+
 test('header exposes the approved complete navigation and CTA copy', () => {
   const html = source('header.php');
   for (const label of ['Services', 'Garage Doors', 'Service Areas', 'Resources', 'About', 'Our Team', 'Careers', 'Book Online', 'Request a Quote']) {
@@ -39,9 +44,18 @@ test('header exposes the service-area chooser as a native market menu with appro
   assert.doesNotMatch(header, /<span>Choose your service area<\/span>/);
 });
 
-test('slider emits normalized records but no review schema owner', () => {
+test('review component exposes bounded featured and static list modes without dot controls', () => {
   const html = source('review-slider.php');
   assert.match(html, /twins-brand-review-slider/);
+  assert.match(html, /data-review-mode="featured"/);
+  assert.match(html, /array_slice\(\$records,\s*0,\s*9\)/);
+  assert.match(html, /twins-brand-review-list/);
+  assert.match(html, /data-review-page-status/);
+  assert.match(html, /twins-brand-review-control/);
+  assert.match(html, /count\(\$words\)\s*>\s*42/);
+  assert.match(html, /<details/);
+  assert.match(html, /Read full review/);
+  assert.doesNotMatch(html, /twins-brand-review-dots/);
   assert.match(html, /id="twins-brand-reviews-title"/);
   assert.match(html, /Google reviews/);
   assert.match(html, /<div class="twins-brand-section-heading">[\s\S]*id="twins-brand-reviews-title"[\s\S]*twins-brand-google-attribution[\s\S]*<\/div>/);
@@ -51,6 +65,13 @@ test('slider emits normalized records but no review schema owner', () => {
   assert.match(html, /===\s*true/);
   assert.doesNotMatch(html, /AggregateRating|ReviewRating|application\/ld\+json/);
   assert.doesNotMatch(html, /sourceRecordUrl|avatar|providerHtml/);
+});
+
+test('Reviews template explicitly selects static list mode without an autoplay marker', () => {
+  const html = templateSource('reviews.php');
+  assert.match(html, /\$context\[['"]classification['"]\]\s*=\s*['"]reviews-brand['"]/);
+  assert.match(html, /components\/review-slider\.php/);
+  assert.doesNotMatch(html, /data-twins-review-slider|data-review-mode="featured"/);
 });
 
 test('picture component accepts logical keys, not paths or URLs', () => {
