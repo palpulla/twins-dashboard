@@ -47,6 +47,8 @@ test('staging manifest is closed, hash-pinned, and has no production payload', (
   assert.equal(prerequisites.has('twins-staging-overhaul.php'), true);
   assert.equal(prerequisites.has('twins-staging-safety.php'), true);
   assert.equal([...prerequisites].some(file => file.startsWith('twins-staging-assets/')), true);
+  assert.equal([...prerequisites].some(file => file.endsWith('.md')), false,
+    'documentation-only files are not live runtime prerequisites');
   assert.equal(manifest.files.some(file => /(^|\/)production(\/|$)|\/tests\//.test(file.source)), false);
   assert.equal(manifest.files.some(file => /twins-before-after-install-source\.png$/.test(file.source)), false);
 });

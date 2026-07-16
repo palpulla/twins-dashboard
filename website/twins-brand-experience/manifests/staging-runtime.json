@@ -272,13 +272,6 @@
     },
     {
       "role": "verify-prerequisite",
-      "source": "staging-safety/mu-plugins/twins-staging-assets/FONT-SOURCES.md",
-      "destination": "twins-staging-assets/FONT-SOURCES.md",
-      "size": 1011,
-      "sha256": "281e07633bdaaa5c4760ff1e4666ce191702f4f5fcb1412ed6fceb97b97b930c"
-    },
-    {
-      "role": "verify-prerequisite",
       "source": "staging-safety/mu-plugins/twins-staging-assets/clopay-assets-manifest.json",
       "destination": "twins-staging-assets/clopay-assets-manifest.json",
       "size": 542339,
