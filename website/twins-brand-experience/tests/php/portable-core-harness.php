@@ -123,6 +123,21 @@ try {
     try { new Twins\BrandExperience\MarketRegistry($extraMarkets); } catch (InvalidArgumentException $expected) { $closed = true; }
     $expect($closed, 'registry accepted an unauthorized market name');
 
+    $pageRecords = require dirname($argv[1]) . '/config/page-content.php';
+    $pageRegistry = new Twins\BrandExperience\PageContentRegistry($pageRecords);
+    $bespoke = $pageRegistry->resolve('/wi/garage-door-spring-repair/', '<script>ignored bespoke title</script>');
+    $expect($bespoke['h1'] === 'Garage Door Spring Repair', 'prefixed bespoke resolution used the mutable title');
+    $fallback = $pageRegistry->resolve('/wi/garage-door-cable-repair/', '<script>hostile mutable title</script>');
+    $expect($fallback['h1'] === 'Garage Door Cable Repair', 'generic fallback did not use the fixed slug title');
+    $closed = false;
+    try { $pageRegistry->resolve('/wi/not-a-service/', 'Ignored'); } catch (DomainException $expected) { $closed = true; }
+    $expect($closed, 'unknown page-content route did not fail closed');
+    $malformedPageRecords = $pageRecords;
+    unset($malformedPageRecords['/garage-door-repair/']['safety']);
+    $closed = false;
+    try { new Twins\BrandExperience\PageContentRegistry($malformedPageRecords); } catch (InvalidArgumentException $expected) { $closed = true; }
+    $expect($closed, 'page-content registry accepted a malformed fixed record');
+
     $publicMethods = array_values(array_map(
         static fn(ReflectionMethod $method): string => $method->getName(),
         array_filter(

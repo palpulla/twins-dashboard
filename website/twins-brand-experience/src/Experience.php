@@ -51,6 +51,9 @@ final class Experience
             $environment = $context['environment'];
             $market = $this->markets->resolve($marketKey, $environment);
             $experience = $this;
+            if (in_array($template, ['service', 'editorial'], true)) {
+                [$phone, $phoneHref] = $this->contactContext($context, $market);
+            }
             if ($template === 'service') {
                 $path = $context['path'] ?? null;
                 $title = $context['title'] ?? null;
@@ -100,6 +103,36 @@ final class Experience
             'editorialContent' => $content,
             'editorialKind' => $kind,
         ]));
+    }
+
+    private function contactContext(array $context, array $market): array
+    {
+        $hasContextPhone = isset($context['phone']) || isset($context['phoneDisplay']);
+        $hasContextHref = isset($context['phoneHref']) || isset($context['tel']);
+        if ($hasContextPhone !== $hasContextHref) {
+            throw new \DomainException('Normalized contact context is incomplete.');
+        }
+
+        $phone = $hasContextPhone
+            ? ($context['phone'] ?? $context['phoneDisplay'])
+            : ($market['phoneDisplay'] ?? null);
+        $phoneHref = $hasContextHref
+            ? ($context['phoneHref'] ?? ('tel:' . $context['tel']))
+            : ($market['phoneHref'] ?? null);
+        if (
+            !is_string($phone)
+            || !is_string($phoneHref)
+            || preg_match('/^\(\d{3}\) \d{3}-\d{4}$/D', $phone) !== 1
+            || preg_match('/^tel:\+1\d{10}$/D', $phoneHref) !== 1
+        ) {
+            throw new \DomainException('Normalized contact context is invalid.');
+        }
+        $displayDigits = preg_replace('/\D+/', '', $phone);
+        $hrefDigits = substr($phoneHref, 5);
+        if (!is_string($displayDigits) || $hrefDigits !== '1' . $displayDigits) {
+            throw new \DomainException('Normalized contact context does not match.');
+        }
+        return [$phone, $phoneHref];
     }
 
     private function pageContent(): PageContentRegistry

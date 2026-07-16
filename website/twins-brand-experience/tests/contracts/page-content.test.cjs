@@ -66,6 +66,7 @@ test('fixed page-content config contains exactly five conservative bespoke recor
 
 test('PageContentRegistry is fixed-shape, fail-closed, and performs no caller-selected I/O', () => {
   const source = read('src/PageContentRegistry.php');
+  const harness = read('tests/php/portable-core-harness.php');
   assert.match(source, /final class PageContentRegistry/);
   assert.match(source, /public function resolve\(string \$path, string \$title\): array/);
   for (const key of requiredKeys) assert.match(source, new RegExp(`['"]${key}['"]`), key);
@@ -74,11 +75,22 @@ test('PageContentRegistry is fixed-shape, fail-closed, and performs no caller-se
   assert.match(source, /genericServiceRecord/);
   assert.match(source, /garage-door-cable-repair/);
   assert.match(source, /garage-door-tune-up/);
+  assert.match(source, /private const FALLBACK_TITLES\s*=\s*\[/);
+  assert.match(source, /'\/garage-door-cable-repair\/'\s*=>\s*'Garage Door Cable Repair'/);
+  assert.match(source, /genericServiceRecord\(self::FALLBACK_TITLES\[\$path\]\)/);
+  assert.doesNotMatch(source, /validateTitle/);
   assert.doesNotMatch(source, /\b(?:file_get_contents|fopen|readfile|include|require|curl_|stream_|glob|scandir)\b/i);
   assert.match(source, /InvalidArgumentException|DomainException/);
   assert.match(source, /%\(2f\|5c\)|%2f|%5c/i);
   assert.match(source, /40/);
   assert.match(source, /60/);
+  for (const assertion of [
+    "$pageRegistry->resolve('/wi/garage-door-spring-repair/', '<script>ignored bespoke title</script>')",
+    "$pageRegistry->resolve('/wi/garage-door-cable-repair/', '<script>hostile mutable title</script>')",
+    "$expect($fallback['h1'] === 'Garage Door Cable Repair'",
+    "$pageRegistry->resolve('/wi/not-a-service/', 'Ignored')",
+    "unset($malformedPageRecords['/garage-door-repair/']['safety'])",
+  ]) assert.ok(harness.includes(assertion), assertion);
 });
 
 test('portable service and editorial templates keep adapters and inert content boundaries explicit', () => {
@@ -102,15 +114,18 @@ test('portable service and editorial templates keep adapters and inert content b
   }
   assert.equal((service.match(/<h1\b/g) || []).length, 1);
   assert.doesNotMatch(service, /data-twins-original-content|\$content|replace it yourself|DIY spring|#1/i);
-  assert.match(service, /\$market\[['"]phoneHref['"]\]/);
-  assert.match(service, /\$market\[['"]phoneDisplay['"]\]/);
+  assert.match(service, /\$phoneHref/);
+  assert.match(service, /\$phone/);
+  assert.doesNotMatch(service, /\$market\[['"]phone(?:Href|Display)['"]\]/);
   assert.match(service, /\$experience->route\(\$link\[['"]route['"]\], \$marketKey\)/);
   assert.match(service, /\$quote\[['"]href['"]\]/);
 
   assert.equal((editorial.match(/<h1\b/g) || []).length, 1);
   assert.match(editorial, /twins-brand-editorial-page/);
   assert.match(editorial, /\$content/);
-  assert.match(editorial, /\$market\[['"]phoneHref['"]\]/);
+  assert.match(editorial, /\$phoneHref/);
+  assert.match(editorial, /\$phone/);
+  assert.doesNotMatch(editorial, /\$market\[['"]phone(?:Href|Display)['"]\]/);
   assert.match(editorial, /\$quote\[['"]href['"]\]/);
   assert.doesNotMatch(editorial, /elementor|<form\b|type=["']submit["']|https?:\/\//i);
 });
@@ -147,6 +162,12 @@ test('renderer harness pins spring safety, one H1, FAQ depth, and raw-body remov
     "stripos($rendered, 'trained professionals') !== false",
     "stripos($rendered, 'replace it yourself') === false",
     "strpos($rendered, 'data-twins-original-content') === false",
+  ]) assert.ok(harness.includes(assertion), assertion);
+  for (const assertion of [
+    "strpos($milwaukee, '(414) 800-9271') !== false",
+    "strpos($milwaukee, 'tel:+14148009271') !== false",
+    "strpos($wisconsin, '(608) 420-2377') !== false",
+    "strpos($illinois, '(815) 800-2025') !== false",
   ]) assert.ok(harness.includes(assertion), assertion);
 });
 

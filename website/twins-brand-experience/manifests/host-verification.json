@@ -174,8 +174,8 @@
     {
       "role": "verify",
       "source": "staging-safety/tests/staging-overhaul-renderers-harness.php",
-      "size": 67798,
-      "sha256": "fb9b8832214d409dd6210475e5be0c367069e60e96c26cb7f8c21bc7d100b69c"
+      "size": 70932,
+      "sha256": "dd6eb02658404a16d420850a2040712c56b950a629689900b3fe5ea57aa8c329"
     },
     {
       "role": "verify",
@@ -235,7 +235,7 @@
       "role": "verify",
       "source": "twins-brand-experience/manifests/staging-runtime.json",
       "size": 357143,
-      "sha256": "9b04012c4b0e3ead2303768939dca0fa941861713a004a297d371d845af2b218"
+      "sha256": "cb349ef6f81bc79e51cfa6391f4438323ec56fbb5d35e54f96396d1556c084ec"
     },
     {
       "role": "verify",
@@ -246,8 +246,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/src/Experience.php",
-      "size": 6222,
-      "sha256": "9c794f2733cc4077543674eca8c2c1638c180e5b5fcfee0d3196511ea80c1b26"
+      "size": 7731,
+      "sha256": "febb5ecf1753ef67121ef3d83fdbd9540fc6dfebe9abe73701781a67d81e8ee4"
     },
     {
       "role": "verify",
@@ -258,8 +258,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/src/PageContentRegistry.php",
-      "size": 14492,
-      "sha256": "e1cb56acf58de27a8d4e808460f65317c3700b50ffb41b480637fb09982df03c"
+      "size": 13864,
+      "sha256": "ac276927242312fff6c255990a13b728a9eb0a9aece6328715e831e12cf26127"
     },
     {
       "role": "verify",
@@ -282,8 +282,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/templates/editorial.php",
-      "size": 3003,
-      "sha256": "f377571e3d073cc76c332d2f1345e76ee55e55f25c52720e960a46867fa1cc17"
+      "size": 2966,
+      "sha256": "92746b636e685697e6e2bc21830467256c5e22dfe7f581f4939879c4a9b91044"
     },
     {
       "role": "verify",
@@ -300,8 +300,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/templates/service.php",
-      "size": 6303,
-      "sha256": "2ab291e4e81c4c66ea85e1f996edb0e56dda0a6716b926f7943d819d6f1c40a9"
+      "size": 6256,
+      "sha256": "0fb58bbd29c952d534ca247d73ead7b8326fb0558c5e4745b2607c3b7cc5d8b9"
     },
     {
       "role": "verify",
@@ -378,8 +378,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/tests/php/portable-core-harness.php",
-      "size": 17434,
-      "sha256": "b67da45f40380b6d5c9c8ad9fa3fc6d9c22462cbbdc08392e4f34cfb86feedbb"
+      "size": 18623,
+      "sha256": "aeac3d2fbb3efa7f1e96145cbd8d7956fd47ad4e082b2c203c2d40639e54470f"
     },
     {
       "role": "verify",

@@ -73,7 +73,7 @@ phpTest('bootstrap harness fails closed for every missing or false gate', () => 
 });
 
 phpTest('renderer harness validates every approved request state', () => {
-  for (const scenario of ['routes', 'asset-versions', 'hooks', 'blog-index', 'campaign', 'family-once', 'service-brand-chrome', 'catalog-brand-chrome', 'home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand', 'ineligible', 'article', 'unknown-blog']) {
+  for (const scenario of ['routes', 'asset-versions', 'hooks', 'blog-index', 'campaign', 'family-once', 'path-contact-context', 'service-brand-chrome', 'catalog-brand-chrome', 'home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand', 'ineligible', 'article', 'unknown-blog']) {
     assert.equal(
       runPhp('staging-overhaul-renderers-harness.php', [LOADER, scenario]),
       `STAGING_OVERHAUL_RENDERERS_HARNESS_OK:${scenario}`,

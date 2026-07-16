@@ -16,7 +16,7 @@ if (!isset($pageContent) || !is_array($pageContent)) {
       <p>Start with a clear answer, review the safety guidance, and use the contact details for your selected service area.</p>
     </div>
     <div class="twins-brand-service-hero-actions">
-      <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($market['phoneHref'], ENT_QUOTES, 'UTF-8') ?>">Call Twins</a>
+      <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call Twins</a>
       <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
     </div>
   </section>
@@ -92,7 +92,7 @@ if (!isset($pageContent) || !is_array($pageContent)) {
       <p>This page uses the contact details and service routes for the market selected in the shared Twins experience.</p>
     </div>
     <div class="twins-brand-service-area-actions">
-      <a class="twins-brand-service-phone" href="<?= htmlspecialchars($market['phoneHref'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($market['phoneDisplay'], ENT_QUOTES, 'UTF-8') ?></a>
+      <a class="twins-brand-service-phone" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
       <a href="<?= htmlspecialchars($experience->route('services', $marketKey), ENT_QUOTES, 'UTF-8') ?>">View garage door services</a>
     </div>
   </section>
@@ -116,7 +116,7 @@ if (!isset($pageContent) || !is_array($pageContent)) {
     <span class="twins-brand-kicker">Ready for a project-specific answer?</span>
     <h2 id="twins-brand-service-final-title">Use the contact path for your service area.</h2>
     <div class="twins-brand-final-actions">
-      <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($market['phoneHref'], ENT_QUOTES, 'UTF-8') ?>">Call Twins</a>
+      <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call Twins</a>
       <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
     </div>
   </section>

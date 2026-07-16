@@ -25,20 +25,15 @@ final class PageContentRegistry
         '/emergency-garage-services/',
     ];
 
-    private const SERVICE_PATHS = [
-        '/garage-door-services/',
-        '/garage-door-repair/',
-        '/garage-door-installation/',
-        '/garage-door-cable-repair/',
-        '/garage-door-opener-repair/',
-        '/garage-door-openers/',
-        '/garage-door-spring-repair/',
-        '/garage-weatherstripping-repair/',
-        '/garage-door-tune-up/',
-        '/emergency-garage-services/',
-        '/property-management-services/',
-        '/maintenance-plans/',
-        '/protection-plans/',
+    private const FALLBACK_TITLES = [
+        '/garage-door-services/' => 'Garage Door Services',
+        '/garage-door-cable-repair/' => 'Garage Door Cable Repair',
+        '/garage-door-openers/' => 'Garage Door Openers',
+        '/garage-weatherstripping-repair/' => 'Weatherstripping Repair',
+        '/garage-door-tune-up/' => 'Garage Door Tune-Up',
+        '/property-management-services/' => 'Property Management Services',
+        '/maintenance-plans/' => 'Maintenance Plans',
+        '/protection-plans/' => 'TwinShield Protection Plan',
     ];
 
     private const LINK_ROUTES = [
@@ -73,14 +68,13 @@ final class PageContentRegistry
     public function resolve(string $path, string $title): array
     {
         $path = $this->normalizePath($path);
-        $title = $this->validateTitle($title);
         if (isset($this->records[$path])) {
             return $this->records[$path];
         }
-        if (!in_array($path, self::SERVICE_PATHS, true)) {
+        if (!isset(self::FALLBACK_TITLES[$path])) {
             throw new \DomainException('The path is outside the fixed service registry.');
         }
-        $fallback = $this->genericServiceRecord($title === '' ? 'Garage Door Service' : $title);
+        $fallback = $this->genericServiceRecord(self::FALLBACK_TITLES[$path]);
         $this->validateRecord($path, $fallback);
         return $fallback;
     }
@@ -116,23 +110,6 @@ final class PageContentRegistry
             throw new \InvalidArgumentException('Service path is not a normalized terminal slug.');
         }
         return '/' . trim($path, '/') . '/';
-    }
-
-    private function validateTitle(string $title): string
-    {
-        $title = trim($title);
-        if (strlen($title) > 80) {
-            throw new \InvalidArgumentException('Service title is outside the fixed boundary.');
-        }
-        if (
-            preg_match('/[\x00-\x1f\x7f]/', $title)
-            || strpos($title, '<') !== false
-            || strpos($title, '>') !== false
-            || preg_match('~(?:[a-z][a-z0-9+.-]*:)?//~i', $title)
-        ) {
-            throw new \InvalidArgumentException('Service title is not plain text.');
-        }
-        return $title;
     }
 
     private function validateRecord(string $path, array $record): void

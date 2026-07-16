@@ -331,7 +331,7 @@ if ($argc !== 3 || !is_file($argv[1])) {
 }
 
 $scenario = $argv[2];
-if (!in_array($scenario, ['routes', 'asset-versions', 'hooks', 'blog-index', 'campaign', 'family-once', 'service-brand-chrome', 'catalog-brand-chrome', 'home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand', 'elementor-theme-content', 'elementor-document-content', 'legacy-location-document', 'ineligible', 'article', 'unknown-blog'], true)) {
+if (!in_array($scenario, ['routes', 'asset-versions', 'hooks', 'blog-index', 'campaign', 'family-once', 'path-contact-context', 'service-brand-chrome', 'catalog-brand-chrome', 'home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand', 'elementor-theme-content', 'elementor-document-content', 'legacy-location-document', 'ineligible', 'article', 'unknown-blog'], true)) {
     fwrite(STDERR, "UNKNOWN_RENDERER_SCENARIO\n");
     exit(2);
 }
@@ -856,6 +856,65 @@ if ($scenario === 'family-once') {
     twins_overhaul_renderer_assert(strpos($rendered, 'id="twins-overhaul-main"') !== false, 'service family lacks skip target');
     twins_overhaul_renderer_assert(!preg_match('/\b(?:five[- ]star|same[- ]day|licensed|guaranteed|24\/7)\b/i', $rendered), 'service family invented an unsupported claim');
     twins_overhaul_renderer_assert(!preg_match('/<form\b|type=["\']submit["\']|\baction=/i', $rendered), 'service family contains an active form');
+}
+
+if ($scenario === 'path-contact-context') {
+    twins_overhaul_renderer_set([
+        'blogId' => 4,
+        'path' => '/wi/garage-door-repair-in-milwaukee-wi/',
+        'postType' => 'page',
+        'postId' => 805,
+        'renderedPostType' => 'page',
+        'renderedPostId' => 805,
+        'title' => 'Garage Door Repair in Milwaukee',
+    ]);
+    twins_overhaul_renderer_assert(twins_overhaul_current_classification() === 'location', 'Milwaukee context route is not a location');
+    $milwaukee = twins_overhaul_render_classified_content(
+        'location',
+        twins_overhaul_current_context('location'),
+        '<p>MILWAUKEE VERIFIED CONTENT</p>'
+    );
+    twins_overhaul_renderer_assert(strpos($milwaukee, '(414) 800-9271') !== false, 'Milwaukee editorial lost its path-specific phone');
+    twins_overhaul_renderer_assert(strpos($milwaukee, 'tel:+14148009271') !== false, 'Milwaukee editorial lost its path-specific phone href');
+    twins_overhaul_renderer_assert(strpos($milwaukee, '(608) 420-2377') === false, 'Milwaukee editorial fell back to the broad Wisconsin phone');
+
+    twins_overhaul_renderer_set([
+        'blogId' => 4,
+        'path' => '/wi/garage-door-spring-repair/',
+        'postType' => 'page',
+        'postId' => 806,
+        'renderedPostType' => 'page',
+        'renderedPostId' => 806,
+        'title' => 'Garage Door Spring Repair',
+    ]);
+    twins_overhaul_renderer_assert(twins_overhaul_current_classification() === 'service', 'Wisconsin context route is not a service');
+    $wisconsin = twins_overhaul_render_classified_content(
+        'service',
+        twins_overhaul_current_context('service'),
+        '<p>IGNORED WISCONSIN SERVICE BODY</p>'
+    );
+    twins_overhaul_renderer_assert(strpos($wisconsin, '(608) 420-2377') !== false, 'generic Wisconsin service phone changed');
+    twins_overhaul_renderer_assert(strpos($wisconsin, 'tel:+16084202377') !== false, 'generic Wisconsin service phone href changed');
+    twins_overhaul_renderer_assert(strpos($wisconsin, '(414) 800-9271') === false, 'Milwaukee phone leaked into generic Wisconsin service');
+
+    twins_overhaul_renderer_set([
+        'blogId' => 5,
+        'path' => '/il/emergency-garage-services/',
+        'postType' => 'page',
+        'postId' => 807,
+        'renderedPostType' => 'page',
+        'renderedPostId' => 807,
+        'title' => 'Emergency Garage Door Service',
+    ]);
+    twins_overhaul_renderer_assert(twins_overhaul_current_classification() === 'service', 'Illinois context route is not a service');
+    $illinois = twins_overhaul_render_classified_content(
+        'service',
+        twins_overhaul_current_context('service'),
+        '<p>IGNORED ILLINOIS SERVICE BODY</p>'
+    );
+    twins_overhaul_renderer_assert(strpos($illinois, '(815) 800-2025') !== false, 'generic Illinois service phone changed');
+    twins_overhaul_renderer_assert(strpos($illinois, 'tel:+18158002025') !== false, 'generic Illinois service phone href changed');
+    twins_overhaul_renderer_assert(strpos($illinois, '(608) 420-2377') === false, 'Wisconsin phone leaked into Illinois service');
 }
 
 if ($scenario === 'home-brand') {
