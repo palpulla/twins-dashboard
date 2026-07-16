@@ -8,6 +8,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const APPLICATION_IDENTITY = 'https://danielj140.sg-host.com/';
 const WEB_ROOT = '/home/customer/www/danielj140.sg-host.com/public_html';
 const TRANSACTION_ROOT = '/home/customer/staging-safety/brand-wide-20260715';
+const SSH_PORT = '18765';
 const allowed = new Set(['--dry-run', '--capture-expected-old', '--deploy', '--rollback']);
 const operation = process.argv[2] || '';
 const baseResult = { writeAuthority: false, productionWriteAuthority: false, applicationIdentity: APPLICATION_IDENTITY };
@@ -49,7 +50,7 @@ function run(command, args, options = {}) {
 }
 
 function verifyHostKey() {
-  const scanned = run('ssh-keyscan', ['-T', '8', host], { failure: 'HOST_KEY_SCAN_FAILED', timeout: 15000 });
+  const scanned = run('ssh-keyscan', ['-p', SSH_PORT, '-T', '8', host], { failure: 'HOST_KEY_SCAN_FAILED', timeout: 15000 });
   const lines = scanned.split(/\r?\n/).filter(line => line && !line.startsWith('#'));
   const matching = [];
   for (const line of lines) {
@@ -67,12 +68,14 @@ if (operation === '--dry-run') {
 } else {
   let state;
   try { state = JSON.parse(fs.readFileSync(transportState, 'utf8')); } catch { finish('TRANSPORT_DRY_RUN_REQUIRED', 1); }
-  if (state.targetSha256 !== targetHash || state.hostKeySha256 !== fingerprint) finish('TRANSPORT_IDENTITY_DRIFT', 1);
+  if (state.targetSha256 !== targetHash || state.hostKeySha256 !== fingerprint || state.sshPort !== SSH_PORT) {
+    finish('TRANSPORT_IDENTITY_DRIFT', 1);
+  }
 }
 
 run(process.execPath, [path.join(root, 'tools/build-packages.mjs'), '--check'], { failure: 'PACKAGE_CHECK_FAILED', timeout: 180000 });
 
-const sshOptions = [
+const transportOptions = [
   '-i', key,
   '-o', 'BatchMode=yes',
   '-o', 'IdentitiesOnly=yes',
@@ -80,21 +83,29 @@ const sshOptions = [
   '-o', `UserKnownHostsFile=${knownHosts}`,
   '-o', 'ConnectTimeout=15',
 ];
+const sshOptions = [
+  '-p', SSH_PORT,
+  ...transportOptions,
+];
+const scpOptions = [
+  '-P', SSH_PORT,
+  ...transportOptions,
+];
 const remoteScript = `${TRANSACTION_ROOT}/verification/twins-brand-experience/tools/private-staging-deploy.php`;
 const remoteCommand = op => `php '${remoteScript}' '${op}'`;
 
 if (operation === '--dry-run') {
   run('ssh', [...sshOptions, target, `mkdir -p '${TRANSACTION_ROOT}' && chmod 700 '${TRANSACTION_ROOT}' && rm -rf '${TRANSACTION_ROOT}/verification.incoming'`], { failure: 'REMOTE_PREFLIGHT_FAILED' });
-  run('scp', [...sshOptions, '-r', path.join(root, 'dist/host-verification'), `${target}:${TRANSACTION_ROOT}/verification.incoming`], { failure: 'VERIFICATION_UPLOAD_FAILED' });
+  run('scp', [...scpOptions, '-r', path.join(root, 'dist/host-verification'), `${target}:${TRANSACTION_ROOT}/verification.incoming`], { failure: 'VERIFICATION_UPLOAD_FAILED' });
   run('ssh', [...sshOptions, target, `rm -rf '${TRANSACTION_ROOT}/verification' && mv '${TRANSACTION_ROOT}/verification.incoming' '${TRANSACTION_ROOT}/verification' && ${remoteCommand(operation)}`], { failure: 'REMOTE_DRY_RUN_FAILED' });
-  fs.writeFileSync(transportState, `${JSON.stringify({ targetSha256: targetHash, hostKeySha256: fingerprint }, null, 2)}\n`, { mode: 0o600 });
+  fs.writeFileSync(transportState, `${JSON.stringify({ targetSha256: targetHash, hostKeySha256: fingerprint, sshPort: SSH_PORT }, null, 2)}\n`, { mode: 0o600 });
   finish('PRIVATE_STAGING_DRY_RUN_PASSED');
 }
 
 if (operation === '--deploy') {
   run('ssh', [...sshOptions, target, `rm -rf '${TRANSACTION_ROOT}/candidate.incoming' '${TRANSACTION_ROOT}/verification.incoming'`], { failure: 'REMOTE_UPLOAD_PREP_FAILED' });
-  run('scp', [...sshOptions, '-r', path.join(root, 'dist/staging-runtime'), `${target}:${TRANSACTION_ROOT}/candidate.incoming`], { failure: 'CANDIDATE_UPLOAD_FAILED' });
-  run('scp', [...sshOptions, '-r', path.join(root, 'dist/host-verification'), `${target}:${TRANSACTION_ROOT}/verification.incoming`], { failure: 'VERIFICATION_UPLOAD_FAILED' });
+  run('scp', [...scpOptions, '-r', path.join(root, 'dist/staging-runtime'), `${target}:${TRANSACTION_ROOT}/candidate.incoming`], { failure: 'CANDIDATE_UPLOAD_FAILED' });
+  run('scp', [...scpOptions, '-r', path.join(root, 'dist/host-verification'), `${target}:${TRANSACTION_ROOT}/verification.incoming`], { failure: 'VERIFICATION_UPLOAD_FAILED' });
   run('ssh', [...sshOptions, target, `rm -rf '${TRANSACTION_ROOT}/candidate' '${TRANSACTION_ROOT}/verification' && mv '${TRANSACTION_ROOT}/candidate.incoming' '${TRANSACTION_ROOT}/candidate' && mv '${TRANSACTION_ROOT}/verification.incoming' '${TRANSACTION_ROOT}/verification' && ${remoteCommand(operation)}`], { failure: 'REMOTE_DEPLOY_FAILED' });
   finish('PRIVATE_STAGING_DEPLOYED');
 }

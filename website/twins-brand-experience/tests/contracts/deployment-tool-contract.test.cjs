@@ -9,7 +9,7 @@ const nodeTool = path.join(root, 'tools/deploy-private-staging.mjs');
 const phpTool = path.join(root, 'tools/private-staging-deploy.php');
 
 test('deployment CLI accepts only four fixed operations and no caller-selected target fields', () => {
-  for (const invalid of ['--host=x', '--root=/tmp/x', '--manifest=x', '--expected-old=x', '--retry=2', '--deploy=x']) {
+  for (const invalid of ['--host=x', '--port=22', '--root=/tmp/x', '--manifest=x', '--expected-old=x', '--retry=2', '--deploy=x']) {
     const result = cp.spawnSync(process.execPath, [nodeTool, invalid], { encoding: 'utf8' });
     assert.equal(result.status, 2, `${invalid}: ${result.stdout}\n${result.stderr}`);
     const output = JSON.parse(result.stdout);
@@ -28,6 +28,11 @@ test('deployment source fixes application identity, paths, safe transport, and o
   assert.match(nodeSource, /TWINS_STAGE_SSH_TARGET/);
   assert.match(nodeSource, /TWINS_STAGE_SSH_KEY/);
   assert.match(nodeSource, /TWINS_STAGE_SSH_HOSTKEY_SHA256/);
+  assert.match(nodeSource, /const SSH_PORT = '18765';/);
+  assert.match(nodeSource, /ssh-keyscan', \['-p', SSH_PORT/);
+  assert.match(nodeSource, /const sshOptions = \[\s*'-p', SSH_PORT,/);
+  assert.match(nodeSource, /const scpOptions = \[\s*'-P', SSH_PORT,/);
+  assert.doesNotMatch(nodeSource, /TWINS_STAGE_SSH_PORT/);
   assert.match(nodeSource, /shell:\s*false/);
   assert.doesNotMatch(combined, /twinsgaragedoors\.com|wp-config|ALTER\s+TABLE|UPDATE\s+wp_/i);
   assert.doesNotMatch(combined, /for\s*\([^)]*(?:retry|attempt)|while\s*\([^)]*(?:retry|attempt)/i);
