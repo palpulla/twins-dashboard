@@ -73,12 +73,19 @@ phpTest('bootstrap harness fails closed for every missing or false gate', () => 
 });
 
 phpTest('renderer harness validates every approved request state', () => {
-  for (const scenario of ['routes', 'hooks', 'blog-index', 'campaign', 'family-once', 'service-brand-chrome', 'catalog-brand-chrome', 'home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand', 'ineligible', 'article', 'unknown-blog']) {
+  for (const scenario of ['routes', 'asset-versions', 'hooks', 'blog-index', 'campaign', 'family-once', 'service-brand-chrome', 'catalog-brand-chrome', 'home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand', 'ineligible', 'article', 'unknown-blog']) {
     assert.equal(
       runPhp('staging-overhaul-renderers-harness.php', [LOADER, scenario]),
       `STAGING_OVERHAUL_RENDERERS_HARNESS_OK:${scenario}`,
     );
   }
+});
+
+phpTest('portable brand asset versioning rejects fixed-file boundary failures', () => {
+  assert.equal(
+    runPhp('staging-overhaul-brand-asset-harness.php', [path.join(PACKAGE, 'renderers.php')]),
+    'STAGING_OVERHAUL_BRAND_ASSET_HARNESS_OK',
+  );
 });
 
 phpTest('staging brand adapters are fixed-origin, fail-closed, and invoke no side-effect primitive', () => {

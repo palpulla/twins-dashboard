@@ -36,8 +36,8 @@
     {
       "role": "verify",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/components.php",
-      "size": 8954,
-      "sha256": "47ebdbb9eb96fb891e3b174f922614ed890bd646a565aac8c435813704b2566c"
+      "size": 9177,
+      "sha256": "0115dc89cc50f4fa9f0ba1ab7b5d14d0bb7fdaad3497886aeaebfee8721864b2"
     },
     {
       "role": "verify",
@@ -54,8 +54,8 @@
     {
       "role": "verify",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/renderers.php",
-      "size": 48889,
-      "sha256": "5ad18db86e2b294221796bdb7dfabf0f7e67d63c7a40e19a24808244aa451279"
+      "size": 51497,
+      "sha256": "3fdaccc1774cd16159ae94261a1a523ec639b2d9edcb750ad91fe7f47e05bfda"
     },
     {
       "role": "verify",
@@ -143,6 +143,12 @@
     },
     {
       "role": "verify",
+      "source": "staging-safety/tests/staging-overhaul-brand-asset-harness.php",
+      "size": 6673,
+      "sha256": "8907be369fa68848ee59165b02e3268d953e061f43c985817e0a6e3b71b80954"
+    },
+    {
+      "role": "verify",
       "source": "staging-safety/tests/staging-overhaul-builder-harness.php",
       "size": 4050,
       "sha256": "deba38206c9799efb34bdda7e16324532b6a746b6627ec539de76e1620896e4f"
@@ -168,8 +174,8 @@
     {
       "role": "verify",
       "source": "staging-safety/tests/staging-overhaul-renderers-harness.php",
-      "size": 58244,
-      "sha256": "2ccb966693e2d8adb973da69d891540a19d748a129f41b5a1b615d7dbb8d07f9"
+      "size": 66384,
+      "sha256": "aa9bb00db20bb75870ad8314242ad988139c8ee11e336931f7120b83e4a230ad"
     },
     {
       "role": "verify",
@@ -223,7 +229,7 @@
       "role": "verify",
       "source": "twins-brand-experience/manifests/staging-runtime.json",
       "size": 356029,
-      "sha256": "5e08d6a3df718856f59721f9b87bf8dc9b5ac81036d0652fae7f72e3f0ef230b"
+      "sha256": "c3cefb124c6eb9558d13eabfe1d4b15bdc92cd404a18cf2c092a76ac3f6ea903"
     },
     {
       "role": "verify",

@@ -331,7 +331,7 @@ if ($argc !== 3 || !is_file($argv[1])) {
 }
 
 $scenario = $argv[2];
-if (!in_array($scenario, ['routes', 'hooks', 'blog-index', 'campaign', 'family-once', 'service-brand-chrome', 'catalog-brand-chrome', 'home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand', 'elementor-theme-content', 'elementor-document-content', 'legacy-location-document', 'ineligible', 'article', 'unknown-blog'], true)) {
+if (!in_array($scenario, ['routes', 'asset-versions', 'hooks', 'blog-index', 'campaign', 'family-once', 'service-brand-chrome', 'catalog-brand-chrome', 'home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand', 'elementor-theme-content', 'elementor-document-content', 'legacy-location-document', 'ineligible', 'article', 'unknown-blog'], true)) {
     fwrite(STDERR, "UNKNOWN_RENDERER_SCENARIO\n");
     exit(2);
 }
@@ -449,6 +449,44 @@ if ($scenario === 'routes') {
         twins_overhaul_filter_isolated_style_tag('<link id="twins-staging-twx-v2-css">', 'twins-staging-twx-v2', '/local.css', 'all') === '<link id="twins-staging-twx-v2-css">',
         'cost route late-filtered its temporary visual-kit support'
     );
+}
+
+if ($scenario === 'asset-versions') {
+    $brandRoot = dirname($argv[1], 3) . '/twins-brand-experience/';
+    $assets = [
+        'assets/css/twins-brand.css',
+        'assets/js/twins-brand.js',
+    ];
+    foreach ($assets as $relativePath) {
+        $bytes = @file_get_contents($brandRoot . $relativePath);
+        twins_overhaul_renderer_assert(is_string($bytes) && $bytes !== '', 'portable asset bytes are unavailable: ' . $relativePath);
+        $expected = substr(hash('sha256', $bytes), 0, 16);
+        twins_overhaul_renderer_assert(
+            twins_overhaul_brand_asset_version($relativePath) === $expected,
+            'portable asset version is not an independently derived SHA-256 prefix: ' . $relativePath
+        );
+    }
+
+    foreach ([
+        '',
+        '/assets/css/twins-brand.css',
+        'assets/css/../css/twins-brand.css',
+        'assets/css/twins-brand.css?changed=1',
+        'assets\\js\\twins-brand.js',
+        'assets/js/not-brand.js',
+    ] as $unsafeAssetPath) {
+        $refusal = null;
+        try {
+            twins_overhaul_brand_asset_version($unsafeAssetPath);
+        } catch (Twins_Overhaul_Renderer_Refusal $exception) {
+            $refusal = $exception;
+        }
+        twins_overhaul_renderer_assert(
+            $refusal instanceof Twins_Overhaul_Renderer_Refusal,
+            'unsafe portable asset path did not fail closed: ' . $unsafeAssetPath
+        );
+        twins_overhaul_renderer_assert($refusal->response === 503, 'unsafe portable asset path refusal did not use 503');
+    }
 }
 
 if ($scenario === 'hooks') {

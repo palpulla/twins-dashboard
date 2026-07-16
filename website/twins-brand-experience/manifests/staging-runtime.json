@@ -5930,8 +5930,8 @@
       "role": "deploy",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/components.php",
       "destination": "twins-staging-overhaul/components.php",
-      "size": 8954,
-      "sha256": "47ebdbb9eb96fb891e3b174f922614ed890bd646a565aac8c435813704b2566c"
+      "size": 9177,
+      "sha256": "0115dc89cc50f4fa9f0ba1ab7b5d14d0bb7fdaad3497886aeaebfee8721864b2"
     },
     {
       "role": "deploy",
@@ -5951,8 +5951,8 @@
       "role": "deploy",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/renderers.php",
       "destination": "twins-staging-overhaul/renderers.php",
-      "size": 48889,
-      "sha256": "5ad18db86e2b294221796bdb7dfabf0f7e67d63c7a40e19a24808244aa451279"
+      "size": 51497,
+      "sha256": "3fdaccc1774cd16159ae94261a1a523ec639b2d9edcb750ad91fe7f47e05bfda"
     },
     {
       "role": "deploy",

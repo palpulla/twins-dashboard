@@ -1066,7 +1066,11 @@ function twins_overhaul_brand_asset_version(string $relativePath): string {
     if (!is_int($size) || $size < 1 || $size > 2097152) {
         twins_overhaul_refuse_route('brand asset size is outside the fixed boundary.');
     }
-    return substr(hash_file('sha256', $path), 0, 16);
+    $digest = @hash_file('sha256', $path);
+    if (!is_string($digest) || preg_match('/\A[a-f0-9]{64}\z/D', $digest) !== 1) {
+        twins_overhaul_refuse_route('brand asset hash is unavailable.');
+    }
+    return substr($digest, 0, 16);
 }
 
 /**

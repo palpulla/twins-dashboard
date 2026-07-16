@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -40,9 +41,30 @@ test('all non-campaign chrome routes use the portable brand header and footer', 
   assert.doesNotMatch(components, /home-brand'.*team-brand'.*careers-brand'.*reviews-brand'.*contact-brand/s);
 });
 
-test('brand assets use a content-derived version', () => {
+test('brand assets use independently derived bounded SHA-256 versions and fail closed', () => {
   const renderers = source('website/staging-safety/mu-plugins/twins-staging-overhaul/renderers.php');
-  assert.match(renderers, /function twins_overhaul_brand_asset_version/);
+  const body = functionBody(renderers, 'twins_overhaul_brand_asset_version');
+  const versions = {
+    css: crypto.createHash('sha256')
+      .update(fs.readFileSync(path.join(root, 'website/twins-brand-experience/assets/css/twins-brand.css')))
+      .digest('hex')
+      .slice(0, 16),
+    js: crypto.createHash('sha256')
+      .update(fs.readFileSync(path.join(root, 'website/twins-brand-experience/assets/js/twins-brand.js')))
+      .digest('hex')
+      .slice(0, 16),
+  };
+
+  assert.deepEqual(versions, {
+    css: '67a338e47651880b',
+    js: 'f211a9e804251cb3',
+  });
+  assert.match(body, /\$digest\s*=\s*@hash_file\(\s*['"]sha256['"]\s*,\s*\$path\s*\)/);
+  assert.match(
+    body,
+    /if\s*\(\s*!is_string\(\$digest\)\s*\|\|\s*preg_match\([^;]+,\s*\$digest\)\s*!==\s*1\s*\)\s*\{[^}]*twins_overhaul_refuse_route\(\s*['"]brand asset hash is unavailable\.['"]\s*\)/,
+  );
+  assert.match(body, /return\s+substr\(\s*\$digest\s*,\s*0\s*,\s*16\s*\)/);
   assert.doesNotMatch(renderers, /twins-brand\.css'[^;]*,\s*['"]1['"]/);
   assert.doesNotMatch(renderers, /twins-brand\.js'[^;]*,\s*['"]1['"]/);
 });
