@@ -7,14 +7,23 @@ foreach ($experience->markets()->all($environment) as $key => $availableMarket) 
     $footerServiceAreas[] = [$availableMarket['label'], $key];
 }
 
+$footerServiceItems = [
+    ['All Services', 'services'],
+    ['Garage Door Repair', 'repair'],
+    ['Garage Door Installation', 'installation'],
+    ['Spring Repair', 'spring-repair'],
+    ['Opener Repair', 'opener-repair'],
+    ['Emergency Service', 'emergency-service'],
+];
+if ($marketKey === 'il-preview') {
+    $footerServiceItems = array_values(array_filter(
+        $footerServiceItems,
+        static fn(array $item): bool => $item[1] !== 'spring-repair'
+    ));
+}
+
 $footerGroups = [
-    'Services' => [
-        ['All Services', 'services'],
-        ['Garage Door Installation', 'installation'],
-        ['Spring Repair', 'spring-repair'],
-        ['Opener Repair', 'opener-repair'],
-        ['Emergency Service', 'emergency-service'],
-    ],
+    'Services' => $footerServiceItems,
     'Garage Doors' => [
         ['Garage Door Collections', 'garage-doors'],
         ['Classic Collection', 'classic-collection'],
@@ -25,7 +34,7 @@ $footerGroups = [
     'Service Areas' => $footerServiceAreas,
     'Resources' => [
         ['Reviews', 'reviews'],
-        ['Cost Guide', 'cost-guide'],
+        ['Wisconsin Garage Door Cost Guide', 'cost-guide'],
         ['Financing', 'financing'],
         ['Offers', 'offers'],
         ['Frequently Asked Questions', 'faqs'],
@@ -57,7 +66,7 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
       <div class="twins-brand-footer-group">
         <h2><?= htmlspecialchars($group, ENT_QUOTES, 'UTF-8') ?></h2>
         <?php foreach ($items as [$label, $routeKey]): ?>
-          <a href="<?= htmlspecialchars($experience->route($routeKey, $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($label, ENT_QUOTES, 'UTF-8') ?></a>
+          <a href="<?= htmlspecialchars($experience->route($routeKey, $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($experience->contextualRouteLabel($routeKey, $marketKey, $label), ENT_QUOTES, 'UTF-8') ?></a>
         <?php endforeach; ?>
       </div>
     <?php endforeach; ?>

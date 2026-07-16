@@ -79,6 +79,7 @@ final class StagingRouteAdapter implements RouteAdapter
     private const ROUTES = [
         'main' => [
             'home' => '/', 'services' => '/garage-door-services/', 'installation' => '/garage-door-installation/',
+            'repair' => '/garage-door-repair/',
             'spring-repair' => '/garage-door-spring-repair/', 'opener-repair' => '/garage-door-opener-repair/',
             'emergency-service' => '/emergency-garage-services/', 'garage-doors' => '/clopay-garage-doors/',
             'classic-collection' => '/clopay-classic-collection/', 'modern-steel' => '/clopay-modern-steel/',
@@ -90,6 +91,7 @@ final class StagingRouteAdapter implements RouteAdapter
         ],
         'wi' => [
             'home' => '/wi/', 'services' => '/wi/garage-door-services/', 'installation' => '/wi/garage-door-installation/',
+            'repair' => '/wi/garage-door-repair/',
             'spring-repair' => '/wi/garage-door-spring-repair/', 'opener-repair' => '/wi/garage-door-opener-repair/',
             'emergency-service' => '/wi/emergency-garage-services/', 'garage-doors' => '/clopay-garage-doors/',
             'classic-collection' => '/clopay-classic-collection/', 'modern-steel' => '/clopay-modern-steel/',
@@ -101,6 +103,7 @@ final class StagingRouteAdapter implements RouteAdapter
         ],
         'ky' => [
             'home' => '/ky/', 'services' => '/ky/garage-door-services/', 'installation' => '/ky/garage-door-installation/',
+            'repair' => '/ky/garage-door-repair/',
             'spring-repair' => '/ky/garage-door-spring-repair/', 'opener-repair' => '/ky/garage-door-opener-repair/',
             'emergency-service' => '/ky/emergency-garage-services/', 'garage-doors' => '/clopay-garage-doors/',
             'classic-collection' => '/clopay-classic-collection/', 'modern-steel' => '/clopay-modern-steel/',
@@ -112,6 +115,7 @@ final class StagingRouteAdapter implements RouteAdapter
         ],
         'il-preview' => [
             'home' => '/il/', 'services' => '/il/garage-door-services/', 'installation' => '/il/garage-door-installation/',
+            'repair' => '/il/garage-door-repair/',
             'spring-repair' => '/il/garage-door-repair/', 'opener-repair' => '/il/garage-door-openers/',
             'emergency-service' => '/il/emergency-garage-services/', 'garage-doors' => '/clopay-garage-doors/',
             'classic-collection' => '/clopay-classic-collection/', 'modern-steel' => '/clopay-modern-steel/',

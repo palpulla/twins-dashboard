@@ -141,6 +141,10 @@ twins_brand_harness_assert($route->normalizeContext(['key' => 'il']) === ['key' 
 twins_brand_harness_assert($route->route('home', 'main') === 'https://stage.example.test/', 'main home route changed');
 twins_brand_harness_assert($route->route('home', 'wi') === 'https://stage.example.test/wi/', 'Wisconsin home route changed');
 twins_brand_harness_assert($route->route('contact', 'ky') === 'https://stage.example.test/ky/contact-us/', 'Kentucky contact route changed');
+twins_brand_harness_assert($route->route('repair', 'main') === 'https://stage.example.test/garage-door-repair/', 'main repair route changed');
+twins_brand_harness_assert($route->route('repair', 'wi') === 'https://stage.example.test/wi/garage-door-repair/', 'Wisconsin repair route changed');
+twins_brand_harness_assert($route->route('repair', 'ky') === 'https://stage.example.test/ky/garage-door-repair/', 'Kentucky repair route changed');
+twins_brand_harness_assert($route->route('repair', 'il-preview') === 'https://stage.example.test/il/garage-door-repair/', 'Illinois repair route changed');
 twins_brand_harness_throws(static fn(): array => $route->normalizeContext([]), 'missing context key was accepted');
 twins_brand_harness_throws(static fn(): array => $route->normalizeContext(['key' => 'unknown']), 'unknown context key was accepted');
 twins_brand_harness_throws(static fn(): array => $route->normalizeContext(['key' => 'main', 'environment' => 'production']), 'fake production context was accepted');
@@ -228,8 +232,17 @@ foreach ([$quote->renderExperience($context), $booking->action($context)['experi
 }
 
 $renderContext = ['key' => 'main'];
+$mainHeader = $runtime->renderHeader($renderContext);
+$illinoisHeader = $runtime->renderHeader(['key' => 'il']);
+$illinoisFooter = $runtime->renderFooter(['key' => 'il']);
+twins_brand_harness_assert(strpos($mainHeader, '>Spring Repair</a>') !== false, 'main header lost the dedicated Spring Repair route');
+twins_brand_harness_assert(strpos($illinoisHeader, '>Spring Repair</a>') === false, 'Illinois header retained the misleading Spring Repair label');
+twins_brand_harness_assert(strpos($illinoisHeader, '>Garage Door Openers</a>') !== false, 'Illinois header omitted the Garage Door Openers destination label');
+twins_brand_harness_assert(strpos($illinoisHeader, 'href="https://stage.example.test/il/garage-door-repair/">Garage Door Repair</a>') !== false, 'Illinois header repair label does not match its destination');
+twins_brand_harness_assert(strpos($illinoisFooter, '>Spring Repair</a>') === false, 'Illinois footer retained the misleading Spring Repair label');
+twins_brand_harness_assert(strpos($illinoisFooter, '>Garage Door Openers</a>') !== false, 'Illinois footer omitted the Garage Door Openers destination label');
 $outputs = [
-    $runtime->renderHeader($renderContext),
+    $mainHeader,
     $runtime->renderFooter($renderContext),
     $runtime->renderHome($renderContext),
     $runtime->renderTeam($renderContext),

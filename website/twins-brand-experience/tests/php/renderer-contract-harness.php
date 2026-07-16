@@ -47,6 +47,7 @@ final class RendererHarnessRouteAdapter implements Twins\BrandExperience\RouteAd
     private const ROUTES = [
         'home' => '/',
         'services' => '/garage-door-services/',
+        'repair' => '/garage-door-repair/',
         'installation' => '/garage-door-installation/',
         'spring-repair' => '/garage-door-spring-repair/',
         'opener-repair' => '/garage-door-opener-repair/',
@@ -299,6 +300,8 @@ $expect(substr_count($header, 'aria-label="Primary navigation"') === 1, 'header 
 $expect(strpos($header, 'Request a Quote') !== false, 'header is missing exact quote CTA');
 $expect(strpos($header, 'Book Online') !== false, 'header is missing booking CTA');
 $expect(strpos($header, 'Our Team') !== false, 'header is missing team route');
+$expect(strpos($header, 'Garage Door Repair') !== false, 'header is missing repair route');
+$expect(strpos($header, 'Wisconsin Garage Door Cost Guide') !== false, 'header is missing the qualified cost-guide label');
 $expect(strpos($header, 'Get an Estimate') === false, 'header contains prohibited legacy CTA');
 $expect(strpos($header, 'https://twinsgaragedoors.com') === false, 'header hard-coded the production host');
 $expect(strpos($header, 'book.housecallpro.com') === false, 'staging header exposed a live booking host');
@@ -351,6 +354,15 @@ $expect(strpos($footer, 'danielj140.sg-host.com') === false, 'footer hard-coded 
 foreach (['/garage-door-services/', '/clopay-garage-doors/', '/wi/', '/ky/', '/il/', '/about-us/', '/our-team/', '/careers/', '/contact-us/'] as $route) {
     $expect(strpos($footer, $route) !== false, 'footer omitted internal route ' . $route);
 }
+
+$illinoisService = $stagingExperience->renderService([
+    'environment' => 'staging',
+    'market' => 'il-preview',
+    'path' => '/garage-door-repair/',
+    'title' => 'Garage Door Repair',
+]);
+$expect(strpos($illinoisService, '>Garage Door Spring Repair</a>') === false, 'Illinois service links retained the misleading Spring Repair label');
+$expect(strpos($illinoisService, '>Garage Door Openers</a>') !== false, 'Illinois service links omitted the Garage Door Openers destination label');
 
 $crewPicture = $renderComponent($stagingExperience, $root . '/components/picture.php', [
     'logicalKey' => 'crew-fleet',

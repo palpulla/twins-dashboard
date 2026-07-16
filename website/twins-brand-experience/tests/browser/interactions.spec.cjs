@@ -2,6 +2,7 @@ const { test, expect } = require('@playwright/test');
 
 const fixture = '/tests/browser/fixtures/brand-home.html';
 const reviewsFixture = '/tests/browser/fixtures/brand-reviews.html';
+const costContentFixture = '/tests/browser/fixtures/cost-content.html';
 const widths = [1440, 1201, 1024, 768, 390, 360, 320];
 const marketMenuFixture = `
 <details class="twins-brand-market-menu">
@@ -385,6 +386,7 @@ test('Reviews page keeps the complete verified collection static without autopla
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(reviewsFixture);
   const list = page.locator('.twins-brand-review-list');
+  expect((await computedContrast(page.locator('.twins-brand-reviews h2'))).ratio).toBeGreaterThanOrEqual(4.5);
   await expect(list).toBeVisible();
   await expect(list.locator('.twins-brand-review-card')).toHaveCount(3);
   await expect(page.locator('[data-twins-review-slider], .twins-brand-review-track, [data-review-page-status]')).toHaveCount(0);
@@ -394,6 +396,40 @@ test('Reviews page keeps the complete verified collection static without autopla
   const initial = await list.evaluate(element => getComputedStyle(element).transform);
   await page.waitForTimeout(12_500);
   expect(await list.evaluate(element => getComputedStyle(element).transform)).toBe(initial);
+});
+
+test('cost decision, climate, and table surfaces keep normal text readable', async ({ page }) => {
+  for (const width of [1440, 768, 390, 320]) {
+    await page.setViewportSize({ width, height: width <= 390 ? 844 : 1000 });
+    await page.goto(costContentFixture);
+
+    for (const [label, locator] of [
+      ['decision heading', page.locator('.twins-cost-decision h2')],
+      ['decision lede', page.locator('.twins-cost-decision > .twins-overhaul-shell > .twins-cost-section-lede')],
+      ['repair card heading', page.locator('.twins-cost-decision-card').first().locator('h3')],
+      ['repair card text', page.locator('.twins-cost-decision-card').first().locator('li').first()],
+      ['replace card heading', page.locator('.twins-cost-decision-card--replace h3')],
+      ['replace card text', page.locator('.twins-cost-decision-card--replace li').first()],
+      ['climate eyebrow', page.locator('.twins-cost-climate .twins-overhaul-eyebrow')],
+      ['climate heading', page.locator('.twins-cost-climate h2')],
+      ['climate card heading', page.locator('.twins-cost-climate-card h3').first()],
+      ['climate card text', page.locator('.twins-cost-climate-card p').first()],
+      ['table column heading', page.locator('.twins-cost-table-wrap thead th').first()],
+      ['table row heading', page.locator('.twins-cost-table-wrap tbody th').first()],
+      ['table body text', page.locator('.twins-cost-table-wrap tbody td').last()],
+    ]) {
+      const snapshot = await visualSnapshot(locator);
+      expect(ratio(snapshot.foreground, snapshot.controlBackground), `${width}px ${label}`)
+        .toBeGreaterThanOrEqual(textThreshold(snapshot));
+    }
+
+    const wrapper = page.locator('.twins-cost-table-wrap');
+    const bounds = await wrapper.boundingBox();
+    expect(bounds.x, `${width}px cost table left edge`).toBeGreaterThanOrEqual(0);
+    expect(bounds.x + bounds.width, `${width}px cost table right edge`).toBeLessThanOrEqual(width);
+    expect(await wrapper.evaluate(element => element.scrollWidth >= element.clientWidth)).toBeTruthy();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBeTruthy();
+  }
 });
 
 test('JavaScript-disabled previews remain structurally incapable of submission', async ({ browser }) => {
@@ -620,6 +656,7 @@ test('Twins move across desktop and mobile loops while reduced motion is static'
   const reduced = await browser.newContext({ reducedMotion: 'reduce', viewport: { width: 390, height: 844 } });
   const reducedPage = await reduced.newPage();
   await reducedPage.goto(fixture);
+  expect(await reducedPage.locator('html').evaluate(element => getComputedStyle(element).scrollBehavior)).toBe('auto');
   const first = await reducedPage.locator('.twins-brand-twin').evaluateAll(elements => elements.map(element => ({ rect: element.getBoundingClientRect().toJSON(), animation: getComputedStyle(element).animationName })));
   await reducedPage.waitForTimeout(1000);
   const second = await reducedPage.locator('.twins-brand-twin').evaluateAll(elements => elements.map(element => ({ rect: element.getBoundingClientRect().toJSON(), animation: getComputedStyle(element).animationName })));

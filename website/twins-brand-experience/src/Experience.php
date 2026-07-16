@@ -5,6 +5,13 @@ namespace Twins\BrandExperience;
 
 final class Experience
 {
+    private const CONTEXTUAL_ROUTE_LABELS = [
+        'il-preview' => [
+            'spring-repair' => 'Garage Door Repair',
+            'opener-repair' => 'Garage Door Openers',
+        ],
+    ];
+
     private AssetResolver $assets;
     private RouteAdapter $routes;
     private ReviewsProvider $reviews;
@@ -160,6 +167,25 @@ final class Experience
             'editorialContent' => $content,
             'editorialKind' => $kind,
         ]));
+    }
+
+    public function contextualRouteLabel(string $routeKey, string $marketKey, string $defaultLabel): string
+    {
+        if (preg_match('/^[a-z][a-z0-9-]{0,39}$/D', $routeKey) !== 1) {
+            throw new \DomainException('Contextual route label key is invalid.');
+        }
+        if (!in_array($marketKey, ['main', 'wi', 'ky', 'il-preview'], true)) {
+            throw new \DomainException('Contextual route label market is invalid.');
+        }
+        if (
+            $defaultLabel === ''
+            || $defaultLabel !== trim($defaultLabel)
+            || strlen($defaultLabel) > 100
+            || preg_match('/[<>\x00-\x1f\x7f]/', $defaultLabel)
+        ) {
+            throw new \DomainException('Contextual route label fallback is invalid.');
+        }
+        return self::CONTEXTUAL_ROUTE_LABELS[$marketKey][$routeKey] ?? $defaultLabel;
     }
 
     private function contactContext(array $context, array $market): array

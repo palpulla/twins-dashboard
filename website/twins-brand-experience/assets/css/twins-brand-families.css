@@ -618,7 +618,8 @@ body.twins-brand-route-builder .twins-overhaul-eyebrow {
   body.twins-brand-route-cost-milwaukee
 ) .twins-cost-decision {
   color: var(--twins-white);
-  background: linear-gradient(125deg, var(--twins-deep), var(--twins-navy));
+  background-color: var(--twins-deep);
+  background-image: linear-gradient(125deg, var(--twins-deep), var(--twins-navy));
 }
 
 :is(
@@ -636,6 +637,27 @@ body.twins-brand-route-builder .twins-overhaul-eyebrow {
   body.twins-brand-route-cost-milwaukee
 ) .twins-cost-decision :where(h2, .twins-overhaul-eyebrow) {
   color: var(--twins-yellow);
+}
+
+:is(
+  body.twins-brand-route-cost-madison,
+  body.twins-brand-route-cost-milwaukee
+) .twins-cost-decision > .twins-overhaul-shell > .twins-cost-section-lede {
+  color: #dbe8f8;
+}
+
+:is(
+  body.twins-brand-route-cost-madison,
+  body.twins-brand-route-cost-milwaukee
+) .twins-cost-decision .twins-overhaul-card:not(.twins-cost-decision-card--replace) {
+  color: var(--twins-ink);
+}
+
+:is(
+  body.twins-brand-route-cost-madison,
+  body.twins-brand-route-cost-milwaukee
+) .twins-cost-decision .twins-overhaul-card:not(.twins-cost-decision-card--replace) h3 {
+  color: var(--twins-navy);
 }
 
 :is(
@@ -689,7 +711,15 @@ body.twins-brand-route-builder .twins-overhaul-eyebrow {
   body.twins-brand-route-cost-madison,
   body.twins-brand-route-cost-milwaukee
 ) .twins-cost-climate {
+  color: var(--twins-ink);
   background: var(--twins-yellow);
+}
+
+:is(
+  body.twins-brand-route-cost-madison,
+  body.twins-brand-route-cost-milwaukee
+) .twins-cost-climate > .twins-overhaul-shell > .twins-overhaul-eyebrow {
+  color: var(--twins-deep);
 }
 
 :is(
@@ -707,6 +737,7 @@ body.twins-brand-route-builder .twins-overhaul-eyebrow {
   body.twins-brand-route-cost-milwaukee
 ) .twins-cost-climate-card {
   padding: 24px 20px;
+  color: var(--twins-ink);
   background: rgba(255, 255, 255, .94);
   border: 3px solid var(--twins-deep);
   box-shadow: 5px 5px 0 var(--twins-deep);
@@ -718,6 +749,13 @@ body.twins-brand-route-builder .twins-overhaul-eyebrow {
 ) .twins-cost-climate-card strong {
   color: var(--twins-yellow-dark);
   font-size: 1.8rem;
+}
+
+:is(
+  body.twins-brand-route-cost-madison,
+  body.twins-brand-route-cost-milwaukee
+) .twins-cost-climate-card :where(h3, p) {
+  color: var(--twins-ink);
 }
 
 :is(

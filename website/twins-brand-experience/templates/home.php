@@ -44,7 +44,7 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
       <article class="twins-brand-service-card">
         <h3>Garage Door Repair</h3>
         <p>Explore help for springs, cables, rollers, and doors that will not move correctly.</p>
-        <a href="<?= htmlspecialchars($experience->route('spring-repair', $marketKey), ENT_QUOTES, 'UTF-8') ?>">Explore repair service</a>
+        <a href="<?= htmlspecialchars($experience->route('repair', $marketKey), ENT_QUOTES, 'UTF-8') ?>">Explore repair service</a>
       </article>
       <article class="twins-brand-service-card">
         <h3>Garage Door Installation</h3>

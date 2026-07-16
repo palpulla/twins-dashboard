@@ -80,7 +80,7 @@ if (!isset($pageContent) || !is_array($pageContent)) {
     </div>
     <nav class="twins-brand-service-links" aria-label="Related garage door pages">
       <?php foreach ($pageContent['links'] as $link): ?>
-        <a href="<?= htmlspecialchars($experience->route($link['route'], $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($link['label'], ENT_QUOTES, 'UTF-8') ?></a>
+        <a href="<?= htmlspecialchars($experience->route($link['route'], $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($experience->contextualRouteLabel($link['route'], $marketKey, $link['label']), ENT_QUOTES, 'UTF-8') ?></a>
       <?php endforeach; ?>
     </nav>
   </section>

@@ -38,6 +38,7 @@ final class PageContentRegistry
 
     private const LINK_ROUTES = [
         'services',
+        'repair',
         'installation',
         'spring-repair',
         'opener-repair',
