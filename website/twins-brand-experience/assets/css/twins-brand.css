@@ -395,7 +395,11 @@ body.twins-brand-experience .twins-brand-careers-hero .twins-brand-kicker,
 body.twins-brand-experience .twins-brand-reviews-collection .twins-brand-kicker,
 body.twins-brand-experience .twins-brand-careers-process .twins-brand-kicker,
 body.twins-brand-experience .twins-brand-team-values .twins-brand-kicker,
-body.twins-brand-experience .twins-brand-team-careers .twins-brand-kicker {
+body.twins-brand-experience .twins-brand-team-careers .twins-brand-kicker,
+body.twins-brand-experience .twins-brand-service-hero .twins-brand-kicker,
+body.twins-brand-experience .twins-brand-editorial-hero .twins-brand-kicker,
+body.twins-brand-experience .twins-brand-direct-answer .twins-brand-kicker,
+body.twins-brand-experience .twins-brand-service-area .twins-brand-kicker {
   color: var(--twins-gold);
 }
 body.twins-brand-experience .twins-brand-door-builder h2,
@@ -674,6 +678,179 @@ body.twins-brand-experience .twins-brand-careers-hero a.twins-brand-cta {
 .twins-brand-contact-quote { background: var(--twins-white); }
 .twins-brand-contact-quote .twins-brand-preview-form { margin-top: 35px; }
 
+/* Answer-first service and inert editorial journeys. */
+.twins-brand-service-page,
+.twins-brand-editorial-page {
+  color: var(--twins-ink);
+  background: var(--twins-cream);
+}
+.twins-brand-service-hero,
+.twins-brand-editorial-hero {
+  min-height: 470px;
+  display: grid;
+  align-content: center;
+  gap: 30px;
+  padding: clamp(76px, 9vw, 138px) var(--twins-content-shell);
+  color: var(--twins-white);
+  background-color: var(--twins-navy-900);
+  background-image: radial-gradient(circle at 88% 18%, rgba(255, 200, 61, .18), transparent 31%), repeating-linear-gradient(0deg, transparent 0 78px, rgba(255, 255, 255, .05) 79px 83px);
+}
+.twins-brand-service-hero {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+}
+.twins-brand-service-hero h1,
+.twins-brand-editorial-hero h1 {
+  max-width: 980px;
+  margin-bottom: 18px;
+  color: var(--twins-white);
+  font-size: clamp(3rem, 6vw, 6.2rem);
+  text-transform: uppercase;
+}
+.twins-brand-service-hero p { max-width: 760px; color: #e8f1fb; font-size: 1.15rem; font-weight: 750; }
+.twins-brand-service-hero-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 14px; }
+.twins-brand-direct-answer,
+.twins-brand-service-needs,
+.twins-brand-service-process,
+.twins-brand-service-options,
+.twins-brand-service-area,
+.twins-brand-faq,
+.twins-brand-editorial-answer,
+.twins-brand-editorial-body {
+  padding: var(--twins-section-space) var(--twins-content-shell);
+}
+.twins-brand-direct-answer {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(300px, .88fr);
+  align-items: start;
+  gap: clamp(32px, 6vw, 78px);
+  color: var(--twins-white);
+  background: var(--twins-navy-950);
+}
+.twins-brand-direct-answer h2,
+.twins-brand-service-area h2 { color: var(--twins-white); font-size: clamp(2.2rem, 4.4vw, 4.2rem); text-transform: uppercase; }
+.twins-brand-direct-answer > div > p { max-width: 780px; color: #e8f1fb; font-size: 1.18rem; }
+.twins-brand-service-safety {
+  padding: clamp(24px, 4vw, 40px);
+  color: var(--twins-navy-950);
+  background: var(--twins-gold);
+  border: 4px solid var(--twins-white);
+  border-radius: 8px 34px 8px 34px;
+  box-shadow: 10px 12px 0 rgba(0, 0, 0, .3);
+}
+.twins-brand-service-safety h2 { color: var(--twins-navy-950); font-size: 2.25rem; text-transform: uppercase; }
+.twins-brand-service-needs,
+.twins-brand-service-options { background: #f4ead6; }
+.twins-brand-service-needs h2,
+.twins-brand-service-process h2,
+.twins-brand-service-options h2,
+.twins-brand-faq h2,
+.twins-brand-editorial-answer h2 {
+  color: var(--twins-navy-950);
+  font-size: clamp(2.2rem, 4.6vw, 4.4rem);
+  text-transform: uppercase;
+}
+.twins-brand-service-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  margin: 36px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.twins-brand-service-grid li,
+.twins-brand-service-option-grid article {
+  padding: 28px;
+  color: var(--twins-ink);
+  background: var(--twins-white);
+  border: 3px solid var(--twins-navy-950);
+  border-radius: 6px 24px 6px 24px;
+  box-shadow: 8px 9px 0 var(--twins-gold);
+}
+.twins-brand-service-process {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(300px, .9fr);
+  gap: clamp(36px, 7vw, 90px);
+  background: var(--twins-white);
+}
+.twins-brand-service-steps {
+  display: grid;
+  gap: 16px;
+  margin: 28px 0 0;
+  padding-left: 24px;
+}
+.twins-brand-service-steps li::marker { color: var(--twins-gold-strong); font-weight: 1000; }
+.twins-brand-service-prepare {
+  padding: clamp(26px, 4vw, 42px);
+  color: var(--twins-white);
+  background: var(--twins-navy-900);
+  border: 4px solid var(--twins-gold);
+  border-radius: 8px 34px 8px 34px;
+}
+.twins-brand-service-prepare h2 { color: var(--twins-gold); font-size: 2.2rem; }
+.twins-brand-service-prepare li { margin-block: 10px; color: var(--twins-white); }
+.twins-brand-service-option-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  margin-top: 36px;
+}
+.twins-brand-service-option-grid h3 { color: var(--twins-navy-900); font-size: 1.65rem; text-transform: uppercase; }
+.twins-brand-service-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 38px;
+}
+body.twins-brand-experience .twins-brand-service-links a {
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  color: var(--twins-white);
+  background: var(--twins-navy-900);
+  border: 2px solid var(--twins-navy-950);
+  border-radius: 999px;
+  font-weight: 900;
+}
+.twins-brand-service-area {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 34px;
+  color: var(--twins-white);
+  background: var(--twins-navy-900);
+}
+.twins-brand-service-area p { max-width: 720px; color: #e8f1fb; }
+.twins-brand-service-area-actions { display: grid; justify-items: start; gap: 12px; }
+body.twins-brand-experience .twins-brand-service-area-actions a { min-height: 44px; display: inline-flex; align-items: center; color: var(--twins-gold); font-weight: 1000; }
+body.twins-brand-experience .twins-brand-service-phone { color: var(--twins-white); font-size: clamp(1.45rem, 3vw, 2.2rem); }
+.twins-brand-faq { background: var(--twins-cream); }
+.twins-brand-faq-list { max-width: 980px; display: grid; gap: 14px; margin-top: 34px; }
+.twins-brand-faq details { color: var(--twins-ink); background: var(--twins-white); border: 3px solid var(--twins-navy-950); border-radius: 6px 20px 6px 20px; box-shadow: 5px 6px 0 var(--twins-gold); }
+.twins-brand-faq summary { min-height: 52px; display: flex; align-items: center; padding: 14px 20px; color: var(--twins-navy-950); cursor: pointer; font-weight: 1000; }
+.twins-brand-faq details p { padding: 0 20px 20px; color: var(--twins-ink); }
+.twins-brand-editorial-hero { min-height: 370px; }
+.twins-brand-editorial-answer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 32px;
+  background: #f4ead6;
+}
+.twins-brand-editorial-answer p { max-width: 760px; }
+.twins-brand-editorial-body { background: var(--twins-white); }
+.twins-brand-editorial-content {
+  max-width: 780px;
+  margin-inline: auto;
+  color: var(--twins-ink);
+  font-size: 1.06rem;
+  line-height: 1.75;
+}
+.twins-brand-editorial-content :where(h2, h3, h4, h5, h6) { margin-top: 1.5em; color: var(--twins-navy-900); }
+.twins-brand-editorial-content a { color: var(--twins-navy-700); font-weight: 900; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.twins-brand-editorial-content :where(blockquote, pre, table) { max-width: 100%; overflow-x: auto; }
+
 .twins-brand-reviews-collection { color: var(--twins-white); background: var(--twins-navy-950); }
 .twins-brand-reviews-collection .twins-brand-reviews > h2 { color: var(--twins-white); font-size: clamp(2.4rem, 5vw, 4.7rem); text-transform: uppercase; }
 .twins-brand-reviews-collection .twins-brand-google-attribution { color: #dbe8f8; }
@@ -765,6 +942,14 @@ body.twins-brand-experience .twins-brand-careers-hero a.twins-brand-cta {
   .twins-brand-role-grid,
   .twins-brand-process-grid,
   .twins-brand-contact-market-grid { grid-template-columns: 1fr 1fr; }
+  .twins-brand-service-hero,
+  .twins-brand-direct-answer,
+  .twins-brand-service-process,
+  .twins-brand-service-area,
+  .twins-brand-editorial-answer { grid-template-columns: 1fr; }
+  .twins-brand-service-hero-actions { justify-content: flex-start; }
+  .twins-brand-service-grid,
+  .twins-brand-service-option-grid { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 768px) {
@@ -817,6 +1002,18 @@ body.twins-brand-experience .twins-brand-careers-hero a.twins-brand-cta {
   .twins-brand-process-grid,
   .twins-brand-contact-market-grid { grid-template-columns: 1fr; }
   .twins-brand-careers-ribbon { flex-wrap: wrap; justify-content: flex-start; }
+  .twins-brand-service-grid,
+  .twins-brand-service-option-grid { grid-template-columns: 1fr; }
+  .twins-brand-service-hero,
+  .twins-brand-editorial-hero,
+  .twins-brand-direct-answer,
+  .twins-brand-service-needs,
+  .twins-brand-service-process,
+  .twins-brand-service-options,
+  .twins-brand-service-area,
+  .twins-brand-faq,
+  .twins-brand-editorial-answer,
+  .twins-brand-editorial-body { padding-inline: 20px; }
 }
 
 @media (max-width: 480px) {

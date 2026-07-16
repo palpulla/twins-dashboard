@@ -12,6 +12,7 @@ final class Experience
     private BookingAdapter $booking;
     private ApplicationAdapter $applications;
     private MarketRegistry $markets;
+    private ?PageContentRegistry $pageContent = null;
     private string $root;
 
     public function __construct(
@@ -50,6 +51,20 @@ final class Experience
             $environment = $context['environment'];
             $market = $this->markets->resolve($marketKey, $environment);
             $experience = $this;
+            if ($template === 'service') {
+                $path = $context['path'] ?? null;
+                $title = $context['title'] ?? null;
+                if (!is_string($path) || !is_string($title)) {
+                    throw new \DomainException('Service render context is incomplete.');
+                }
+                $pageContent = $this->pageContent()->resolve($path, $title);
+            } elseif ($template === 'editorial') {
+                $content = $context['editorialContent'] ?? null;
+                $kind = $context['editorialKind'] ?? null;
+                if (!is_string($content) || !is_string($kind) || !in_array($kind, ['location', 'trust', 'article'], true)) {
+                    throw new \DomainException('Editorial render context is incomplete.');
+                }
+            }
             $quote = $this->quote->action($context);
             $booking = $template === '../components/header' ? $this->booking->action($context) : null;
             require $this->root . '/templates/' . $template . '.php';
@@ -67,6 +82,42 @@ final class Experience
     public function renderCareers(array $context): string { return $this->render('careers', $context); }
     public function renderContact(array $context): string { return $this->render('contact', $context); }
     public function renderReviews(array $context): string { return $this->render('reviews', $context); }
+    public function renderService(array $context): string { return $this->render('service', $context); }
+
+    public function renderEditorial(array $context, string $content, string $kind): string
+    {
+        if (!in_array($kind, ['location', 'trust', 'article'], true)) {
+            throw new \DomainException('Editorial kind is outside the fixed boundary.');
+        }
+        if (
+            preg_match('~<(?:form|input|button|select|textarea|script|style|iframe|frame|object|embed|template|a|img)\b~i', $content)
+            || preg_match('~<[a-z][^>]*\s+[a-z_:][-a-z0-9_:.]*\s*=~i', $content)
+            || preg_match('~\b(?:fetch|XMLHttpRequest|sendBeacon)\s*\(|\burl\s*\(~i', $content)
+        ) {
+            throw new \DomainException('Editorial content is not inert.');
+        }
+        return $this->render('editorial', array_replace($context, [
+            'editorialContent' => $content,
+            'editorialKind' => $kind,
+        ]));
+    }
+
+    private function pageContent(): PageContentRegistry
+    {
+        if ($this->pageContent instanceof PageContentRegistry) {
+            return $this->pageContent;
+        }
+        $config = $this->root . '/config/page-content.php';
+        if (!is_file($config) || is_link($config)) {
+            throw new \DomainException('Fixed page-content config is unavailable.');
+        }
+        $records = require $config;
+        if (!is_array($records)) {
+            throw new \DomainException('Fixed page-content config is invalid.');
+        }
+        $this->pageContent = new PageContentRegistry($records);
+        return $this->pageContent;
+    }
 
     public function assetHandles(): array
     {

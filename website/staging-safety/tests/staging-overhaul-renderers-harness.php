@@ -840,16 +840,21 @@ if ($scenario === 'family-once') {
         twins_overhaul_renderer_assert($refusal->response === 503, 'unsafe malformed family-body refusal did not use 503');
     }
     $rendered = twins_overhaul_replace_main_content($original);
-    twins_overhaul_renderer_assert(preg_match_all('/<h1\b/i', $rendered) === 1, 'service family does not render one frame H1');
-    twins_overhaul_renderer_assert(strpos($rendered, 'Embedded heading one') !== false && strpos($rendered, 'Embedded heading two') !== false, 'service family lost nested heading content');
-    twins_overhaul_renderer_assert(preg_match_all('/<h2\b[^>]*>Embedded heading/i', $rendered) === 2, 'service family did not demote both nested H1 tags');
-    twins_overhaul_renderer_assert(strpos($rendered, 'Garage Door Spring Repair') !== false, 'service family lost the existing title');
-    foreach (['twins-family-hero', 'twins-family-answer', 'twins-family-cards', 'twins-family-process', 'twins-family-service-area', 'twins-family-faq', 'twins-family-closing'] as $class) {
-        twins_overhaul_renderer_assert(strpos($rendered, $class) !== false, 'service family section missing: ' . $class);
-    }
-    twins_overhaul_renderer_assert(strpos($rendered, '(608) 420-2377') !== false, 'service family lost the fixed region phone');
+    twins_overhaul_renderer_assert(substr_count($rendered, '<h1') === 1, 'service H1 count changed');
+    twins_overhaul_renderer_assert(substr_count($rendered, '<details') >= 4, 'service FAQ count is insufficient');
+    twins_overhaul_renderer_assert(stripos($rendered, 'dangerous tension') !== false, 'spring safety answer missing');
+    twins_overhaul_renderer_assert(stripos($rendered, 'trained professionals') !== false, 'spring professional-handling answer missing');
+    twins_overhaul_renderer_assert(stripos($rendered, 'replace it yourself') === false, 'unsafe DIY spring copy survived');
+    twins_overhaul_renderer_assert(stripos($rendered, 'DIY spring') === false, 'unsafe DIY spring phrase survived');
+    twins_overhaul_renderer_assert(stripos($rendered, '#1') === false, 'unsupported ranking claim survived');
+    twins_overhaul_renderer_assert(strpos($rendered, 'data-twins-original-content') === false, 'raw service body survived');
+    twins_overhaul_renderer_assert(strpos($rendered, 'Embedded heading one') === false, 'legacy service heading survived');
+    twins_overhaul_renderer_assert(strpos($rendered, 'SAFE FACTUAL COPY') === false, 'legacy service body survived');
+    twins_overhaul_renderer_assert(strpos($rendered, '(608) 420-2377') !== false, 'service page lost the normalized regional phone');
+    twins_overhaul_renderer_assert(strpos($rendered, '/contact-us/') !== false, 'service page lost the quote adapter action');
+    twins_overhaul_renderer_assert(strpos($rendered, '/wi/garage-door-opener-repair/') !== false, 'service page bypassed market-aware internal links');
     twins_overhaul_renderer_assert(strpos($rendered, 'id="twins-overhaul-main"') !== false, 'service family lacks skip target');
-    twins_overhaul_renderer_assert(!preg_match('/\b(?:five[- ]star|same[- ]day|licensed|guaranteed|24\/7|technicians?)\b/i', $rendered), 'service family invented an unsupported claim');
+    twins_overhaul_renderer_assert(!preg_match('/\b(?:five[- ]star|same[- ]day|licensed|guaranteed|24\/7)\b/i', $rendered), 'service family invented an unsupported claim');
     twins_overhaul_renderer_assert(!preg_match('/<form\b|type=["\']submit["\']|\baction=/i', $rendered), 'service family contains an active form');
 }
 
@@ -922,8 +927,8 @@ if ($scenario === 'elementor-theme-content') {
     );
     twins_overhaul_renderer_assert(substr_count($location, 'id="twins-overhaul-main"') === 1, 'Elementor location fallback did not render one fixed main wrapper');
     twins_overhaul_renderer_assert(
-        strpos($location, 'twins-family--location') !== false,
-        'Elementor location fallback did not render the location family: ' . substr($location, 0, 320)
+        strpos($location, 'twins-brand-editorial-page') !== false,
+        'Elementor location fallback did not render the portable editorial family: ' . substr($location, 0, 320)
     );
     twins_overhaul_renderer_assert(substr_count($location, 'LEGACY LOCATION BODY') === 1, 'Elementor location fallback did not retain safe legacy facts exactly once');
     twins_overhaul_renderer_assert(stripos($location, '<form') === false && stripos($location, 'spoofed-lead') === false, 'spoofed legacy main marker bypassed Elementor form isolation');
@@ -949,7 +954,8 @@ if ($scenario === 'elementor-theme-content') {
     );
     twins_overhaul_renderer_assert(stripos($article, '<form') === false && stripos($article, '</form>') === false, 'general article fallback retained form markup');
     twins_overhaul_renderer_assert(stripos($article, 'action=') === false && stripos($article, 'method=') === false && stripos($article, 'type="submit"') === false, 'general article fallback retained submission authority');
-    twins_overhaul_renderer_assert(strpos($article, 'data-twins-staging-form-inert=true') !== false, 'general article fallback lacks the server-side inert marker');
+    twins_overhaul_renderer_assert(strpos($article, 'This private staging preview does not submit or store lead information.') !== false, 'general article fallback lacks the inert-form notice');
+    twins_overhaul_renderer_assert(strpos($article, 'twins-brand-editorial-page') !== false, 'general article fallback lacks the portable editorial shell');
 }
 
 if ($scenario === 'elementor-document-content') {
@@ -974,7 +980,7 @@ if ($scenario === 'elementor-document-content') {
     $directLocation = '<div data-elementor-type="location"><p>DIRECT ELEMENTOR LOCATION FACT</p><form action="/direct-lead" method="post"><button type="submit">Send</button></form></div>';
     $renderedLocation = ($elementorDocumentHook[2])($directLocation);
     twins_overhaul_renderer_assert(substr_count($renderedLocation, 'id="twins-overhaul-main"') === 1, 'direct Elementor document did not render one fixed main wrapper');
-    twins_overhaul_renderer_assert(strpos($renderedLocation, 'twins-family--location') !== false, 'direct Elementor document did not render the fixed location family');
+    twins_overhaul_renderer_assert(strpos($renderedLocation, 'twins-brand-editorial-page') !== false, 'direct Elementor document did not render the portable editorial family');
     twins_overhaul_renderer_assert(substr_count($renderedLocation, 'DIRECT ELEMENTOR LOCATION FACT') === 1, 'direct Elementor document did not retain safe legacy facts exactly once');
     twins_overhaul_renderer_assert(stripos($renderedLocation, '<form') === false && stripos($renderedLocation, 'direct-lead') === false, 'direct Elementor document retained form or action authority');
     twins_overhaul_renderer_assert(
@@ -1012,7 +1018,7 @@ if ($scenario === 'legacy-location-document') {
     twins_overhaul_renderer_set(['path' => '/ky/location/lexington/']);
     $renderedLocation = ($elementorDocumentHook[2])($legacyTemplate);
     twins_overhaul_renderer_assert(substr_count($renderedLocation, 'id="twins-overhaul-main"') === 1, 'fixed Lexington template did not render one overhaul root');
-    twins_overhaul_renderer_assert(strpos($renderedLocation, 'twins-family--location') !== false, 'fixed Lexington template did not render the location family');
+    twins_overhaul_renderer_assert(strpos($renderedLocation, 'twins-brand-editorial-page') !== false, 'fixed Lexington template did not render the portable editorial family');
     twins_overhaul_renderer_assert(substr_count($renderedLocation, 'LEGACY LEXINGTON FACT') === 1, 'fixed Lexington template did not retain its inert factual text exactly once');
     twins_overhaul_renderer_assert(stripos($renderedLocation, '<form') === false && stripos($renderedLocation, 'legacy-lead') === false, 'fixed Lexington template retained form or action authority');
 }
@@ -1084,9 +1090,13 @@ if ($scenario === 'article') {
     $original = '<article data-original="article" class="exact"><h1 id="article-heading" data-source="published">Embedded article heading</h1><p style="color:navy">PUBLISHED-ARTICLE-BYTES</p></article>';
     $rendered = twins_overhaul_replace_main_content($original);
     twins_overhaul_renderer_assert(preg_match_all('/<h1\b/i', $rendered) === 1, 'article frame does not render exactly one H1');
-    twins_overhaul_renderer_assert(substr_count($rendered, $original) === 1, 'article body is not byte-identical exactly once');
-    twins_overhaul_renderer_assert(strpos($rendered, '<h1 class="twins-overhaul-title">') === false, 'article frame added a duplicate H1');
-    twins_overhaul_renderer_assert(strpos($rendered, 'twins-overhaul-editorial') !== false, 'article lacks editorial frame');
+    twins_overhaul_renderer_assert(strpos($rendered, $original) === false, 'article retained its raw wrapper and authority attributes');
+    twins_overhaul_renderer_assert(substr_count($rendered, '<h2>Embedded article heading</h2>') === 1, 'article heading was not demoted exactly once');
+    twins_overhaul_renderer_assert(substr_count($rendered, 'PUBLISHED-ARTICLE-BYTES') === 1, 'article lost or duplicated its inert published facts');
+    twins_overhaul_renderer_assert(strpos($rendered, 'data-original=') === false && strpos($rendered, 'data-source=') === false && strpos($rendered, 'style=') === false, 'article retained a legacy authority attribute');
+    twins_overhaul_renderer_assert(strpos($rendered, 'twins-brand-editorial-page') !== false, 'article lacks the portable editorial frame');
+    twins_overhaul_renderer_assert(strpos($rendered, '(833) 833-2010') !== false, 'article lost the normalized regional phone');
+    twins_overhaul_renderer_assert(strpos($rendered, '/contact-us/') !== false, 'article lost the quote adapter action');
     $legalOriginal = '<div data-original="legal"><H1 class="legal-title" DATA-KEEP="yes">LEGAL TITLE</H1><p>LEGAL-BYTES</p></div>';
     $legalContext = ['title' => 'Privacy Policy', 'classification' => 'legal-preserve'];
     $legal = twins_overhaul_render_article_template($legalContext, $legalOriginal);

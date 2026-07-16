@@ -166,8 +166,9 @@ function twins_overhaul_region_name(string $key): string {
 /**
  * Demote legacy H1 tags for rebuilt family content.
  *
- * Completed campaign, Careers, Team, catalog, article, and legal bodies never
- * call this helper.
+ * Completed campaign, Careers, Team, catalog, and legal bodies never call this
+ * helper. Rebuilt location, trust, and article bodies use it before entering
+ * the portable editorial shell.
  *
  * @param string $content Existing rendered WordPress content.
  * @return string
@@ -1203,17 +1204,19 @@ function twins_overhaul_render_classified_content(string $classification, array 
         $rendered = twins_overhaul_wrap_preserved_content(
             twins_overhaul_make_preserved_forms_inert($content)
         );
-    } elseif ($classification === 'legal-preserve' || $classification === 'article') {
+    } elseif ($classification === 'legal-preserve') {
         $rendered = twins_overhaul_render_article_template(
             $context,
             twins_overhaul_make_preserved_forms_inert($content)
         );
     } elseif ($classification === 'service') {
-        $rendered = twins_overhaul_render_service_template($context, $content);
-    } elseif ($classification === 'location') {
-        $rendered = twins_overhaul_render_location_template($context, $content);
-    } elseif ($classification === 'trust') {
-        $rendered = twins_overhaul_render_trust_template($context, $content);
+        $rendered = twins_overhaul_brand_runtime()->renderService($context);
+    } elseif (in_array($classification, array('location', 'trust', 'article'), true)) {
+        $rendered = twins_overhaul_brand_runtime()->renderEditorial(
+            $context,
+            twins_overhaul_prepare_family_content($content),
+            $classification
+        );
     } elseif ($classification === 'cost-madison' && function_exists('twins_overhaul_render_cost_page')) {
         $rendered = twins_overhaul_render_cost_page('madison', $context);
     } elseif ($classification === 'cost-milwaukee' && function_exists('twins_overhaul_render_cost_page')) {
