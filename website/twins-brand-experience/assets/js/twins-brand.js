@@ -131,6 +131,15 @@
       if (!event.target.closest('.twins-brand-nav-group')) closeNav();
     });
 
+    document.querySelectorAll('.twins-brand-market-menu').forEach(menu => {
+      menu.addEventListener('keydown', event => {
+        if (event.key !== 'Escape' || !menu.open) return;
+        event.preventDefault();
+        menu.open = false;
+        menu.querySelector('summary')?.focus();
+      });
+    });
+
     document.querySelectorAll('.twins-brand-preview-form').forEach(preview => {
       const fields = [...preview.querySelectorAll('input, select, textarea')];
       const final = preview.querySelector('[data-preview-finalize]');

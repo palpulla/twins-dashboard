@@ -69,7 +69,19 @@ if ($environment === 'staging') {
 ?>
 <header class="twins-brand-header" data-twins-header>
   <div class="twins-brand-utility">
-    <span>Choose your service area</span>
+    <details class="twins-brand-market-menu">
+      <summary>Choose your service area</summary>
+      <div class="twins-brand-market-menu-panel">
+        <?php foreach ($experience->markets()->all($environment) as $availableKey => $availableMarket): ?>
+          <?php if ($availableKey === 'main') continue; ?>
+          <a href="<?= htmlspecialchars($experience->route($availableKey, $marketKey), ENT_QUOTES, 'UTF-8') ?>">
+            <strong><?= htmlspecialchars($availableMarket['label'], ENT_QUOTES, 'UTF-8') ?></strong>
+            <span><?= htmlspecialchars($availableMarket['phoneDisplay'], ENT_QUOTES, 'UTF-8') ?></span>
+            <?php if ($availableMarket['preview'] === true): ?><small>Private staging preview</small><?php endif; ?>
+          </a>
+        <?php endforeach; ?>
+      </div>
+    </details>
     <a class="twins-brand-phone" href="<?= htmlspecialchars($market['phoneHref'], ENT_QUOTES, 'UTF-8') ?>">
       <?= htmlspecialchars($market['phoneDisplay'], ENT_QUOTES, 'UTF-8') ?>
     </a>

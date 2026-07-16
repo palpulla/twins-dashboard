@@ -93,6 +93,12 @@ test('supporting journeys preserve approved copy and adapter boundaries', () => 
   assert.match(reviews, /Verified customer reviews/);
 });
 
+test('contact always renders approved market phones independently from preview status', () => {
+  const contact = template('contact.php');
+  assert.match(contact, /phoneDisplay/);
+  assert.doesNotMatch(contact, /if \(\$availableMarket\['preview'\] === true\)[\s\S]*Private staging preview[\s\S]*else/s);
+});
+
 test('careers binds every staging preview label to the normalized environment', () => {
   const careers = template('careers.php');
   assert.match(careers, /<a href="#apply">\s*<\?php if \(\$environment === 'staging'\): \?>\s*Application preview\s*<\?php else: \?>\s*Apply\s*<\?php endif; \?>\s*<\/a>/);

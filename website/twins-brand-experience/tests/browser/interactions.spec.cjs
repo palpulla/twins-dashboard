@@ -2,6 +2,25 @@ const { test, expect } = require('@playwright/test');
 
 const fixture = '/tests/browser/fixtures/brand-home.html';
 const widths = [1440, 1201, 1024, 768, 390, 360, 320];
+const marketMenuFixture = `
+<details class="twins-brand-market-menu">
+  <summary>Choose your service area</summary>
+  <div class="twins-brand-market-menu-panel">
+    <a href="#markets"><strong>Wisconsin</strong><span>(608) 420-2377</span></a>
+    <a href="#markets"><strong>Kentucky</strong><span>(833) 833-2010</span></a>
+    <a href="#markets"><strong>Illinois preview</strong><span>(815) 800-2025</span><small>Private staging preview</small></a>
+  </div>
+</details>`;
+
+async function routeFixtureWithMarketMenu(page) {
+  await page.route(`**${fixture}`, async route => {
+    const response = await route.fetch();
+    const original = await response.text();
+    const marker = '<span>Choose your service area</span>';
+    if (!original.includes(marker)) throw new Error('Fixture utility marker is missing.');
+    await route.fulfill({ response, body: original.replace(marker, marketMenuFixture) });
+  });
+}
 
 function channels(value) {
   const match = value.match(/rgba?\(([^)]+)\)/);
@@ -120,6 +139,55 @@ test('desktop dropdowns are keyboard operable and close cleanly', async ({ page 
   await page.keyboard.press('Escape');
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
   await expect(trigger).toBeFocused();
+});
+
+test('market selector exposes approved phones with native keyboard semantics and bounded Escape close', async ({ page }) => {
+  await routeFixtureWithMarketMenu(page);
+
+  for (const width of [1440, 390, 320]) {
+    await page.setViewportSize({ width, height: width <= 390 ? 844 : 1000 });
+    await page.goto(fixture);
+    const selector = page.locator('.twins-brand-market-menu');
+    const summary = selector.locator('summary');
+
+    await summary.click();
+    await expect(selector).toHaveAttribute('open', '');
+    await expect(selector.getByText('(815) 800-2025')).toBeVisible();
+
+    const panel = selector.locator('.twins-brand-market-menu-panel');
+    const panelBounds = await panel.boundingBox();
+    expect(panelBounds.x, `${width}px market panel left edge`).toBeGreaterThanOrEqual(0);
+    expect(panelBounds.x + panelBounds.width, `${width}px market panel right edge`).toBeLessThanOrEqual(width);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBeTruthy();
+
+    for (const target of [summary, ...await panel.getByRole('link').all()]) {
+      const bounds = await target.boundingBox();
+      expect(bounds.width, `${width}px ${await target.innerText()} width`).toBeGreaterThanOrEqual(44);
+      expect(bounds.height, `${width}px ${await target.innerText()} height`).toBeGreaterThanOrEqual(44);
+      expect((await computedContrast(target)).ratio, `${width}px ${await target.innerText()} contrast`).toBeGreaterThanOrEqual(4.5);
+    }
+
+    await page.keyboard.press('Escape');
+    await expect(selector).not.toHaveAttribute('open', '');
+    await expect(summary).toBeFocused();
+    expect(await summary.evaluate(element => element.matches(':focus-visible'))).toBeTruthy();
+    const summaryFocus = await visualSnapshot(summary);
+    const summaryRings = [
+      ...(summaryFocus.outlineStyle !== 'none' && summaryFocus.outlineWidth >= 2 ? [channels(summaryFocus.outlineColor)] : []),
+      ...(summaryFocus.boxShadow.match(/rgba?\([^)]+\)/g) || []).map(channels),
+    ];
+    expect(summaryRings.length, `${width}px summary focus indicator`).toBeGreaterThan(0);
+    expect(Math.max(...summaryRings.map(color => ringContrast(color, summaryFocus.controlBackground))), `${width}px summary focus contrast`).toBeGreaterThanOrEqual(3);
+
+    await page.keyboard.press('Enter');
+    await expect(selector).toHaveAttribute('open', '');
+    await page.keyboard.press('Tab');
+    const firstMarket = panel.getByRole('link').first();
+    await expect(firstMarket).toBeFocused();
+    expect(await firstMarket.evaluate(element => element.matches(':focus-visible'))).toBeTruthy();
+    await page.keyboard.press('Escape');
+    await expect(selector).not.toHaveAttribute('open', '');
+  }
 });
 
 test('booking dialog traps focus, closes outside or with Escape, and reports only local status', async ({ page }) => {

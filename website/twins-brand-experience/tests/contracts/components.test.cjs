@@ -31,6 +31,14 @@ test('header binds booking mode to environment and emits only exact safe externa
   assert.equal((html.match(/target="_blank" rel="noopener noreferrer"/g) || []).length, 2);
 });
 
+test('header exposes the service-area chooser as a native market menu with approved phones', () => {
+  const header = source('header.php');
+  assert.match(header, /<details class="twins-brand-market-menu"/);
+  assert.match(header, /<summary>Choose your service area<\/summary>/);
+  assert.match(header, /phoneDisplay/);
+  assert.doesNotMatch(header, /<span>Choose your service area<\/span>/);
+});
+
 test('slider emits normalized records but no review schema owner', () => {
   const html = source('review-slider.php');
   assert.match(html, /twins-brand-review-slider/);

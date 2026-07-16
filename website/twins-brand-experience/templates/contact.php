@@ -21,11 +21,10 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
         <?php if ($availableMarketKey === 'main') continue; ?>
         <article>
           <h3><?= htmlspecialchars($availableMarket['label'], ENT_QUOTES, 'UTF-8') ?></h3>
-          <?php if ($availableMarket['preview'] === true): ?>
-            <p>Private staging preview</p>
-          <?php else: ?>
-            <a href="<?= htmlspecialchars($availableMarket['phoneHref'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($availableMarket['phoneDisplay'], ENT_QUOTES, 'UTF-8') ?></a>
-          <?php endif; ?>
+          <a href="<?= htmlspecialchars($availableMarket['phoneHref'], ENT_QUOTES, 'UTF-8') ?>">
+            <?= htmlspecialchars($availableMarket['phoneDisplay'], ENT_QUOTES, 'UTF-8') ?>
+          </a>
+          <?php if ($availableMarket['preview'] === true): ?><small>Private staging preview</small><?php endif; ?>
           <a href="<?= htmlspecialchars($experience->route($availableMarketKey, $marketKey), ENT_QUOTES, 'UTF-8') ?>">View service area</a>
         </article>
       <?php endforeach; ?>
