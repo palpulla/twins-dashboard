@@ -653,14 +653,14 @@ final class TwinsPrivateStagingDeploy
 
     private function verifyHostTooling(): void
     {
-        $verificationRoot = $this->transaction . '/verification/twins-brand-experience';
+        $verificationRoot = $this->transaction . '/verification';
         $brandRoot = $verificationRoot . '/twins-brand-experience';
         $stagingRoot = $verificationRoot . '/staging-safety';
         $loader = $stagingRoot . '/mu-plugins/twins-staging-overhaul.php';
         $safety = $stagingRoot . '/mu-plugins/twins-staging-safety.php';
         $package = $stagingRoot . '/mu-plugins/twins-staging-overhaul';
-        $tool = $verificationRoot . '/tools/private-staging-deploy.php';
-        $harness = $verificationRoot . '/tests/php/private-staging-deploy-harness.php';
+        $tool = $brandRoot . '/tools/private-staging-deploy.php';
+        $harness = $brandRoot . '/tests/php/private-staging-deploy-harness.php';
         foreach ($this->listTree($verificationRoot) as $relative) {
             if (substr($relative, -4) === '.php') {
                 self::runPhp([PHP_BINARY, '-l', $verificationRoot . '/' . $relative], 'No syntax errors detected');

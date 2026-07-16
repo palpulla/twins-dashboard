@@ -115,6 +115,11 @@ test('remote dry-run lints the fixed deploy tooling and executes every fixed PHP
   const harnessBlock = harnessSource.match(/\$allowed = \[([\s\S]*?)\];/);
   assert.notEqual(scenarioBlock, null);
   assert.notEqual(harnessBlock, null);
+  assert.match(phpSource, /\$verificationRoot\s*=\s*\$this->transaction\s*\.\s*'\/verification';/);
+  assert.match(phpSource, /\$brandRoot\s*=\s*\$verificationRoot\s*\.\s*'\/twins-brand-experience';/);
+  assert.match(phpSource, /\$stagingRoot\s*=\s*\$verificationRoot\s*\.\s*'\/staging-safety';/);
+  assert.match(phpSource, /\$tool\s*=\s*\$brandRoot\s*\.\s*'\/tools\/private-staging-deploy\.php';/);
+  assert.match(phpSource, /\$harness\s*=\s*\$brandRoot\s*\.\s*'\/tests\/php\/private-staging-deploy-harness\.php';/);
   assert.match(phpSource, /\$operation === '--dry-run'[\s\S]{0,240}\$this->verifyHostTooling\(\)/);
   assert.match(phpSource, /foreach\s*\(\$this->listTree\(\$verificationRoot\)/);
   assert.match(phpSource, /PHP_BINARY,\s*'-l',\s*\$verificationRoot\s*\.\s*'\/'\s*\.\s*\$relative/);
