@@ -869,14 +869,26 @@ if ($scenario === 'path-contact-context') {
         'title' => 'Garage Door Repair in Milwaukee',
     ]);
     twins_overhaul_renderer_assert(twins_overhaul_current_classification() === 'location', 'Milwaukee context route is not a location');
-    $milwaukee = twins_overhaul_render_classified_content(
+    $milwaukeeContext = twins_overhaul_current_context('location');
+    $milwaukeeHeader = twins_overhaul_render_header($milwaukeeContext);
+    $milwaukeeBody = twins_overhaul_render_classified_content(
         'location',
-        twins_overhaul_current_context('location'),
+        $milwaukeeContext,
         '<p>MILWAUKEE VERIFIED CONTENT</p>'
     );
-    twins_overhaul_renderer_assert(strpos($milwaukee, '(414) 800-9271') !== false, 'Milwaukee editorial lost its path-specific phone');
-    twins_overhaul_renderer_assert(strpos($milwaukee, 'tel:+14148009271') !== false, 'Milwaukee editorial lost its path-specific phone href');
-    twins_overhaul_renderer_assert(strpos($milwaukee, '(608) 420-2377') === false, 'Milwaukee editorial fell back to the broad Wisconsin phone');
+    $milwaukeeFooter = twins_overhaul_render_footer($milwaukeeContext);
+    $milwaukee = $milwaukeeHeader . $milwaukeeBody . $milwaukeeFooter;
+    twins_overhaul_renderer_assert(
+        preg_match('~<details class="twins-brand-market-menu">(.*?)</details>~s', $milwaukeeHeader, $milwaukeeMarketMenu) === 1,
+        'Milwaukee header lost the market selector'
+    );
+    twins_overhaul_renderer_assert(strpos($milwaukeeMarketMenu[0], '(608) 420-2377') !== false, 'Milwaukee market selector lost the approved Wisconsin phone');
+    twins_overhaul_renderer_assert(strpos($milwaukeeMarketMenu[0], '(815) 800-2025') !== false, 'Milwaukee market selector lost the approved Illinois phone');
+    $milwaukeeWithoutMarketMenu = str_replace($milwaukeeMarketMenu[0], '', $milwaukee);
+    twins_overhaul_renderer_assert(substr_count($milwaukeeWithoutMarketMenu, '(414) 800-9271') === 3, 'Milwaukee composition does not use one display phone in header, body, and footer');
+    twins_overhaul_renderer_assert(substr_count($milwaukeeWithoutMarketMenu, 'tel:+14148009271') === 5, 'Milwaukee composition does not use one phone href across all call actions');
+    twins_overhaul_renderer_assert(strpos($milwaukeeWithoutMarketMenu, '(608) 420-2377') === false, 'Milwaukee composition exposes a contradictory broad Wisconsin phone');
+    twins_overhaul_renderer_assert(strpos($milwaukeeWithoutMarketMenu, 'tel:+16084202377') === false, 'Milwaukee composition exposes a contradictory broad Wisconsin phone href');
 
     twins_overhaul_renderer_set([
         'blogId' => 4,
@@ -888,14 +900,24 @@ if ($scenario === 'path-contact-context') {
         'title' => 'Garage Door Spring Repair',
     ]);
     twins_overhaul_renderer_assert(twins_overhaul_current_classification() === 'service', 'Wisconsin context route is not a service');
-    $wisconsin = twins_overhaul_render_classified_content(
+    $wisconsinContext = twins_overhaul_current_context('service');
+    $wisconsinHeader = twins_overhaul_render_header($wisconsinContext);
+    $wisconsinBody = twins_overhaul_render_classified_content(
         'service',
-        twins_overhaul_current_context('service'),
+        $wisconsinContext,
         '<p>IGNORED WISCONSIN SERVICE BODY</p>'
     );
-    twins_overhaul_renderer_assert(strpos($wisconsin, '(608) 420-2377') !== false, 'generic Wisconsin service phone changed');
-    twins_overhaul_renderer_assert(strpos($wisconsin, 'tel:+16084202377') !== false, 'generic Wisconsin service phone href changed');
-    twins_overhaul_renderer_assert(strpos($wisconsin, '(414) 800-9271') === false, 'Milwaukee phone leaked into generic Wisconsin service');
+    $wisconsinFooter = twins_overhaul_render_footer($wisconsinContext);
+    $wisconsin = $wisconsinHeader . $wisconsinBody . $wisconsinFooter;
+    twins_overhaul_renderer_assert(
+        preg_match('~<details class="twins-brand-market-menu">(.*?)</details>~s', $wisconsinHeader, $wisconsinMarketMenu) === 1,
+        'generic Wisconsin header lost the market selector'
+    );
+    $wisconsinWithoutMarketMenu = str_replace($wisconsinMarketMenu[0], '', $wisconsin);
+    twins_overhaul_renderer_assert(substr_count($wisconsinWithoutMarketMenu, '(608) 420-2377') === 3, 'generic Wisconsin composition display phone changed');
+    twins_overhaul_renderer_assert(substr_count($wisconsinWithoutMarketMenu, 'tel:+16084202377') === 6, 'generic Wisconsin composition phone href changed');
+    twins_overhaul_renderer_assert(strpos($wisconsinWithoutMarketMenu, '(414) 800-9271') === false, 'Milwaukee phone leaked into generic Wisconsin composition');
+    twins_overhaul_renderer_assert(strpos($wisconsinWithoutMarketMenu, '(815) 800-2025') === false, 'Illinois phone leaked into generic Wisconsin composition');
 
     twins_overhaul_renderer_set([
         'blogId' => 5,
@@ -907,14 +929,24 @@ if ($scenario === 'path-contact-context') {
         'title' => 'Emergency Garage Door Service',
     ]);
     twins_overhaul_renderer_assert(twins_overhaul_current_classification() === 'service', 'Illinois context route is not a service');
-    $illinois = twins_overhaul_render_classified_content(
+    $illinoisContext = twins_overhaul_current_context('service');
+    $illinoisHeader = twins_overhaul_render_header($illinoisContext);
+    $illinoisBody = twins_overhaul_render_classified_content(
         'service',
-        twins_overhaul_current_context('service'),
+        $illinoisContext,
         '<p>IGNORED ILLINOIS SERVICE BODY</p>'
     );
-    twins_overhaul_renderer_assert(strpos($illinois, '(815) 800-2025') !== false, 'generic Illinois service phone changed');
-    twins_overhaul_renderer_assert(strpos($illinois, 'tel:+18158002025') !== false, 'generic Illinois service phone href changed');
-    twins_overhaul_renderer_assert(strpos($illinois, '(608) 420-2377') === false, 'Wisconsin phone leaked into Illinois service');
+    $illinoisFooter = twins_overhaul_render_footer($illinoisContext);
+    $illinois = $illinoisHeader . $illinoisBody . $illinoisFooter;
+    twins_overhaul_renderer_assert(
+        preg_match('~<details class="twins-brand-market-menu">(.*?)</details>~s', $illinoisHeader, $illinoisMarketMenu) === 1,
+        'generic Illinois header lost the market selector'
+    );
+    $illinoisWithoutMarketMenu = str_replace($illinoisMarketMenu[0], '', $illinois);
+    twins_overhaul_renderer_assert(substr_count($illinoisWithoutMarketMenu, '(815) 800-2025') === 3, 'generic Illinois composition display phone changed');
+    twins_overhaul_renderer_assert(substr_count($illinoisWithoutMarketMenu, 'tel:+18158002025') === 6, 'generic Illinois composition phone href changed');
+    twins_overhaul_renderer_assert(strpos($illinoisWithoutMarketMenu, '(608) 420-2377') === false, 'Wisconsin phone leaked into Illinois composition');
+    twins_overhaul_renderer_assert(strpos($illinoisWithoutMarketMenu, '(414) 800-9271') === false, 'Milwaukee phone leaked into Illinois composition');
 }
 
 if ($scenario === 'home-brand') {

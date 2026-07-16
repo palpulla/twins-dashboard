@@ -164,10 +164,16 @@ test('renderer harness pins spring safety, one H1, FAQ depth, and raw-body remov
     "strpos($rendered, 'data-twins-original-content') === false",
   ]) assert.ok(harness.includes(assertion), assertion);
   for (const assertion of [
-    "strpos($milwaukee, '(414) 800-9271') !== false",
-    "strpos($milwaukee, 'tel:+14148009271') !== false",
-    "strpos($wisconsin, '(608) 420-2377') !== false",
-    "strpos($illinois, '(815) 800-2025') !== false",
+    '$milwaukeeHeader = twins_overhaul_render_header($milwaukeeContext)',
+    '$milwaukeeBody = twins_overhaul_render_classified_content(',
+    '$milwaukeeFooter = twins_overhaul_render_footer($milwaukeeContext)',
+    "strpos($milwaukeeWithoutMarketMenu, '(608) 420-2377') === false",
+    "substr_count($milwaukeeWithoutMarketMenu, '(414) 800-9271') === 3",
+    "substr_count($milwaukeeWithoutMarketMenu, 'tel:+14148009271') === 5",
+    "substr_count($wisconsinWithoutMarketMenu, '(608) 420-2377') === 3",
+    "substr_count($wisconsinWithoutMarketMenu, 'tel:+16084202377') === 6",
+    "substr_count($illinoisWithoutMarketMenu, '(815) 800-2025') === 3",
+    "substr_count($illinoisWithoutMarketMenu, 'tel:+18158002025') === 6",
   ]) assert.ok(harness.includes(assertion), assertion);
 });
 

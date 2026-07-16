@@ -82,8 +82,8 @@ if ($environment === 'staging') {
         <?php endforeach; ?>
       </div>
     </details>
-    <a class="twins-brand-phone" href="<?= htmlspecialchars($market['phoneHref'], ENT_QUOTES, 'UTF-8') ?>">
-      <?= htmlspecialchars($market['phoneDisplay'], ENT_QUOTES, 'UTF-8') ?>
+    <a class="twins-brand-phone" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">
+      <?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?>
     </a>
   </div>
   <div class="twins-brand-fascia">

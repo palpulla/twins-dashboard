@@ -45,8 +45,24 @@ test('header exposes the service-area chooser as a native market menu with appro
   const header = source('header.php');
   assert.match(header, /<details class="twins-brand-market-menu"/);
   assert.match(header, /<summary>Choose your service area<\/summary>/);
-  assert.match(header, /phoneDisplay/);
+  assert.match(header, /\$availableMarket\[['"]phoneDisplay['"]\]/);
   assert.doesNotMatch(header, /<span>Choose your service area<\/span>/);
+});
+
+test('shared chrome uses normalized path contact while the market selector stays market-wide', () => {
+  const header = source('header.php');
+  const footer = source('footer.php');
+  const experience = fs.readFileSync(path.join(root, 'src/Experience.php'), 'utf8');
+  assert.match(
+    experience,
+    /in_array\(\$template,\s*\[['"]\.\.\/components\/header['"],\s*['"]\.\.\/components\/footer['"],\s*['"]service['"],\s*['"]editorial['"]\],\s*true\)/,
+  );
+  assert.match(header, /class="twins-brand-phone" href="<\?= htmlspecialchars\(\$phoneHref,[\s\S]*?<\?= htmlspecialchars\(\$phone,/);
+  assert.doesNotMatch(header, /class="twins-brand-phone"[\s\S]*?\$market\[['"]phone(?:Href|Display)['"]\]/);
+  assert.match(header, /\$availableMarket\[['"]phoneDisplay['"]\]/);
+  assert.match(footer, /class="twins-brand-phone" href="<\?= htmlspecialchars\(\$phoneHref,[\s\S]*?<\?= htmlspecialchars\(\$phone,/);
+  assert.match(footer, /twins-brand-mobile-actions[\s\S]*?htmlspecialchars\(\$phoneHref,/);
+  assert.doesNotMatch(footer, /\$market\[['"]phone(?:Href|Display)['"]\]/);
 });
 
 test('review component exposes bounded featured and static list modes without dot controls', () => {

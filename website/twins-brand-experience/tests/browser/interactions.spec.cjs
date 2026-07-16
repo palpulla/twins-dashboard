@@ -23,6 +23,20 @@ async function routeFixtureWithMarketMenu(page) {
   });
 }
 
+async function routeMilwaukeeCompositionFixture(page) {
+  await page.route(`**${fixture}`, async route => {
+    const response = await route.fetch();
+    const original = await response.text();
+    const marker = '<span>Choose your service area</span>';
+    if (!original.includes(marker)) throw new Error('Fixture utility marker is missing.');
+    const milwaukee = original
+      .replaceAll('tel:+18338332010', 'tel:+14148009271')
+      .replaceAll('(833) 833-2010', '(414) 800-9271')
+      .replace(marker, marketMenuFixture);
+    await route.fulfill({ response, body: milwaukee });
+  });
+}
+
 function channels(value) {
   const match = value.match(/rgba?\(([^)]+)\)/);
   if (!match) throw new Error(`Unsupported computed color: ${value}`);
@@ -210,6 +224,31 @@ test('market selector exposes approved phones with native keyboard semantics and
     await page.keyboard.press('Escape');
     await expect(selector).not.toHaveAttribute('open', '');
   }
+});
+
+test('Milwaukee composition keeps one active phone across header, body, footer, and mobile actions', async ({ page }) => {
+  await routeMilwaukeeCompositionFixture(page);
+  await page.goto(fixture);
+
+  await expect(page.locator('.twins-brand-utility > .twins-brand-phone')).toHaveAttribute('href', 'tel:+14148009271');
+  await expect(page.locator('.twins-brand-utility > .twins-brand-phone')).toHaveText('(414) 800-9271');
+  for (const link of await page.locator('main .twins-brand-cta--call').all()) {
+    await expect(link).toHaveAttribute('href', 'tel:+14148009271');
+  }
+  await expect(page.locator('.twins-brand-footer .twins-brand-phone')).toHaveAttribute('href', 'tel:+14148009271');
+  await expect(page.locator('.twins-brand-footer .twins-brand-phone')).toHaveText('(414) 800-9271');
+  await expect(page.locator('.twins-brand-mobile-actions a').first()).toHaveAttribute('href', 'tel:+14148009271');
+
+  const selector = page.locator('.twins-brand-market-menu-panel');
+  await expect(selector).toContainText('(608) 420-2377');
+  await expect(selector).toContainText('(815) 800-2025');
+  const outsideSelector = await page.evaluate(() => {
+    const documentClone = document.documentElement.cloneNode(true);
+    documentClone.querySelector('.twins-brand-market-menu')?.remove();
+    return documentClone.outerHTML;
+  });
+  expect(outsideSelector).not.toContain('(608) 420-2377');
+  expect(outsideSelector).not.toContain('tel:+16084202377');
 });
 
 test('booking dialog traps focus, closes outside or with Escape, and reports only local status', async ({ page }) => {

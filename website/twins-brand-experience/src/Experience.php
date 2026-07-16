@@ -51,7 +51,7 @@ final class Experience
             $environment = $context['environment'];
             $market = $this->markets->resolve($marketKey, $environment);
             $experience = $this;
-            if (in_array($template, ['service', 'editorial'], true)) {
+            if (in_array($template, ['../components/header', '../components/footer', 'service', 'editorial'], true)) {
                 [$phone, $phoneHref] = $this->contactContext($context, $market);
             }
             if ($template === 'service') {
