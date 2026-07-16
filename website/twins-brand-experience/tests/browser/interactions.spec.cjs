@@ -223,6 +223,59 @@ test('primary and contextual base CTAs expose circular arrows and a restrained s
   }
 });
 
+test('brand controls remain readable and obviously interactive under WordPress host styles', async ({ page }) => {
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: width === 390 ? 844 : 1000 });
+    await page.goto(fixture);
+    await page.evaluate(() => {
+      document.body.classList.add('twins-overhaul-preview', 'ast-single-post');
+      document.querySelector('main')?.classList.add('entry-content');
+    });
+    await page.addStyleTag({
+      content: `
+        body.twins-overhaul-preview a { color: inherit; }
+        .ast-single-post .entry-content a { text-decoration: underline; }
+        .entry-content :where(h2), h2 { color: #3a3a3a; }
+      `,
+    });
+
+    expect((await computedContrast(page.locator('.twins-brand-reviews h2'))).ratio).toBeGreaterThanOrEqual(4.5);
+    expect((await computedContrast(page.locator('.twins-brand-hero-actions .twins-brand-cta--quote'))).ratio).toBeGreaterThanOrEqual(4.5);
+    await expect(page.locator('.twins-brand-hero-actions .twins-brand-cta--quote')).toHaveCSS('text-decoration-line', 'none');
+
+    for (const card of await page.locator('.twins-brand-market-card').all()) {
+      expect((await computedContrast(card)).ratio, `${width}px ${await card.innerText()}`).toBeGreaterThanOrEqual(4.5);
+      await expect(card).toHaveCSS('cursor', 'pointer');
+      await expect(card).toHaveCSS('text-decoration-line', 'none');
+      const bounds = await card.boundingBox();
+      expect(bounds.width).toBeGreaterThanOrEqual(44);
+      expect(bounds.height).toBeGreaterThanOrEqual(44);
+    }
+  }
+
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto(fixture);
+  const marketCard = page.locator('.twins-brand-market-card').first();
+  const before = await marketCard.evaluate(element => getComputedStyle(element).transform);
+  await marketCard.hover();
+  await expect.poll(() => marketCard.evaluate(element => getComputedStyle(element).transform)).not.toBe(before);
+});
+
+test('service pathway cards expose a full-card click target', async ({ page }) => {
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: width === 390 ? 844 : 1000 });
+    await page.goto(fixture);
+    const card = page.locator('.twins-brand-service-card').first();
+    await card.scrollIntoViewIfNeeded();
+    const bounds = await card.boundingBox();
+    const linkedText = await page.evaluate(({ x, y }) => {
+      const hit = document.elementFromPoint(x, y);
+      return hit?.closest('a')?.textContent?.trim() || '';
+    }, { x: bounds.x + bounds.width - 18, y: bounds.y + 18 });
+    expect(linkedText).toBe('Explore repair service');
+  }
+});
+
 test('seven-width matrix preserves logo floors, contrast, Twins, and deterministic truck placement', async ({ page }) => {
   for (const width of widths) {
     await page.setViewportSize({ width, height: width <= 390 ? 844 : 1000 });

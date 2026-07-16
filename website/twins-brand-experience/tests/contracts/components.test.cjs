@@ -36,6 +36,8 @@ test('slider emits normalized records but no review schema owner', () => {
   assert.match(html, /twins-brand-review-slider/);
   assert.match(html, /id="twins-brand-reviews-title"/);
   assert.match(html, /Google reviews/);
+  assert.match(html, /<div class="twins-brand-section-heading">[\s\S]*id="twins-brand-reviews-title"[\s\S]*twins-brand-google-attribution[\s\S]*<\/div>/);
+  assert.match(html, /<a class="twins-brand-text-link" href="[^"]*">Read all reviews<\/a>/);
   assert.match(html, /data-review-stable-id/);
   assert.match(html, /allowExternalSourceAction/);
   assert.match(html, /===\s*true/);

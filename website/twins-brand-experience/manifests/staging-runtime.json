@@ -8,8 +8,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/assets/css/twins-brand.css",
       "destination": "twins-brand-experience/assets/css/twins-brand.css",
-      "size": 39059,
-      "sha256": "bb362ab92ff1ece3ca75ecda13d9c1c442fcf101a779a59f9af727d416f145d2"
+      "size": 40754,
+      "sha256": "67a338e47651880bfb611cabf0eede88a98ccffa6ea724ea30d698ae118e6eb4"
     },
     {
       "role": "deploy",
@@ -190,8 +190,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/components/review-slider.php",
       "destination": "twins-brand-experience/components/review-slider.php",
-      "size": 3024,
-      "sha256": "c4713a9ae9e5a7c5187cf910891370c0f4f1ffc49b3612f7c84e054aef9d3783"
+      "size": 3368,
+      "sha256": "e64269e69db25e32a1dbc24cb6d2bb3472b0418fc00cfe37c541f40a71489f35"
     },
     {
       "role": "deploy",

@@ -7,9 +7,12 @@ $reviewsRoute = $experience->route('reviews', $marketKey);
 if (($collection['status'] ?? null) === 'unavailable'):
 ?>
 <section class="twins-brand-reviews" aria-labelledby="twins-brand-reviews-title">
-  <h2 id="twins-brand-reviews-title">What our customers say</h2>
-  <p role="status">Reviews are temporarily unavailable.</p>
-  <a href="<?= htmlspecialchars($reviewsRoute, ENT_QUOTES, 'UTF-8') ?>">Read all reviews</a>
+  <div class="twins-brand-section-heading">
+    <span class="twins-brand-kicker">Verified customer stories</span>
+    <h2 id="twins-brand-reviews-title">What our customers say</h2>
+    <p role="status">Reviews are temporarily unavailable.</p>
+  </div>
+  <a class="twins-brand-text-link" href="<?= htmlspecialchars($reviewsRoute, ENT_QUOTES, 'UTF-8') ?>">Read all reviews</a>
 </section>
 <?php
     return;
@@ -28,8 +31,11 @@ if ($environment === 'production' && ($collection['allowExternalSourceAction'] ?
 }
 ?>
 <section class="twins-brand-reviews" aria-labelledby="twins-brand-reviews-title">
-  <h2 id="twins-brand-reviews-title">What our customers say</h2>
-  <p class="twins-brand-google-attribution" aria-label="Verified Google reviews">Google reviews from real Twins customers</p>
+  <div class="twins-brand-section-heading">
+    <span class="twins-brand-kicker">Verified customer stories</span>
+    <h2 id="twins-brand-reviews-title">What our customers say</h2>
+    <p class="twins-brand-google-attribution" aria-label="Verified Google reviews">Google reviews from real Twins customers</p>
+  </div>
   <div class="twins-brand-review-slider" data-twins-review-slider data-review-count="<?= count($collection['records']) ?>">
     <div class="twins-brand-review-track">
       <?php foreach ($collection['records'] as $index => $review): ?>
@@ -47,8 +53,8 @@ if ($environment === 'production' && ($collection['allowExternalSourceAction'] ?
     <div class="twins-brand-review-dots" role="group" aria-label="Choose review page"></div>
     <button type="button" data-review-next aria-label="Next reviews">Next</button>
   </div>
-  <a href="<?= htmlspecialchars($reviewsRoute, ENT_QUOTES, 'UTF-8') ?>">Read all reviews</a>
+  <a class="twins-brand-text-link" href="<?= htmlspecialchars($reviewsRoute, ENT_QUOTES, 'UTF-8') ?>">Read all reviews</a>
   <?php if ($externalReviewsUrl !== null): ?>
-    <a href="<?= htmlspecialchars($externalReviewsUrl, ENT_QUOTES, 'UTF-8') ?>" rel="noopener noreferrer">See our reviews on Google</a>
+    <a class="twins-brand-text-link" href="<?= htmlspecialchars($externalReviewsUrl, ENT_QUOTES, 'UTF-8') ?>" rel="noopener noreferrer">See our reviews on Google</a>
   <?php endif; ?>
 </section>

@@ -213,6 +213,9 @@ body.twins-brand-experience { margin: 0; }
   background-size: 220% 100%;
 }
 .twins-brand-cta--call { color: var(--twins-white); background: var(--twins-navy-800); border-color: var(--twins-gold); }
+body.twins-brand-experience a.twins-brand-cta { text-decoration: none; }
+body.twins-brand-experience a.twins-brand-cta--quote { color: var(--twins-navy-950); }
+body.twins-brand-experience a.twins-brand-cta--call { color: var(--twins-white); }
 .twins-brand-door-builder .twins-brand-cta {
   color: var(--twins-navy-950);
   background-color: var(--twins-gold);
@@ -352,12 +355,17 @@ body.twins-brand-experience { margin: 0; }
   border-radius: 8px 30px 8px 30px;
   box-shadow: 9px 10px 0 var(--twins-gold);
   overflow: hidden;
+  transition: transform .16s ease, box-shadow .16s ease, background-color .16s ease;
 }
 .twins-brand-service-card h3 { position: relative; color: var(--twins-navy-900); font-size: 2rem; text-transform: uppercase; }
 .twins-brand-service-card a,
 .twins-brand-team-story a,
 .twins-brand-careers a,
 .twins-brand-text-link { min-height: 44px; display: inline-flex; align-items: center; color: var(--twins-navy-900); font-weight: 1000; text-decoration-thickness: 3px; text-underline-offset: 6px; }
+.twins-brand-service-card a::after { content: ''; position: absolute; inset: 0; z-index: 3; }
+.twins-brand-service-card:is(:hover, :focus-within) { background: #fffdf6; box-shadow: 13px 14px 0 var(--twins-gold); transform: translateY(-4px); }
+.twins-brand-service-card:focus-within { outline: 3px solid var(--twins-gold); outline-offset: 4px; }
+.twins-brand-service-card a:focus-visible { outline: 0; box-shadow: none; }
 
 .twins-brand-review-proof { color: var(--twins-white); background: var(--twins-navy-950); }
 .twins-brand-review-proof .twins-brand-section-heading h2 { color: var(--twins-white); }
@@ -425,8 +433,13 @@ body.twins-brand-experience { margin: 0; }
 .twins-brand-market-selector { background: #f4ead6; }
 .twins-brand-market-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
 .twins-brand-market-card { min-height: 170px; display: flex; flex-direction: column; justify-content: flex-end; padding: 28px; color: var(--twins-white); background: var(--twins-navy-900); border: 3px solid var(--twins-navy-950); border-radius: 6px 28px 6px 28px; box-shadow: 8px 9px 0 var(--twins-gold); text-decoration: none; }
-.twins-brand-market-card strong { font-family: 'Lilita One', Impact, sans-serif; font-size: 2.1rem; text-transform: uppercase; }
-.twins-brand-market-card--preview { color: var(--twins-navy-950); background: var(--twins-gold); box-shadow: 8px 9px 0 var(--twins-navy-950); }
+body.twins-brand-experience a.twins-brand-market-card { color: var(--twins-white); cursor: pointer; text-decoration: none; transition: color .16s ease, background-color .16s ease, box-shadow .16s ease, transform .16s ease; }
+body.twins-brand-experience a.twins-brand-market-card strong { color: var(--twins-gold); font-family: 'Lilita One', Impact, sans-serif; font-size: 2.1rem; text-transform: uppercase; }
+body.twins-brand-experience a.twins-brand-market-card span { color: var(--twins-white); font-weight: 900; }
+body.twins-brand-experience a.twins-brand-market-card:is(:hover, :focus-visible) { color: var(--twins-white); background: var(--twins-navy-800); box-shadow: 12px 13px 0 var(--twins-gold); transform: translateY(-4px); }
+body.twins-brand-experience a.twins-brand-market-card--preview { color: var(--twins-navy-950); background: var(--twins-gold); box-shadow: 8px 9px 0 var(--twins-navy-950); }
+body.twins-brand-experience a.twins-brand-market-card--preview :where(strong, span) { color: var(--twins-navy-950); }
+body.twins-brand-experience a.twins-brand-market-card--preview:is(:hover, :focus-visible) { color: var(--twins-navy-950); background: #ffda76; box-shadow: 12px 13px 0 var(--twins-navy-950); }
 .twins-brand-careers { grid-template-columns: 1.05fr .95fr; }
 .twins-brand-careers-image img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border: 5px solid var(--twins-navy-950); box-shadow: 14px 15px 0 var(--twins-gold); }
 
