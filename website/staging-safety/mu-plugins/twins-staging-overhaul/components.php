@@ -51,6 +51,17 @@ function twins_overhaul_render_link_list(array $items): string {
 }
 
 /**
+ * Use the portable brand runtime for every approved non-campaign chrome route.
+ *
+ * @param string $classification Fixed classifier outcome.
+ * @return bool
+ */
+function twins_overhaul_uses_brand_chrome(string $classification): bool {
+    return twins_overhaul_should_render_chrome($classification)
+        && $classification !== 'campaign-preserve';
+}
+
+/**
  * Render the shared preview header.
  *
  * @param array $context Internal request context.
@@ -58,7 +69,7 @@ function twins_overhaul_render_link_list(array $items): string {
  */
 function twins_overhaul_render_header(array $context): string {
     $classification = $context['classification'] ?? null;
-    if (is_string($classification) && in_array($classification, array('home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand'), true)) {
+    if (is_string($classification) && twins_overhaul_uses_brand_chrome($classification)) {
         return twins_overhaul_brand_runtime()->renderHeader($context);
     }
 
@@ -119,7 +130,7 @@ function twins_overhaul_render_header(array $context): string {
  */
 function twins_overhaul_render_footer(array $context): string {
     $classification = $context['classification'] ?? null;
-    if (is_string($classification) && in_array($classification, array('home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand'), true)) {
+    if (is_string($classification) && twins_overhaul_uses_brand_chrome($classification)) {
         return twins_overhaul_brand_runtime()->renderFooter($context);
     }
 

@@ -455,7 +455,7 @@ function twins_overhaul_filter_body_classes(array $classes): array {
         $classes[] = 'twins-overhaul-campaign';
         return array_values(array_unique($classes));
     }
-    if (!twins_overhaul_should_render_chrome($classification)) {
+    if (!twins_overhaul_uses_brand_chrome($classification)) {
         return $classes;
     }
 
@@ -465,10 +465,31 @@ function twins_overhaul_filter_body_classes(array $classes): array {
         $classes[] = 'twins-overhaul-singular';
     }
     $classes[] = 'twins-overhaul-region-' . $context['key'];
-    if (in_array($classification, array('home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand'), true)) {
-        $classes[] = 'twins-brand-experience';
+    $routeClass = function_exists('sanitize_html_class')
+        ? sanitize_html_class($classification)
+        : (twins_overhaul_is_known_classification($classification) ? $classification : '');
+    if ($routeClass === '') {
+        twins_overhaul_refuse_route('brand route body class is outside the fixed classification map.');
     }
+    $classes[] = 'twins-brand-experience';
+    $classes[] = 'twins-brand-route-' . $routeClass;
     return array_values(array_unique($classes));
+}
+
+/**
+ * Keep the recovered family assets only for campaign and the three temporary
+ * cost/builder migration exceptions.
+ *
+ * @param string $classification Fixed classifier outcome.
+ * @return bool
+ */
+function twins_overhaul_uses_legacy_family_assets(string $classification): bool {
+    return $classification === 'campaign-preserve'
+        || in_array(
+            $classification,
+            array('cost-madison', 'cost-milwaukee', 'builder'),
+            true
+        );
 }
 
 /**
@@ -541,12 +562,19 @@ function twins_overhaul_filter_isolated_style_tag(string $html, string $handle, 
     if (!twins_overhaul_is_allowed_chrome_request()) {
         return $html;
     }
-    return in_array($handle, array(
+    if (in_array($handle, array(
         'astra-google-fonts',
         'elementor-gf-local-montserrat',
         'elementor-gf-local-prompt',
         'wp-emoji-styles',
-    ), true) ? '' : $html;
+    ), true)) {
+        return '';
+    }
+    if ($handle === 'twins-staging-twx-v2') {
+        $classification = twins_overhaul_current_classification();
+        return twins_overhaul_uses_legacy_family_assets($classification) ? $html : '';
+    }
+    return $html;
 }
 
 /**
@@ -990,13 +1018,14 @@ function twins_overhaul_send_inert_response_boundary(): void {
 }
 
 /**
- * Register after every MU plugin has loaded so this fixed hardening header is
- * emitted after the general staging safety header at send_headers time.
+ * Register after every MU plugin has loaded so the fixed hardening header and
+ * asset isolation both run after the general staging safety callbacks.
  *
  * @return void
  */
 function twins_overhaul_register_inert_response_boundary(): void {
     add_action('send_headers', 'twins_overhaul_send_inert_response_boundary', PHP_INT_MAX, 0);
+    add_action('wp_enqueue_scripts', 'twins_overhaul_enqueue_assets', PHP_INT_MAX, 0);
 }
 
 /**
@@ -1014,7 +1043,35 @@ function twins_overhaul_output_local_font_sentinel(): void {
 }
 
 /**
- * Enqueue only the two same-origin preview assets on approved requests.
+ * Return a bounded content-derived version for one fixed portable brand asset.
+ *
+ * @param string $relativePath Fixed portable asset path.
+ * @return string
+ */
+function twins_overhaul_brand_asset_version(string $relativePath): string {
+    $allowed = array('assets/css/twins-brand.css', 'assets/js/twins-brand.js');
+    if (!in_array($relativePath, $allowed, true)) {
+        twins_overhaul_refuse_route('brand asset path is outside the fixed allowlist.');
+    }
+    $root = dirname(__DIR__) . '/twins-brand-experience/';
+    if (PHP_SAPI === 'cli' && !is_dir($root)) {
+        $root = dirname(__DIR__, 3) . '/twins-brand-experience/';
+    }
+    $path = $root . $relativePath;
+    $stat = @lstat($path);
+    if (!is_array($stat) || is_link($path) || !is_file($path)) {
+        twins_overhaul_refuse_route('brand asset is not a bounded regular file.');
+    }
+    $size = @filesize($path);
+    if (!is_int($size) || $size < 1 || $size > 2097152) {
+        twins_overhaul_refuse_route('brand asset size is outside the fixed boundary.');
+    }
+    return substr(hash_file('sha256', $path), 0, 16);
+}
+
+/**
+ * Enqueue the isolated campaign assets or portable brand assets on approved
+ * requests, retaining only the fixed temporary cost/builder support pair.
  *
  * @return void
  */
@@ -1024,25 +1081,41 @@ function twins_overhaul_enqueue_assets(): void {
     }
     twins_overhaul_dequeue_remote_assets();
 
-    wp_enqueue_style('twins-staging-overhaul', twins_overhaul_asset_url('stylesheet'), array(), 'a3fb61ed0da87e83');
-
     $classification = twins_overhaul_current_classification();
-    if ($classification !== 'campaign-preserve' && !twins_overhaul_should_render_chrome($classification)) {
+    $usesLegacyFamilyAssets = twins_overhaul_uses_legacy_family_assets($classification);
+    if ($usesLegacyFamilyAssets) {
+        wp_enqueue_style('twins-staging-overhaul', twins_overhaul_asset_url('stylesheet'), array(), 'a3fb61ed0da87e83');
+        wp_enqueue_script('twins-staging-overhaul', twins_overhaul_asset_url('script'), array(), '549faf277bbadc3d', true);
+    }
+
+    if (!twins_overhaul_uses_brand_chrome($classification)) {
         return;
     }
 
-    wp_enqueue_script('twins-staging-overhaul', twins_overhaul_asset_url('script'), array(), '549faf277bbadc3d', true);
-
-    if (in_array($classification, array('home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand'), true)) {
-        $runtime = twins_overhaul_brand_runtime();
-        $handles = $runtime->assetHandles();
-        if (($handles['style'] ?? null) !== 'twins-brand-experience' || ($handles['script'] ?? null) !== 'twins-brand-experience') {
-            twins_overhaul_refuse_route('portable brand asset handles changed unexpectedly.');
-        }
-        $base = rtrim(content_url('mu-plugins/twins-brand-experience'), '/');
-        wp_enqueue_style('twins-brand-experience', $base . '/assets/css/twins-brand.css', array('twins-staging-overhaul'), '1');
-        wp_enqueue_script('twins-brand-experience', $base . '/assets/js/twins-brand.js', array('twins-staging-overhaul'), '1', true);
+    if (!$usesLegacyFamilyAssets) {
+        wp_dequeue_style('twins-staging-twx-v2');
     }
+
+    $runtime = twins_overhaul_brand_runtime();
+    $handles = $runtime->assetHandles();
+    if (($handles['style'] ?? null) !== 'twins-brand-experience' || ($handles['script'] ?? null) !== 'twins-brand-experience') {
+        twins_overhaul_refuse_route('portable brand asset handles changed unexpectedly.');
+    }
+    $base = rtrim(content_url('mu-plugins/twins-brand-experience'), '/');
+    $styleDependencies = $usesLegacyFamilyAssets ? array('twins-staging-overhaul') : array();
+    wp_enqueue_style(
+        'twins-brand-experience',
+        $base . '/assets/css/twins-brand.css',
+        $styleDependencies,
+        twins_overhaul_brand_asset_version('assets/css/twins-brand.css')
+    );
+    wp_enqueue_script(
+        'twins-brand-experience',
+        $base . '/assets/js/twins-brand.js',
+        array(),
+        twins_overhaul_brand_asset_version('assets/js/twins-brand.js'),
+        true
+    );
 }
 
 /**
@@ -1234,7 +1307,6 @@ function twins_overhaul_output_footer(): void {
 function twins_overhaul_register_frontend_hooks(): void {
     add_action('muplugins_loaded', 'twins_overhaul_register_inert_response_boundary', PHP_INT_MAX, 0);
     add_filter('body_class', 'twins_overhaul_filter_body_classes', 20, 1);
-    add_action('wp_enqueue_scripts', 'twins_overhaul_enqueue_assets', PHP_INT_MAX, 0);
     add_filter('wp_resource_hints', 'twins_overhaul_filter_remote_resource_hints', PHP_INT_MAX, 2);
     add_filter('style_loader_tag', 'twins_overhaul_filter_isolated_style_tag', PHP_INT_MAX, 4);
     add_filter('script_loader_tag', 'twins_overhaul_filter_isolated_script_tag', PHP_INT_MAX, 3);

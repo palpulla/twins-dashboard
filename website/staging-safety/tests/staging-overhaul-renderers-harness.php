@@ -75,6 +75,7 @@ class_alias('Twins_Overhaul_Renderer_Elementor_Plugin', 'Elementor\\Plugin');
 
 $GLOBALS['twins_overhaul_renderer_hooks'] = [];
 $GLOBALS['twins_overhaul_renderer_assets'] = [];
+$GLOBALS['twins_overhaul_renderer_style_queue'] = [];
 $GLOBALS['twins_overhaul_renderer_dequeued_styles'] = [];
 $GLOBALS['twins_overhaul_renderer_dequeued_scripts'] = [];
 $GLOBALS['twins_overhaul_renderer_removed_actions'] = [];
@@ -266,6 +267,7 @@ function is_attachment(): bool
 function wp_enqueue_style($handle, $src = '', $deps = [], $version = false, $media = 'all'): bool
 {
     $GLOBALS['twins_overhaul_renderer_assets'][] = ['style', $handle, $src, $deps, $version, $media];
+    $GLOBALS['twins_overhaul_renderer_style_queue'][(string) $handle] = true;
     return true;
 }
 
@@ -278,6 +280,7 @@ function wp_enqueue_script($handle, $src = '', $deps = [], $version = false, $in
 function wp_dequeue_style($handle): void
 {
     $GLOBALS['twins_overhaul_renderer_dequeued_styles'][] = (string) $handle;
+    unset($GLOBALS['twins_overhaul_renderer_style_queue'][(string) $handle]);
 }
 
 function wp_dequeue_script($handle): void
@@ -292,12 +295,22 @@ function twins_overhaul_renderer_assert(bool $condition, string $message): void
     }
 }
 
-function twins_overhaul_renderer_hook(string $kind, string $name): array
+function twins_staging_safety_enqueue_visual_preview_styles(): void
 {
-    $matches = array_values(array_filter(
+    wp_enqueue_style('twins-staging-twx-v2', '/wp-content/mu-plugins/twins-staging-assets/twx-v2-kit.css', [], '2026.07.13.3');
+}
+
+function twins_overhaul_renderer_hooks(string $kind, string $name): array
+{
+    return array_values(array_filter(
         $GLOBALS['twins_overhaul_renderer_hooks'],
         static fn(array $hook): bool => $hook[0] === $kind && $hook[1] === $name
     ));
+}
+
+function twins_overhaul_renderer_hook(string $kind, string $name): array
+{
+    $matches = twins_overhaul_renderer_hooks($kind, $name);
     twins_overhaul_renderer_assert(count($matches) === 1, 'hook count mismatch: ' . $kind . ':' . $name);
     return $matches[0];
 }
@@ -318,7 +331,7 @@ if ($argc !== 3 || !is_file($argv[1])) {
 }
 
 $scenario = $argv[2];
-if (!in_array($scenario, ['routes', 'hooks', 'blog-index', 'campaign', 'family-once', 'home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand', 'elementor-theme-content', 'elementor-document-content', 'legacy-location-document', 'ineligible', 'article', 'unknown-blog'], true)) {
+if (!in_array($scenario, ['routes', 'hooks', 'blog-index', 'campaign', 'family-once', 'service-brand-chrome', 'catalog-brand-chrome', 'home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand', 'elementor-theme-content', 'elementor-document-content', 'legacy-location-document', 'ineligible', 'article', 'unknown-blog'], true)) {
     fwrite(STDERR, "UNKNOWN_RENDERER_SCENARIO\n");
     exit(2);
 }
@@ -415,12 +428,43 @@ if ($scenario === 'routes') {
     twins_overhaul_renderer_assert(twins_overhaul_should_render_chrome('campaign-preserve') === false, 'campaign chrome was enabled');
     twins_overhaul_renderer_assert(twins_overhaul_should_render_chrome('article') === true, 'article chrome was disabled');
     twins_overhaul_renderer_assert(twins_overhaul_should_render_chrome('unknown') === false, 'unknown classification enabled chrome');
+
+    twins_overhaul_renderer_set([
+        'blogId' => 4,
+        'path' => '/wi/garage-door-cost-in-madison-wi/',
+        'postType' => 'page',
+        'postId' => 6807,
+        'renderedPostType' => 'page',
+        'renderedPostId' => 6807,
+        'title' => 'Garage Door Cost in Madison, WI',
+    ]);
+    twins_overhaul_enqueue_assets();
+    twins_overhaul_renderer_assert(count($GLOBALS['twins_overhaul_renderer_assets']) === 4, 'cost route did not retain exactly two legacy support assets plus two portable assets');
+    twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][0][1] === 'twins-staging-overhaul', 'cost support stylesheet handle changed');
+    twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][1][1] === 'twins-staging-overhaul', 'cost support script handle changed');
+    twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][2][1] === 'twins-brand-experience', 'cost portable stylesheet handle changed');
+    twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][3][1] === 'twins-brand-experience', 'cost portable script handle changed');
+    twins_overhaul_renderer_assert(!in_array('twins-staging-twx-v2', $GLOBALS['twins_overhaul_renderer_dequeued_styles'], true), 'cost route lost its temporary visual-kit support');
+    twins_overhaul_renderer_assert(
+        twins_overhaul_filter_isolated_style_tag('<link id="twins-staging-twx-v2-css">', 'twins-staging-twx-v2', '/local.css', 'all') === '<link id="twins-staging-twx-v2-css">',
+        'cost route late-filtered its temporary visual-kit support'
+    );
 }
 
 if ($scenario === 'hooks') {
     $muPluginsLoadedHook = twins_overhaul_renderer_hook('action', 'muplugins_loaded');
+    twins_overhaul_renderer_assert(twins_overhaul_renderer_hooks('action', 'wp_enqueue_scripts') === [], 'overhaul enqueue hook registered before all MU plugins loaded');
+    add_action('wp_enqueue_scripts', 'twins_staging_safety_enqueue_visual_preview_styles', PHP_INT_MAX, 0);
+    $safetyEnqueueHooks = twins_overhaul_renderer_hooks('action', 'wp_enqueue_scripts');
+    twins_overhaul_renderer_assert(count($safetyEnqueueHooks) === 1 && $safetyEnqueueHooks[0][2] === 'twins_staging_safety_enqueue_visual_preview_styles', 'safety visual-kit hook order setup failed');
+    ($muPluginsLoadedHook[2])();
+    $enqueueHooks = twins_overhaul_renderer_hooks('action', 'wp_enqueue_scripts');
+    twins_overhaul_renderer_assert(
+        array_column($enqueueHooks, 2) === ['twins_staging_safety_enqueue_visual_preview_styles', 'twins_overhaul_enqueue_assets'],
+        'overhaul enqueue hook was not registered after the safety visual-kit hook'
+    );
+    $enqueueHook = $enqueueHooks[1];
     $bodyHook = twins_overhaul_renderer_hook('filter', 'body_class');
-    $enqueueHook = twins_overhaul_renderer_hook('action', 'wp_enqueue_scripts');
     $resourceHintsHook = twins_overhaul_renderer_hook('filter', 'wp_resource_hints');
     $styleTagHook = twins_overhaul_renderer_hook('filter', 'style_loader_tag');
     $scriptTagHook = twins_overhaul_renderer_hook('filter', 'script_loader_tag');
@@ -434,7 +478,6 @@ if ($scenario === 'hooks') {
     $footerHook = twins_overhaul_renderer_hook('action', 'wp_footer');
     twins_overhaul_renderer_assert($muPluginsLoadedHook[2] === 'twins_overhaul_register_inert_response_boundary', 'inert response-boundary registration callback mismatch');
     twins_overhaul_renderer_assert($muPluginsLoadedHook[3] === PHP_INT_MAX && $muPluginsLoadedHook[4] === 0, 'inert response-boundary registration priority mismatch');
-    ($muPluginsLoadedHook[2])();
     $sendHeadersHook = twins_overhaul_renderer_hook('action', 'send_headers');
     twins_overhaul_renderer_assert($sendHeadersHook[2] === 'twins_overhaul_send_inert_response_boundary', 'inert response header callback mismatch');
     twins_overhaul_renderer_assert($sendHeadersHook[3] === PHP_INT_MAX && $sendHeadersHook[4] === 0, 'inert response header priority mismatch');
@@ -463,24 +506,37 @@ if ($scenario === 'hooks') {
     twins_overhaul_renderer_assert($contentHook[3] === PHP_INT_MAX && $contentHook[4] === 1, 'content callback priority mismatch');
     twins_overhaul_renderer_assert($footerHook[2] === 'twins_overhaul_output_footer', 'footer callback mismatch');
 
+    foreach ($enqueueHooks as $registeredEnqueueHook) {
+        ($registeredEnqueueHook[2])();
+    }
+    twins_overhaul_renderer_assert(!isset($GLOBALS['twins_overhaul_renderer_style_queue']['twins-staging-twx-v2']), 'late safety visual kit remained queued after overhaul isolation');
+    twins_overhaul_renderer_assert(isset($GLOBALS['twins_overhaul_renderer_style_queue']['twins-brand-experience']), 'portable stylesheet was not queued after late isolation');
+    $GLOBALS['twins_overhaul_renderer_assets'] = [];
+    $GLOBALS['twins_overhaul_renderer_style_queue'] = [];
+    $GLOBALS['twins_overhaul_renderer_dequeued_styles'] = [];
+    $GLOBALS['twins_overhaul_renderer_dequeued_scripts'] = [];
+    $GLOBALS['twins_overhaul_renderer_removed_actions'] = [];
+
     $classes = ($bodyHook[2])(['existing-class']);
     twins_overhaul_renderer_assert(in_array('twins-overhaul-preview', $classes, true), 'eligible request lacks preview body class');
     twins_overhaul_renderer_assert(in_array('twins-overhaul-singular', $classes, true), 'eligible singular request lacks singular-only body class');
     twins_overhaul_renderer_assert(in_array('twins-brand-experience', $classes, true), 'branded request lacks portable body class');
+    twins_overhaul_renderer_assert(in_array('twins-brand-route-home-brand', $classes, true), 'branded request lacks its fixed route body class');
 
     twins_overhaul_enqueue_assets();
-    twins_overhaul_renderer_assert(count($GLOBALS['twins_overhaul_renderer_assets']) === 4, 'branded request did not enqueue two legacy and two portable assets');
-    twins_overhaul_renderer_assert((bool) preg_match('~^/(?!/)~', (string) $GLOBALS['twins_overhaul_renderer_assets'][0][2]), 'legacy style is not same-origin root-relative');
-    twins_overhaul_renderer_assert((bool) preg_match('~^/(?!/)~', (string) $GLOBALS['twins_overhaul_renderer_assets'][1][2]), 'legacy script is not same-origin root-relative');
-    twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][2][1] === 'twins-brand-experience', 'portable style handle changed');
-    twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][3][1] === 'twins-brand-experience', 'portable script handle changed');
-    twins_overhaul_renderer_assert(strpos((string) $GLOBALS['twins_overhaul_renderer_assets'][2][2], 'https://stage.example.test/wp-content/mu-plugins/twins-brand-experience/assets/css/twins-brand.css') === 0, 'portable style is not fixed same-origin');
-    twins_overhaul_renderer_assert(strpos((string) $GLOBALS['twins_overhaul_renderer_assets'][3][2], 'https://stage.example.test/wp-content/mu-plugins/twins-brand-experience/assets/js/twins-brand.js') === 0, 'portable script is not fixed same-origin');
+    twins_overhaul_renderer_assert(count($GLOBALS['twins_overhaul_renderer_assets']) === 2, 'ordinary brand request did not enqueue exactly two portable assets');
+    twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][0][1] === 'twins-brand-experience', 'portable style handle changed');
+    twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][1][1] === 'twins-brand-experience', 'portable script handle changed');
+    twins_overhaul_renderer_assert(strpos((string) $GLOBALS['twins_overhaul_renderer_assets'][0][2], 'https://stage.example.test/wp-content/mu-plugins/twins-brand-experience/assets/css/twins-brand.css') === 0, 'portable style is not fixed same-origin');
+    twins_overhaul_renderer_assert(strpos((string) $GLOBALS['twins_overhaul_renderer_assets'][1][2], 'https://stage.example.test/wp-content/mu-plugins/twins-brand-experience/assets/js/twins-brand.js') === 0, 'portable script is not fixed same-origin');
+    twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][0][4] === twins_overhaul_brand_asset_version('assets/css/twins-brand.css'), 'portable style version is not content-derived');
+    twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][1][4] === twins_overhaul_brand_asset_version('assets/js/twins-brand.js'), 'portable script version is not content-derived');
     twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_dequeued_styles'] === [
         'astra-google-fonts',
         'elementor-gf-local-montserrat',
         'elementor-gf-local-prompt',
         'wp-emoji-styles',
+        'twins-staging-twx-v2',
     ], 'eligible request did not dequeue the exact fixed remote styles');
     twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_dequeued_scripts'] === [
         'uael-google-maps',
@@ -505,6 +561,7 @@ if ($scenario === 'hooks') {
         'https://fonts.googleapis.com.evil.test',
     ], 'resource-hint filter removed anything beyond the two fixed Google font hosts or changed order');
     twins_overhaul_renderer_assert(($styleTagHook[2])('<link id="elementor-gf-local-montserrat-css">', 'elementor-gf-local-montserrat', '/local.css', 'all') === '', 'late Elementor font style was printed');
+    twins_overhaul_renderer_assert(($styleTagHook[2])('<link id="twins-staging-twx-v2-css">', 'twins-staging-twx-v2', '/local.css', 'all') === '', 'late recovered global visual kit was printed');
     twins_overhaul_renderer_assert(($styleTagHook[2])('<link id="unrelated-css">', 'unrelated', '/local.css', 'all') === '<link id="unrelated-css">', 'unrelated local style was removed');
     twins_overhaul_renderer_assert(($scriptTagHook[2])('<script id="uael-google-maps-api-js"></script>', 'uael-google-maps-api', '/local.js') === '', 'late Google Maps API script was printed');
     twins_overhaul_renderer_assert(($scriptTagHook[2])('<script id="unrelated-js"></script>', 'unrelated', '/local.js') === '<script id="unrelated-js"></script>', 'unrelated local script was removed');
@@ -613,20 +670,24 @@ if ($scenario === 'blog-index') {
     $classes = twins_overhaul_filter_body_classes(['blog']);
     twins_overhaul_renderer_assert(in_array('twins-overhaul-preview', $classes, true), 'posts index lacks preview body class');
     twins_overhaul_renderer_assert(!in_array('twins-overhaul-singular', $classes, true), 'posts index received the singular-only title-suppression class');
+    twins_overhaul_renderer_assert(in_array('twins-brand-experience', $classes, true), 'posts index lacks portable brand body class');
+    twins_overhaul_renderer_assert(in_array('twins-brand-route-article', $classes, true), 'posts index lacks its fixed article route body class');
     twins_overhaul_enqueue_assets();
-    twins_overhaul_renderer_assert(count($GLOBALS['twins_overhaul_renderer_assets']) === 2, 'posts index did not enqueue exactly two assets');
+    twins_overhaul_renderer_assert(count($GLOBALS['twins_overhaul_renderer_assets']) === 2, 'posts index did not enqueue exactly two portable assets');
+    twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][0][1] === 'twins-brand-experience', 'posts index portable style handle changed');
+    twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][1][1] === 'twins-brand-experience', 'posts index portable script handle changed');
+    twins_overhaul_renderer_assert(in_array('twins-staging-twx-v2', $GLOBALS['twins_overhaul_renderer_dequeued_styles'], true), 'posts index retained the recovered global visual kit');
     ob_start();
     twins_overhaul_output_header();
     twins_overhaul_output_header();
     $header = (string) ob_get_clean();
-    twins_overhaul_renderer_assert(substr_count($header, '<header class="twins-overhaul-header"') === 1, 'posts index header once guard failed');
-    twins_overhaul_renderer_assert(strpos($header, 'href="#content"') !== false, 'posts index skip link does not target the proven Astra content anchor');
-    twins_overhaul_renderer_assert(strpos($header, 'href="#twins-overhaul-main"') === false, 'posts index skip link targets a body wrapper that is intentionally absent');
+    twins_overhaul_renderer_assert(substr_count($header, '<header class="twins-brand-header"') === 1, 'posts index portable header once guard failed');
+    twins_overhaul_renderer_assert(strpos($header, 'twins-overhaul-header') === false, 'posts index retained the legacy public header');
     ob_start();
     twins_overhaul_output_footer();
     twins_overhaul_output_footer();
     $footer = (string) ob_get_clean();
-    twins_overhaul_renderer_assert(substr_count($footer, '<footer class="twins-overhaul-footer"') === 1, 'posts index footer once guard failed');
+    twins_overhaul_renderer_assert(substr_count($footer, '<footer class="twins-brand-footer"') === 1, 'posts index portable footer once guard failed');
     $postBody = '<article data-index-post="exact">BLOG-INDEX-POST-BYTES</article>';
     twins_overhaul_renderer_assert(twins_overhaul_replace_main_content($postBody) === $postBody, 'posts index body was replaced');
 }
@@ -663,6 +724,33 @@ if ($scenario === 'campaign') {
     twins_overhaul_renderer_assert(stripos($campaign, '<form') === false && stripos($campaign, '</form>') === false, 'campaign retained a form element');
     twins_overhaul_renderer_assert(stripos($campaign, 'type="submit"') === false && stripos($campaign, 'action=') === false && stripos($campaign, 'method=') === false, 'campaign retained submission authority');
     twins_overhaul_renderer_assert(strpos($campaign, 'data-twins-staging-form-inert=true') !== false, 'campaign lacks the context-neutral server-side inert marker');
+}
+
+if (in_array($scenario, ['service-brand-chrome', 'catalog-brand-chrome'], true)) {
+    $fixtures = [
+        'service-brand-chrome' => [4, '/wi/garage-door-spring-repair/', 801, 'Garage Door Spring Repair', 'service'],
+        'catalog-brand-chrome' => [1, '/clopay-garage-doors/', 7141, 'Clopay Garage Doors', 'catalog-preserve'],
+    ];
+    [$blogId, $path, $postId, $title, $classification] = $fixtures[$scenario];
+    twins_overhaul_renderer_set([
+        'blogId' => $blogId,
+        'path' => $path,
+        'postType' => 'page',
+        'postId' => $postId,
+        'renderedPostType' => 'page',
+        'renderedPostId' => $postId,
+        'title' => $title,
+    ]);
+    twins_overhaul_renderer_assert(twins_overhaul_current_classification() === $classification, $scenario . ' classification mismatch');
+    $classes = twins_overhaul_filter_body_classes(['existing']);
+    twins_overhaul_renderer_assert(in_array('twins-brand-experience', $classes, true), 'portable brand body class missing');
+    twins_overhaul_renderer_assert(in_array('twins-brand-route-' . $classification, $classes, true), 'portable brand route body class missing');
+    $context = twins_overhaul_current_context($classification);
+    $header = twins_overhaul_render_header($context);
+    $footer = twins_overhaul_render_footer($context);
+    twins_overhaul_renderer_assert(strpos($header, 'class="twins-brand-header"') !== false, 'portable brand header missing');
+    twins_overhaul_renderer_assert(strpos($header, 'twins-overhaul-header') === false, 'legacy public header survived');
+    twins_overhaul_renderer_assert(strpos($footer, 'class="twins-brand-footer"') !== false, 'portable brand footer missing');
 }
 
 if ($scenario === 'family-once') {
