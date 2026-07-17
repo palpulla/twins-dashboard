@@ -6,7 +6,7 @@
 
 **Branch:** `codex/staging-site-safety`
 
-**Status:** `PRIVATE STAGING CORRECTIVE RELEASE DEPLOYED — OWNER VISUAL REVIEW PENDING`
+**Status:** `PRIVATE STAGING HEADER CORRECTION VERIFIED — OWNER BROADER VISUAL REVIEW PENDING`
 
 **Write authority:** `false`
 
@@ -38,6 +38,17 @@ after a new remote dry-run and exact expected-old capture. The original
 release's consumed transaction remains preserved and was not reused, erased,
 or retried.
 
+A later authenticated reload proved that SiteGround could still serve a
+cached legacy header before the deferred stylesheet arrived. The final
+cache-independent correction emits a small inline guard before the branded
+header and suppresses only the fixed legacy Astra/Elementor/header selectors.
+It was released through a new fixed transaction, SiteGround Dynamic Cache was
+flushed, and the loaded staging homepage was then inspected directly. That
+inspection found exactly one visible branded header, zero visible legacy
+headers, the critical guard present, and no horizontal overflow. This is
+specific proof of the duplicate-header correction; it is not a substitute for
+the owner’s broader route-by-route visual review.
+
 ## Candidate identity
 
 - Initial deployed commit: `350d64bfa4555245c2fa3a54b7ff18aa389ab4cc`
@@ -62,6 +73,20 @@ or retried.
   `dadf04d0f2df09f7722451f6fb740ee66640247f781b9aaebf9a49598f9c5a77`
 - Corrective host-verification SHA-256:
   `0ac0861fcdbac41dd7bee7310685684d6c04f21b687e1357b0e5d165b7efe426`
+- Cache-independent header payload commit:
+  `0857631cd9536bf338bf02f7368291e65826ac5c`
+- Header release-wrapper commit:
+  `d5a9040773aa264f714df0e111db5a6963714074`
+- Header release transaction:
+  `/home/customer/staging-safety/staging-header-guard-r2-20260717`
+- Header candidate manifest SHA-256:
+  `dcf09c58ed0b3486a2b33039dff645c30dbdc88113254d4a940dddc1796382eb`
+- Header candidate deploy package SHA-256:
+  `08e291006e2ccfb37e8c3a28e2ac18f842e37f0dd1caa972bbc17cfa80e4b279`
+- Header candidate prerequisite-set SHA-256:
+  `dadf04d0f2df09f7722451f6fb740ee66640247f781b9aaebf9a49598f9c5a77`
+- Header host-verification package SHA-256:
+  `cd4f4e76f37db709f844a07054fd078eb056aea4e6029c097deec34ee01e6958`
 
 ## Exact live verification matrix
 
@@ -142,6 +167,29 @@ Corrective live release result:
   be rerun without credentials. No visual-pass claim is made from that blocked
   path.
 
+Cache-independent header release result:
+
+- the first new transaction root,
+  `/home/customer/staging-safety/staging-header-guard-20260717`, was consumed
+  without changing live bytes and was never reused;
+- a fresh fixed transaction root,
+  `/home/customer/staging-safety/staging-header-guard-r2-20260717`, passed its
+  remote dry-run and captured exact expected-old bytes;
+- one deployment attempt applied the candidate, and read-only post-deploy
+  comparison proved the live target byte-identical to the candidate with zero
+  mismatches;
+- SiteGround Dynamic Cache reported
+  `Cache for danielj140.sg-host.com flushed.`;
+- an authenticated desktop inspection of the loaded staging homepage proved
+  one `.twins-brand-header`, one visible header total, zero visible legacy
+  header matches, the `#twins-brand-critical-chrome` guard present, and no
+  horizontal overflow;
+- the ephemeral Basic-auth verifier was deleted after inspection;
+- the temporary SSH key `chatgpt-profile-1-stage-20260717` was deleted in
+  SiteGround, and a fresh fingerprint-pinned connection returned
+  `Permission denied (publickey)`; and
+- an unauthenticated request still returned HTTP 401 after cleanup.
+
 ## Local verification completed
 
 - Legacy staging-safety Node suite: **37 passed, 0 failed, 14 explicit PHP
@@ -184,6 +232,10 @@ Corrective live release result:
   SiteGround's active `authorized_keys2`; a fresh connection returned
   `Permission denied`, and the local private/public key files and auth helpers
   were deleted.
+- The later cache-independent header release used a separately named temporary
+  key. SiteGround UI deletion removed that key, a new fingerprint-pinned SSH
+  attempt proved public-key rejection, and all local key, target, transport,
+  and diagnostic files from that release were removed.
 
 ## Release safety implemented
 
@@ -230,11 +282,12 @@ The full disposition is recorded in
 
 ## Remaining live gates
 
-1. Owner reload and visual review of the private staging home, Careers,
-   Reviews, Illinois, service, catalog, and builder routes.
-2. If machine-generated live screenshots are required, supply Basic Auth only
-   through an ephemeral process environment and run the corrected authenticated
-   matrix; do not write the credential to files or logs.
+1. Owner reload and broader visual review of Careers, Reviews, Illinois,
+   service, catalog, builder, and remaining routes. The homepage duplicate
+   header itself has been directly rechecked after cache flush.
+2. If a complete machine-generated live screenshot matrix is required, supply
+   Basic Auth only through an ephemeral process environment; do not write the
+   credential to files or logs.
 3. Do not consider production publication until the owner accepts the private
    staging presentation in a separate decision.
 
