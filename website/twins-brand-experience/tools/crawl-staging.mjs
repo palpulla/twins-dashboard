@@ -37,7 +37,7 @@ const dangerousQueryKeys = new Set([
   'rest_route',
   'wc-ajax',
 ]);
-const staticAssetPath = /^(?:\/(?:favicon\.ico|robots\.txt)|(?:\/assets\/.+|\/wp-content\/(?:mu-plugins|plugins|themes|uploads)\/.+|\/wp-includes\/.+)\.(?:avif|css|eot|gif|ico|jpe?g|js|json|mjs|otf|png|svg|ttf|webp|woff2?))$/i;
+const staticAssetPath = /^(?:\/(?:favicon\.ico|robots\.txt)|(?:\/assets\/.+|(?:\/(?:wi|ky|il))?\/wp-content\/(?:mu-plugins|plugins|themes|uploads)\/.+|(?:\/(?:wi|ky|il))?\/wp-includes\/.+)\.(?:avif|css|eot|gif|ico|jpe?g|js|json|mjs|otf|png|svg|ttf|webp|woff2?))$/i;
 const staticAssetQueryKeys = new Set(['v', 'ver']);
 const envelope = {
   writeAuthority: false,

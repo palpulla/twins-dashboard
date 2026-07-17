@@ -149,6 +149,10 @@ test('branded sections escape Astra wrappers without gaps or horizontal overflow
     const hero = await page.locator('.twins-brand-page-hero').boundingBox();
     expect(Math.abs(hero.y - (header.y + header.height)), `${width}px header/hero gap`).toBeLessThanOrEqual(1);
     await expect(page.locator('.entry-header')).toBeHidden();
+    await expect(page.locator('#masthead.site-header')).toBeHidden();
+    await expect(page.locator('#colophon.site-footer')).toBeHidden();
+    await expect(page.locator('.elementor-location-header')).toBeHidden();
+    await expect(page.locator('.elementor-location-footer')).toBeHidden();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), `${width}px overflow`).toBeTruthy();
   }
 });

@@ -17,6 +17,8 @@
     .ast-separate-container .ast-article-single { padding: 3em; }
     .entry-header { margin-bottom: 24px; padding: 20px; background: #ffffff; }
     .entry-header h1 { margin: 0; color: #3a3a3a; font: 700 2rem/1.2 system-ui, sans-serif; }
+    .site-header,
+    .site-footer { min-height: 96px; padding: 24px; color: #ffffff; background: #172554; }
     .twins-brand-content-shell-probe {
       position: absolute;
       width: 0;
@@ -66,6 +68,13 @@
                       <h2>Book with Twins</h2>
                     </div>
                   </div>
+                </header>
+
+                <header id="masthead" class="site-header" data-host-legacy-chrome>
+                  <nav aria-label="Legacy WordPress navigation">Legacy WordPress header</nav>
+                </header>
+                <header class="site-header elementor-location-header" data-host-legacy-chrome>
+                  <nav aria-label="Legacy Elementor navigation">Legacy Elementor header</nav>
                 </header>
 
                 <main id="twins-overhaul-main" class="twins-brand-page">
@@ -152,6 +161,8 @@
                   </nav>
                   <p class="twins-brand-footer-legal">Private staging fixture. No production writes.</p>
                 </footer>
+                <footer id="colophon" class="site-footer" data-host-legacy-chrome>Legacy WordPress footer</footer>
+                <footer class="site-footer elementor-location-footer" data-host-legacy-chrome>Legacy Elementor footer</footer>
                 <div class="twins-brand-content-shell-probe" aria-hidden="true"></div>
               </div>
             </article>

@@ -50,6 +50,10 @@ test('crawler request policy permits only GET or HEAD to the fixed staging origi
   assert.throws(() => crawler.validateRequest('GET', 'https://danielj140.sg-host.com/custom.php?do=delete', 'fetch'), /STATIC_ASSET_PATH_FORBIDDEN/);
   assert.throws(() => crawler.validateRequest('GET', 'https://danielj140.sg-host.com/wp-content/themes/astra/app.css?do=delete', 'stylesheet'), /STATIC_ASSET_QUERY_FORBIDDEN/);
   assert.doesNotThrow(() => crawler.validateRequest('GET', 'https://danielj140.sg-host.com/wp-content/themes/astra/app.css?ver=123', 'stylesheet'));
+  assert.doesNotThrow(() => crawler.validateRequest('GET', 'https://danielj140.sg-host.com/il/wp-content/mu-plugins/twins-brand-experience/assets/css/twins-brand.css?ver=123', 'stylesheet'));
+  assert.doesNotThrow(() => crawler.validateRequest('GET', 'https://danielj140.sg-host.com/il/wp-includes/js/jquery/jquery.min.js?ver=3.7.1', 'script'));
+  assert.throws(() => crawler.validateRequest('GET', 'https://danielj140.sg-host.com/unknown/wp-content/themes/astra/app.css?ver=123', 'stylesheet'), /STATIC_ASSET_PATH_FORBIDDEN/);
+  assert.throws(() => crawler.validateRequest('GET', 'https://danielj140.sg-host.com/il/wp-content/plugins/example/endpoint.php?ver=123', 'fetch'), /STATIC_ASSET_PATH_FORBIDDEN/);
 });
 
 test('crawler final-location and contrast helpers are executable and fail closed', async () => {
@@ -166,6 +170,7 @@ test('live Playwright specification contains the same exact matrix and all requi
   assert.match(source, /__blocked-post/);
   assert.match(source, /__blocked-off-origin/);
   assert.match(source, /__fixture-ledger/);
+  assert.match(source, /browser\.newContext\(\{\s*httpCredentials:\s*undefined,/);
   for (const required of [
     'BASIC_AUTH_CHALLENGE_MISSING',
     'FINAL_ROUTE_MISMATCH',

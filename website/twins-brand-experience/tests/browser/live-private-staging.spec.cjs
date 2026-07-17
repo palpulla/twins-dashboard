@@ -33,7 +33,7 @@ const dangerousQueryKeys = new Set([
   'rest_route',
   'wc-ajax',
 ]);
-const staticAssetPath = /^(?:\/(?:favicon\.ico|robots\.txt)|(?:\/assets\/.+|\/wp-content\/(?:mu-plugins|plugins|themes|uploads)\/.+|\/wp-includes\/.+)\.(?:avif|css|eot|gif|ico|jpe?g|js|json|mjs|otf|png|svg|ttf|webp|woff2?))$/i;
+const staticAssetPath = /^(?:\/(?:favicon\.ico|robots\.txt)|(?:\/assets\/.+|(?:\/(?:wi|ky|il))?\/wp-content\/(?:mu-plugins|plugins|themes|uploads)\/.+|(?:\/(?:wi|ky|il))?\/wp-includes\/.+)\.(?:avif|css|eot|gif|ico|jpe?g|js|json|mjs|otf|png|svg|ttf|webp|woff2?))$/i;
 const staticAssetQueryKeys = new Set(['v', 'ver']);
 
 if (suppliedConfiguration !== 0 && suppliedConfiguration !== 3) {
@@ -379,7 +379,7 @@ test.describe('exact private staging candidate', () => {
   test.skip(!configured, 'private staging credentials are environment-only');
 
   test('unauthenticated staging requires the pinned Basic Auth boundary', async ({ browser }) => {
-    const context = await browser.newContext({ serviceWorkers: 'block' });
+    const context = await browser.newContext({ httpCredentials: undefined, serviceWorkers: 'block' });
     const page = await context.newPage();
     const violations = await installReadOnlyRouting(page, stageOrigin);
     try {

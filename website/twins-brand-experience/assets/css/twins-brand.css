@@ -41,6 +41,16 @@ body.twins-brand-experience :where(
 body.twins-brand-experience :where(.entry-header, .page-header, .ast-article-post > .entry-title) {
   display: none !important;
 }
+/* The portable chrome is printed before Astra's shell. Keep exactly one visible
+   site header and footer on branded routes without affecting preserved pages. */
+body.twins-brand-experience :where(
+  #masthead,
+  #colophon,
+  .elementor-location-header,
+  .elementor-location-footer
+) {
+  display: none !important;
+}
 [hidden] { display: none !important; }
 .twins-brand-experience {
   overflow-x: clip;

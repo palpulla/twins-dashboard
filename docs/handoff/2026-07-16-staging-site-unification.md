@@ -6,7 +6,7 @@
 
 **Branch:** `codex/staging-site-safety`
 
-**Status:** `REMOTE_PREFLIGHT_COMPLETE — ONE-TIME STAGING DEPLOYMENT PENDING`
+**Status:** `PRIVATE STAGING DEPLOYED — CORRECTIVE RELEASE CANDIDATE VERIFIED LOCALLY, NOT DEPLOYED`
 
 **Write authority:** `false`
 
@@ -19,27 +19,44 @@ market-aware contact context, bounded review presentation, repaired Careers
 experience, answer-first service pages, and the frozen local Clopay
 catalog/builder presentation.
 
-Task 9 adds the sealed, single-attempt staging release and read-only live
-verification layer. The exact candidate has passed the PHP-enabled SiteGround
-preflight, but it has not yet been deployed into the private staging web root.
-Production remains untouched. The private staging URL must not be presented as
-updated until every live gate below is completed.
+Task 9's sealed, single-attempt release completed successfully on the private
+SiteGround staging web root. Production remained untouched. Independent
+unauthenticated verification proved that the staging origin still responds
+with HTTP 401 and a Basic authentication challenge.
+
+The first authenticated live audit then exposed one real shared-shell defect:
+the legacy WordPress/Elementor header and footer remained visible around the
+new portable header and footer. It also exposed two audit-harness defects: the
+supposedly unauthenticated Playwright context inherited credentials, and the
+static-asset allowlist rejected valid fixed Illinois multisite asset paths.
+
+The corrective repository candidate now suppresses the exact Astra and
+Elementor legacy chrome only on `body.twins-brand-experience`, fixes both audit
+harness defects, and passes the complete local package, repository, and browser
+suite. It has **not** been deployed. The original release's one-attempt/no-retry
+contract remains honored; any corrective live release must use a new fixed
+transaction and a new exact expected-old capture.
 
 ## Candidate identity
 
-- Local verification base: `3ff2c2305482` (`fix(staging): verify uploaded host bundle root`)
-- Task 9 remote-preflight commit: the commit containing this handoff
-- Deployed commit: `PENDING`
+- Deployed commit: `350d64bfa4555245c2fa3a54b7ff18aa389ab4cc`
 - Application identity: `https://danielj140.sg-host.com/`
-- Candidate deploy package SHA-256:
-  `c7ecfb396c829c08f62d1b7fb4eab63ad44e1b849d49a2d622b18bfde3884aaf`
-- Candidate prerequisite-set SHA-256:
-  `dadf04d0f2df09f7722451f6fb740ee66640247f781b9aaebf9a49598f9c5a77`
-- Candidate host-verification SHA-256:
-  `42e611d3bcd5758ed28c64094729075921d3532e2e1a8e71c79c1ba935f0c8bc`
-- Candidate manifest SHA-256:
+- Deployed manifest SHA-256:
   `5c573314c8f9e1dfedae7d20f59652cd359dbcbd9c6d55e71b7abdb183e1d656`
-- Deployed package identity: `PENDING — must be captured from the one successful deployment`
+- Deployed package SHA-256:
+  `c7ecfb396c829c08f62d1b7fb4eab63ad44e1b849d49a2d622b18bfde3884aaf`
+- Deployed prerequisite-set SHA-256:
+  `dadf04d0f2df09f7722451f6fb740ee66640247f781b9aaebf9a49598f9c5a77`
+- Deployed host-verification SHA-256:
+  `42e611d3bcd5758ed28c64094729075921d3532e2e1a8e71c79c1ba935f0c8bc`
+- Corrective candidate manifest SHA-256:
+  `9c272ddc602a965cd131e5d3d5d92ab433d885477bf8efa4f34089e0ccbe9361`
+- Corrective candidate deploy package SHA-256:
+  `667c4f77a71951ea8df067971d1e31059de98c382615e954e7080ded01a1b8fb`
+- Corrective candidate prerequisite-set SHA-256:
+  `dadf04d0f2df09f7722451f6fb740ee66640247f781b9aaebf9a49598f9c5a77`
+- Corrective candidate host-verification SHA-256:
+  `8514685ca23544a1a6b3a9070b2f102fa93105413f7205cdc06e53cc792103e9`
 
 ## Exact live verification matrix
 
@@ -84,7 +101,25 @@ gate fails. Evidence path after the live crawl:
 
 `website/twins-brand-experience/test-results/staging-crawl/`
 
-Current live evidence: `PENDING`
+First live audit result:
+
+- privacy boundary: **passed** independently with HTTP 401 and
+  `WWW-Authenticate: Basic`;
+- inert same-origin interactions: **passed**;
+- reduced-motion mobile Twins: **passed**;
+- 55 route/viewport visits reported `HEADER_SECTION_GAP` because the real
+  legacy host header remained between the portable header and first section;
+- Illinois visits were rendered without fixed multisite assets by an audit
+  allowlist bug, not by a runtime asset failure;
+- the Playwright Basic-auth failure was a harness inheritance bug; the
+  credential-independent crawler proved the real boundary;
+- crawler result: `PRIVATE_STAGING_CRAWL_FAILED`, 0 accepted visits and 63
+  bounded failures, with no write authority and no staging mutation.
+
+The failure screenshots were inspected before the subsequent local Playwright
+run replaced the ephemeral `test-results` directory. A new corrective live
+release must regenerate durable evidence rather than treating the first audit
+as acceptance evidence.
 
 ## Local verification completed
 
@@ -96,7 +131,7 @@ Current live evidence: `PENDING`
 - Owned-asset check: **passed**.
 - Package build and closed-package check: **passed**.
 - Repository checker: `REPOSITORY_CHECK_PASSED`.
-- Local Playwright suite: **31 passed, 0 failed, 66 authenticated-live skips**.
+- Corrective local Playwright suite: **31 passed, 0 failed, 66 authenticated-live skips**.
 - Local crawler invocation without credentials:
   `PRIVATE_STAGING_CRAWL_SKIPPED`,
   `writeAuthority:false`, `productionWriteAuthority:false`,
@@ -111,8 +146,15 @@ Current live evidence: `PENDING`
   transition, and WordPress safety report.
 - Fixed-target remote dry-run: `PRIVATE_STAGING_DRY_RUN_PASSED`,
   `writeAuthority:false`, `productionWriteAuthority:false`.
-
-The one-time deployment, live browser matrix, and live crawler remain pending.
+- One-time deployment: `PRIVATE_STAGING_DEPLOYED`, `writeAuthority:false`,
+  `productionWriteAuthority:false`.
+- Private-cache purge was attempted once with the fixed SiteGround command and
+  was unavailable on the host. It was not retried.
+- Corrective repository verification: **73/73 contracts passed**, package build
+  and closed-package check passed, `REPOSITORY_CHECK_PASSED`, and **31/31 local
+  browser tests passed**. The PHP-enabled host suite was already green for the
+  deployed source family; a new corrective release must repeat its own fixed
+  remote preflight.
 
 ## Release safety implemented
 
@@ -159,27 +201,21 @@ The full disposition is recorded in
 
 ## Remaining live gates
 
-Completed live prerequisites:
-
-1. Created and imported one temporary staging-only SSH key.
-2. Confirmed the fixed staging host fingerprint.
-3. Ran the full PHP-enabled remote preflight successfully.
-
-Remaining live gates:
-
-1. Capture the exact expected-old staging release.
-2. Deploy the tested candidate exactly once with no automatic retry.
-3. If the attempt conflicts or is indeterminate, stop; do not retry.
-4. Purge only the private staging cache.
-5. Run the authenticated 63-visit Playwright matrix.
-6. Run the authenticated 63-visit crawler and capture the 36 success
-    screenshots.
-7. Record package identity, test output, and evidence paths here.
-8. Remove the public key from SiteGround and delete the temporary local key.
-9. Confirm the private staging site remains protected by HTTP Basic
-    Authentication.
-10. Perform owner visual review before any separate production-publication
-    plan is considered.
+1. Create a new fixed corrective-release transaction; do not reuse or erase the
+   consumed `staging-unification-20260716` attempt.
+2. Repeat the fixed PHP-enabled remote preflight for the exact corrective
+   candidate.
+3. Capture the exact expected-old staging targets, then perform one exact-CAS
+   corrective deployment with no automatic retry.
+4. If that attempt conflicts or is indeterminate, stop; do not retry.
+5. Run the corrected authenticated 63-visit Playwright matrix and 63-visit
+   crawler, capture all required screenshots, and confirm zero layout,
+   contrast, network, or interaction failures.
+6. Independently reconfirm HTTP 401 Basic authentication and `noindex`.
+7. Remove the temporary public key from SiteGround and delete the local private
+   key after the final remote verification.
+8. Complete owner visual review before any separate production-publication
+   plan is considered.
 
 `TWINS_STAGE_USER` and `TWINS_STAGE_PASSWORD` must be supplied only through the
 process environment. They must never be written into commands, files,
@@ -187,10 +223,10 @@ screenshots, test artifacts, or logs.
 
 ## Safety boundary
 
-The remote preflight accessed only the fixed private-staging SSH transaction
-directory and read-only verification inputs. It did not modify the staging web
-root, access WordPress administration, change DNS, or contact forms, booking,
-email, SMS, leads, analytics destinations, or other production integrations.
+The completed release modified only the fixed private-staging MU-plugin targets.
+It did not access WordPress administration, change DNS, or contact forms,
+booking, email, SMS, leads, analytics destinations, or other production
+integrations. All live verification was read-only.
 
 Production pages, files, database state, menus, DNS, submissions, email, leads,
 booking, and integrations remain unchanged by this local phase. Final live
