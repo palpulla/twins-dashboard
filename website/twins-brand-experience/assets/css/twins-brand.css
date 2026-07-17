@@ -88,6 +88,7 @@ body.twins-brand-experience :where(
 .twins-brand-skip-link:focus { transform: translateY(0); }
 
 /* Header: a compact, branded service fascia rather than a generic site bar. */
+body:has(#twins-staging-banner) { margin-top: 34px; --twins-staging-banner-height: 34px; }
 .twins-brand-header {
   position: sticky;
   top: var(--twins-staging-banner-height, 0px);

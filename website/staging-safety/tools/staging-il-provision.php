@@ -779,7 +779,7 @@ function twins_staging_il_assert_identity(): void
         || (int) ($runtime['phpMajor'] ?? PHP_MAJOR_VERSION) !== 8
         || (int) ($runtime['phpMinor'] ?? PHP_MINOR_VERSION) !== 2
         || !str_starts_with((string) ($runtime['databaseVersion'] ?? ''), '8.4.')
-        || (string) ($runtime['safetyDigest'] ?? '') !== '65c65d28c502d5465b2e6419a48108781d8c554473290ec70d2d9997263226d2'
+        || (string) ($runtime['safetyDigest'] ?? '') !== '0aedbd14df0ce5276b8400e6b4180af7eca0072e5403ac5d4280d6a01f9c6cd2'
         || (!$predeploymentMuSet && !$deployedMuSet)
         || ($runtime['normalPluginOrThemeLoaded'] ?? true) !== false
         || ($runtime['astraAvailable'] ?? false) !== true

@@ -152,8 +152,7 @@ function twins_staging_safety_frontend_banner() {
     }
     $rendered = true;
 
-    echo '<style id="twins-staging-banner-offset">:root{--twins-staging-banner-height:34px}body{margin-top:34px !important}</style>';
-    echo '<div id="twins-staging-banner" role="alert" style="position:fixed;left:0;right:0;top:0;z-index:2147483647;height:34px;box-sizing:border-box;padding:8px 16px;background:#b91c1c;color:#fff;text-align:center;font:700 14px/1.3 sans-serif;letter-spacing:.08em;pointer-events:none">STAGING — NOT PRODUCTION</div>';
+    echo '<div id="twins-staging-banner" role="alert" style="position:fixed;left:0;right:0;top:0;z-index:2147483647;padding:8px 16px;background:#b91c1c;color:#fff;text-align:center;font:700 14px/1.3 sans-serif;letter-spacing:.08em;pointer-events:none">STAGING — NOT PRODUCTION</div>';
 }
 
 /**

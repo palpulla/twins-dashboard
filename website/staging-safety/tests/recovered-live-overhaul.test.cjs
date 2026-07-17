@@ -51,7 +51,7 @@ function functionBody(source, name) {
 }
 
 const LIVE_HASHES = Object.freeze({
-  [SAFETY]: '65c65d28c502d5465b2e6419a48108781d8c554473290ec70d2d9997263226d2',
+  [SAFETY]: '0aedbd14df0ce5276b8400e6b4180af7eca0072e5403ac5d4280d6a01f9c6cd2',
   [LOADER]: '20a3e8b8d88917f54173457f112562c6a31250f9385a3144d9771704d63a2e90',
   [`${PACKAGE}/bootstrap.php`]: '4d534364b37cb91a9a70bbb4b13fa2c50eba30b71dd8c2ab6d0022271dac8e22',
   [`${PACKAGE}/components.php`]: 'dfc0548204787ca24743ebebc02099690a75ad3fdede21e8ba10fa488ac47556',
@@ -369,7 +369,7 @@ test('Illinois provisioner pins the current safety-plugin digest when the recove
     return;
   }
   const source = read(relativePath);
-  assert.match(source, /65c65d28c502d5465b2e6419a48108781d8c554473290ec70d2d9997263226d2/);
+  assert.match(source, /0aedbd14df0ce5276b8400e6b4180af7eca0072e5403ac5d4280d6a01f9c6cd2/);
   assert.match(source, /https:\/\/danielj140\.sg-host\.com/);
   assert.doesNotMatch(source, /(?:https?:\/\/)?(?:www\.)?twinsgaragedoors\.com/i);
 });

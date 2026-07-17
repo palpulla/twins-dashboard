@@ -114,8 +114,8 @@
     {
       "role": "verify",
       "source": "staging-safety/mu-plugins/twins-staging-safety.php",
-      "size": 28504,
-      "sha256": "65c65d28c502d5465b2e6419a48108781d8c554473290ec70d2d9997263226d2"
+      "size": 28336,
+      "sha256": "0aedbd14df0ce5276b8400e6b4180af7eca0072e5403ac5d4280d6a01f9c6cd2"
     },
     {
       "role": "verify",
@@ -133,7 +133,7 @@
       "role": "verify",
       "source": "staging-safety/tests/staging-il-provision-harness.php",
       "size": 125675,
-      "sha256": "85cf59263362657ac54bd742b76dbf993529f82520e27fd11d01e0f8022127b4"
+      "sha256": "5776e67c7fb1f31fe67af299c199dcf0b16e82e7e80449ee492c2bfb29d9633a"
     },
     {
       "role": "verify",
@@ -199,7 +199,7 @@
       "role": "verify",
       "source": "staging-safety/tools/staging-il-provision.php",
       "size": 105044,
-      "sha256": "c9407513e4d26fb0743d5d6e43dc07188744f55a85303c982e4fa2feeec3e960"
+      "sha256": "87d22262a52d96d9143f41c5f897a24b79bfa113673c73f4e64e3865f4939c5c"
     },
     {
       "role": "verify",
@@ -210,8 +210,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/assets/css/twins-brand.css",
-      "size": 57042,
-      "sha256": "c4836f24b89916bf7b9a756088a658d2a46c9aabded0e5545259a38f9d09ecd5"
+      "size": 57133,
+      "sha256": "cfd4bc54ea5df5f543f6f1dbb3f98a746d2d4c4f30877aafb2b182455cb54923"
     },
     {
       "role": "verify",
@@ -283,7 +283,7 @@
       "role": "verify",
       "source": "twins-brand-experience/manifests/staging-runtime.json",
       "size": 358281,
-      "sha256": "c477287767c867d7fdb5ff27c67a1e7087a1dbbe6c252a369fb055081faef5cf"
+      "sha256": "b2cf48060f2a5b1ca0eef13fdcbbf5360ff051617d29baed53a4e6b910bb1768"
     },
     {
       "role": "verify",

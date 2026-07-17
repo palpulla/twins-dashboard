@@ -1367,7 +1367,7 @@ function twins_staging_il_runtime_evidence(): array
         'phpMajor' => 8,
         'phpMinor' => 2,
         'databaseVersion' => '8.4.6-6',
-        'safetyDigest' => '65c65d28c502d5465b2e6419a48108781d8c554473290ec70d2d9997263226d2',
+        'safetyDigest' => '0aedbd14df0ce5276b8400e6b4180af7eca0072e5403ac5d4280d6a01f9c6cd2',
         'muPhpFiles' => (array) $GLOBALS['twins_staging_il_state']['muPhpFiles'],
         'overhaulDigest' => (string) $GLOBALS['twins_staging_il_state']['overhaulDigest'],
         'normalPluginOrThemeLoaded' => false,
