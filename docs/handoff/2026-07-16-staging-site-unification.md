@@ -6,7 +6,7 @@
 
 **Branch:** `codex/staging-site-safety`
 
-**Status:** `PRIVATE STAGING DEPLOYED — CORRECTIVE RELEASE CANDIDATE VERIFIED LOCALLY, NOT DEPLOYED`
+**Status:** `PRIVATE STAGING CORRECTIVE RELEASE DEPLOYED — OWNER VISUAL REVIEW PENDING`
 
 **Write authority:** `false`
 
@@ -30,16 +30,21 @@ new portable header and footer. It also exposed two audit-harness defects: the
 supposedly unauthenticated Playwright context inherited credentials, and the
 static-asset allowlist rejected valid fixed Illinois multisite asset paths.
 
-The corrective repository candidate now suppresses the exact Astra and
-Elementor legacy chrome only on `body.twins-brand-experience`, fixes both audit
-harness defects, and passes the complete local package, repository, and browser
-suite. It has **not** been deployed. The original release's one-attempt/no-retry
-contract remains honored; any corrective live release must use a new fixed
-transaction and a new exact expected-old capture.
+The corrective repository candidate suppresses the exact Astra and Elementor
+legacy chrome only on `body.twins-brand-experience`, fixes both audit-harness
+defects, and passes the complete local package, repository, and browser suite.
+It was deployed once through a separate commit-pinned corrective transaction
+after a new remote dry-run and exact expected-old capture. The original
+release's consumed transaction remains preserved and was not reused, erased,
+or retried.
 
 ## Candidate identity
 
-- Deployed commit: `350d64bfa4555245c2fa3a54b7ff18aa389ab4cc`
+- Initial deployed commit: `350d64bfa4555245c2fa3a54b7ff18aa389ab4cc`
+- Corrective payload commit: `fad4d35a7ac92a26ab7a873bfbb335b333b0f950`
+- Corrective release-wrapper commit: `35939b25`
+- Corrective transaction:
+  `/home/customer/staging-safety/staging-corrective-fad4d35a-20260716`
 - Application identity: `https://danielj140.sg-host.com/`
 - Deployed manifest SHA-256:
   `5c573314c8f9e1dfedae7d20f59652cd359dbcbd9c6d55e71b7abdb183e1d656`
@@ -55,8 +60,8 @@ transaction and a new exact expected-old capture.
   `667c4f77a71951ea8df067971d1e31059de98c382615e954e7080ded01a1b8fb`
 - Corrective candidate prerequisite-set SHA-256:
   `dadf04d0f2df09f7722451f6fb740ee66640247f781b9aaebf9a49598f9c5a77`
-- Corrective candidate host-verification SHA-256:
-  `8514685ca23544a1a6b3a9070b2f102fa93105413f7205cdc06e53cc792103e9`
+- Corrective host-verification SHA-256:
+  `0ac0861fcdbac41dd7bee7310685684d6c04f21b687e1357b0e5d165b7efe426`
 
 ## Exact live verification matrix
 
@@ -117,9 +122,25 @@ First live audit result:
   bounded failures, with no write authority and no staging mutation.
 
 The failure screenshots were inspected before the subsequent local Playwright
-run replaced the ephemeral `test-results` directory. A new corrective live
-release must regenerate durable evidence rather than treating the first audit
-as acceptance evidence.
+run replaced the ephemeral `test-results` directory. They remain historical
+defect evidence, not corrective acceptance evidence.
+
+Corrective live release result:
+
+- fixed remote PHP preflight: `PRIVATE_STAGING_DRY_RUN_PASSED`;
+- exact current staging bytes captured as expected old:
+  `EXPECTED_OLD_CAPTURED`;
+- one exact-CAS corrective release: `PRIVATE_STAGING_DEPLOYED`;
+- no deployment retry occurred;
+- unauthenticated origin check after deployment: HTTP 401 with
+  `WWW-Authenticate: Basic realm="Password protected"`;
+- deployed `twins-brand.css` SHA-256:
+  `4331facaffc57fbc1a44ba197c7e38869d90dddcc6058c95d3e9d517a8ca693c`,
+  byte-identical to the locally tested stylesheet; and
+- the app browser controller refused the password-protected staging URL under
+  its URL policy, so the corrected authenticated screenshot matrix could not
+  be rerun without credentials. No visual-pass claim is made from that blocked
+  path.
 
 ## Local verification completed
 
@@ -152,9 +173,17 @@ as acceptance evidence.
   was unavailable on the host. It was not retried.
 - Corrective repository verification: **73/73 contracts passed**, package build
   and closed-package check passed, `REPOSITORY_CHECK_PASSED`, and **31/31 local
-  browser tests passed**. The PHP-enabled host suite was already green for the
-  deployed source family; a new corrective release must repeat its own fixed
-  remote preflight.
+  browser tests passed** with 66 credential-gated live tests skipped.
+- Corrective PHP-enabled host suite and deployment-safety scenarios passed
+  under the new fixed transaction before mutation.
+- Independent corrective release guard review: **passed** after proving real,
+  non-symlink local and remote transaction roots before later operations,
+  byte-pinning `known_hosts`, exclusively creating local state, and retaining
+  the no-retry deployment markers.
+- The exact temporary `CHATGPT_PROFILE_1` public key was removed from
+  SiteGround's active `authorized_keys2`; a fresh connection returned
+  `Permission denied`, and the local private/public key files and auth helpers
+  were deleted.
 
 ## Release safety implemented
 
@@ -201,21 +230,13 @@ The full disposition is recorded in
 
 ## Remaining live gates
 
-1. Create a new fixed corrective-release transaction; do not reuse or erase the
-   consumed `staging-unification-20260716` attempt.
-2. Repeat the fixed PHP-enabled remote preflight for the exact corrective
-   candidate.
-3. Capture the exact expected-old staging targets, then perform one exact-CAS
-   corrective deployment with no automatic retry.
-4. If that attempt conflicts or is indeterminate, stop; do not retry.
-5. Run the corrected authenticated 63-visit Playwright matrix and 63-visit
-   crawler, capture all required screenshots, and confirm zero layout,
-   contrast, network, or interaction failures.
-6. Independently reconfirm HTTP 401 Basic authentication and `noindex`.
-7. Remove the temporary public key from SiteGround and delete the local private
-   key after the final remote verification.
-8. Complete owner visual review before any separate production-publication
-   plan is considered.
+1. Owner reload and visual review of the private staging home, Careers,
+   Reviews, Illinois, service, catalog, and builder routes.
+2. If machine-generated live screenshots are required, supply Basic Auth only
+   through an ephemeral process environment and run the corrected authenticated
+   matrix; do not write the credential to files or logs.
+3. Do not consider production publication until the owner accepts the private
+   staging presentation in a separate decision.
 
 `TWINS_STAGE_USER` and `TWINS_STAGE_PASSWORD` must be supplied only through the
 process environment. They must never be written into commands, files,
@@ -223,7 +244,8 @@ screenshots, test artifacts, or logs.
 
 ## Safety boundary
 
-The completed release modified only the fixed private-staging MU-plugin targets.
+The completed initial and corrective releases modified only the fixed
+private-staging MU-plugin targets.
 It did not access WordPress administration, change DNS, or contact forms,
 booking, email, SMS, leads, analytics destinations, or other production
 integrations. All live verification was read-only.
