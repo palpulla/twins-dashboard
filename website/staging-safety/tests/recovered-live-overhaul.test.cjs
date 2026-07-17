@@ -51,7 +51,7 @@ function functionBody(source, name) {
 }
 
 const LIVE_HASHES = Object.freeze({
-  [SAFETY]: '0aedbd14df0ce5276b8400e6b4180af7eca0072e5403ac5d4280d6a01f9c6cd2',
+  [SAFETY]: '65c65d28c502d5465b2e6419a48108781d8c554473290ec70d2d9997263226d2',
   [LOADER]: '20a3e8b8d88917f54173457f112562c6a31250f9385a3144d9771704d63a2e90',
   [`${PACKAGE}/bootstrap.php`]: '4d534364b37cb91a9a70bbb4b13fa2c50eba30b71dd8c2ab6d0022271dac8e22',
   [`${PACKAGE}/components.php`]: 'dfc0548204787ca24743ebebc02099690a75ad3fdede21e8ba10fa488ac47556',
@@ -231,8 +231,9 @@ test('fixed routing preserves campaign work while branding Careers and retaining
   assert.match(classify, /in_array\(\s*\$postId,\s*array\(7092,\s*7093\),\s*true\)/);
   assert.match(classify, /\$postId\s*===\s*7341[\s\S]*?return\s+['"]careers-brand['"]/);
   for (const [blog, route] of [[1, '/door-builder'], [3, '/ky/design-your-door'], [4, '/wi/door-builder'], [5, '/il/door-builder']]) {
-    assert.match(classify, new RegExp(`${blog}\\s*=>\\s*['"]${route.replaceAll('/', '\\/')}['"]`));
+    assert.match(classify, new RegExp(`${blog}\\s*=>\\s*array\\(['"]${route.replaceAll('/', '\\/')}['"]`));
   }
+  assert.match(classify, /1\s*=>\s*array\('\/door-builder',\s*'\/design-your-door'\)/);
   assert.equal((data.match(/twins_overhaul_navigation_item\(['"]Careers['"],\s*['"]\/careers\/['"]\)/g) || []).length, 4);
 });
 
@@ -368,7 +369,7 @@ test('Illinois provisioner pins the current safety-plugin digest when the recove
     return;
   }
   const source = read(relativePath);
-  assert.match(source, /0aedbd14df0ce5276b8400e6b4180af7eca0072e5403ac5d4280d6a01f9c6cd2/);
+  assert.match(source, /65c65d28c502d5465b2e6419a48108781d8c554473290ec70d2d9997263226d2/);
   assert.match(source, /https:\/\/danielj140\.sg-host\.com/);
   assert.doesNotMatch(source, /(?:https?:\/\/)?(?:www\.)?twinsgaragedoors\.com/i);
 });
