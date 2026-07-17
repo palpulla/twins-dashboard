@@ -281,6 +281,22 @@ body.twins-brand-experience .twins-brand-market-menu-panel small {
 .twins-brand-footer-nap { display: flex; flex-direction: column; gap: 4px; margin: 12px 0 18px; font-style: normal; color: rgba(255, 255, 255, .88); }
 .twins-brand-footer-nap a { color: var(--twins-gold); text-decoration: none; }
 .twins-brand-footer-nap a:is(:hover, :focus-visible) { text-decoration: underline; }
+.twins-brand-editorial-services { padding: 34px max(32px, calc((100vw - 1450px) / 2)); }
+.twins-brand-location-links { display: flex; flex-wrap: wrap; gap: 12px; }
+.twins-brand-location-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 18px;
+  background: var(--twins-white);
+  color: var(--twins-navy-950);
+  font-weight: 800;
+  text-decoration: none;
+  border: 2px solid var(--twins-navy-950);
+  border-radius: 12px;
+  box-shadow: 4px 5px 0 var(--twins-gold);
+}
+.twins-brand-location-links a:is(:hover, :focus-visible) { background: var(--twins-gold); }
 .twins-brand-menu-trigger { display: none; border: 2px solid var(--twins-gold); border-radius: 999px; color: var(--twins-gold); }
 
 .twins-brand-cta {

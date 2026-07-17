@@ -1351,7 +1351,182 @@ function twins_overhaul_render_classified_content(string $classification, array 
     if (!is_string($rendered) || preg_match('~</?form\b~i', $rendered)) {
         twins_overhaul_refuse_route('classified staging output retained form markup.');
     }
-    return $rendered;
+    return $rendered . twins_overhaul_brand_schema_markup($classification, $context);
+}
+
+/**
+ * Emit structured data for the branded routes.
+ *
+ * Schema is an additive crawler enhancement, so this helper fails open to an
+ * empty string instead of refusing the route when source data is unavailable.
+ *
+ * @param string $classification Proven route classification.
+ * @param array  $context Proven current request context.
+ * @return string
+ */
+function twins_overhaul_brand_schema_markup(string $classification, array $context): string {
+    $regions = twins_overhaul_regions();
+    $blogId = (int) get_current_blog_id();
+    if (!isset($regions[$blogId])) {
+        return '';
+    }
+    $region = $regions[$blogId];
+    $telephone = (string) $region['tel'];
+    $business = array(
+        '@type' => 'LocalBusiness',
+        'name' => 'Twins Garage Doors',
+        'telephone' => $telephone,
+        'url' => home_url('/'),
+    );
+    $title = isset($context['title']) && is_string($context['title']) && trim($context['title']) !== ''
+        ? trim($context['title'])
+        : 'Twins Garage Doors';
+
+    $schema = null;
+    if ($classification === 'home-brand') {
+        $schema = $business;
+        $schema['@context'] = 'https://schema.org';
+        $schema['image'] = home_url('/wp-content/mu-plugins/twins-brand-experience/assets/images/brand/twins-logo.png');
+    } elseif ($classification === 'service') {
+        $record = twins_overhaul_brand_schema_service_record((string) ($context['path'] ?? ''));
+        if ($record === null) {
+            return '';
+        }
+        $questions = array();
+        foreach ($record['faqs'] as $faq) {
+            $questions[] = array(
+                '@type' => 'Question',
+                'name' => (string) $faq['question'],
+                'acceptedAnswer' => array('@type' => 'Answer', 'text' => (string) $faq['answer']),
+            );
+        }
+        $schema = array(
+            '@context' => 'https://schema.org',
+            '@graph' => array(
+                array(
+                    '@type' => 'Service',
+                    'name' => (string) $record['h1'],
+                    'serviceType' => (string) $record['h1'],
+                    'description' => (string) $record['directAnswer'],
+                    'provider' => $business,
+                ),
+                array('@type' => 'FAQPage', 'mainEntity' => $questions),
+                array(
+                    '@type' => 'BreadcrumbList',
+                    'itemListElement' => array(
+                        array('@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => home_url('/')),
+                        array('@type' => 'ListItem', 'position' => 2, 'name' => (string) $record['h1']),
+                    ),
+                ),
+            ),
+        );
+    } elseif ($classification === 'reviews-brand') {
+        $rating = twins_overhaul_brand_schema_review_rating();
+        if ($rating === null) {
+            return '';
+        }
+        $schema = $business;
+        $schema['@context'] = 'https://schema.org';
+        $schema['aggregateRating'] = array(
+            '@type' => 'AggregateRating',
+            'ratingValue' => $rating['value'],
+            'reviewCount' => $rating['count'],
+            'bestRating' => 5,
+        );
+    } elseif ($classification === 'location') {
+        $schema = array(
+            '@context' => 'https://schema.org',
+            '@graph' => array(
+                $business + array('areaServed' => $title),
+                array(
+                    '@type' => 'BreadcrumbList',
+                    'itemListElement' => array(
+                        array('@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => home_url('/')),
+                        array('@type' => 'ListItem', 'position' => 2, 'name' => $title),
+                    ),
+                ),
+            ),
+        );
+    } elseif ($classification === 'catalog-preserve') {
+        $schema = array(
+            '@context' => 'https://schema.org',
+            '@type' => 'Product',
+            'name' => $title,
+            'brand' => array('@type' => 'Brand', 'name' => 'Clopay'),
+            'description' => $title . ' garage doors installed by Twins Garage Doors.',
+        );
+    }
+
+    if ($schema === null) {
+        return '';
+    }
+    $json = wp_json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    if (!is_string($json) || $json === '' || stripos($json, '<') !== false) {
+        return '';
+    }
+    return '<script type="application/ld+json">' . $json . '</script>';
+}
+
+/**
+ * Load one bespoke service record for schema output.
+ *
+ * @param string $path Current request path.
+ * @return array|null
+ */
+function twins_overhaul_brand_schema_service_record(string $path) {
+    static $records = null;
+    if ($records === null) {
+        $file = dirname(__DIR__) . '/twins-brand-experience/config/page-content.php';
+        if (!is_file($file)) {
+            $file = dirname(__DIR__, 3) . '/twins-brand-experience/config/page-content.php';
+        }
+        $loaded = is_file($file) ? require $file : null;
+        $records = is_array($loaded) ? $loaded : array();
+    }
+    $normalized = '/' . trim(preg_replace('~^/(wi|ky|il)/~', '/', '/' . ltrim($path, '/')), '/') . '/';
+    if (!isset($records[$normalized]) || !is_array($records[$normalized])) {
+        return null;
+    }
+    $record = $records[$normalized];
+    if (!isset($record['h1'], $record['directAnswer'], $record['faqs']) || !is_array($record['faqs'])) {
+        return null;
+    }
+    return $record;
+}
+
+/**
+ * Derive the aggregate review rating from the captured collection.
+ *
+ * @return array{value:float,count:int}|null
+ */
+function twins_overhaul_brand_schema_review_rating() {
+    $file = dirname(__DIR__) . '/twins-brand-experience/data/reviews/google-business-reviews-collection-2178.json';
+    if (!is_file($file)) {
+        $file = dirname(__DIR__, 3) . '/twins-brand-experience/data/reviews/google-business-reviews-collection-2178.json';
+    }
+    if (!is_file($file)) {
+        return null;
+    }
+    $raw = @file_get_contents($file);
+    if (!is_string($raw) || $raw === '') {
+        return null;
+    }
+    $decoded = json_decode($raw, true);
+    if (!is_array($decoded) || !isset($decoded['records']) || !is_array($decoded['records'])) {
+        return null;
+    }
+    $sum = 0;
+    $count = 0;
+    foreach ($decoded['records'] as $record) {
+        if (is_array($record) && isset($record['rating']) && is_int($record['rating'])) {
+            $sum += $record['rating'];
+            $count++;
+        }
+    }
+    if ($count === 0) {
+        return null;
+    }
+    return array('value' => round($sum / $count, 1), 'count' => $count);
 }
 
 /**
