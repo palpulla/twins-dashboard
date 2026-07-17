@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "remoteDirectory": "/home/customer/staging-safety/staging-header-guard-r2-20260717/verification/",
+  "remoteDirectory": "/home/customer/staging-safety/staging-remediation-r1-20260717/verification/",
   "productionWriteAuthority": false,
   "files": [
     {
@@ -456,8 +456,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/tools/private-staging-deploy.php",
-      "size": 69392,
-      "sha256": "3bb176f398de14cb08a7b3d8c0b1305e0f6a7661c404a552d26bdef6afc59044"
+      "size": 69391,
+      "sha256": "8239e392a79dfff8d0e06e50310f107b84034835d5f0ecb43cc958b5ebd5af83"
     }
   ]
 }
