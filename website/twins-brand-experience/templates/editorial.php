@@ -26,6 +26,23 @@ $editorial = $editorialKinds[$kind];
 $title = isset($context['title']) && is_string($context['title']) && trim($context['title']) !== ''
     ? trim($context['title'])
     : 'Twins Garage Doors';
+if (
+    $kind === 'location'
+    && str_word_count($title) <= 3
+    && stripos($title, 'garage') === false
+) {
+    $title = 'Garage Door Service in ' . $title;
+}
+$locationServiceLinks = $kind === 'location'
+    ? [
+        ['Garage Door Repair', 'repair'],
+        ['Garage Door Installation', 'installation'],
+        ['Spring Repair', 'spring-repair'],
+        ['Opener Repair', 'opener-repair'],
+        ['Emergency Service', 'emergency-service'],
+        ['Customer Reviews', 'reviews'],
+    ]
+    : [];
 ?>
 <main id="twins-overhaul-main" class="twins-brand-page twins-brand-editorial-page">
   <header class="twins-brand-editorial-hero" aria-labelledby="twins-brand-editorial-title">
@@ -41,6 +58,20 @@ $title = isset($context['title']) && is_string($context['title']) && trim($conte
     </div>
     <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call <?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
   </section>
+
+  <?php if ($locationServiceLinks !== []): ?>
+    <section class="twins-brand-editorial-services" aria-labelledby="twins-brand-location-services-title">
+      <div class="twins-brand-section-heading">
+        <span class="twins-brand-kicker">What we do here</span>
+        <h2 id="twins-brand-location-services-title">Garage door help in this area</h2>
+      </div>
+      <nav class="twins-brand-location-links" aria-label="Local garage door services">
+        <?php foreach ($locationServiceLinks as [$locationLabel, $locationRoute]): ?>
+          <a href="<?= htmlspecialchars($experience->route($locationRoute, $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($experience->contextualRouteLabel($locationRoute, $marketKey, $locationLabel), ENT_QUOTES, 'UTF-8') ?></a>
+        <?php endforeach; ?>
+      </nav>
+    </section>
+  <?php endif; ?>
 
   <section class="twins-brand-editorial-body">
     <article class="twins-brand-editorial-content">
