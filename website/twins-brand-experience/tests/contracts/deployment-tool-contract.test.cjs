@@ -9,7 +9,8 @@ const nodeTool = path.join(root, 'tools/deploy-private-staging.mjs');
 const phpTool = path.join(root, 'tools/private-staging-deploy.php');
 const phpHarness = path.join(root, 'tests/php/private-staging-deploy-harness.php');
 const phpHarnessRegistry = path.join(root, 'tests/php-harnesses.test.cjs');
-const releaseRoot = '/home/customer/staging-safety/staging-unification-20260716';
+const consumedReleaseRoot = '/home/customer/staging-safety/staging-unification-20260716';
+const releaseRoot = '/home/customer/staging-safety/staging-corrective-fad4d35a-20260716';
 
 test('deployment CLI accepts only four fixed operations and no caller-selected target fields', () => {
   for (const invalid of ['--host=x', '--port=22', '--root=/tmp/x', '--manifest=x', '--expected-old=x', '--retry=2', '--deploy=x']) {
@@ -39,8 +40,25 @@ test('deployment source fixes application identity, paths, safe transport, and o
   assert.match(nodeSource, /shell:\s*false/);
   assert.equal(nodeSource.includes(releaseRoot), true);
   assert.equal(phpSource.includes(releaseRoot), true);
+  assert.equal(nodeSource.includes(consumedReleaseRoot), false);
+  assert.equal(phpSource.includes(consumedReleaseRoot), false);
   assert.doesNotMatch(combined, /brand-wide-20260715/);
-  assert.match(nodeSource, /dist\/\.staging-deploy\/staging-unification-20260716/);
+  assert.match(nodeSource, /const stateParent = path\.join\(root, 'dist\/\.staging-deploy'\);/);
+  assert.match(nodeSource, /path\.join\(stateParent, 'staging-corrective-fad4d35a-20260716'\)/);
+  assert.match(nodeSource, /TRANSACTION_STATE_ALREADY_EXISTS/);
+  assert.match(nodeSource, /assertLocalStateRoot/);
+  assert.match(nodeSource, /readRegularText\(transportState/);
+  assert.match(nodeSource, /HOST_KEY_STATE_DRIFT/);
+  assert.match(nodeSource, /writeFileSync\(knownHosts,[\s\S]{0,160}flag:\s*'wx'/);
+  assert.match(nodeSource, /const remoteRootGuard/);
+  assert.match(nodeSource, /const remoteCommand = op => `\$\{remoteRootGuard\} && php/);
+  assert.equal((nodeSource.match(/assertRemoteRoot\(\);/g) || []).length >= 3, true);
+  assert.equal(nodeSource.includes("test -d '${TRANSACTION_PARENT}'"), true);
+  assert.equal(nodeSource.includes("test ! -L '${TRANSACTION_PARENT}'"), true);
+  assert.equal(nodeSource.includes("test ! -e '${TRANSACTION_ROOT}'"), true);
+  assert.equal(nodeSource.includes("test ! -L '${TRANSACTION_ROOT}'"), true);
+  assert.equal(nodeSource.includes("mkdir '${TRANSACTION_ROOT}'"), true);
+  assert.equal(nodeSource.includes("mkdir -p '${TRANSACTION_ROOT}'"), false);
   assert.match(nodeSource, /DEPLOY_ATTEMPT_ALREADY_RECORDED/);
   assert.match(nodeSource, /flag:\s*'wx'/);
   assert.match(nodeSource, /REMOTE_RESULT_INVALID/);

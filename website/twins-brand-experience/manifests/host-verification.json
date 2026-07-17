@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "remoteDirectory": "/home/customer/staging-safety/staging-unification-20260716/verification/",
+  "remoteDirectory": "/home/customer/staging-safety/staging-corrective-fad4d35a-20260716/verification/",
   "productionWriteAuthority": false,
   "files": [
     {
@@ -450,8 +450,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/tools/private-staging-deploy.php",
-      "size": 69388,
-      "sha256": "15fc13f1d21a9834191e7def88ab49f269d1958111d9801ac3a11c5f010822d2"
+      "size": 69396,
+      "sha256": "f8d417a51c55f6f20b12b5d776d93f25f621306ccae8ee9270741d5b53a7d983"
     }
   ]
 }

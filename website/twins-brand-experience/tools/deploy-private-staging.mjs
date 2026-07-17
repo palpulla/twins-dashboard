@@ -7,7 +7,8 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const APPLICATION_IDENTITY = 'https://danielj140.sg-host.com/';
 const WEB_ROOT = '/home/customer/www/danielj140.sg-host.com/public_html';
-const TRANSACTION_ROOT = '/home/customer/staging-safety/staging-unification-20260716';
+const TRANSACTION_PARENT = '/home/customer/staging-safety';
+const TRANSACTION_ROOT = '/home/customer/staging-safety/staging-corrective-fad4d35a-20260716';
 const SSH_PORT = '18765';
 const allowed = new Set(['--dry-run', '--capture-expected-old', '--deploy', '--rollback']);
 const operation = process.argv[2] || '';
@@ -31,12 +32,29 @@ let keyStat;
 try { keyStat = fs.lstatSync(key); } catch { finish('TRANSPORT_KEY_UNAVAILABLE', 1); }
 if (!keyStat.isFile() || keyStat.isSymbolicLink()) finish('TRANSPORT_KEY_INVALID', 1);
 
-const stateRoot = path.join(root, 'dist/.staging-deploy/staging-unification-20260716');
+const stateParent = path.join(root, 'dist/.staging-deploy');
+const stateRoot = path.join(stateParent, 'staging-corrective-fad4d35a-20260716');
 const knownHosts = path.join(stateRoot, 'known_hosts');
 const transportState = path.join(stateRoot, 'transport.json');
 const deployAttempt = path.join(stateRoot, 'deploy-attempt.json');
 const targetHash = crypto.createHash('sha256').update(target).digest('hex');
 const host = target.slice(target.indexOf('@') + 1);
+
+function entryExists(file) {
+  try {
+    fs.lstatSync(file);
+    return true;
+  } catch (error) {
+    if (error && error.code === 'ENOENT') return false;
+    finish('TRANSACTION_STATE_INSPECTION_FAILED', 1);
+  }
+}
+
+function assertRealDirectory(file, failure) {
+  let stat;
+  try { stat = fs.lstatSync(file); } catch { finish(failure, 1); }
+  if (!stat.isDirectory() || stat.isSymbolicLink()) finish(failure, 1);
+}
 
 function run(command, args, options = {}) {
   const result = spawnSync(command, args, {
@@ -62,6 +80,27 @@ function readRegularText(file, failure) {
   try { stat = fs.lstatSync(file); } catch { finish(failure, 1); }
   if (!stat.isFile() || stat.isSymbolicLink() || stat.size < 1 || stat.size > 1024 * 1024) finish(failure, 1);
   try { return fs.readFileSync(file, 'utf8'); } catch { finish(failure, 1); }
+}
+
+function assertLocalStateRoot() {
+  assertRealDirectory(path.join(root, 'dist'), 'TRANSACTION_STATE_ROOT_INVALID');
+  assertRealDirectory(stateParent, 'TRANSACTION_STATE_ROOT_INVALID');
+  assertRealDirectory(stateRoot, 'TRANSACTION_STATE_ROOT_INVALID');
+  readRegularText(knownHosts, 'TRANSPORT_STATE_INVALID');
+  readRegularText(transportState, 'TRANSPORT_STATE_INVALID');
+}
+
+if (operation === '--dry-run') {
+  if (entryExists(stateRoot)) finish('TRANSACTION_STATE_ALREADY_EXISTS', 1);
+  assertRealDirectory(path.join(root, 'dist'), 'TRANSACTION_STATE_ROOT_INVALID');
+  if (entryExists(stateParent)) {
+    assertRealDirectory(stateParent, 'TRANSACTION_STATE_ROOT_INVALID');
+  } else {
+    try { fs.mkdirSync(stateParent, { mode: 0o700 }); } catch { finish('TRANSACTION_STATE_ROOT_INVALID', 1); }
+    assertRealDirectory(stateParent, 'TRANSACTION_STATE_ROOT_INVALID');
+  }
+} else {
+  assertLocalStateRoot();
 }
 
 function packageIdentity() {
@@ -122,8 +161,15 @@ function verifyHostKey() {
     if (detail.split(/\s+/).includes(fingerprint)) matching.push(line);
   }
   if (matching.length !== 1) finish('HOST_KEY_FINGERPRINT_MISMATCH', 1);
-  fs.mkdirSync(stateRoot, { recursive: true, mode: 0o700 });
-  fs.writeFileSync(knownHosts, `${matching[0]}\n`, { mode: 0o600 });
+  const knownHostBytes = `${matching[0]}\n`;
+  if (operation === '--dry-run') {
+    try { fs.mkdirSync(stateRoot, { mode: 0o700 }); } catch { finish('TRANSACTION_STATE_ROOT_INVALID', 1); }
+    assertRealDirectory(stateRoot, 'TRANSACTION_STATE_ROOT_INVALID');
+    try { fs.writeFileSync(knownHosts, knownHostBytes, { mode: 0o600, flag: 'wx' }); } catch { finish('HOST_KEY_STATE_WRITE_FAILED', 1); }
+  } else {
+    assertLocalStateRoot();
+    if (readRegularText(knownHosts, 'TRANSPORT_STATE_INVALID') !== knownHostBytes) finish('HOST_KEY_STATE_DRIFT', 1);
+  }
 }
 
 run(process.execPath, [path.join(root, 'tools/build-packages.mjs'), '--check'], {
@@ -133,10 +179,10 @@ run(process.execPath, [path.join(root, 'tools/build-packages.mjs'), '--check'], 
 const identity = packageIdentity();
 verifyHostKey();
 if (operation === '--dry-run') {
-  if (fs.existsSync(transportState)) finish('TRANSPORT_STATE_ALREADY_EXISTS', 1);
+  if (entryExists(transportState)) finish('TRANSPORT_STATE_ALREADY_EXISTS', 1);
 } else {
   let state;
-  try { state = JSON.parse(fs.readFileSync(transportState, 'utf8')); } catch { finish('TRANSPORT_DRY_RUN_REQUIRED', 1); }
+  try { state = JSON.parse(readRegularText(transportState, 'TRANSPORT_DRY_RUN_REQUIRED')); } catch { finish('TRANSPORT_DRY_RUN_REQUIRED', 1); }
   if (state.targetSha256 !== targetHash || state.hostKeySha256 !== fingerprint || state.sshPort !== SSH_PORT ||
       state.manifestSha256 !== identity.manifestSha256 ||
       state.deployPackageSha256 !== identity.deployPackageSha256 ||
@@ -147,6 +193,7 @@ if (operation === '--dry-run') {
 }
 
 if (operation === '--deploy') {
+  assertLocalStateRoot();
   try {
     fs.writeFileSync(deployAttempt, `${JSON.stringify({
       schemaVersion: 1,
@@ -178,32 +225,40 @@ const scpOptions = [
   '-P', SSH_PORT,
   ...transportOptions,
 ];
+const remoteRootGuard = `test -d '${TRANSACTION_PARENT}' && test ! -L '${TRANSACTION_PARENT}' && test -d '${TRANSACTION_ROOT}' && test ! -L '${TRANSACTION_ROOT}'`;
+const assertRemoteRoot = () => run('ssh', [...sshOptions, target, remoteRootGuard], { failure: 'REMOTE_TRANSACTION_ROOT_INVALID' });
 const remoteScript = `${TRANSACTION_ROOT}/verification/twins-brand-experience/tools/private-staging-deploy.php`;
-const remoteCommand = op => `php '${remoteScript}' '${op}'`;
+const remoteCommand = op => `${remoteRootGuard} && php '${remoteScript}' '${op}'`;
 
 if (operation === '--dry-run') {
-  run('ssh', [...sshOptions, target, `mkdir -p '${TRANSACTION_ROOT}' && chmod 700 '${TRANSACTION_ROOT}' && rm -rf '${TRANSACTION_ROOT}/verification.incoming'`], { failure: 'REMOTE_PREFLIGHT_FAILED' });
+  run('ssh', [...sshOptions, target, `test -d '${TRANSACTION_PARENT}' && test ! -L '${TRANSACTION_PARENT}' && test ! -e '${TRANSACTION_ROOT}' && test ! -L '${TRANSACTION_ROOT}' && mkdir '${TRANSACTION_ROOT}' && chmod 700 '${TRANSACTION_ROOT}'`], { failure: 'REMOTE_TRANSACTION_ALREADY_EXISTS_OR_PREFLIGHT_FAILED' });
+  assertRemoteRoot();
   run('scp', [...scpOptions, '-r', path.join(root, 'dist/host-verification'), `${target}:${TRANSACTION_ROOT}/verification.incoming`], { failure: 'VERIFICATION_UPLOAD_FAILED' });
-  const stdout = run('ssh', [...sshOptions, target, `rm -rf '${TRANSACTION_ROOT}/verification' && mv '${TRANSACTION_ROOT}/verification.incoming' '${TRANSACTION_ROOT}/verification' && ${remoteCommand(operation)}`], { failure: 'REMOTE_DRY_RUN_FAILED' });
+  assertRemoteRoot();
+  const stdout = run('ssh', [...sshOptions, target, `${remoteRootGuard} && test -d '${TRANSACTION_ROOT}/verification.incoming' && test ! -L '${TRANSACTION_ROOT}/verification.incoming' && rm -rf '${TRANSACTION_ROOT}/verification' && mv '${TRANSACTION_ROOT}/verification.incoming' '${TRANSACTION_ROOT}/verification' && ${remoteCommand(operation)}`], { failure: 'REMOTE_DRY_RUN_FAILED' });
   const report = validateRemoteReport(stdout, 'PRIVATE_STAGING_DRY_RUN_PASSED', operation, identity);
   fs.writeFileSync(transportState, `${JSON.stringify({
     targetSha256: targetHash,
     hostKeySha256: fingerprint,
     sshPort: SSH_PORT,
     ...identity,
-  }, null, 2)}\n`, { mode: 0o600 });
+  }, null, 2)}\n`, { mode: 0o600, flag: 'wx' });
   finish('PRIVATE_STAGING_DRY_RUN_PASSED', 0, report);
 }
 
 if (operation === '--deploy') {
-  run('ssh', [...sshOptions, target, `rm -rf '${TRANSACTION_ROOT}/candidate.incoming' '${TRANSACTION_ROOT}/verification.incoming'`], { failure: 'REMOTE_UPLOAD_PREP_FAILED' });
+  assertRemoteRoot();
+  run('ssh', [...sshOptions, target, `${remoteRootGuard} && rm -rf '${TRANSACTION_ROOT}/candidate.incoming' '${TRANSACTION_ROOT}/verification.incoming'`], { failure: 'REMOTE_UPLOAD_PREP_FAILED' });
+  assertRemoteRoot();
   run('scp', [...scpOptions, '-r', path.join(root, 'dist/staging-runtime'), `${target}:${TRANSACTION_ROOT}/candidate.incoming`], { failure: 'CANDIDATE_UPLOAD_FAILED' });
+  assertRemoteRoot();
   run('scp', [...scpOptions, '-r', path.join(root, 'dist/host-verification'), `${target}:${TRANSACTION_ROOT}/verification.incoming`], { failure: 'VERIFICATION_UPLOAD_FAILED' });
-  const stdout = run('ssh', [...sshOptions, target, `rm -rf '${TRANSACTION_ROOT}/candidate' '${TRANSACTION_ROOT}/verification' && mv '${TRANSACTION_ROOT}/candidate.incoming' '${TRANSACTION_ROOT}/candidate' && mv '${TRANSACTION_ROOT}/verification.incoming' '${TRANSACTION_ROOT}/verification' && ${remoteCommand(operation)}`], { failure: 'REMOTE_DEPLOY_FAILED' });
+  const stdout = run('ssh', [...sshOptions, target, `${remoteRootGuard} && test -d '${TRANSACTION_ROOT}/candidate.incoming' && test ! -L '${TRANSACTION_ROOT}/candidate.incoming' && test -d '${TRANSACTION_ROOT}/verification.incoming' && test ! -L '${TRANSACTION_ROOT}/verification.incoming' && rm -rf '${TRANSACTION_ROOT}/candidate' '${TRANSACTION_ROOT}/verification' && mv '${TRANSACTION_ROOT}/candidate.incoming' '${TRANSACTION_ROOT}/candidate' && mv '${TRANSACTION_ROOT}/verification.incoming' '${TRANSACTION_ROOT}/verification' && ${remoteCommand(operation)}`], { failure: 'REMOTE_DEPLOY_FAILED' });
   const report = validateRemoteReport(stdout, 'PRIVATE_STAGING_DEPLOYED', operation, identity);
   finish('PRIVATE_STAGING_DEPLOYED', 0, report);
 }
 
+assertRemoteRoot();
 const stdout = run('ssh', [...sshOptions, target, remoteCommand(operation)], {
   failure: operation === '--rollback' ? 'REMOTE_ROLLBACK_FAILED' : 'EXPECTED_OLD_CAPTURE_FAILED',
 });
