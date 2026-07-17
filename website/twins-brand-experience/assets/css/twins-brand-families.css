@@ -1280,10 +1280,60 @@ body.twins-brand-route-builder .twins-builder__reference {
 }
 
 body.twins-brand-route-builder .twins-builder__reference-image {
+  display: block;
   width: auto;
   max-height: 430px;
   margin-inline: auto;
   border-radius: 9px;
+}
+
+body.twins-brand-route-builder .twins-builder__composite {
+  position: relative;
+  width: fit-content;
+  margin-inline: auto;
+}
+
+body.twins-brand-route-builder .twins-builder__tint {
+  position: absolute;
+  inset: 0;
+  border-radius: 9px;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+
+body.twins-brand-route-builder .twins-builder__tint[data-tint-ready="true"] {
+  opacity: 1;
+}
+
+body.twins-brand-route-builder .twins-builder__overlay {
+  position: absolute;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  height: auto;
+}
+
+body.twins-brand-route-builder .twins-builder__overlay--windows {
+  top: 3%;
+  left: 3%;
+  width: 94%;
+  max-height: 32%;
+  object-fit: contain;
+}
+
+body.twins-brand-route-builder .twins-builder__overlay--hardware {
+  bottom: 5%;
+  left: 22%;
+  width: 56%;
+  max-height: 26%;
+  object-fit: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.twins-brand-route-builder .twins-builder__tint {
+    transition: none;
+  }
 }
 
 body.twins-brand-route-builder .twins-builder__samples {

@@ -15,7 +15,9 @@ test('home contains every approved section in order', () => {
     assert.ok(next > cursor, `${marker} is missing or out of order`);
     cursor = next;
   }
-  assert.match(html, /Garage Door Repair & Installation, Done Right Today\./);
+  assert.match(html, /Garage Door <em>Repair<\/em> & Installation, Done Right <em>Today<\/em>\./);
+  assert.match(html, /twins-brand-offer-chip/);
+  assert.match(html, /twins-brand-hero-proof/);
   assert.match(html, /Same-day appointments/);
   assert.match(html, /Upfront pricing/);
   assert.match(html, /Most repairs done in one visit/);

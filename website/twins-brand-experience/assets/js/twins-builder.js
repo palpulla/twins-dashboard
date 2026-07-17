@@ -126,6 +126,63 @@
     return element;
   }
 
+  function builderPrefersReducedMotion() {
+    return Boolean(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+
+  function builderCleanTitle(title) {
+    let clean = String(title || '').trim();
+    clean = clean.replace(/\s*\([A-Z]{1,3}\)\s*[*±]?$/, '');
+    clean = clean.replace(/[*±]+$/, '').trim();
+    if (clean.length > 3 && clean === clean.toUpperCase() && /[A-Z]/.test(clean)) {
+      clean = clean.toLowerCase().replace(/(^|[\s\-/])([a-z0-9])/g, (match, lead, letter) => lead + letter.toUpperCase());
+    }
+    return clean;
+  }
+
+  const builderSwatchColors = new Map();
+
+  function builderDominantColor(src, apply) {
+    if (builderSwatchColors.has(src)) {
+      apply(builderSwatchColors.get(src));
+      return;
+    }
+    const probe = new Image();
+    probe.decoding = 'async';
+    probe.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 12;
+        canvas.height = 12;
+        const context = canvas.getContext('2d');
+        context.drawImage(probe, 0, 0, 12, 12);
+        const data = context.getImageData(0, 0, 12, 12).data;
+        let red = 0;
+        let green = 0;
+        let blue = 0;
+        let counted = 0;
+        for (let index = 0; index < data.length; index += 4) {
+          if (data[index + 3] < 128) continue;
+          red += data[index];
+          green += data[index + 1];
+          blue += data[index + 2];
+          counted += 1;
+        }
+        if (counted === 0) {
+          apply(null);
+          return;
+        }
+        const color = `rgb(${Math.round(red / counted)}, ${Math.round(green / counted)}, ${Math.round(blue / counted)})`;
+        builderSwatchColors.set(src, color);
+        apply(color);
+      } catch (error) {
+        apply(null);
+      }
+    };
+    probe.onerror = () => apply(null);
+    probe.src = src;
+  }
+
   function initBuilder(root) {
     const scope = root || document;
     const builders = [];
@@ -173,7 +230,8 @@
       }
 
       function optionLabel(option) {
-        return option.group ? `${option.group} — ${option.title}` : option.title;
+        const title = builderCleanTitle(option.title);
+        return option.group ? `${builderCleanTitle(option.group)} · ${title}` : title;
       }
 
       function configurationRows() {
@@ -194,19 +252,53 @@
 
       function renderReference(parent) {
         if (!state.product) return;
-        const panel = state.design ? state.design.image : state.product.showcase;
+        const composed = Boolean(state.design);
+        const panel = composed ? state.design.image : state.product.showcase;
         const figure = builderElement(owner, 'figure', 'twins-builder__reference');
-        figure.appendChild(builderImage(
+        const stagePane = builderElement(owner, 'div', 'twins-builder__composite');
+        stagePane.appendChild(builderImage(
           owner,
           panel,
           `${state.product.title} manufacturer reference`,
           'twins-builder__reference-image',
         ));
+        if (composed && state.color) {
+          const tint = builderElement(owner, 'div', 'twins-builder__tint');
+          stagePane.appendChild(tint);
+          builderDominantColor(state.color.image.src, color => {
+            if (!color) return;
+            tint.style.backgroundColor = color;
+            tint.setAttribute('data-tint-ready', 'true');
+          });
+        }
+        if (composed && state.window) {
+          const windowsOverlay = builderImage(
+            owner,
+            state.window.image,
+            `Window style: ${optionLabel(state.window)}`,
+            'twins-builder__overlay twins-builder__overlay--windows',
+          );
+          stagePane.appendChild(windowsOverlay);
+        }
+        if (composed && state.hardware) {
+          const hardwareOverlay = builderImage(
+            owner,
+            state.hardware.image,
+            `Decorative hardware: ${optionLabel(state.hardware)}`,
+            'twins-builder__overlay twins-builder__overlay--hardware',
+          );
+          stagePane.appendChild(hardwareOverlay);
+        }
+        figure.appendChild(stagePane);
+        const selections = configurationRows().slice(1).map(row => row[1]).join(', ');
+        const caption = composed
+          ? `Illustrative preview of your selections${selections ? `: ${selections}` : ''}. Manufacturer reference only. Twins confirms final appearance before ordering.`
+          : 'Manufacturer reference only. Pick a panel or design and your color, window, and hardware choices appear on the door; Twins confirms final appearance before ordering.';
         figure.appendChild(builderElement(
           owner,
           'figcaption',
           'twins-builder__reference-caption',
-          'Manufacturer reference only. The large image shows the selected panel or design. Colors, windows, glass, and hardware are samples; Twins confirms final appearance before ordering.',
+          caption,
         ));
         parent.appendChild(figure);
 
@@ -379,7 +471,14 @@
           if (state.step !== 'contact-preview') actions.appendChild(actionButton('Continue', 'next', 'twins-builder__next'));
           mount.appendChild(actions);
         }
-        if (focusHeading) heading.focus();
+        if (focusHeading) {
+          heading.focus({ preventScroll: true });
+          const anchor = heading.getBoundingClientRect().top + window.pageYOffset - 150;
+          window.scrollTo({
+            top: Math.max(anchor, 0),
+            behavior: builderPrefersReducedMotion() ? 'auto' : 'smooth',
+          });
+        }
       }
 
       stepControls.forEach(control => {
