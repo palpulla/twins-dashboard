@@ -23,6 +23,14 @@ final class PageContentRegistry
         '/garage-door-spring-repair/',
         '/garage-door-opener-repair/',
         '/emergency-garage-services/',
+        '/garage-door-services/',
+        '/garage-door-cable-repair/',
+        '/garage-door-openers/',
+        '/garage-weatherstripping-repair/',
+        '/garage-door-tune-up/',
+        '/maintenance-plans/',
+        '/property-management-services/',
+        '/protection-plans/',
     ];
 
     private const FALLBACK_TITLES = [
