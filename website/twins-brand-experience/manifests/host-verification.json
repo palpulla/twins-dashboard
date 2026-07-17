@@ -156,8 +156,8 @@
     {
       "role": "verify",
       "source": "staging-safety/tests/staging-overhaul-builder-harness.php",
-      "size": 6202,
-      "sha256": "f1e7260df3c39ba30d27bbbfc05283bd90f949127124884d63a4ee19c019cae1"
+      "size": 6191,
+      "sha256": "7b9d8a9996a5ec5344dbed8d34cd80a5f4743f4878fd8c419291731da3f5aa92"
     },
     {
       "role": "verify",

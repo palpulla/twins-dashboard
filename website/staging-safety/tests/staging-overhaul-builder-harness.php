@@ -69,8 +69,8 @@ foreach ($phones as $blogId => $phone) {
     $markup = twins_overhaul_render_builder(array('phone' => '(000) 000-0000', 'base' => '/spoof/'));
     builder_assert(preg_match_all('/<h1\b/i', $markup) === 1, 'builder must have one H1 for blog ' . $blogId);
     builder_assert(strpos($markup, 'class="twins-brand-page twins-overhaul-main twins-builder-page"') !== false, 'shared brand page shell missing');
-    builder_assert(strpos($markup, 'Frozen Clopay builder') !== false, 'frozen builder eyebrow missing');
-    builder_assert(strpos($markup, 'fixed local 23-product catalog') !== false, 'bounded builder lead missing');
+    builder_assert(strpos($markup, 'Official Clopay dealer') !== false, 'builder dealer eyebrow missing');
+    builder_assert(strpos($markup, 'Explore Clopay collections') !== false, 'builder lead missing');
     builder_assert(strpos($markup, 'twins-builder__notice') === false, 'large debug-style builder notice survived');
     builder_assert(strpos($markup, 'Manufacturer reference only.') !== false, 'manufacturer truth missing');
     builder_assert(strpos($markup, 'This private staging preview does not submit or store lead information.') !== false, 'compact staging preview note missing');
