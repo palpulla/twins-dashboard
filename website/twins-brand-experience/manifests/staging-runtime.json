@@ -169,8 +169,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/assets/js/twins-builder.js",
       "destination": "twins-brand-experience/assets/js/twins-builder.js",
-      "size": 24608,
-      "sha256": "e2b6962c2720c56fbb6d86ab1e83d5ff9f637221d156dc893a48a7254cc34c36"
+      "size": 24646,
+      "sha256": "64c6e7430dd3c163ec4be764f7d1ff2e7fb7333b6fa29786bcb76a6b784f413b"
     },
     {
       "role": "deploy",

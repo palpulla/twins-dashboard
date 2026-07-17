@@ -67,7 +67,7 @@ test('brand assets use independently derived bounded SHA-256 versions and fail c
     css: 'cfd4bc54ea5df5f5',
     familyCss: '4aed6828e8e5cc1f',
     js: 'a27a7a219e280a80',
-    builderJs: 'e2b6962c2720c56f',
+    builderJs: '64c6e7430dd3c163',
   });
   assert.match(body, /\$digest\s*=\s*@hash_file\(\s*['"]sha256['"]\s*,\s*\$path\s*\)/);
   assert.match(

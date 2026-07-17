@@ -368,8 +368,8 @@
           control.setAttribute('data-builder-option-id', option.id);
           control.setAttribute('aria-pressed', String(state[field === 'windows' ? 'window' : field] === option));
           control.appendChild(builderImage(owner, option.image, optionLabel(option), 'twins-builder__option-image'));
-          if (option.group) control.appendChild(builderElement(owner, 'span', 'twins-builder__option-group', option.group));
-          control.appendChild(builderElement(owner, 'span', 'twins-builder__option-title', option.title));
+          if (option.group) control.appendChild(builderElement(owner, 'span', 'twins-builder__option-group', builderCleanTitle(option.group)));
+          control.appendChild(builderElement(owner, 'span', 'twins-builder__option-title', builderCleanTitle(option.title)));
           grid.appendChild(control);
         });
         body.appendChild(grid);
