@@ -10,7 +10,8 @@ const phpTool = path.join(root, 'tools/private-staging-deploy.php');
 const phpHarness = path.join(root, 'tests/php/private-staging-deploy-harness.php');
 const phpHarnessRegistry = path.join(root, 'tests/php-harnesses.test.cjs');
 const consumedReleaseRoot = '/home/customer/staging-safety/staging-unification-20260716';
-const releaseRoot = '/home/customer/staging-safety/staging-corrective-fad4d35a-20260716';
+const consumedCorrectiveRoot = '/home/customer/staging-safety/staging-corrective-fad4d35a-20260716';
+const releaseRoot = '/home/customer/staging-safety/staging-header-guard-20260717';
 
 test('deployment CLI accepts only four fixed operations and no caller-selected target fields', () => {
   for (const invalid of ['--host=x', '--port=22', '--root=/tmp/x', '--manifest=x', '--expected-old=x', '--retry=2', '--deploy=x']) {
@@ -42,9 +43,11 @@ test('deployment source fixes application identity, paths, safe transport, and o
   assert.equal(phpSource.includes(releaseRoot), true);
   assert.equal(nodeSource.includes(consumedReleaseRoot), false);
   assert.equal(phpSource.includes(consumedReleaseRoot), false);
+  assert.equal(nodeSource.includes(consumedCorrectiveRoot), false);
+  assert.equal(phpSource.includes(consumedCorrectiveRoot), false);
   assert.doesNotMatch(combined, /brand-wide-20260715/);
   assert.match(nodeSource, /const stateParent = path\.join\(root, 'dist\/\.staging-deploy'\);/);
-  assert.match(nodeSource, /path\.join\(stateParent, 'staging-corrective-fad4d35a-20260716'\)/);
+  assert.match(nodeSource, /path\.join\(stateParent, 'staging-header-guard-20260717'\)/);
   assert.match(nodeSource, /TRANSACTION_STATE_ALREADY_EXISTS/);
   assert.match(nodeSource, /assertLocalStateRoot/);
   assert.match(nodeSource, /readRegularText\(transportState/);

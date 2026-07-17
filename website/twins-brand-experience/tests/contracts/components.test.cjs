@@ -32,6 +32,29 @@ test('header exposes the approved complete navigation and CTA copy', () => {
   assert.match(html, /===\s*['"]external['"]/);
 });
 
+test('header carries a cache-independent guard against duplicate legacy chrome', () => {
+  const html = source('header.php');
+  const guard = html.match(/<style id="twins-brand-critical-chrome">([\s\S]*?)<\/style>/);
+
+  assert.ok(guard, 'header is missing its inline critical chrome guard');
+  assert.ok(
+    html.indexOf('<style id="twins-brand-critical-chrome">') < html.indexOf('<header class="twins-brand-header"'),
+    'critical chrome guard must render before the branded header',
+  );
+  assert.match(guard[1], /body:has\(\.twins-brand-header\)\s+:where\(/);
+  for (const selector of [
+    '#masthead',
+    '#colophon',
+    'header.elementor-location-header',
+    '[data-elementor-type="header"][data-elementor-id="7336"]',
+    'footer.elementor-location-footer',
+    '#menuhopin.twx2-header',
+  ]) {
+    assert.match(guard[1], new RegExp(selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  }
+  assert.match(guard[1], /display:\s*none\s*!important/);
+});
+
 test('header binds booking mode to environment and emits only exact safe external links', () => {
   const html = source('header.php');
   assert.match(html, /\$environment\s*===\s*['"]staging['"][\s\S]*?\$bookingMode\s*!==\s*['"]dialog['"]/);

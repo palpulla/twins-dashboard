@@ -190,8 +190,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/components/header.php",
       "destination": "twins-brand-experience/components/header.php",
-      "size": 6998,
-      "sha256": "f83b6d3af8416315cd086f955f92b260f95413b64f20dffbbb20d12ce731ba38"
+      "size": 7301,
+      "sha256": "b35a718536d1a591a90b13a47a800854070297e77e75ddc27ae1e6ce8886d113"
     },
     {
       "role": "deploy",

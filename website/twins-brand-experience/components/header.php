@@ -76,6 +76,16 @@ if ($environment === 'staging') {
     throw new DomainException('Booking environment is invalid.');
 }
 ?>
+<style id="twins-brand-critical-chrome">
+body:has(.twins-brand-header) :where(
+  #masthead,
+  #colophon,
+  header.elementor-location-header,
+  [data-elementor-type="header"][data-elementor-id="7336"],
+  footer.elementor-location-footer,
+  #menuhopin.twx2-header
+) { display: none !important; }
+</style>
 <header class="twins-brand-header" data-twins-header>
   <div class="twins-brand-utility">
     <details class="twins-brand-market-menu">
