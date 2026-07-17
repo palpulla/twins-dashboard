@@ -8,13 +8,15 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
 <main id="twins-overhaul-main" class="twins-brand-page twins-brand-home">
   <section class="twins-brand-hero" data-section="brand-hero">
     <div class="twins-brand-hero-copy">
+      <span class="twins-brand-offer-chip">$0 Service Call</span>
       <span class="twins-brand-kicker">Local garage door service across our communities</span>
-      <h1>Garage Door Repair & Installation, Done Right Today.</h1>
+      <h1>Garage Door <em>Repair</em> & Installation, Done Right <em>Today</em>.</h1>
       <p>Fast local service, straight answers, and upfront options from the Twins crew.</p>
       <div class="twins-brand-hero-actions">
         <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($market['phoneHref'], ENT_QUOTES, 'UTF-8') ?>">Call Twins</a>
         <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
       </div>
+      <p class="twins-brand-hero-proof"><span class="twins-brand-stars" aria-hidden="true">★★★★★</span> 5.0 on Google · Licensed and insured · Local Twins crew</p>
     </div>
     <div class="twins-brand-hero-art" aria-label="The Twins Garage Doors team">
       <img class="twins-brand-truck twins-brand-truck--hero" src="<?= htmlspecialchars($experience->asset('truck-webp'), ENT_QUOTES, 'UTF-8') ?>" width="1398" height="821" alt="Twins Garage Doors branded service truck">

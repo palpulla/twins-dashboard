@@ -90,7 +90,7 @@ body.twins-brand-experience :where(
 /* Header: a compact, branded service fascia rather than a generic site bar. */
 .twins-brand-header {
   position: sticky;
-  top: 0;
+  top: var(--twins-staging-banner-height, 0px);
   z-index: 1000;
   background: var(--twins-navy-950);
   border-bottom: 4px solid var(--twins-gold);
@@ -437,6 +437,22 @@ body.twins-brand-experience .twins-brand-footer-group h2 {
   text-shadow: 3px 4px 0 rgba(3, 18, 43, .38);
 }
 .twins-brand-hero-copy > p { max-width: 660px; margin: 0 0 30px; color: var(--twins-white); font-size: clamp(1.08rem, 1.55vw, 1.34rem); font-weight: 750; }
+.twins-brand-hero h1 em { font-style: normal; color: var(--twins-gold); }
+.twins-brand-offer-chip {
+  display: inline-block;
+  margin-bottom: 16px;
+  padding: 8px 18px;
+  background: var(--twins-gold);
+  color: var(--twins-navy-950);
+  font-weight: 900;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  border-radius: 12px;
+  transform: rotate(-2deg);
+  box-shadow: 4px 5px 0 rgba(3, 18, 43, .4);
+}
+.twins-brand-hero-proof { margin: 18px 0 0; color: var(--twins-white); font-weight: 750; }
+.twins-brand-hero-proof .twins-brand-stars { color: var(--twins-gold); letter-spacing: 3px; margin-right: 6px; }
 .twins-brand-hero-actions { display: flex; flex-wrap: wrap; gap: 18px; }
 .twins-brand-hero-actions .twins-brand-cta { min-width: 190px; }
 .twins-brand-hero-art { position: relative; align-self: stretch; min-height: 540px; }
