@@ -70,6 +70,46 @@ final class RendererHarnessRouteAdapter implements Twins\BrandExperience\RouteAd
         'team' => '/our-team/',
         'careers' => '/careers/',
         'contact' => '/contact-us/',
+        'cable-repair' => '/garage-door-cable-repair/',
+        'weatherstripping' => '/garage-weatherstripping-repair/',
+        'maintenance-plans' => '/maintenance-plans/',
+        'property-management' => '/property-management-services/',
+        'openers' => '/garage-door-openers/',
+        'service-area' => '/locations/',
+        'city-madison' => '/wi/location/madison/',
+        'city-milwaukee' => '/wi/garage-door-repair-in-milwaukee-wi/',
+        'city-belleville' => '/wi/location/belleville/',
+        'city-cottage-grove' => '/wi/location/cottage-grove/',
+        'city-cross-plains' => '/wi/location/cross-plains/',
+        'city-deerfield' => '/wi/location/deerfield/',
+        'city-deforest' => '/wi/location/deforest/',
+        'city-edgerton' => '/wi/location/edgerton/',
+        'city-evansville' => '/wi/location/evansville/',
+        'city-fitchburg' => '/wi/location/fitchburg/',
+        'city-fort-atkinson' => '/wi/location/fort-atkinson/',
+        'city-janesville' => '/wi/location/janesville/',
+        'city-marshall' => '/wi/location/marshall/',
+        'city-mcfarland' => '/wi/location/mcfarland/',
+        'city-middleton' => '/wi/location/middleton/',
+        'city-milton' => '/wi/location/milton/',
+        'city-monona' => '/wi/location/monona/',
+        'city-oregon' => '/wi/location/oregon/',
+        'city-prairie-du-sac' => '/wi/location/prairie-du-sac/',
+        'city-sun-prairie' => '/wi/location/sun-prairie/',
+        'city-verona' => '/wi/location/verona/',
+        'city-lexington' => '/ky/location/lexington/',
+        'city-rockford' => '/il/location/rockford/',
+        'city-loves-park' => '/il/location/loves-park/',
+        'city-machesney-park' => '/il/location/machesney-park/',
+        'city-belvidere' => '/il/location/belvidere/',
+        'city-roscoe' => '/il/location/roscoe/',
+        'city-rockton' => '/il/location/rockton/',
+        'city-cherry-valley' => '/il/location/cherry-valley/',
+        'city-poplar-grove' => '/il/location/poplar-grove/',
+        'city-south-beloit' => '/il/location/south-beloit/',
+        'city-winnebago' => '/il/location/winnebago/',
+        'city-byron' => '/il/location/byron/',
+        'city-caledonia' => '/il/location/caledonia/',
     ];
 
     public function normalizeContext(array $requestContext): array { return $requestContext; }
@@ -308,7 +348,8 @@ $expect(strpos($header, 'book.housecallpro.com') === false, 'staging header expo
 $expect(substr_count($header, 'data-twins-booking-open') === 2, 'dialog mode must render two button triggers');
 $expect(substr_count($header, '<button type="button" class="twins-brand-cta twins-brand-cta--book" data-twins-booking-open>Book Online</button>') === 2, 'dialog mode rendered a non-button booking action');
 $expect(substr_count($header, 'id="booking-dialog-fixture"') === 1, 'dialog experience must render exactly once');
-$expect(strpos($header, 'Illinois preview') !== false, 'staging header omitted Illinois preview');
+$expect(strpos($header, 'Illinois') !== false, 'staging header omitted Illinois');
+$expect(strpos($header, 'Private staging preview') !== false, 'staging header omitted the Illinois preview marker');
 
 [$productionExperience] = $makeExperience($verifiedCollection, $externalBookingAction);
 $productionHeader = $productionExperience->renderHeader(['environment' => 'production', 'market' => 'main']);
@@ -316,7 +357,8 @@ $expect(substr_count($productionHeader, RendererHarnessBookingAdapter::EXTERNAL_
 $expect(substr_count($productionHeader, 'target="_blank" rel="noopener noreferrer"') === 2, 'external booking actions must emit exact safe target and rel values');
 $expect(substr_count($productionHeader, 'data-twins-booking-open') === 0, 'external booking mode rendered dialog triggers');
 $expect(strpos($productionHeader, 'booking-dialog-fixture') === false, 'external booking mode rendered dialog HTML');
-$expect(strpos($productionHeader, 'Illinois preview') === false, 'production header exposed Illinois preview');
+$expect(strpos($productionHeader, 'Illinois') === false, 'production header exposed Illinois');
+$expect(strpos($productionHeader, 'Private staging preview') === false, 'production header exposed the staging preview marker');
 
 $invalidBookingCases = [
     'staging-missing-mode' => ['environment' => 'staging', 'action' => []],
@@ -586,9 +628,11 @@ foreach ($homeMarkers as $marker) {
     $expect($next !== false && $next > $homeCursor, 'home section missing or out of order: ' . $marker);
     $homeCursor = $next;
 }
-$expect(strpos($home, 'Illinois preview') !== false, 'staging home omitted Illinois preview');
+$expect(strpos($home, 'Illinois') !== false, 'staging home omitted Illinois');
+$expect(strpos($home, 'Private staging preview') !== false, 'staging home omitted the Illinois preview marker');
 $productionHome = $productionExperience->renderHome(['environment' => 'production', 'market' => 'main']);
-$expect(strpos($productionHome, 'Illinois preview') === false, 'production home exposed Illinois preview');
+$expect(strpos($productionHome, 'Illinois') === false, 'production home exposed Illinois');
+$expect(strpos($productionHome, 'Private staging preview') === false, 'production home exposed the staging preview marker');
 $expect(strpos($productionHome, 'Private staging preview') === false, 'production home exposed staging-only preview copy');
 $productionCareers = $productionExperience->renderCareers(['environment' => 'production', 'market' => 'main']);
 $expect(preg_match('/(?:staging|preview)/i', $productionCareers) === 0, 'production Careers exposed staging preview copy');

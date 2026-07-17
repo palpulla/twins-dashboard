@@ -444,8 +444,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/tests/php/renderer-contract-harness.php",
-      "size": 34805,
-      "sha256": "ff943ceff926743a482d19ec9d94ec37d3b4e2c8df274f3eda53b195dbbcb653"
+      "size": 37461,
+      "sha256": "8f63d182bde844bac83483417a2ae09a62de8206a7c57c8edeb86e8e08b0b9da"
     },
     {
       "role": "verify",
