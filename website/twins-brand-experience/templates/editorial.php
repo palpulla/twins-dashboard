@@ -8,15 +8,15 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
 $editorialKinds = [
     'location' => [
         'kicker' => 'Service-area guide',
-        'answer' => 'Review the verified location information below, then use the selected regional phone or quote path for questions about a specific garage door project.',
+        'answer' => 'Twins Garage Doors repairs and installs garage doors, springs, openers, and cables in this area. Call the local number for help today, or request a quote and the crew will follow up with straight answers and upfront options.',
     ],
     'trust' => [
         'kicker' => 'About Twins',
-        'answer' => 'Review the verified published information below, then use the selected regional contact details when your question depends on a specific property or project.',
+        'answer' => 'Twins Garage Doors is a local, licensed, and insured garage door company. The details below explain how we work. For anything specific to your home or property, call or request a quote and a real person will help.',
     ],
     'article' => [
         'kicker' => 'Garage door resource',
-        'answer' => 'Start with the published resource below, keep the details that apply to your question, and use the selected regional contact path for project-specific guidance.',
+        'answer' => 'This guide comes from the Twins team. Use what applies to your door, and leave spring or cable work to trained professionals. For help with your specific situation, call Twins or request a quote.',
     ],
 ];
 if (!isset($editorialKinds[$kind])) {
@@ -36,7 +36,7 @@ $title = isset($context['title']) && is_string($context['title']) && trim($conte
   <section class="twins-brand-editorial-answer" aria-labelledby="twins-brand-editorial-answer-title">
     <div>
       <span class="twins-brand-kicker">Direct answer</span>
-      <h2 id="twins-brand-editorial-answer-title">How to use this page</h2>
+      <h2 id="twins-brand-editorial-answer-title">What to know first</h2>
       <p><?= htmlspecialchars($editorial['answer'], ENT_QUOTES, 'UTF-8') ?></p>
     </div>
     <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call <?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>

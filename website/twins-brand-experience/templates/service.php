@@ -13,7 +13,7 @@ if (!isset($pageContent) || !is_array($pageContent)) {
     <div>
       <span class="twins-brand-kicker">Garage door service guide</span>
       <h1 id="twins-brand-service-title"><?= htmlspecialchars($pageContent['h1'], ENT_QUOTES, 'UTF-8') ?></h1>
-      <p>Start with a clear answer, review the safety guidance, and use the contact details for your selected service area.</p>
+      <p>Straight answers, safe work, and upfront options from the local Twins crew.</p>
     </div>
     <div class="twins-brand-service-hero-actions">
       <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call Twins</a>

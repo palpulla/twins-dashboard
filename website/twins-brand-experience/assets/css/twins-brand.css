@@ -277,6 +277,10 @@ body.twins-brand-experience .twins-brand-market-menu-panel small {
   text-decoration: none;
 }
 .twins-brand-nav-panel a:is(:hover, :focus-visible) { color: var(--twins-navy-950); background: var(--twins-gold); }
+.twins-brand-nav-panel--wide { min-width: 520px; grid-template-columns: repeat(2, minmax(210px, 1fr)); column-gap: 8px; }
+.twins-brand-footer-nap { display: flex; flex-direction: column; gap: 4px; margin: 12px 0 18px; font-style: normal; color: rgba(255, 255, 255, .88); }
+.twins-brand-footer-nap a { color: var(--twins-gold); text-decoration: none; }
+.twins-brand-footer-nap a:is(:hover, :focus-visible) { text-decoration: underline; }
 .twins-brand-menu-trigger { display: none; border: 2px solid var(--twins-gold); border-radius: 999px; color: var(--twins-gold); }
 
 .twins-brand-cta {

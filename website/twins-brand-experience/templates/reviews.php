@@ -10,7 +10,7 @@ $context['classification'] = 'reviews-brand';
   <section class="twins-brand-page-hero" aria-labelledby="twins-brand-reviews-page-title">
     <span class="twins-brand-kicker">Verified customer reviews</span>
     <h1 id="twins-brand-reviews-page-title">Straight from Twins customers</h1>
-    <p>Read the verified Google review collection presented in the Twins brand experience.</p>
+    <p>Real Google reviews from Twins customers across our service areas.</p>
     <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
   </section>
 

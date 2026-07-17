@@ -8,10 +8,10 @@ $collections = $isProduct ? [] : $catalogView['collections'];
 $featured = $isProduct ? [] : $catalogView['featured'];
 $builderPath = $catalogView['builderPath'];
 $heading = $isProduct ? 'Clopay ' . $product['title'] : 'Clopay garage door collections';
-$eyebrow = $isProduct ? 'Clopay manufacturer reference' : 'Frozen Clopay catalog';
+$eyebrow = 'Official Clopay dealer';
 $lead = $isProduct
-    ? 'This private staging page shows the frozen product record and local manufacturer reference images available for this collection.'
-    : 'This private staging page uses the fixed local catalog of 23 Clopay product records. Start with the three featured manufacturer references below or open the builder to compare the full frozen catalog.';
+    ? 'Explore this Clopay collection with real manufacturer imagery, then design your own combination or request a quote from the Twins team.'
+    : 'Browse Clopay garage door collections installed by Twins. Start with the featured collections below, or open the door designer to compare panels, colors, windows, and hardware.';
 $heroImage = $isProduct ? $product['showcase'] : $featured[0]['product']['showcase'];
 $factFamilies = [
     ['key' => 'designs', 'label' => 'Panels and designs'],
@@ -58,8 +58,8 @@ $escape = static function (string $value): string {
   <?php if (!$isProduct): ?>
     <section class="twins-brand-catalog-section" aria-labelledby="twins-catalog-featured">
       <div class="twins-brand-section-heading">
-        <span class="twins-brand-kicker">Featured frozen records</span>
-        <h2 id="twins-catalog-featured">Three Clopay manufacturer references</h2>
+        <span class="twins-brand-kicker">Featured collections</span>
+        <h2 id="twins-catalog-featured">Featured Clopay collections</h2>
         <p>These fixed records are Modern Steel™, Gallery® Steel, and Classic™ Steel.</p>
       </div>
       <div class="twins-brand-catalog-grid">
@@ -88,8 +88,8 @@ $escape = static function (string $value): string {
 
     <section class="twins-brand-catalog-section twins-brand-catalog-section--ordered" aria-labelledby="twins-catalog-all">
       <div class="twins-brand-section-heading">
-        <span class="twins-brand-kicker">Complete frozen catalog</span>
-        <h2 id="twins-catalog-all">All 23 frozen product records</h2>
+        <span class="twins-brand-kicker">Complete catalog</span>
+        <h2 id="twins-catalog-all">All Clopay collections</h2>
         <p>The records below follow the fixed catalog order used by the builder.</p>
       </div>
       <div class="twins-brand-catalog-grid">
@@ -113,8 +113,8 @@ $escape = static function (string $value): string {
   <?php else: ?>
     <section class="twins-brand-catalog-section" aria-labelledby="twins-catalog-record">
       <div class="twins-brand-section-heading">
-        <span class="twins-brand-kicker">Frozen product facts</span>
-        <h2 id="twins-catalog-record">What the frozen record includes</h2>
+        <span class="twins-brand-kicker">Product facts</span>
+        <h2 id="twins-catalog-record">What this collection offers</h2>
         <p>Counts below come directly from the fixed local record for <?= $escape($product['title']) ?>.</p>
       </div>
       <dl class="twins-brand-catalog-facts twins-brand-catalog-facts--large">
@@ -128,7 +128,7 @@ $escape = static function (string $value): string {
       <div class="twins-brand-section-heading">
         <span class="twins-brand-kicker">Construction and design labels</span>
         <h2 id="twins-catalog-designs">Panels and designs</h2>
-        <p>These labels are copied from the frozen product record.</p>
+        <p>These options come straight from the manufacturer product record.</p>
       </div>
       <?php if ($product['designs'] !== []): ?>
         <ul class="twins-brand-catalog-labels">
@@ -137,15 +137,15 @@ $escape = static function (string $value): string {
           <?php endforeach; ?>
         </ul>
       <?php else: ?>
-        <p>The frozen record does not list panel or design choices for this product.</p>
+        <p>The manufacturer record does not list panel or design choices for this product.</p>
       <?php endif; ?>
     </section>
 
     <section class="twins-brand-catalog-section" aria-labelledby="twins-catalog-selections">
       <div class="twins-brand-section-heading">
-        <span class="twins-brand-kicker">Frozen option samples</span>
+        <span class="twins-brand-kicker">Option samples</span>
         <h2 id="twins-catalog-selections">Selection references</h2>
-        <p>The first three labels in each non-empty family are shown below. Open the builder to compare every frozen option.</p>
+        <p>A sample of available options is shown below. Open the door designer to compare every option in this collection.</p>
       </div>
       <div class="twins-brand-catalog-selection-grid">
         <?php foreach ($selectionFamilies as $family): ?>
@@ -158,7 +158,7 @@ $escape = static function (string $value): string {
                 <?php endforeach; ?>
               </ul>
             <?php else: ?>
-              <p>No <?= $escape($family['empty']) ?> records are listed in this frozen product record.</p>
+              <p>No <?= $escape($family['empty']) ?> options are listed for this collection.</p>
             <?php endif; ?>
           </article>
         <?php endforeach; ?>
@@ -168,9 +168,9 @@ $escape = static function (string $value): string {
     <?php if ($gallery !== []): ?>
       <section class="twins-brand-catalog-section twins-brand-catalog-section--gallery" aria-labelledby="twins-catalog-gallery">
         <div class="twins-brand-section-heading">
-          <span class="twins-brand-kicker">Frozen local files</span>
+          <span class="twins-brand-kicker">Reference gallery</span>
           <h2 id="twins-catalog-gallery">Local manufacturer reference images</h2>
-          <p>These local files are reference images from the frozen catalog. Twins confirms the final appearance before ordering.</p>
+          <p>These are manufacturer reference images. Twins confirms the final appearance before ordering.</p>
         </div>
         <div class="twins-brand-catalog-gallery">
           <?php foreach ($gallery as $photo): ?>
@@ -194,7 +194,7 @@ $escape = static function (string $value): string {
       <div>
         <span class="twins-brand-kicker">Continue with Twins</span>
         <h2 id="twins-catalog-builder">Compare this product in the door builder</h2>
-        <p>Open the private builder to compare the product and the selection references present in this frozen record.</p>
+        <p>Open the door designer to try this collection with the panel, color, window, and hardware options you want.</p>
       </div>
       <div class="twins-brand-catalog-actions">
         <a class="twins-brand-cta twins-brand-cta--quote" href="<?= $escape($builderPath) ?>">Design This Door</a>

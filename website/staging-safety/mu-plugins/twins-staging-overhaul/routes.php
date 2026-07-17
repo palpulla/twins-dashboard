@@ -164,12 +164,12 @@ function twins_overhaul_classify_request(int $blogId, string $path, string $post
     }
 
     $builders = array(
-        1 => '/door-builder',
-        3 => '/ky/design-your-door',
-        4 => '/wi/door-builder',
-        5 => '/il/door-builder',
+        1 => array('/door-builder', '/design-your-door'),
+        3 => array('/ky/design-your-door'),
+        4 => array('/wi/door-builder'),
+        5 => array('/il/door-builder'),
     );
-    if (rtrim($path, '/') === $builders[$blogId]) {
+    if (in_array(rtrim($path, '/'), $builders[$blogId], true)) {
         return 'builder';
     }
 

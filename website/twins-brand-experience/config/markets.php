@@ -30,7 +30,7 @@ return [
         'preview' => false,
     ],
     'il-preview' => [
-        'label' => 'Illinois preview',
+        'label' => 'Illinois',
         'phoneDisplay' => '(815) 800-2025',
         'phoneHref' => 'tel:+18158002025',
         'routePrefix' => '/il/',

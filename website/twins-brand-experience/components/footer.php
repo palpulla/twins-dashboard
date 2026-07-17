@@ -1,51 +1,14 @@
 <?php
 declare(strict_types=1);
 
-$footerServiceAreas = [];
-foreach ($experience->markets()->all($environment) as $key => $availableMarket) {
-    if ($key === 'main') continue;
-    $footerServiceAreas[] = [$availableMarket['label'], $key];
-}
-
-$footerServiceItems = [
-    ['All Services', 'services'],
-    ['Garage Door Repair', 'repair'],
-    ['Garage Door Installation', 'installation'],
-    ['Spring Repair', 'spring-repair'],
-    ['Opener Repair', 'opener-repair'],
-    ['Emergency Service', 'emergency-service'],
-];
-if ($marketKey === 'il-preview') {
-    $footerServiceItems = array_values(array_filter(
-        $footerServiceItems,
-        static fn(array $item): bool => $item[1] !== 'spring-repair'
-    ));
-}
+require __DIR__ . '/nav-data.php';
 
 $footerGroups = [
-    'Services' => $footerServiceItems,
-    'Garage Doors' => [
-        ['Garage Door Collections', 'garage-doors'],
-        ['Classic Collection', 'classic-collection'],
-        ['Modern Steel', 'modern-steel'],
-        ['Gallery Steel', 'gallery-steel'],
-        ['Design Your Door', 'door-builder'],
-    ],
-    'Service Areas' => $footerServiceAreas,
-    'Resources' => [
-        ['Reviews', 'reviews'],
-        ['Wisconsin Garage Door Cost Guide', 'cost-guide'],
-        ['Financing', 'financing'],
-        ['Offers', 'offers'],
-        ['Frequently Asked Questions', 'faqs'],
-        ['Blog', 'blog'],
-    ],
-    'About' => [
-        ['About Twins', 'about'],
-        ['Our Team', 'team'],
-        ['Careers', 'careers'],
-        ['Contact Us', 'contact'],
-    ],
+    'Services' => $serviceItems,
+    'Garage Doors' => $garageDoorItems,
+    'Service Areas' => $serviceAreas,
+    'Resources' => $resourceItems,
+    'About' => $aboutItems,
 ];
 
 if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '') {
@@ -59,6 +22,12 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
     </a>
     <p>Local garage door service from a team that treats your home like our own.</p>
     <a class="twins-brand-phone" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
+    <address class="twins-brand-footer-nap">
+      <span>Twins Garage Doors</span>
+      <span>Madison, Wisconsin</span>
+      <a href="mailto:contact@twinsgaragedoors.com">contact@twinsgaragedoors.com</a>
+      <span>Licensed and insured</span>
+    </address>
     <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
   </div>
   <nav class="twins-brand-footer-nav" aria-label="Footer navigation">

@@ -1,51 +1,14 @@
 <?php
 declare(strict_types=1);
 
-$serviceAreas = [];
-foreach ($experience->markets()->all($environment) as $key => $availableMarket) {
-    if ($key === 'main') continue;
-    $serviceAreas[] = [$availableMarket['label'], $key];
-}
-
-$serviceItems = [
-    ['All Services', 'services'],
-    ['Garage Door Repair', 'repair'],
-    ['Garage Door Installation', 'installation'],
-    ['Spring Repair', 'spring-repair'],
-    ['Opener Repair', 'opener-repair'],
-    ['Emergency Service', 'emergency-service'],
-];
-if ($marketKey === 'il-preview') {
-    $serviceItems = array_values(array_filter(
-        $serviceItems,
-        static fn(array $item): bool => $item[1] !== 'spring-repair'
-    ));
-}
+require __DIR__ . '/nav-data.php';
 
 $nav = [
     'Services' => $serviceItems,
-    'Garage Doors' => [
-        ['Garage Door Collections', 'garage-doors'],
-        ['Classic Collection', 'classic-collection'],
-        ['Modern Steel', 'modern-steel'],
-        ['Gallery Steel', 'gallery-steel'],
-        ['Design Your Door', 'door-builder'],
-    ],
+    'Garage Doors' => $garageDoorItems,
     'Service Areas' => $serviceAreas,
-    'Resources' => [
-        ['Reviews', 'reviews'],
-        ['Wisconsin Garage Door Cost Guide', 'cost-guide'],
-        ['Financing', 'financing'],
-        ['Offers', 'offers'],
-        ['Frequently Asked Questions', 'faqs'],
-        ['Blog', 'blog'],
-    ],
-    'About' => [
-        ['About Twins', 'about'],
-        ['Our Team', 'team'],
-        ['Careers', 'careers'],
-        ['Contact Us', 'contact'],
-    ],
+    'Resources' => $resourceItems,
+    'About' => $aboutItems,
 ];
 
 if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '') {
@@ -113,7 +76,7 @@ body:has(.twins-brand-header) :where(
       <?php foreach ($nav as $group => $items): ?>
         <div class="twins-brand-nav-group">
           <button type="button" class="twins-brand-nav-trigger" aria-expanded="false"><?= htmlspecialchars($group, ENT_QUOTES, 'UTF-8') ?></button>
-          <div class="twins-brand-nav-panel">
+          <div class="twins-brand-nav-panel<?= count($items) > 8 ? ' twins-brand-nav-panel--wide' : '' ?>">
             <?php foreach ($items as [$label, $routeKey]): ?>
               <a href="<?= htmlspecialchars($experience->route($routeKey, $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($experience->contextualRouteLabel($routeKey, $marketKey, $label), ENT_QUOTES, 'UTF-8') ?></a>
             <?php endforeach; ?>
