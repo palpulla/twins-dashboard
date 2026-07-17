@@ -824,7 +824,7 @@ if (in_array($scenario, ['service-brand-chrome', 'catalog-brand-chrome'], true))
         $legacyOverview = '<section data-twins-original-content><h1>Legacy catalog</h1><iframe src="https://remote.example"></iframe><form action="/lead"><button type="submit">Send</button></form></section>';
         $renderedOverview = twins_overhaul_render_classified_content($classification, $context, $legacyOverview);
         twins_overhaul_renderer_assert(substr_count($renderedOverview, '<h1') === 1, 'catalog overview H1 count changed');
-        twins_overhaul_renderer_assert(strpos($renderedOverview, 'All 23 frozen product records') !== false, 'catalog overview lost the fixed ordered catalog');
+        twins_overhaul_renderer_assert(strpos($renderedOverview, 'All Clopay collections') !== false, 'catalog overview lost the fixed ordered catalog');
         twins_overhaul_renderer_assert(strpos($renderedOverview, 'Modern Steel') !== false, 'catalog overview lost the first featured record');
         twins_overhaul_renderer_assert(strpos($renderedOverview, 'Gallery') !== false, 'catalog overview lost the second featured record');
         twins_overhaul_renderer_assert(strpos($renderedOverview, 'Classic') !== false, 'catalog overview lost the third featured record');

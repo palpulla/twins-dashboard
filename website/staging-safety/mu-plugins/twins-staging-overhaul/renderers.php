@@ -1365,6 +1365,9 @@ function twins_overhaul_render_classified_content(string $classification, array 
  * @return string
  */
 function twins_overhaul_brand_schema_markup(string $classification, array $context): string {
+    if (!function_exists('get_current_blog_id') || !function_exists('home_url')) {
+        return '';
+    }
     $regions = twins_overhaul_regions();
     $blogId = (int) get_current_blog_id();
     if (!isset($regions[$blogId])) {
@@ -1460,7 +1463,9 @@ function twins_overhaul_brand_schema_markup(string $classification, array $conte
     if ($schema === null) {
         return '';
     }
-    $json = wp_json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    $json = function_exists('wp_json_encode')
+        ? wp_json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+        : json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     if (!is_string($json) || $json === '' || stripos($json, '<') !== false) {
         return '';
     }
