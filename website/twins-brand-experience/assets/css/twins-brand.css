@@ -1416,3 +1416,4 @@ body.single-post main.twins-brand-page { width: 100% !important; max-width: 100%
 .twins-builder__door-art svg { width: 100%; height: auto; display: block; }
 .twins-brand-icon-row--start { justify-content: flex-start; margin: 0 0 20px; }
 .twins-brand-blog-hero .twins-brand-icon-row .twins-brand-door-art { opacity: .85; }
+body.twins-brand-experience .twins-brand-preview-form .twins-brand-kicker { color: var(--twins-gold); }
