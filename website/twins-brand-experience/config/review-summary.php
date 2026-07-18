@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 return [
     'ratingValue' => 4.9,
-    'reviewCountFloor' => 675,
-    'displayCount' => '675+',
+    'reviewCountFloor' => 699,
+    'displayCount' => '699',
     'checkedAt' => '2026-07-17',
 ];

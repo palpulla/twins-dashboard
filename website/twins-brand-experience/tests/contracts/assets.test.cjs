@@ -17,7 +17,7 @@ test('owned originals remain exact and every derivative is manifested', () => {
   for (const [file, sha] of Object.entries(originals)) assert.equal(digest(file), sha, file);
   const manifest = JSON.parse(fs.readFileSync(path.join(root, 'assets/owned-assets.provenance.json'), 'utf8'));
   assert.equal(manifest.schemaVersion, 1);
-  assert.deepEqual(manifest.assets.map(a => a.logicalName), ['crew-fleet', 'tal-portrait', 'technician-at-work']);
+  assert.deepEqual(manifest.assets.map(a => a.logicalName), ['crew-fleet', 'tal-portrait', 'technician-at-work', 'daniel-portrait', 'charles-portrait', 'maurice-portrait', 'nicholas-portrait']);
   assert.deepEqual(manifest.brandAssets.map(a => a.logicalName), ['logo', 'twin-left', 'twin-right', 'truck-original', 'truck-webp']);
   assert.equal(manifest.doorBuilderAssets.length, 1);
   assert.equal(manifest.doorBuilderAssets[0].logicalName, 'door-builder-before-after');

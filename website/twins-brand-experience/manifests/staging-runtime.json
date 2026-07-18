@@ -15,8 +15,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/assets/css/twins-brand.css",
       "destination": "twins-brand-experience/assets/css/twins-brand.css",
-      "size": 59845,
-      "sha256": "04861009f8085e123f4d0931ee66b86b68c7bcc459d7158fdda25a3931cfd40f"
+      "size": 61271,
+      "sha256": "bf1d2e9bc31a76247ee74a14e840a567b8d7b6645d99e3ac3ff91a135f00e85d"
     },
     {
       "role": "deploy",
@@ -73,6 +73,118 @@
       "destination": "twins-brand-experience/assets/images/door-builder/twins-before-after-install.webp",
       "size": 149790,
       "sha256": "e9a0b6c0d5c1a25b711103a132647ab50cbb4c9b3b120c97124f000537d6e346"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/assets/images/team/charles-rue-1066w.webp",
+      "destination": "twins-brand-experience/assets/images/team/charles-rue-1066w.webp",
+      "size": 76670,
+      "sha256": "4bc08c4874b1fa00837a3be5ef0d2fea18b2e78393069ba7a40c6ad547ef5702"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/assets/images/team/charles-rue-480w.webp",
+      "destination": "twins-brand-experience/assets/images/team/charles-rue-480w.webp",
+      "size": 27008,
+      "sha256": "c85b7c8d3c78a1c382937f769c39cedeaa9b4d6f6d82883f1dacadc662131ed2"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/assets/images/team/charles-rue-768w.webp",
+      "destination": "twins-brand-experience/assets/images/team/charles-rue-768w.webp",
+      "size": 50166,
+      "sha256": "ec2d2b3002c8d459734aebb13e42582fa8978c445e938e8fdabbfcc65b1d99ca"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/assets/images/team/charles-rue.jpeg",
+      "destination": "twins-brand-experience/assets/images/team/charles-rue.jpeg",
+      "size": 315519,
+      "sha256": "b85e488f5c4971719c03427e3c8d03e4c4861f9e2f03546c766aaf61e1c83a1e"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/assets/images/team/daniel-joseph-1066w.webp",
+      "destination": "twins-brand-experience/assets/images/team/daniel-joseph-1066w.webp",
+      "size": 65546,
+      "sha256": "3b6b729e731cb475871f95d3db82926f24c5706c5e45d10c11ed53bc4eb03c49"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/assets/images/team/daniel-joseph-480w.webp",
+      "destination": "twins-brand-experience/assets/images/team/daniel-joseph-480w.webp",
+      "size": 21044,
+      "sha256": "16c1399e5b58545456eaa948d1a9b62c2c57fd8821b43cb07711b0cf628baa66"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/assets/images/team/daniel-joseph-768w.webp",
+      "destination": "twins-brand-experience/assets/images/team/daniel-joseph-768w.webp",
+      "size": 41458,
+      "sha256": "7136f4e5a8e2d2088f082ceb9429ca10576e08a9a45c462dd6deaaf3ff34f98e"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/assets/images/team/daniel-joseph.jpeg",
+      "destination": "twins-brand-experience/assets/images/team/daniel-joseph.jpeg",
+      "size": 267102,
+      "sha256": "aacdc82f5b05b3324bf7114be07d26db2b9e1a396457ee46f857611eb47168eb"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/assets/images/team/maurice-williams-1066w.webp",
+      "destination": "twins-brand-experience/assets/images/team/maurice-williams-1066w.webp",
+      "size": 91426,
+      "sha256": "72239aab1d8f865c91bb16c2ad47968546895e63b5fefea88c02e2a9fdbdd108"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/assets/images/team/maurice-williams-480w.webp",
+      "destination": "twins-brand-experience/assets/images/team/maurice-williams-480w.webp",
+      "size": 30186,
+      "sha256": "0508b19932a0b37915dd9d5469386b58fefd37cacb937ee4f4ded676111e9353"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/assets/images/team/maurice-williams-768w.webp",
+      "destination": "twins-brand-experience/assets/images/team/maurice-williams-768w.webp",
+      "size": 56966,
+      "sha256": "e44177775a1a2dc533c5fa62a5d696b6fdd03311781f5a32e925f4b1cb6d13b5"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/assets/images/team/maurice-williams.jpeg",
+      "destination": "twins-brand-experience/assets/images/team/maurice-williams.jpeg",
+      "size": 194588,
+      "sha256": "bbf688d25a38490b7b99665ee56f3f68084ac3842cfea53961c37cea53704774"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/assets/images/team/nicholas-roccaforte-1066w.webp",
+      "destination": "twins-brand-experience/assets/images/team/nicholas-roccaforte-1066w.webp",
+      "size": 76158,
+      "sha256": "db81b67e9d8ec3bad55d19ae7e7bc669d981f88213e39f92346968ce7031c4c2"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/assets/images/team/nicholas-roccaforte-480w.webp",
+      "destination": "twins-brand-experience/assets/images/team/nicholas-roccaforte-480w.webp",
+      "size": 34320,
+      "sha256": "d99e9b2cbce49f5bfebce04b5eb07604eb3ad2596e80522102a7b9081a7dbfe5"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/assets/images/team/nicholas-roccaforte-768w.webp",
+      "destination": "twins-brand-experience/assets/images/team/nicholas-roccaforte-768w.webp",
+      "size": 62076,
+      "sha256": "6cb9514fbd28237f32cc2d4b2a18fb0dde5bcf6cf00b19e6dbb567e385b99e2c"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/assets/images/team/nicholas-roccaforte.jpeg",
+      "destination": "twins-brand-experience/assets/images/team/nicholas-roccaforte.jpeg",
+      "size": 119855,
+      "sha256": "cfa81c1377ce55de71e5df60d27550b37786c6690c12eb0ab0664b6416d9bdc2"
     },
     {
       "role": "deploy",
@@ -204,8 +316,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/components/picture.php",
       "destination": "twins-brand-experience/components/picture.php",
-      "size": 2129,
-      "sha256": "a5175049aa78f8d0ca0de5797ee4ca4cdf4e4f030cf573c3f9980b789e84e5c5"
+      "size": 3427,
+      "sha256": "a99c9e80cfb120388622f8ee2462a2dfa1a7c2c09665e5447db6f6665c76f24c"
     },
     {
       "role": "deploy",
@@ -239,8 +351,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/config/review-summary.php",
       "destination": "twins-brand-experience/config/review-summary.php",
-      "size": 550,
-      "sha256": "de72b59fdf200bb36123b53d120ba090b8fe802bc2889d3d16d7c9ecc42c2eeb"
+      "size": 549,
+      "sha256": "5e66465336ac3aa106d753321d235390956255e82835b9f5bf7293018f12dd53"
     },
     {
       "role": "deploy",
@@ -316,8 +428,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/templates/home.php",
       "destination": "twins-brand-experience/templates/home.php",
-      "size": 9045,
-      "sha256": "236925501cf34fbde99471736ddcf87486224bf4f2de02d6581da72e22b5121a"
+      "size": 9044,
+      "sha256": "96911ab39f8fdb6aadcfaded1d0e3312f8209f5e6c220a92ad411432bc4d64ad"
     },
     {
       "role": "deploy",
@@ -337,8 +449,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/templates/team.php",
       "destination": "twins-brand-experience/templates/team.php",
-      "size": 4060,
-      "sha256": "833e2f942d8848598e4e2b76e1d49db4ae04d90186933e5d3364b280ebce7ebe"
+      "size": 9978,
+      "sha256": "e19c661b87866c72e99e58168741ba5d70516dcf9c91a90327be9d6ba65dd1b7"
     },
     {
       "role": "verify-prerequisite",
@@ -5972,8 +6084,8 @@
       "role": "deploy",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/adapters/BrandStagingAdapters.php",
       "destination": "twins-staging-overhaul/adapters/BrandStagingAdapters.php",
-      "size": 18473,
-      "sha256": "a3b08ff6587f1b42425a88d5c136a915acc24768b65e320582c2be2c75a00679"
+      "size": 19801,
+      "sha256": "44d9ecb5f7ceb29b4599ce588d387cd562d2ef95115e173739f8a51f4631eef3"
     },
     {
       "role": "deploy",

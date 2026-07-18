@@ -49,9 +49,13 @@ test('homepage has deterministic desktop and mobile truck placements', () => {
 test('supporting journeys preserve approved copy and adapter boundaries', () => {
   const team = template('team.php');
   assert.match(team, /Tal Joseph/);
-  assert.match(team, /technician-at-work/);
+  assert.match(team, /Daniel Joseph/);
+  assert.match(team, /Charles Rue/);
+  assert.match(team, /Maurice Williams/);
+  assert.match(team, /Nicholas Roccaforte/);
+  assert.match(team, /daniel-portrait/);
+  assert.match(team, /charles-portrait/);
   assert.match(team, /Careers/);
-  assert.match(team, /data-section="company-story"/);
 
   const careers = template('careers.php');
   for (const anchor of ['#why-twins', '#roles', '#process', '#apply']) assert.match(careers, new RegExp(anchor));

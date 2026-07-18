@@ -236,6 +236,170 @@
           "height": 570
         }
       ]
+    },
+    {
+      "logicalName": "daniel-portrait",
+      "importLocator": "https://twinsgaragedoors.com/wp-content/uploads/2026/05/Gemini_Generated_Image_8ry9ar8ry9ar8ry9-1.jpg",
+      "sourceEvidence": "owner-published production /our-team/ page, captured 2026-07-17",
+      "original": {
+        "path": "assets/images/team/daniel-joseph.jpeg",
+        "sha256": "aacdc82f5b05b3324bf7114be07d26db2b9e1a396457ee46f857611eb47168eb",
+        "mime": "image/jpeg",
+        "width": 1254,
+        "height": 1673
+      },
+      "approvedAlt": "Twins Garage Doors co-founder and CEO Daniel Joseph",
+      "allowedUse": [
+        "home",
+        "careers",
+        "team"
+      ],
+      "derivatives": [
+        {
+          "path": "assets/images/team/daniel-joseph-480w.webp",
+          "sha256": "16c1399e5b58545456eaa948d1a9b62c2c57fd8821b43cb07711b0cf628baa66",
+          "mime": "image/webp",
+          "width": 480,
+          "height": 640
+        },
+        {
+          "path": "assets/images/team/daniel-joseph-768w.webp",
+          "sha256": "7136f4e5a8e2d2088f082ceb9429ca10576e08a9a45c462dd6deaaf3ff34f98e",
+          "mime": "image/webp",
+          "width": 768,
+          "height": 1025
+        },
+        {
+          "path": "assets/images/team/daniel-joseph-1066w.webp",
+          "sha256": "3b6b729e731cb475871f95d3db82926f24c5706c5e45d10c11ed53bc4eb03c49",
+          "mime": "image/webp",
+          "width": 1066,
+          "height": 1422
+        }
+      ]
+    },
+    {
+      "logicalName": "charles-portrait",
+      "importLocator": "https://twinsgaragedoors.com/wp-content/uploads/2026/05/charles-rue-twins-garage-doors.jpg",
+      "sourceEvidence": "owner-published production /our-team/ page, captured 2026-07-17",
+      "original": {
+        "path": "assets/images/team/charles-rue.jpeg",
+        "sha256": "b85e488f5c4971719c03427e3c8d03e4c4861f9e2f03546c766aaf61e1c83a1e",
+        "mime": "image/jpeg",
+        "width": 1600,
+        "height": 1322
+      },
+      "approvedAlt": "Twins Garage Doors field operations manager Charles Rue",
+      "allowedUse": [
+        "home",
+        "careers",
+        "team"
+      ],
+      "derivatives": [
+        {
+          "path": "assets/images/team/charles-rue-480w.webp",
+          "sha256": "c85b7c8d3c78a1c382937f769c39cedeaa9b4d6f6d82883f1dacadc662131ed2",
+          "mime": "image/webp",
+          "width": 480,
+          "height": 397
+        },
+        {
+          "path": "assets/images/team/charles-rue-768w.webp",
+          "sha256": "ec2d2b3002c8d459734aebb13e42582fa8978c445e938e8fdabbfcc65b1d99ca",
+          "mime": "image/webp",
+          "width": 768,
+          "height": 635
+        },
+        {
+          "path": "assets/images/team/charles-rue-1066w.webp",
+          "sha256": "4bc08c4874b1fa00837a3be5ef0d2fea18b2e78393069ba7a40c6ad547ef5702",
+          "mime": "image/webp",
+          "width": 1066,
+          "height": 881
+        }
+      ]
+    },
+    {
+      "logicalName": "maurice-portrait",
+      "importLocator": "https://twinsgaragedoors.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-07-at-13.28.13-1.jpeg",
+      "sourceEvidence": "owner-published production /our-team/ page, captured 2026-07-17",
+      "original": {
+        "path": "assets/images/team/maurice-williams.jpeg",
+        "sha256": "bbf688d25a38490b7b99665ee56f3f68084ac3842cfea53961c37cea53704774",
+        "mime": "image/jpeg",
+        "width": 1448,
+        "height": 1086
+      },
+      "approvedAlt": "Twins Garage Doors senior technician Maurice Williams",
+      "allowedUse": [
+        "home",
+        "careers",
+        "team"
+      ],
+      "derivatives": [
+        {
+          "path": "assets/images/team/maurice-williams-480w.webp",
+          "sha256": "0508b19932a0b37915dd9d5469386b58fefd37cacb937ee4f4ded676111e9353",
+          "mime": "image/webp",
+          "width": 480,
+          "height": 360
+        },
+        {
+          "path": "assets/images/team/maurice-williams-768w.webp",
+          "sha256": "e44177775a1a2dc533c5fa62a5d696b6fdd03311781f5a32e925f4b1cb6d13b5",
+          "mime": "image/webp",
+          "width": 768,
+          "height": 576
+        },
+        {
+          "path": "assets/images/team/maurice-williams-1066w.webp",
+          "sha256": "72239aab1d8f865c91bb16c2ad47968546895e63b5fefea88c02e2a9fdbdd108",
+          "mime": "image/webp",
+          "width": 1066,
+          "height": 800
+        }
+      ]
+    },
+    {
+      "logicalName": "nicholas-portrait",
+      "importLocator": "https://twinsgaragedoors.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-04-30-at-10.30.33-1.jpeg",
+      "sourceEvidence": "owner-published production /our-team/ page, captured 2026-07-17",
+      "original": {
+        "path": "assets/images/team/nicholas-roccaforte.jpeg",
+        "sha256": "cfa81c1377ce55de71e5df60d27550b37786c6690c12eb0ab0664b6416d9bdc2",
+        "mime": "image/jpeg",
+        "width": 900,
+        "height": 1600
+      },
+      "approvedAlt": "Twins Garage Doors technician Nicholas Roccaforte",
+      "allowedUse": [
+        "home",
+        "careers",
+        "team"
+      ],
+      "derivatives": [
+        {
+          "path": "assets/images/team/nicholas-roccaforte-480w.webp",
+          "sha256": "d99e9b2cbce49f5bfebce04b5eb07604eb3ad2596e80522102a7b9081a7dbfe5",
+          "mime": "image/webp",
+          "width": 480,
+          "height": 853
+        },
+        {
+          "path": "assets/images/team/nicholas-roccaforte-768w.webp",
+          "sha256": "6cb9514fbd28237f32cc2d4b2a18fb0dde5bcf6cf00b19e6dbb567e385b99e2c",
+          "mime": "image/webp",
+          "width": 768,
+          "height": 1365
+        },
+        {
+          "path": "assets/images/team/nicholas-roccaforte-1066w.webp",
+          "sha256": "db81b67e9d8ec3bad55d19ae7e7bc669d981f88213e39f92346968ce7031c4c2",
+          "mime": "image/webp",
+          "width": 900,
+          "height": 1600
+        }
+      ]
     }
   ]
 }
