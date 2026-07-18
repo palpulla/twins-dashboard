@@ -110,6 +110,33 @@ $escape = static function (string $value): string {
         <?php endforeach; ?>
       </div>
     </section>
+    <section class="twins-brand-catalog-section" aria-labelledby="twins-catalog-compare">
+      <div class="twins-brand-section-heading">
+        <span class="twins-brand-kicker">Compare at a glance</span>
+        <h2 id="twins-catalog-compare">Which collection fits your home?</h2>
+        <p>Option counts come straight from each manufacturer record. Open a collection or the door designer to see every choice.</p>
+      </div>
+      <div class="twins-brand-catalog-compare-scroll">
+        <table class="twins-brand-catalog-compare">
+          <thead>
+            <tr><th scope="col">Collection</th><th scope="col">Panels and designs</th><th scope="col">Colors</th><th scope="col">Windows</th><th scope="col">Glass</th><th scope="col">Hardware</th></tr>
+          </thead>
+          <tbody>
+            <?php foreach ($collections as $record): ?>
+              <?php $compareProduct = $record['product']; ?>
+              <tr>
+                <th scope="row"><a href="<?= $escape($record['path']) ?>"><?= $escape($compareProduct['title']) ?></a></th>
+                <td><?= $escape((string) count($compareProduct['designs'])) ?></td>
+                <td><?= $escape((string) count($compareProduct['colors'])) ?></td>
+                <td><?= $escape((string) count($compareProduct['windows'])) ?></td>
+                <td><?= $escape((string) count($compareProduct['glass'])) ?></td>
+                <td><?= $escape((string) count($compareProduct['hardware'])) ?></td>
+              </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+    </section>
   <?php else: ?>
     <section class="twins-brand-catalog-section" aria-labelledby="twins-catalog-record">
       <div class="twins-brand-section-heading">

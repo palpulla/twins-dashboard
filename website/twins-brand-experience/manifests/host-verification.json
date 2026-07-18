@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "remoteDirectory": "/home/customer/staging-safety/staging-remediation-r6-20260717/verification/",
+  "remoteDirectory": "/home/customer/staging-safety/staging-remediation-r7-20260717/verification/",
   "productionWriteAuthority": false,
   "files": [
     {
@@ -210,8 +210,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/assets/css/twins-brand.css",
-      "size": 61271,
-      "sha256": "bf1d2e9bc31a76247ee74a14e840a567b8d7b6645d99e3ac3ff91a135f00e85d"
+      "size": 62590,
+      "sha256": "fca98b38b19d1bc1a73482e1142f4ef85101d56203ef44cd74ebb58f2b065c29"
     },
     {
       "role": "verify",
@@ -295,7 +295,7 @@
       "role": "verify",
       "source": "twins-brand-experience/manifests/staging-runtime.json",
       "size": 363944,
-      "sha256": "e375926c87a3c18e8afd4746333c124d7a590f7f340ab4a7fb2545a7e518e145"
+      "sha256": "29400070838f3b5cbfeeeabd096669896cf3e4c996e9c5ae829461bd081e0d90"
     },
     {
       "role": "verify",
@@ -336,8 +336,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/templates/catalog.php",
-      "size": 10375,
-      "sha256": "2d2acb95c1f8c5cc4aa7f72a7b545c3391a094148f46048643117d2bae7539cf"
+      "size": 11964,
+      "sha256": "4078f66404f7dde8731f0c5a39260fbf71c7fa0a47f8caaa6d967d0352ff2ee9"
     },
     {
       "role": "verify",
@@ -354,8 +354,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/templates/home.php",
-      "size": 9044,
-      "sha256": "96911ab39f8fdb6aadcfaded1d0e3312f8209f5e6c220a92ad411432bc4d64ad"
+      "size": 9109,
+      "sha256": "c5cda2437631acd38030aa12461b9f6ef945798a37b0cefec7a907ce15b909ea"
     },
     {
       "role": "verify",
@@ -469,7 +469,7 @@
       "role": "verify",
       "source": "twins-brand-experience/tools/private-staging-deploy.php",
       "size": 69391,
-      "sha256": "d14979a40c15482b81a18d125390d44fe36e77066ec00a691f050a6ed1999c73"
+      "sha256": "5693777b384e8e25782ab1bee1a14e110ef6492ed2523c0f86dc3a9e04921f1a"
     }
   ]
 }

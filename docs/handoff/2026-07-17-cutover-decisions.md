@@ -54,3 +54,19 @@ These bind the production cutover engineering for the site overhaul on branch
   image matrix.
 - Hormann line: keep (page redesign) or retire (redirect at cutover).
 - IL phone forwarding evidence.
+
+## Blog prune list (PENDING OWNER YES/NO)
+
+Off-topic posts proposed for removal + 301 to /blog/ at cutover (keep the two
+smart-garage-door posts; they are opener-adjacent):
+
+- /the-benefits-of-regular-hvac-system-maintenance/
+- /top-10-energy-saving-tips-for-lowering-your-utility-bills/
+- /simple-steps-to-declutter-and-organize-your-garage/
+- /looking-for-home-reno-expert/
+- /the-ultimate-guide-to-choosing-the-right-paint-colors-for-your-home/
+- /how-to-permanently-repair-a-garage-floor-crack/
+- /keeping-your-home-clutter-free/
+- /air-filters-and-their-impact-on-your-health/
+- /the-future-of-home-automation/
+- /home-improvement-trends-enhancing-your-living-spaces/

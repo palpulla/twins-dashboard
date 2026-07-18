@@ -6,7 +6,7 @@ final class TwinsPrivateStagingDeploy
     private const APPLICATION_IDENTITY = 'https://danielj140.sg-host.com/';
     private const ENVIRONMENT = 'staging';
     private const WEB_ROOT = '/home/customer/www/danielj140.sg-host.com/public_html';
-    private const TRANSACTION_ROOT = '/home/customer/staging-safety/staging-remediation-r6-20260717';
+    private const TRANSACTION_ROOT = '/home/customer/staging-safety/staging-remediation-r7-20260717';
     private const MAX_FILES = 4096;
     private const MAX_FILE_SIZE = 67108864;
     private const HOST_VERIFICATION_SCENARIOS = [
