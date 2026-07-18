@@ -8,16 +8,23 @@ if (!defined('ABSPATH')) {
 
 function twins_brand_staging_quote_preview(): string
 {
-    return '<div class="twins-brand-preview-form" role="form" aria-labelledby="twins-brand-quote-form-title" data-preview-kind="quote">'
-        . '<h3 id="twins-brand-quote-form-title">Tell us what you need</h3>'
-        . '<label>Full name <input type="text" autocomplete="name"></label>'
+    return '<div class="twins-brand-preview-form twins-brand-callback-form" role="form" aria-labelledby="twins-brand-quote-form-title" data-preview-kind="quote">'
+        . '<span class="twins-brand-kicker">Fast response</span>'
+        . '<h3 id="twins-brand-quote-form-title">Request a call back</h3>'
+        . '<p>Tell us what is going on and we will call you right back.</p>'
+        . '<label>Name <input type="text" autocomplete="name"></label>'
         . '<label>Phone <input type="tel" autocomplete="tel"></label>'
-        . '<label>Email <input type="email" autocomplete="email"></label>'
-        . '<label>ZIP code <input type="text" inputmode="numeric" autocomplete="postal-code"></label>'
-        . '<label>Service needed <select><option>Garage door repair</option><option>Garage door installation</option><option>Garage door opener help</option><option>Something else</option></select></label>'
-        . '<label>Message <textarea></textarea></label>'
-        . '<button type="button" data-preview-finalize>Review quote on staging</button>'
-        . '<p role="status" hidden data-preview-status>This private preview cannot send a quote request.</p>'
+        . '<label>What do you need? <select>'
+        . '<option>Broken spring</option>'
+        . '<option>Door will not open or close</option>'
+        . '<option>Opener problem</option>'
+        . '<option>Door off track</option>'
+        . '<option>New garage door</option>'
+        . '<option>Something else</option>'
+        . '</select></label>'
+        . '<button type="button" data-preview-finalize>Get My Call Back</button>'
+        . '<p class="twins-brand-callback-consent">By submitting, you agree Twins Garage Doors may call or text this number about your request. Msg and data rates may apply. Reply STOP to opt out.</p>'
+        . '<p role="status" hidden data-preview-status>This private preview cannot send a call back request.</p>'
         . '</div>';
 }
 

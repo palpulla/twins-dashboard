@@ -281,7 +281,7 @@ test('staging previews validate locally and make zero POST or external requests'
   await page.keyboard.press('Escape');
 
   const preview = page.locator('[data-preview-kind="quote"]');
-  const final = preview.getByRole('button', { name: 'Review quote on staging' });
+  const final = preview.getByRole('button', { name: 'Get My Call Back' });
   await final.click();
   await expect(preview.getByLabel('Full name')).toBeFocused();
   await expect(preview.locator('[data-preview-status]')).toBeHidden();
@@ -440,7 +440,7 @@ test('JavaScript-disabled previews remain structurally incapable of submission',
   await page.goto(fixture);
   await expect(page.locator('form')).toHaveCount(0);
   await expect(page.locator('[type="submit"], [type="image"], [formaction], form [name], input[name], select[name], textarea[name], button[name]')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Review quote on staging' }).click();
+  await page.getByRole('button', { name: 'Get My Call Back' }).click();
   expect(requests.filter(method => method !== 'GET')).toEqual([]);
   await context.close();
 });

@@ -17,9 +17,11 @@ These bind the production cutover engineering for the site overhaul on branch
   `['mode' => 'external', 'href' => <URL above>, 'target' => '_blank', 'rel' => 'noopener noreferrer']`.
 - Staging keeps the inert dialog by contract; the renderer harness asserts
   `book.housecallpro.com` never appears in staging output. Do not weaken that.
-- Open question for cutover: whether "Request a Quote" should also route to
-  HCP booking or to a callback form (LP-style). Current staging routes it to
-  the contact page.
+- DECIDED (owner, 2026-07-17): "Request a Quote" is an LP-style callback form
+  (Name, Phone, what-do-you-need picker, TCPA consent line, "Get My Call
+  Back"). Staged inert on the contact page; at cutover, wire submission to
+  the same lead destination as the Madison LP form (GHL/LeadConnector;
+  capture the exact endpoint from the LP page source during cutover).
 
 ## Business address (CONFIRMED)
 
