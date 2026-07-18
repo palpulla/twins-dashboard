@@ -55,6 +55,8 @@ point it at `/ky/garage-door-repair/`. Indianapolis sources point at
 | `/design-your-door/` | `/door-builder/` | Staging classifies it as builder; production should converge on one URL (or keep serving it as builder, in which case no redirect) |
 | `/location/madison/` | `/wi/location/madison/` | Merge legacy location CPT duplicate |
 | `/shorewood-hills/` | `/wi/service-area/` | Root-level stray city page |
+| `/hormann-garage-doors/` | `/clopay-garage-doors/` | Owner decision: retire Hormann line |
+| 10 pruned blog posts (see cutover decisions doc) | `/blog/` | Owner-approved prune |
 | `/madison-garage-door-repair/` | keep as-is | Live SEO page; do NOT redirect (campaign-preserve) |
 | Off-topic blog posts (HVAC, paint colors, energy tips) | `/blog/` | Only if pruned; list pending owner approval |
 

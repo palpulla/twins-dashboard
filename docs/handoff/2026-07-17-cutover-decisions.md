@@ -52,10 +52,27 @@ These bind the production cutover engineering for the site overhaul on branch
 
 - Clopay dealer licensing confirmation for the full per-combination builder
   image matrix.
-- Hormann line: keep (page redesign) or retire (redirect at cutover).
 - IL phone forwarding evidence.
 
-## Blog prune list (PENDING OWNER YES/NO)
+## Hormann (DECIDED 2026-07-17: RETIRE)
+
+Page 6132 drafted on staging. At cutover: unpublish on production and 301
+`/hormann-garage-doors/` -> `/clopay-garage-doors/` (added to redirect plan).
+
+## Blog revamp (IN PROGRESS)
+
+Owner verdict: titles, metadata, and content across the blog read as poorly
+AI-generated. Program: (1) titles + Rank Math meta rewritten for all 187
+published posts, applied on staging via wp eval-file with a review CSV;
+(2) content-body rewrites in prioritized batches (thin posts under 500 words
+and top-traffic topics first), phased over subsequent rounds; (3) same
+updates exported for production at cutover.
+
+## Blog prune list (APPROVED by owner 2026-07-17; EXECUTED on staging)
+
+The 10 posts below are drafted on staging (DB backup:
+`~/staging-safety/before-blog-revamp-20260717.sql.gz`). At cutover: unpublish
+on production + 301 each to /blog/.
 
 Off-topic posts proposed for removal + 301 to /blog/ at cutover (keep the two
 smart-garage-door posts; they are opener-adjacent):
