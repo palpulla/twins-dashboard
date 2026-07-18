@@ -995,8 +995,15 @@ if ($scenario === 'path-contact-context') {
     twins_overhaul_renderer_assert(strpos($milwaukeeMarketMenu[0], '(608) 420-2377') !== false, 'Milwaukee market selector lost the approved Wisconsin phone');
     twins_overhaul_renderer_assert(strpos($milwaukeeMarketMenu[0], '(815) 800-2025') !== false, 'Milwaukee market selector lost the approved Illinois phone');
     $milwaukeeWithoutMarketMenu = str_replace($milwaukeeMarketMenu[0], '', $milwaukee);
-    twins_overhaul_renderer_assert(substr_count($milwaukeeWithoutMarketMenu, '(414) 800-9271') === 3, 'Milwaukee composition does not use one display phone in header, body, and footer');
-    twins_overhaul_renderer_assert(substr_count($milwaukeeWithoutMarketMenu, 'tel:+14148009271') === 5, 'Milwaukee composition does not use one phone href across all call actions');
+    twins_overhaul_renderer_assert(
+        preg_match('~<span class="twins-brand-utility-phones">(.*?)</span>\s*</div>~s', $milwaukeeWithoutMarketMenu, $milwaukeeUtilityPhones) === 1,
+        'Milwaukee header lost the labeled dual metro phone bar'
+    );
+    twins_overhaul_renderer_assert(strpos($milwaukeeUtilityPhones[1], '<small>Madison</small> (608) 420-2377') !== false, 'Milwaukee dual bar lost the labeled Madison phone');
+    twins_overhaul_renderer_assert(strpos($milwaukeeUtilityPhones[1], '<small>Milwaukee</small> (414) 800-9271') !== false, 'Milwaukee dual bar lost the labeled Milwaukee phone');
+    $milwaukeeWithoutMarketMenu = str_replace($milwaukeeUtilityPhones[0], '', $milwaukeeWithoutMarketMenu);
+    twins_overhaul_renderer_assert(substr_count($milwaukeeWithoutMarketMenu, '(414) 800-9271') === 2, 'Milwaukee composition does not use one display phone in body and footer');
+    twins_overhaul_renderer_assert(substr_count($milwaukeeWithoutMarketMenu, 'tel:+14148009271') === 4, 'Milwaukee composition does not use one phone href across all call actions');
     twins_overhaul_renderer_assert(strpos($milwaukeeWithoutMarketMenu, '(608) 420-2377') === false, 'Milwaukee composition exposes a contradictory broad Wisconsin phone');
     twins_overhaul_renderer_assert(strpos($milwaukeeWithoutMarketMenu, 'tel:+16084202377') === false, 'Milwaukee composition exposes a contradictory broad Wisconsin phone href');
 
@@ -1024,9 +1031,16 @@ if ($scenario === 'path-contact-context') {
         'generic Wisconsin header lost the market selector'
     );
     $wisconsinWithoutMarketMenu = str_replace($wisconsinMarketMenu[0], '', $wisconsin);
-    twins_overhaul_renderer_assert(substr_count($wisconsinWithoutMarketMenu, '(608) 420-2377') === 3, 'generic Wisconsin composition display phone changed');
-    twins_overhaul_renderer_assert(substr_count($wisconsinWithoutMarketMenu, 'tel:+16084202377') === 6, 'generic Wisconsin composition phone href changed');
-    twins_overhaul_renderer_assert(strpos($wisconsinWithoutMarketMenu, '(414) 800-9271') === false, 'Milwaukee phone leaked into generic Wisconsin composition');
+    twins_overhaul_renderer_assert(
+        preg_match('~<span class="twins-brand-utility-phones">(.*?)</span>\s*</div>~s', $wisconsinWithoutMarketMenu, $wisconsinUtilityPhones) === 1,
+        'generic Wisconsin header lost the labeled dual metro phone bar'
+    );
+    twins_overhaul_renderer_assert(strpos($wisconsinUtilityPhones[1], '<small>Madison</small> (608) 420-2377') !== false, 'Wisconsin dual bar lost the labeled Madison phone');
+    twins_overhaul_renderer_assert(strpos($wisconsinUtilityPhones[1], '<small>Milwaukee</small> (414) 800-9271') !== false, 'Wisconsin dual bar lost the labeled Milwaukee phone');
+    $wisconsinWithoutMarketMenu = str_replace($wisconsinUtilityPhones[0], '', $wisconsinWithoutMarketMenu);
+    twins_overhaul_renderer_assert(substr_count($wisconsinWithoutMarketMenu, '(608) 420-2377') === 2, 'generic Wisconsin composition display phone changed');
+    twins_overhaul_renderer_assert(substr_count($wisconsinWithoutMarketMenu, 'tel:+16084202377') === 5, 'generic Wisconsin composition phone href changed');
+    twins_overhaul_renderer_assert(strpos($wisconsinWithoutMarketMenu, '(414) 800-9271') === false, 'Milwaukee phone leaked into generic Wisconsin body composition');
     twins_overhaul_renderer_assert(strpos($wisconsinWithoutMarketMenu, '(815) 800-2025') === false, 'Illinois phone leaked into generic Wisconsin composition');
 
     twins_overhaul_renderer_set([
