@@ -115,6 +115,8 @@ $articleHeroImage = $isArticle && isset($articleHero) && is_string($articleHero)
   <?php endif; ?>
 
   <section class="twins-brand-final-cta" aria-labelledby="twins-brand-editorial-final-title">
+    <?php require_once dirname(__DIR__) . '/components/door-art.php'; ?>
+    <?= twins_brand_door_art('door-open', 'twins-brand-cta-art', 'editorial-final') ?>
     <span class="twins-brand-kicker"><?= htmlspecialchars($market['label'], ENT_QUOTES, 'UTF-8') ?></span>
     <h2 id="twins-brand-editorial-final-title">Need a project-specific answer?</h2>
     <div class="twins-brand-final-actions">

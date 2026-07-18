@@ -53,8 +53,13 @@ test('supporting journeys preserve approved copy and adapter boundaries', () => 
   assert.match(team, /Charles Rue/);
   assert.match(team, /Maurice Williams/);
   assert.match(team, /Nicholas Roccaforte/);
+  assert.match(team, /Ivory Tianga/);
+  assert.match(team, /Aman Kharga/);
   assert.match(team, /daniel-portrait/);
   assert.match(team, /charles-portrait/);
+  assert.match(team, /maurice-portrait/);
+  assert.match(team, /twins_brand_door_avatar/);
+  assert.match(team, /twins-brand-crew-grid/);
   assert.match(team, /Careers/);
 
   const careers = template('careers.php');

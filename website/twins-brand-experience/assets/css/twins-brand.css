@@ -380,20 +380,16 @@ body.twins-brand-experience .twins-brand-market-menu-panel small {
 }
 .twins-brand-location-map--link:is(:hover, :focus-visible) { outline: 3px solid var(--twins-gold); }
 .twins-brand-location-map-note { margin: 10px 0 0; color: rgba(17, 24, 39, .6); font-size: .9rem; }
-.twins-brand-team-owners { padding: 56px max(32px, calc((100vw - 1450px) / 2)); display: grid; gap: 40px; }
-.twins-brand-person-feature { display: grid; grid-template-columns: minmax(240px, 360px) minmax(0, 1fr); gap: 34px; align-items: start; }
-.twins-brand-person-feature:nth-child(odd) { direction: rtl; }
-.twins-brand-person-feature:nth-child(odd) > * { direction: ltr; }
-.twins-brand-person-photo { width: 100%; height: auto; border: 4px solid var(--twins-navy-950); border-radius: 14px; box-shadow: 8px 10px 0 var(--twins-gold); }
-.twins-brand-person-role { margin: 2px 0 14px; color: var(--twins-navy-700); font-weight: 900; letter-spacing: .05em; text-transform: uppercase; font-size: .82rem; }
-.twins-brand-team-technicians { padding: 56px max(32px, calc((100vw - 1450px) / 2)); background: var(--twins-cream); }
-.twins-brand-technician-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 26px; }
-.twins-brand-technician-grid .twins-brand-person-card { background: var(--twins-white); border: 2px solid var(--twins-navy-950); border-radius: 14px; padding: 20px; box-shadow: 6px 7px 0 var(--twins-gold); }
-.twins-brand-technician-grid .twins-brand-person-photo { max-height: 340px; object-fit: cover; object-position: top; }
-@media (max-width: 860px) {
-  .twins-brand-person-feature { grid-template-columns: 1fr; }
-  .twins-brand-person-feature:nth-child(odd) { direction: ltr; }
-}
+.twins-brand-team-crew-members { padding: 56px max(32px, calc((100vw - 1450px) / 2)); background: var(--twins-cream); }
+.twins-brand-crew-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 28px; margin-top: 34px; }
+.twins-brand-crew-grid .twins-brand-person-card { display: flex; flex-direction: column; margin: 0; padding: 0; color: var(--twins-ink); background: var(--twins-white); border: 3px solid var(--twins-navy-950); border-radius: 14px; box-shadow: 8px 9px 0 var(--twins-gold); overflow: hidden; }
+.twins-brand-person-media { position: relative; aspect-ratio: 4 / 5; background: var(--twins-navy-900); }
+.twins-brand-person-media img,
+.twins-brand-person-media .twins-brand-door-avatar { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; object-position: 50% 18%; }
+.twins-brand-person-body { display: flex; flex: 1; flex-direction: column; gap: 4px; padding: 22px 24px 26px; }
+.twins-brand-crew-grid .twins-brand-person-card h3 { margin: 0; color: var(--twins-navy-950); font-size: 1.9rem; text-transform: uppercase; }
+.twins-brand-crew-grid .twins-brand-person-card p { color: var(--twins-ink); }
+.twins-brand-person-role { margin: 2px 0 12px; color: var(--twins-gold-strong); font-weight: 900; letter-spacing: .05em; text-transform: uppercase; font-size: .84rem; }
 .twins-brand-menu-trigger { display: none; border: 2px solid var(--twins-gold); border-radius: 999px; color: var(--twins-gold); }
 
 .twins-brand-cta {
@@ -736,7 +732,6 @@ body.twins-brand-experience a.twins-brand-market-card--preview:is(:hover, :focus
 .twins-brand-page-hero .twins-brand-cta { justify-self: start; margin-top: 16px; }
 
 .twins-brand-team-crew,
-.twins-brand-team-portraits,
 .twins-brand-team-values,
 .twins-brand-team-page > .twins-brand-team-story,
 .twins-brand-team-careers,
@@ -761,11 +756,6 @@ body.twins-brand-experience a.twins-brand-market-card--preview:is(:hover, :focus
 .twins-brand-team-careers h2,
 .twins-brand-careers-page :where(.twins-brand-section-heading h2, .twins-brand-careers-application h2),
 .twins-brand-contact-page h2 { color: var(--twins-navy-950); font-size: clamp(2.4rem, 5vw, 4.7rem); text-transform: uppercase; }
-.twins-brand-team-portraits { display: grid; grid-template-columns: minmax(260px, .42fr) minmax(0, .58fr); gap: clamp(30px, 6vw, 80px); background: #f4ead6; }
-.twins-brand-team-portraits > .twins-brand-section-heading { grid-column: 1 / -1; }
-.twins-brand-person-card { margin: 0; padding: 18px; color: var(--twins-white); background: var(--twins-navy-900); border: 4px solid var(--twins-gold); box-shadow: 12px 14px 0 var(--twins-navy-950); }
-.twins-brand-person-card img { width: 100%; max-height: 660px; display: block; object-fit: cover; object-position: 50% 22%; }
-.twins-brand-person-card h3 { margin: 22px 4px 5px; color: var(--twins-gold); font-size: 2.3rem; text-transform: uppercase; }
 .twins-brand-team-work-photo img { width: 100%; height: 100%; min-height: 520px; display: block; object-fit: cover; border: 5px solid var(--twins-navy-950); }
 .twins-brand-team-values { color: var(--twins-white); background: var(--twins-navy-950); text-align: center; }
 .twins-brand-team-values h2 { max-width: 1050px; margin-inline: auto; color: var(--twins-gold); }
@@ -1378,3 +1368,51 @@ body.twins-brand-experience .twins-brand-blog-page-link:is(:hover, :focus-visibl
 body.single-post #primary,
 body.single-post .site-main,
 body.single-post main.twins-brand-page { width: 100% !important; max-width: 100% !important; }
+
+/* Garage-door brand art (inline SVG) */
+.twins-brand-door-art, .twins-brand-door-avatar { display: block; }
+.twins-da-gold { fill: var(--twins-gold); }
+.twins-da-navy { fill: var(--twins-navy-950); }
+.twins-da-navy-soft { fill: var(--twins-navy-900); }
+.twins-da-face { fill: #eef1f5; }
+.twins-da-panel { fill: #e2e6ec; stroke: #c6cdd7; stroke-width: 1; }
+.twins-da-panel-inner { fill: #f5f7fa; stroke: #cfd6df; stroke-width: 1; }
+.twins-da-window-frame { fill: #f5f7fa; stroke: #c6cdd7; stroke-width: 1; }
+.twins-da-glass { fill: #0d2a52; }
+.twins-da-glass-hi { fill: rgba(255, 255, 255, .16); }
+.twins-da-interior { fill: #04101f; }
+.twins-da-glow { fill: rgba(255, 200, 61, .22); }
+.twins-da-glow-strong { fill: rgba(255, 200, 61, .8); }
+.twins-da-floor { fill: rgba(255, 200, 61, .5); }
+.twins-da-shaft { fill: #8d98a8; }
+.twins-da-coil { fill: none; stroke: var(--twins-gold); stroke-width: 7; }
+.twins-da-coil-fill { fill: var(--twins-gold); }
+.twins-da-hub { fill: var(--twins-navy-950); stroke: var(--twins-gold); stroke-width: 4; }
+.twins-da-button { fill: #eef1f5; }
+.twins-da-ring { fill: none; stroke: var(--twins-gold); stroke-width: 5; }
+.twins-da-initials { fill: var(--twins-gold); font-family: 'Lilita One', Impact, sans-serif; font-size: 46px; letter-spacing: .04em; }
+.twins-brand-door-art--door-open .twins-da-curtain { animation: twins-door-cycle 8s ease-in-out infinite; }
+@keyframes twins-door-cycle {
+  0%, 14% { transform: translateY(0); }
+  44%, 62% { transform: translateY(-122px); }
+  92%, 100% { transform: translateY(0); }
+}
+.twins-brand-icon-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: clamp(20px, 4vw, 46px); margin-top: 26px; }
+.twins-brand-icon-row .twins-brand-door-art { width: clamp(64px, 8vw, 96px); height: auto; opacity: .92; }
+.twins-brand-cta-art { width: clamp(150px, 17vw, 230px); height: auto; margin-inline: auto; filter: drop-shadow(6px 7px 0 rgba(0, 0, 0, .28)); }
+.twins-brand-footer-door { width: 74px; height: auto; margin-bottom: 12px; }
+
+/* Contact: schedule online + callback contrast */
+.twins-brand-preview-form .twins-brand-kicker { color: var(--twins-gold); }
+.twins-brand-contact-booking { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: clamp(26px, 5vw, 70px); align-items: center; padding: var(--twins-section-space) max(28px, calc((100vw - 1320px) / 2)); color: var(--twins-white); background: var(--twins-navy-950); }
+.twins-brand-contact-booking h2 { color: var(--twins-white); font-size: clamp(2.2rem, 4.4vw, 3.9rem); text-transform: uppercase; }
+.twins-brand-contact-booking p { max-width: 640px; color: #dbe8f8; }
+.twins-brand-contact-booking .twins-brand-door-art { width: clamp(160px, 19vw, 250px); height: auto; }
+.twins-brand-contact-booking .twins-brand-cta { margin-top: 18px; }
+@media (max-width: 760px) { .twins-brand-contact-booking { grid-template-columns: 1fr; } .twins-brand-contact-booking .twins-brand-door-art { margin-inline: auto; } }
+
+/* Builder: illustrated configured door */
+.twins-builder__door-art { display: block; margin: 0 0 10px; }
+.twins-builder__door-art svg { width: 100%; height: auto; display: block; }
+.twins-brand-icon-row--start { justify-content: flex-start; margin: 0 0 20px; }
+.twins-brand-blog-hero .twins-brand-icon-row .twins-brand-door-art { opacity: .85; }

@@ -150,6 +150,8 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
   </section>
 
   <section class="twins-brand-final-cta" data-section="final-cta" aria-labelledby="twins-brand-final-cta-title">
+    <?php require_once dirname(__DIR__) . '/components/door-art.php'; ?>
+    <?= twins_brand_door_art('door-open', 'twins-brand-cta-art', 'home-final') ?>
     <span class="twins-brand-kicker">Ready when you are</span>
     <h2 id="twins-brand-final-cta-title">Let’s get your garage door moving.</h2>
     <div class="twins-brand-final-actions">

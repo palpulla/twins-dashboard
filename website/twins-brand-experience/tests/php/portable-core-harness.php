@@ -242,11 +242,19 @@ if ($booking !== null) throw new RuntimeException('booking escaped header scope'
 ?>
 <main id="twins-overhaul-main" class="twins-brand-page"></main>
 PHP;
-    foreach (['home', 'team', 'careers', 'contact', 'reviews'] as $template) {
+    foreach (['home', 'team', 'careers', 'reviews'] as $template) {
         $path = $fixtureRoot . '/templates/' . $template . '.php';
         $expect(file_put_contents($path, $requiredScope) === strlen($requiredScope), 'could not write ' . $template . ' fixture');
         $fixtureFiles[] = $path;
     }
+    $contactScope = str_replace(
+        "if (\$booking !== null) throw new RuntimeException('booking escaped header scope');",
+        "if (!isset(\$booking['mode']) || \$booking['mode'] !== 'fixture') throw new RuntimeException('missing contact booking scope');",
+        $requiredScope
+    );
+    $contactPath = $fixtureRoot . '/templates/contact.php';
+    $expect(file_put_contents($contactPath, $contactScope) === strlen($contactScope), 'could not write contact fixture');
+    $fixtureFiles[] = $contactPath;
     $catalogScope = <<<'PHP'
 <?php
 if (!isset($experience, $marketKey, $environment, $market, $quote, $quotePath, $catalogView)) throw new RuntimeException('missing catalog render scope');
@@ -291,7 +299,7 @@ PHP;
     ]);
     $expect(strpos($catalogOutput, 'twins-brand-catalog-page') !== false, 'renderCatalog did not render its bounded fixture');
     $expect($quote->actionCalls === 8, 'quote action did not run for every public render surface');
-    $expect($booking->actionCalls === 1, 'booking action was not header-only');
+    $expect($booking->actionCalls === 2, 'booking action must run for exactly the header and contact surfaces');
     $expect($experience->assetHandles() === ['style' => 'twins-brand-experience', 'script' => 'twins-brand-experience'], 'asset handles drifted');
     $expect($experience->asset('logo') === '/assets/logo', 'asset facade drifted');
     $expect($experience->route('home', 'main') === '/routes/home/main', 'route facade drifted');
@@ -375,7 +383,7 @@ PHP;
             $renderableReviews
         );
         foreach ($renderMethods as $method) $actualExperience->{$method}([]);
-        $expect($actualQuote->actionCalls === 7 && $actualBooking->actionCalls === 1, 'regular templates did not render in ' . $environment);
+        $expect($actualQuote->actionCalls === 7 && $actualBooking->actionCalls === 2, 'regular templates did not render in ' . $environment);
     }
 } catch (Throwable $error) {
     while (ob_get_level() > $initialBufferLevel) ob_end_clean();

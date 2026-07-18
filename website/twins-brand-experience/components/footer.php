@@ -15,8 +15,10 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
     throw new DomainException('Quote action is unavailable.');
 }
 ?>
+<?php require_once __DIR__ . '/door-art.php'; ?>
 <footer class="twins-brand-footer">
   <div class="twins-brand-footer-intro">
+    <?= twins_brand_door_art('door', 'twins-brand-footer-door', 'footer') ?>
     <a class="twins-brand-footer-logo" href="<?= htmlspecialchars($experience->route('home', $marketKey), ENT_QUOTES, 'UTF-8') ?>" aria-label="Twins Garage Doors home">
       <img src="<?= htmlspecialchars($experience->asset('logo'), ENT_QUOTES, 'UTF-8') ?>" width="711" height="325" alt="Twins Garage Doors">
     </a>

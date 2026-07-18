@@ -140,7 +140,9 @@ final class Experience
             } elseif ($catalogView !== null) {
                 throw new \DomainException('Catalog view was supplied to a different template.');
             }
-            $booking = $template === '../components/header' ? $this->booking->action($context) : null;
+            $booking = in_array($template, ['../components/header', 'contact'], true)
+                ? $this->booking->action($context)
+                : null;
             require $this->root . '/templates/' . $template . '.php';
             return (string) ob_get_clean();
         } catch (\Throwable $error) {

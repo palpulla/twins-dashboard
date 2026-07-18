@@ -183,6 +183,155 @@
     probe.src = src;
   }
 
+  function builderKeywordSource(state) {
+    return [
+      state.design ? `${state.design.group} ${state.design.title}` : '',
+      state.product ? state.product.title : '',
+    ].join(' ').toLowerCase();
+  }
+
+  function builderPanelStyle(state) {
+    const text = builderKeywordSource(state);
+    if (/avante|full[ -]view|glass door|aluminum/.test(text)) return 'glass';
+    if (/carriage|coachman|canyon|gallery|reserve/.test(text)) return 'carriage';
+    if (/flush|modern|skyline|plank/.test(text) && /flush|modern/.test(text)) return 'flush';
+    if (/groove|plank|shiplap|v-groove/.test(text)) return 'grooved';
+    if (/long/.test(text)) return 'long';
+    return 'raised';
+  }
+
+  function builderWindowStyle(state) {
+    if (!state.window || state.window.solid) return null;
+    const text = `${state.window.group} ${state.window.title}`.toLowerCase();
+    if (/arch|madison|cathedral|cascade|arched/.test(text)) return 'arch';
+    if (/sun|sunset|sunburst|williamsburg/.test(text)) return 'sunburst';
+    if (/prairie|stockton|waterton|grid|611|610/.test(text)) return 'grid';
+    if (/vertical/.test(text)) return 'vertical';
+    if (/grille/.test(text)) return 'grid';
+    return 'plain';
+  }
+
+  function builderGlassTone(state) {
+    if (!state.glass) return 'standard';
+    const text = `${state.glass.group} ${state.glass.title}`.toLowerCase();
+    if (/frost|obscure|satin|white|seeded|rain/.test(text)) return 'frosted';
+    if (/tint|gray|grey|bronze|smoke|dark/.test(text)) return 'tinted';
+    return 'standard';
+  }
+
+  function builderWindowCellSvg(x, y, width, height, windowStyle, glassTone) {
+    const inset = 3.4;
+    const glassX = x + inset;
+    const glassY = y + inset;
+    const glassW = width - inset * 2;
+    const glassH = height - inset * 2;
+    const glassFill = glassTone === 'frosted'
+      ? 'rgba(244, 248, 252, 0.94)'
+      : glassTone === 'tinted' ? '#1d2733' : '#0d2a52';
+    let svg = `<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="2.5" fill="#f5f7fa" stroke="#c6cdd7"></rect>`;
+    if (windowStyle === 'arch') {
+      const rise = Math.min(10, glassH * 0.42);
+      svg += `<path d="M ${glassX} ${glassY + glassH} v ${-(glassH - rise)} q ${glassW / 2} ${-rise * 1.9} ${glassW} 0 v ${glassH - rise} z" fill="${glassFill}"></path>`;
+    } else {
+      svg += `<rect x="${glassX}" y="${glassY}" width="${glassW}" height="${glassH}" rx="1.5" fill="${glassFill}"></rect>`;
+    }
+    if (glassTone !== 'frosted' && windowStyle !== 'sunburst') {
+      svg += `<path d="M ${glassX} ${glassY + glassH * 0.66} q ${glassW * 0.25} -5 ${glassW * 0.5} 0 t ${glassW * 0.5} 0 v ${glassH * 0.34} h ${-glassW} z" fill="rgba(255,255,255,0.15)"></path>`;
+    }
+    const barStroke = 'stroke="#f5f7fa" stroke-width="2.4"';
+    const centerX = glassX + glassW / 2;
+    const centerY = glassY + glassH / 2;
+    if (windowStyle === 'grid') {
+      svg += `<line x1="${centerX}" y1="${glassY}" x2="${centerX}" y2="${glassY + glassH}" ${barStroke}></line>`;
+      svg += `<line x1="${glassX}" y1="${centerY}" x2="${glassX + glassW}" y2="${centerY}" ${barStroke}></line>`;
+    } else if (windowStyle === 'vertical') {
+      const third = glassW / 3;
+      svg += `<line x1="${glassX + third}" y1="${glassY}" x2="${glassX + third}" y2="${glassY + glassH}" ${barStroke}></line>`;
+      svg += `<line x1="${glassX + third * 2}" y1="${glassY}" x2="${glassX + third * 2}" y2="${glassY + glassH}" ${barStroke}></line>`;
+    } else if (windowStyle === 'sunburst') {
+      const baseY = glassY + glassH - 1.5;
+      svg += `<line x1="${centerX}" y1="${baseY}" x2="${glassX + 2}" y2="${glassY + 2}" ${barStroke}></line>`;
+      svg += `<line x1="${centerX}" y1="${baseY}" x2="${centerX}" y2="${glassY + 1.5}" ${barStroke}></line>`;
+      svg += `<line x1="${centerX}" y1="${baseY}" x2="${glassX + glassW - 2}" y2="${glassY + 2}" ${barStroke}></line>`;
+    }
+    return svg;
+  }
+
+  function builderPanelCellSvg(x, y, width, height, panelStyle) {
+    if (panelStyle === 'flush') {
+      return `<rect x="${x}" y="${y}" width="${width}" height="${height}" fill="rgba(255,255,255,0.05)" stroke="rgba(7,29,59,0.12)"></rect>`;
+    }
+    if (panelStyle === 'grooved') {
+      let svg = `<rect x="${x}" y="${y}" width="${width}" height="${height}" fill="rgba(255,255,255,0.04)" stroke="rgba(7,29,59,0.12)"></rect>`;
+      for (let line = 1; line <= 2; line += 1) {
+        const lineY = y + (height / 3) * line;
+        svg += `<line x1="${x + 2}" y1="${lineY}" x2="${x + width - 2}" y2="${lineY}" stroke="rgba(7,29,59,0.2)" stroke-width="1.4"></line>`;
+      }
+      return svg;
+    }
+    if (panelStyle === 'glass') {
+      return `<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="2" fill="#f5f7fa" stroke="#c6cdd7"></rect>`
+        + `<rect x="${x + 3.4}" y="${y + 3.4}" width="${width - 6.8}" height="${height - 6.8}" rx="1.5" fill="#12365f"></rect>`
+        + `<path d="M ${x + 4} ${y + height - 10} q ${width * 0.25} -4 ${width * 0.5} 0 t ${width * 0.45} 0 v ${6.6} h ${-(width - 8)} z" fill="rgba(255,255,255,0.16)"></path>`;
+    }
+    let svg = `<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="2" fill="rgba(7,29,59,0.07)" stroke="rgba(7,29,59,0.16)"></rect>`;
+    svg += `<rect x="${x + 7}" y="${y + 6}" width="${width - 14}" height="${height - 12}" rx="1.5" fill="rgba(255,255,255,0.32)" stroke="rgba(7,29,59,0.12)"></rect>`;
+    if (panelStyle === 'carriage') {
+      svg += `<line x1="${x + 8}" y1="${y + 7}" x2="${x + width - 8}" y2="${y + height - 7}" stroke="rgba(7,29,59,0.16)" stroke-width="2"></line>`;
+      svg += `<line x1="${x + width - 8}" y1="${y + 7}" x2="${x + 8}" y2="${y + height - 7}" stroke="rgba(7,29,59,0.16)" stroke-width="2"></line>`;
+    }
+    return svg;
+  }
+
+  // Every interpolated value below is numeric geometry or a fixed/validated
+  // color token; option titles must never be interpolated into this markup.
+  function builderDoorSvg(state, paint) {
+    const panelStyle = builderPanelStyle(state);
+    const windowStyle = builderWindowStyle(state);
+    const glassTone = builderGlassTone(state);
+    const facePaint = paint || '#e8ebef';
+    const left = 26;
+    const top = 26;
+    const rowHeight = 32;
+    const rowGap = 3.4;
+    const cellGap = 3.6;
+    const columns = panelStyle === 'long' || panelStyle === 'carriage' ? 2 : 4;
+    const cellWidth = (168 - cellGap * (columns - 1)) / columns;
+    const windowColumns = 4;
+    const windowWidth = (168 - cellGap * (windowColumns - 1)) / windowColumns;
+
+    let cells = '';
+    for (let row = 0; row < 4; row += 1) {
+      const y = top + row * (rowHeight + rowGap);
+      if (row === 0 && windowStyle) {
+        for (let column = 0; column < windowColumns; column += 1) {
+          cells += builderWindowCellSvg(left + column * (windowWidth + cellGap), y, windowWidth, rowHeight, windowStyle, glassTone);
+        }
+        continue;
+      }
+      for (let column = 0; column < columns; column += 1) {
+        cells += builderPanelCellSvg(left + column * (cellWidth + cellGap), y, cellWidth, rowHeight, panelStyle === 'glass' && !windowStyle ? 'glass' : panelStyle);
+      }
+    }
+
+    let hardware = '';
+    if (state.hardware) {
+      const hingeY = top + rowHeight + rowGap - 2;
+      hardware += `<rect x="${left + 6}" y="${top + 3 * (rowHeight + rowGap) + 10}" width="16" height="5" rx="2.5" fill="#1c2430"></rect>`;
+      hardware += `<rect x="${left + 168 - 22}" y="${top + 3 * (rowHeight + rowGap) + 10}" width="16" height="5" rx="2.5" fill="#1c2430"></rect>`;
+      hardware += `<circle cx="${left + 30}" cy="${hingeY}" r="3.4" fill="#1c2430"></circle>`;
+      hardware += `<circle cx="${left + 138}" cy="${hingeY}" r="3.4" fill="#1c2430"></circle>`;
+    }
+
+    return '<svg viewBox="0 0 220 190" role="img" aria-hidden="true" focusable="false">'
+      + '<rect x="2" y="2" width="216" height="186" rx="10" fill="#ffc83d"></rect>'
+      + '<rect x="11" y="11" width="198" height="168" rx="6" fill="#071d3b"></rect>'
+      + `<rect x="20" y="20" width="180" height="150" rx="4" data-door-paint fill="${facePaint}"></rect>`
+      + cells
+      + hardware
+      + '</svg>';
+  }
+
   function initBuilder(root) {
     const scope = root || document;
     const builders = [];
@@ -252,57 +401,24 @@
 
       function renderReference(parent) {
         if (!state.product) return;
-        const designDoorShaped = Boolean(
-          state.design
-          && state.design.image.width >= state.design.image.height * 1.4,
-        );
-        const composed = designDoorShaped;
-        const panel = composed ? state.design.image : state.product.showcase;
         const figure = builderElement(owner, 'figure', 'twins-builder__reference');
-        const stagePane = builderElement(owner, 'div', 'twins-builder__composite');
-        stagePane.appendChild(builderImage(
-          owner,
-          panel,
-          `${state.product.title} manufacturer reference`,
-          'twins-builder__reference-image',
-        ));
-        if (composed && state.color) {
-          const tint = builderElement(owner, 'div', 'twins-builder__tint');
-          stagePane.appendChild(tint);
+        const art = builderElement(owner, 'div', 'twins-builder__door-art');
+        art.setAttribute('data-builder-door-art', '');
+        const cachedPaint = state.color ? builderSwatchColors.get(state.color.image.src) || null : null;
+        art.innerHTML = builderDoorSvg(state, cachedPaint);
+        figure.appendChild(art);
+        if (state.color && !cachedPaint) {
           builderDominantColor(state.color.image.src, color => {
             if (!color) return;
-            tint.style.backgroundColor = color;
-            tint.setAttribute('data-tint-ready', 'true');
+            art.querySelectorAll('[data-door-paint]').forEach(face => {
+              face.style.fill = color;
+            });
           });
         }
-        if (composed && state.window) {
-          const windowsOverlay = builderImage(
-            owner,
-            state.window.image,
-            `Window style: ${optionLabel(state.window)}`,
-            'twins-builder__overlay twins-builder__overlay--windows',
-          );
-          stagePane.appendChild(windowsOverlay);
-        }
-        if (composed && state.hardware) {
-          const hardwareOverlay = builderImage(
-            owner,
-            state.hardware.image,
-            `Decorative hardware: ${optionLabel(state.hardware)}`,
-            'twins-builder__overlay twins-builder__overlay--hardware',
-          );
-          stagePane.appendChild(hardwareOverlay);
-        }
-        figure.appendChild(stagePane);
         const selections = configurationRows().slice(1).map(row => row[1]).join(', ');
-        let caption;
-        if (composed) {
-          caption = `Illustrative preview of your selections${selections ? `: ${selections}` : ''}. Manufacturer reference only. Twins confirms final appearance before ordering.`;
-        } else if (state.design) {
-          caption = `Real ${builderCleanTitle(state.product.title)} door shown; your selections${selections ? ` (${selections})` : ''} appear as manufacturer samples below. Manufacturer reference only. Twins confirms final appearance before ordering.`;
-        } else {
-          caption = 'Manufacturer reference only. Pick a panel or design and your color, window, and hardware choices appear on the door; Twins confirms final appearance before ordering.';
-        }
+        const caption = selections
+          ? `Illustrated preview of your door: ${selections}. Manufacturer samples below show true finishes. Manufacturer reference only. Twins confirms final appearance before ordering.`
+          : 'Illustrated preview of your door updates with every choice you make. Manufacturer reference only. Twins confirms final appearance before ordering.';
         figure.appendChild(builderElement(
           owner,
           'figcaption',
@@ -311,8 +427,14 @@
         ));
         parent.appendChild(figure);
 
+        const showcaseSample = {
+          title: `${state.product.title} — real door photo`,
+          group: '',
+          image: state.product.showcase,
+        };
         const samples = [
-          composed ? null : state.design,
+          showcaseSample,
+          state.design,
           state.color,
           state.window,
           state.glass,

@@ -87,6 +87,12 @@ if (!isset($pageContent) || !is_array($pageContent)) {
 
   <section class="twins-brand-service-area" aria-labelledby="twins-brand-service-area-title">
     <div>
+      <?php require_once dirname(__DIR__) . '/components/door-art.php'; ?>
+      <div class="twins-brand-icon-row twins-brand-icon-row--start" aria-hidden="true">
+        <?= twins_brand_door_art('spring') ?>
+        <?= twins_brand_door_art('roller') ?>
+        <?= twins_brand_door_art('keypad') ?>
+      </div>
       <span class="twins-brand-kicker">Your selected service area</span>
       <h2 id="twins-brand-service-area-title"><?= htmlspecialchars($market['label'], ENT_QUOTES, 'UTF-8') ?></h2>
       <p>This page uses the contact details and service routes for the market selected in the shared Twins experience.</p>

@@ -22,6 +22,13 @@ $blogPagePath = static function (int $target) use ($blogBasePath): string {
     <h1 id="twins-brand-blog-title">Garage door answers from the Twins crew</h1>
     <p>Straight answers on springs, openers, panels, and new doors, written by the crew that repairs and installs them every day. Use what applies to your door, and leave spring or cable work to trained professionals.</p>
     <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
+    <?php require_once dirname(__DIR__) . '/components/door-art.php'; ?>
+    <div class="twins-brand-icon-row" aria-hidden="true">
+      <?= twins_brand_door_art('spring') ?>
+      <?= twins_brand_door_art('door') ?>
+      <?= twins_brand_door_art('roller') ?>
+      <?= twins_brand_door_art('keypad') ?>
+    </div>
   </header>
 
   <?php if ($blogPosts === []): ?>

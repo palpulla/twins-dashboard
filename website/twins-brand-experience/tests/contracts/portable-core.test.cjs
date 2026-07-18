@@ -83,7 +83,7 @@ test('renderer isolates the full render pipeline inside its output-buffer cleanu
   const validationIndex = source.indexOf("if (!isset($context['environment'], $context['market'])");
   const marketIndex = source.indexOf('$market = $this->markets->resolve($marketKey, $environment);');
   const quoteIndex = source.indexOf('$quote = $this->quote->action($context);');
-  const bookingIndex = source.indexOf('$booking = $template ===');
+  const bookingIndex = source.indexOf('$booking = in_array($template');
   const templateIndex = source.indexOf("require $this->root . '/templates/'");
   assert.ok(bufferIndex >= 0 && tryIndex > bufferIndex && catchIndex > tryIndex);
   for (const [step, index] of [
