@@ -994,6 +994,126 @@ body.twins-brand-experience .twins-brand-service-phone { color: var(--twins-whit
 .twins-brand-editorial-content a { color: var(--twins-navy-700); font-weight: 900; text-decoration-thickness: 2px; text-underline-offset: 3px; }
 .twins-brand-editorial-content :where(blockquote, pre, table) { max-width: 100%; overflow-x: auto; }
 
+/* Article layout: full-bleed featured hero plus a wide readable measure. */
+.twins-brand-article-hero-media { margin: 0; background: var(--twins-navy-950); }
+.twins-brand-article-hero-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 560px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+.twins-brand-article-page .twins-brand-editorial-hero.twins-brand-article-hero {
+  min-height: 0;
+  gap: 16px;
+  padding: clamp(44px, 6vw, 84px) var(--twins-content-shell);
+}
+.twins-brand-article-body { background: var(--twins-white); }
+.twins-brand-editorial-content.twins-brand-article-content {
+  max-width: 860px;
+  font-size: 1.12rem;
+  line-height: 1.8;
+}
+.twins-brand-article-content :where(h2) { font-size: clamp(1.7rem, 3vw, 2.3rem); }
+.twins-brand-article-services {
+  padding: var(--twins-section-space) var(--twins-content-shell);
+  background: #f4ead6;
+}
+
+/* Blog index: branded hero, illustrated card grid, and pill pagination. */
+.twins-brand-blog-page { color: var(--twins-ink); background: var(--twins-cream); }
+.twins-brand-blog-hero {
+  display: grid;
+  justify-items: start;
+  gap: 18px;
+  padding: clamp(64px, 8vw, 120px) var(--twins-content-shell);
+  color: var(--twins-white);
+  background-color: var(--twins-navy-900);
+  background-image: radial-gradient(circle at 88% 18%, rgba(255, 200, 61, .18), transparent 31%), repeating-linear-gradient(0deg, transparent 0 78px, rgba(255, 255, 255, .05) 79px 83px);
+}
+.twins-brand-blog-hero h1 {
+  max-width: 1050px;
+  margin-bottom: 0;
+  color: var(--twins-white);
+  font-size: clamp(2.6rem, 5.4vw, 5.4rem);
+  text-transform: uppercase;
+}
+.twins-brand-blog-hero p { max-width: 780px; color: #e8f1fb; font-size: 1.15rem; font-weight: 750; }
+body.twins-brand-experience .twins-brand-blog-hero .twins-brand-kicker { color: var(--twins-gold); }
+.twins-brand-blog-grid-section,
+.twins-brand-blog-empty { padding: var(--twins-section-space) var(--twins-content-shell); }
+.twins-brand-blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
+  gap: 28px;
+}
+.twins-brand-blog-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--twins-white);
+  border: 2px solid var(--twins-navy-950);
+  border-radius: 14px;
+  box-shadow: 6px 7px 0 var(--twins-gold);
+}
+.twins-brand-blog-card-media { display: block; }
+.twins-brand-blog-card-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-bottom: 2px solid var(--twins-navy-950);
+}
+.twins-brand-blog-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 22px 24px;
+}
+.twins-brand-blog-card-date {
+  color: var(--twins-muted);
+  font-size: .85rem;
+  font-weight: 900;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.twins-brand-blog-card h2 { margin: 0; font-size: 1.45rem; line-height: 1.14; }
+body.twins-brand-experience .twins-brand-blog-card h2 a { color: var(--twins-navy-950); text-decoration: none; }
+body.twins-brand-experience .twins-brand-blog-card h2 a:is(:hover, :focus-visible) {
+  color: var(--twins-navy-700);
+  text-decoration: underline;
+  text-decoration-color: var(--twins-gold-strong);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 3px;
+}
+.twins-brand-blog-card p { margin: 0; color: var(--twins-muted); }
+.twins-brand-blog-card-more { margin-top: auto; padding-top: 8px; color: var(--twins-navy-700); font-weight: 1000; }
+.twins-brand-blog-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 0 var(--twins-content-shell) var(--twins-section-space);
+}
+body.twins-brand-experience .twins-brand-blog-page-link {
+  min-height: 50px;
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 22px;
+  color: var(--twins-navy-950);
+  background: var(--twins-gold);
+  border: 3px solid var(--twins-navy-950);
+  border-radius: 999px;
+  box-shadow: 4px 5px 0 rgba(3, 18, 43, .45);
+  font-weight: 1000;
+}
+body.twins-brand-experience .twins-brand-blog-page-link:is(:hover, :focus-visible) { background: var(--twins-gold-strong); }
+.twins-brand-blog-page-status { color: var(--twins-navy-950); font-weight: 900; }
+
 .twins-brand-reviews-collection { color: var(--twins-white); background: var(--twins-navy-950); }
 .twins-brand-reviews-collection .twins-brand-reviews .twins-brand-section-heading h2 { color: var(--twins-white); font-size: clamp(2.4rem, 5vw, 4.7rem); text-transform: uppercase; }
 .twins-brand-reviews-collection .twins-brand-google-attribution { color: #dbe8f8; }

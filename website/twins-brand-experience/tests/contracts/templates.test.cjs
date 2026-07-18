@@ -31,7 +31,7 @@ test('team and careers use real fixed picture keys', () => {
 });
 
 test('all redesigned templates use exact quote copy', () => {
-  for (const name of ['home.php', 'team.php', 'careers.php', 'contact.php', 'reviews.php']) {
+  for (const name of ['home.php', 'team.php', 'careers.php', 'contact.php', 'reviews.php', 'blog-index.php']) {
     const html = template(name);
     assert.doesNotMatch(html, /Get an Estimate|Request Exact Quote/);
     assert.match(html, /Request a Quote/);
@@ -134,17 +134,38 @@ test('renderer safety contract scans full composition and proves unsafe booking 
 
 test('portable templates contain no direct submission or network primitive', () => {
   const prohibited = /<form\b|type\s*=\s*["'](?:submit|image)["']|\sname\s*=|\sform\s*=|formaction\s*=|https?:\/\/|fetch\s*\(|XMLHttpRequest|sendBeacon\s*\(/i;
-  for (const name of ['home.php', 'team.php', 'careers.php', 'contact.php', 'reviews.php']) {
+  for (const name of ['home.php', 'team.php', 'careers.php', 'contact.php', 'reviews.php', 'blog-index.php']) {
     assert.doesNotMatch(template(name), prohibited, name);
   }
 });
 
 test('each body owns exactly one main while shared chrome owns none', () => {
-  for (const name of ['home.php', 'team.php', 'careers.php', 'contact.php', 'reviews.php']) {
+  for (const name of ['home.php', 'team.php', 'careers.php', 'contact.php', 'reviews.php', 'blog-index.php']) {
     assert.equal((template(name).match(/id="twins-overhaul-main"/g) || []).length, 1, name);
   }
   for (const name of ['header.php', 'footer.php']) {
     const chrome = fs.readFileSync(path.join(root, 'components', name), 'utf8');
     assert.equal((chrome.match(/id="twins-overhaul-main"/g) || []).length, 0, name);
   }
+});
+
+test('blog index and article layouts keep approved structure and context-only data', () => {
+  const blog = template('blog-index.php');
+  assert.equal((blog.match(/<h1\b/g) || []).length, 1);
+  assert.match(blog, /twins-brand-blog-page/);
+  assert.match(blog, /Garage door answers from the Twins crew/);
+  assert.match(blog, /twins-brand-blog-card/);
+  assert.match(blog, /twins-brand-blog-card-media[\s\S]*loading="lazy"/);
+  assert.match(blog, /twins-brand-blog-pagination/);
+  assert.match(blog, /twins-brand-blog-page-link/);
+  assert.match(blog, /\$quote\[['"]href['"]\]/);
+  assert.match(blog, /\$blogIndex/);
+  assert.doesNotMatch(blog, /get_the_post_thumbnail_url|WP_Query|get_permalink|\$market\[['"]phone(?:Href|Display)['"]\]/);
+
+  const editorial = template('editorial.php');
+  assert.match(editorial, /twins-brand-article-page/);
+  assert.match(editorial, /twins-brand-article-hero-media/);
+  assert.match(editorial, /\$articleHeroImage !== ''/);
+  assert.match(editorial, /twins-brand-article-content/);
+  assert.match(editorial, /Services related to this guide/);
 });

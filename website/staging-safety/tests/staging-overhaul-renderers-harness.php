@@ -99,6 +99,9 @@ $GLOBALS['twins_overhaul_renderer_state'] = [
     'mainQuery' => true,
     'loop' => true,
     'elementorDocumentId' => 0,
+    'permalinks' => [],
+    'thumbnails' => [],
+    'paged' => 0,
 ];
 Twins_Overhaul_Renderer_Elementor_Plugin::$instance = (object) [
     'documents' => new Twins_Overhaul_Renderer_Elementor_Documents(),
@@ -262,6 +265,28 @@ function in_the_loop(): bool
 function is_attachment(): bool
 {
     return $GLOBALS['twins_overhaul_renderer_state']['postType'] === 'attachment';
+}
+
+function get_permalink($post = 0): string
+{
+    $permalinks = $GLOBALS['twins_overhaul_renderer_state']['permalinks'] ?? [];
+    return (string) ($permalinks[(int) $post] ?? '');
+}
+
+function get_the_post_thumbnail_url($post = null, $size = 'post-thumbnail')
+{
+    unset($size);
+    $thumbnails = $GLOBALS['twins_overhaul_renderer_state']['thumbnails'] ?? [];
+    return $thumbnails[(int) $post] ?? false;
+}
+
+function get_query_var($queryVar, $fallback = '')
+{
+    unset($fallback);
+    if ($queryVar === 'paged') {
+        return (int) ($GLOBALS['twins_overhaul_renderer_state']['paged'] ?? 0);
+    }
+    return '';
 }
 
 function wp_enqueue_style($handle, $src = '', $deps = [], $version = false, $media = 'all'): bool
@@ -532,6 +557,7 @@ if ($scenario === 'hooks') {
     $elementorDocumentHook = twins_overhaul_renderer_hook('filter', 'elementor/frontend/the_content');
     $imageAttributesHook = twins_overhaul_renderer_hook('filter', 'wp_get_attachment_image_attributes');
     $searchFormHook = twins_overhaul_renderer_hook('filter', 'get_search_form');
+    $blogTemplateHook = twins_overhaul_renderer_hook('filter', 'template_include');
     $fontSentinelHook = twins_overhaul_renderer_hook('action', 'wp_head');
     $headerHook = twins_overhaul_renderer_hook('action', 'wp_body_open');
     $contentHook = twins_overhaul_renderer_hook('filter', 'the_content');
@@ -561,6 +587,12 @@ if ($scenario === 'hooks') {
     twins_overhaul_renderer_assert($imageAttributesHook[3] === PHP_INT_MAX && $imageAttributesHook[4] === 3, 'legacy image-attributes isolation priority mismatch');
     twins_overhaul_renderer_assert($searchFormHook[2] === 'twins_overhaul_filter_search_form', 'search-form isolation callback mismatch');
     twins_overhaul_renderer_assert($searchFormHook[3] === PHP_INT_MAX && $searchFormHook[4] === 2, 'search-form isolation priority mismatch');
+    twins_overhaul_renderer_assert($blogTemplateHook[2] === 'twins_overhaul_filter_blog_index_template', 'blog index template callback mismatch');
+    twins_overhaul_renderer_assert($blogTemplateHook[3] === PHP_INT_MAX && $blogTemplateHook[4] === 1, 'blog index template priority mismatch');
+    twins_overhaul_renderer_assert(
+        twins_overhaul_filter_blog_index_template('/legacy-theme/singular.php') === '/legacy-theme/singular.php',
+        'singular request lost its theme template to the blog index boundary'
+    );
     twins_overhaul_renderer_assert($headerHook[2] === 'twins_overhaul_output_header', 'header callback mismatch');
     twins_overhaul_renderer_assert($contentHook[2] === 'twins_overhaul_replace_main_content', 'content callback mismatch');
     twins_overhaul_renderer_assert($contentHook[3] === PHP_INT_MAX && $contentHook[4] === 1, 'content callback priority mismatch');
@@ -729,12 +761,49 @@ if ($scenario === 'blog-index') {
         'title' => 'Garage Door Resources',
         'singular' => false,
         'home' => true,
+        'paged' => 0,
+        'permalinks' => [
+            901 => 'https://stage.example.test/garage-door-spring-replacement-guide/',
+            902 => 'https://stage.example.test/garage-door-opener-troubleshooting/',
+            903 => 'https://stage.example.test/insulated-garage-door-benefits/',
+        ],
+        'thumbnails' => [
+            901 => 'https://stage.example.test/wp-content/uploads/2026/07/twins-blog-springs.webp',
+            902 => 'https://stage.example.test/wp-content/uploads/2026/07/twins-blog-openers.webp',
+        ],
     ]);
+    $GLOBALS['wp_query'] = (object) [
+        'posts' => [
+            (object) [
+                'ID' => 901,
+                'post_title' => 'How Long Do Garage Door Springs Really Last?',
+                'post_excerpt' => '',
+                'post_content' => '<h2>Spring life</h2><p>Most torsion springs are rated in open-close cycles, not years. Count how often your household uses the door before judging a spring by its age alone.</p>',
+                'post_date' => '2026-07-02 09:15:00',
+            ],
+            (object) [
+                'ID' => 902,
+                'post_title' => 'Garage Door Opener Troubleshooting From the Crew',
+                'post_excerpt' => 'Start with the safety sensors before blaming the motor head.',
+                'post_content' => '<p>IGNORED WHEN AN EXCERPT EXISTS</p>',
+                'post_date' => '2026-06-18 08:00:00',
+            ],
+            (object) [
+                'ID' => 903,
+                'post_title' => 'Do Insulated Garage Doors Pay Off in Wisconsin?',
+                'post_excerpt' => '',
+                'post_content' => '<p>An insulated door steadies the temperature in an attached garage through Wisconsin winters. It also runs quieter on every open and close.</p>',
+                'post_date' => '2026-05-30 07:30:00',
+            ],
+        ],
+        'max_num_pages' => 19,
+    ];
+    twins_overhaul_renderer_assert(twins_overhaul_current_classification() === 'blog-index', 'posts index classification is not blog-index');
     $classes = twins_overhaul_filter_body_classes(['blog']);
     twins_overhaul_renderer_assert(in_array('twins-overhaul-preview', $classes, true), 'posts index lacks preview body class');
     twins_overhaul_renderer_assert(!in_array('twins-overhaul-singular', $classes, true), 'posts index received the singular-only title-suppression class');
     twins_overhaul_renderer_assert(in_array('twins-brand-experience', $classes, true), 'posts index lacks portable brand body class');
-    twins_overhaul_renderer_assert(in_array('twins-brand-route-article', $classes, true), 'posts index lacks its fixed article route body class');
+    twins_overhaul_renderer_assert(in_array('twins-brand-route-blog-index', $classes, true), 'posts index lacks its fixed blog-index route body class');
     twins_overhaul_enqueue_assets();
     twins_overhaul_renderer_assert(count($GLOBALS['twins_overhaul_renderer_assets']) === 2, 'posts index did not enqueue exactly two portable assets');
     twins_overhaul_renderer_assert($GLOBALS['twins_overhaul_renderer_assets'][0][1] === 'twins-brand-experience', 'posts index portable style handle changed');
@@ -751,8 +820,56 @@ if ($scenario === 'blog-index') {
     twins_overhaul_output_footer();
     $footer = (string) ob_get_clean();
     twins_overhaul_renderer_assert(substr_count($footer, '<footer class="twins-brand-footer"') === 1, 'posts index portable footer once guard failed');
+
+    $expectedTemplate = realpath(dirname($argv[1]) . '/twins-staging-overhaul/templates/blog-index.php');
+    $switchedTemplate = twins_overhaul_filter_blog_index_template('/legacy-theme/index.php');
+    twins_overhaul_renderer_assert(
+        is_string($expectedTemplate)
+            && is_string($switchedTemplate)
+            && realpath($switchedTemplate) === $expectedTemplate,
+        'posts index did not switch to the fixed branded template'
+    );
+
+    $rendered = twins_overhaul_render_classified_content(
+        'blog-index',
+        twins_overhaul_current_context('blog-index'),
+        '<div data-twins-original-content><article data-index-post="exact">BLOG-INDEX-POST-BYTES</article></div>'
+    );
+    twins_overhaul_renderer_assert(substr_count($rendered, '<h1') === 1, 'branded blog index does not render exactly one H1');
+    twins_overhaul_renderer_assert(substr_count($rendered, 'id="twins-overhaul-main"') === 1, 'branded blog index lacks one portable main landmark');
+    twins_overhaul_renderer_assert(strpos($rendered, 'twins-brand-blog-page') !== false, 'branded blog index lacks its page family class');
+    twins_overhaul_renderer_assert(strpos($rendered, 'Garage door answers from the Twins crew') !== false, 'branded blog index lost the approved hero heading');
+    twins_overhaul_renderer_assert(substr_count($rendered, '<article class="twins-brand-blog-card">') === 3, 'branded blog index did not render one card per query post');
+    twins_overhaul_renderer_assert(substr_count($rendered, 'twins-brand-blog-card-media') === 2, 'branded blog index did not render exactly the two available featured images');
+    twins_overhaul_renderer_assert(strpos($rendered, 'How Long Do Garage Door Springs Really Last?') !== false, 'branded blog index lost a rewritten post title');
+    twins_overhaul_renderer_assert(strpos($rendered, 'href="/garage-door-spring-replacement-guide/"') !== false, 'branded blog index lost a root-relative post path');
+    twins_overhaul_renderer_assert(strpos($rendered, 'src="/wp-content/uploads/2026/07/twins-blog-springs.webp"') !== false, 'branded blog index lost a root-relative featured-image path');
+    twins_overhaul_renderer_assert(strpos($rendered, 'Most torsion springs are rated in open-close cycles, not years.') !== false, 'branded blog index lost the first-sentence excerpt');
+    twins_overhaul_renderer_assert(strpos($rendered, 'Start with the safety sensors before blaming the motor head.') !== false, 'branded blog index ignored an authored excerpt');
+    twins_overhaul_renderer_assert(strpos($rendered, 'July 2, 2026') !== false, 'branded blog index lost a formatted post date');
+    twins_overhaul_renderer_assert(strpos($rendered, 'Page 1 of 19') !== false, 'branded blog index lost its pagination status');
+    twins_overhaul_renderer_assert(strpos($rendered, 'href="/blog/page/2/"') !== false, 'branded blog index lost the older-guides pagination link');
+    twins_overhaul_renderer_assert(strpos($rendered, 'Newer guides') === false, 'branded blog index rendered a newer-guides link on page one');
+    twins_overhaul_renderer_assert(strpos($rendered, 'data-twins-original-content') === false, 'legacy archive body survived the branded blog index');
+    twins_overhaul_renderer_assert(strpos($rendered, 'BLOG-INDEX-POST-BYTES') === false, 'legacy archive bytes survived the branded blog index');
+    twins_overhaul_renderer_assert(strpos($rendered, 'stage.example.test/garage-door-spring-replacement-guide') === false, 'branded blog index leaked an absolute post URL');
+    twins_overhaul_renderer_assert(stripos($rendered, '<form') === false, 'branded blog index retained form authority');
+    twins_overhaul_renderer_assert(strpos($rendered, 'Request a Quote') !== false, 'branded blog index lost the quote CTA');
+
+    twins_overhaul_renderer_set(['path' => '/blog/page/3/', 'paged' => 3]);
+    $paged = twins_overhaul_render_classified_content(
+        'blog-index',
+        twins_overhaul_current_context('blog-index'),
+        ''
+    );
+    twins_overhaul_renderer_assert(strpos($paged, 'Page 3 of 19') !== false, 'paged blog index lost its pagination status');
+    twins_overhaul_renderer_assert(strpos($paged, 'href="/blog/page/2/"') !== false, 'paged blog index lost the newer-guides link');
+    twins_overhaul_renderer_assert(strpos($paged, 'href="/blog/page/4/"') !== false, 'paged blog index lost the older-guides link');
+    twins_overhaul_renderer_assert(strpos($paged, 'Newer guides') !== false, 'paged blog index lost the newer-guides label');
+
+    twins_overhaul_renderer_set(['path' => '/blog/', 'paged' => 0]);
     $postBody = '<article data-index-post="exact">BLOG-INDEX-POST-BYTES</article>';
-    twins_overhaul_renderer_assert(twins_overhaul_replace_main_content($postBody) === $postBody, 'posts index body was replaced');
+    twins_overhaul_renderer_assert(twins_overhaul_replace_main_content($postBody) === $postBody, 'posts index loop body was replaced outside the fixed template boundary');
 }
 
 if ($scenario === 'campaign') {
@@ -1301,6 +1418,7 @@ if ($scenario === 'article') {
         'renderedPostType' => 'post',
         'renderedPostId' => 803,
         'title' => 'Published Garage Door Story',
+        'thumbnails' => [803 => 'https://stage.example.test/wp-content/uploads/2026/07/twins-blog-story.webp'],
     ]);
     $original = '<article data-original="article" class="exact"><h1 id="article-heading" data-source="published">Embedded article heading</h1><p style="color:navy">PUBLISHED-ARTICLE-BYTES</p></article>';
     $rendered = twins_overhaul_replace_main_content($original);
@@ -1310,8 +1428,29 @@ if ($scenario === 'article') {
     twins_overhaul_renderer_assert(substr_count($rendered, 'PUBLISHED-ARTICLE-BYTES') === 1, 'article lost or duplicated its inert published facts');
     twins_overhaul_renderer_assert(strpos($rendered, 'data-original=') === false && strpos($rendered, 'data-source=') === false && strpos($rendered, 'style=') === false, 'article retained a legacy authority attribute');
     twins_overhaul_renderer_assert(strpos($rendered, 'twins-brand-editorial-page') !== false, 'article lacks the portable editorial frame');
+    twins_overhaul_renderer_assert(strpos($rendered, 'twins-brand-article-page') !== false, 'article lacks the full-width article layout class');
+    twins_overhaul_renderer_assert(substr_count($rendered, 'twins-brand-article-hero-media') === 1, 'article did not render its featured-image hero exactly once');
+    twins_overhaul_renderer_assert(strpos($rendered, 'src="/wp-content/uploads/2026/07/twins-blog-story.webp"') !== false, 'article hero lost the root-relative featured-image path');
+    twins_overhaul_renderer_assert(strpos($rendered, 'twins-brand-article-content') !== false, 'article lacks the wide readable content column');
+    twins_overhaul_renderer_assert(strpos($rendered, 'Services related to this guide') !== false, 'article lost the related-services block');
     twins_overhaul_renderer_assert(strpos($rendered, '(833) 833-2010') !== false, 'article lost the normalized regional phone');
     twins_overhaul_renderer_assert(strpos($rendered, '/contact-us/') !== false, 'article lost the quote adapter action');
+
+    twins_overhaul_renderer_set([
+        'path' => '/published-story-without-image/',
+        'postId' => 808,
+        'renderedPostId' => 808,
+        'title' => 'Published Story Without Image',
+        'thumbnails' => [],
+    ]);
+    $withoutImage = twins_overhaul_render_classified_content(
+        'article',
+        twins_overhaul_current_context('article'),
+        '<p>PLAIN-ARTICLE-BYTES</p>'
+    );
+    twins_overhaul_renderer_assert(strpos($withoutImage, 'twins-brand-article-hero-media') === false, 'image-free article rendered an empty hero figure');
+    twins_overhaul_renderer_assert(preg_match_all('/<h1\b/i', $withoutImage) === 1, 'image-free article frame does not render exactly one H1');
+    twins_overhaul_renderer_assert(substr_count($withoutImage, 'PLAIN-ARTICLE-BYTES') === 1, 'image-free article lost its inert body');
     $legalOriginal = '<div data-original="legal"><H1 class="legal-title" DATA-KEEP="yes">LEGAL TITLE</H1><p>LEGAL-BYTES</p></div>';
     $legalContext = ['title' => 'Privacy Policy', 'classification' => 'legal-preserve'];
     $legal = twins_overhaul_render_article_template($legalContext, $legalOriginal);

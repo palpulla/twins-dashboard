@@ -119,6 +119,10 @@ function twins_overhaul_is_allowed_singular_request(): bool {
  * @return string
  */
 function twins_overhaul_current_classification(): string {
+    if (function_exists('is_home') && is_home() && !is_singular()) {
+        twins_overhaul_current_request_path();
+        return 'blog-index';
+    }
     $postId = (int) get_queried_object_id();
     $postType = (string) get_post_type($postId);
     return twins_overhaul_classify_request(
@@ -246,6 +250,133 @@ function twins_overhaul_catalog_view(array $context): array {
         'mode' => 'product',
         'product' => $byId[$routes[$requestPath]],
         'builderPath' => $builderPath,
+    );
+}
+
+/**
+ * Resolve one same-origin root-relative path from a WordPress URL.
+ *
+ * @param mixed $url Candidate WordPress URL.
+ * @return string Root-relative path, or an empty string when unavailable.
+ */
+function twins_overhaul_same_origin_path($url): string {
+    if (!is_string($url) || $url === '') {
+        return '';
+    }
+    $path = wp_parse_url($url, PHP_URL_PATH);
+    if (!is_string($path) || $path === '' || $path[0] !== '/' || strpos($path, '//') !== false) {
+        return '';
+    }
+    return $path;
+}
+
+/**
+ * Resolve the branded featured-image path for the current queried article.
+ *
+ * @return string Root-relative featured-image path, or an empty string.
+ */
+function twins_overhaul_article_hero_path(): string {
+    if (!function_exists('get_the_post_thumbnail_url')) {
+        return '';
+    }
+    $postId = (int) get_queried_object_id();
+    if ($postId < 1) {
+        return '';
+    }
+    return twins_overhaul_same_origin_path(get_the_post_thumbnail_url($postId, 'full'));
+}
+
+/**
+ * Build the branded posts-index view from the proven main query only.
+ *
+ * Caller-selected posts, paths, and URLs are intentionally ignored; every
+ * record comes from the resolved main query and same-origin permalinks.
+ *
+ * @param array $context Proven current request context.
+ * @return array
+ */
+function twins_overhaul_blog_index_view(array $context): array {
+    $requestPath = twins_overhaul_current_request_path();
+    if (
+        !isset($context['path'])
+        || !is_string($context['path'])
+        || $context['path'] !== $requestPath
+    ) {
+        twins_overhaul_refuse_route('blog index request path does not match the proven context.');
+    }
+
+    $basePath = preg_replace('~page/\d+/?$~', '', $requestPath);
+    if (!is_string($basePath) || $basePath === '' || $basePath[0] !== '/') {
+        $basePath = '/blog/';
+    }
+    if (substr($basePath, -1) !== '/') {
+        $basePath .= '/';
+    }
+
+    $query = isset($GLOBALS['wp_query']) && is_object($GLOBALS['wp_query']) ? $GLOBALS['wp_query'] : null;
+    $queryPosts = $query !== null && isset($query->posts) && is_array($query->posts) ? $query->posts : array();
+    $posts = array();
+    foreach ($queryPosts as $post) {
+        if (count($posts) >= 24) {
+            break;
+        }
+        if (!is_object($post) || !isset($post->ID)) {
+            continue;
+        }
+        $postId = (int) $post->ID;
+        $postPath = function_exists('get_permalink')
+            ? twins_overhaul_same_origin_path(get_permalink($postId))
+            : '';
+        if ($postPath === '') {
+            continue;
+        }
+        $title = isset($post->post_title) ? trim((string) $post->post_title) : '';
+        if ($title === '') {
+            continue;
+        }
+        $excerptSource = isset($post->post_excerpt) && trim((string) $post->post_excerpt) !== ''
+            ? (string) $post->post_excerpt
+            : (isset($post->post_content) ? (string) $post->post_content : '');
+        $excerpt = trim((string) preg_replace(
+            '~\s+~u',
+            ' ',
+            strip_tags((string) preg_replace('~<[^>]+>~', ' ', $excerptSource))
+        ));
+        if (preg_match('~^.{40,220}?[.!?](?=\s|$)~us', $excerpt, $sentence)) {
+            $excerpt = trim($sentence[0]);
+        } elseif (strlen($excerpt) > 240) {
+            $cut = substr($excerpt, 0, 240);
+            $space = strrpos($cut, ' ');
+            $excerpt = rtrim(substr($cut, 0, $space === false ? 240 : $space), " \t.,;:") . '…';
+        }
+        $timestamp = isset($post->post_date) ? strtotime((string) $post->post_date) : false;
+        $date = $timestamp !== false ? date('F j, Y', $timestamp) : '';
+        $thumbnail = function_exists('get_the_post_thumbnail_url')
+            ? twins_overhaul_same_origin_path(get_the_post_thumbnail_url($postId, 'large'))
+            : '';
+        $posts[] = array(
+            'path' => $postPath,
+            'title' => $title,
+            'excerpt' => $excerpt,
+            'date' => $date,
+            'thumbnail' => $thumbnail,
+        );
+    }
+
+    $paged = function_exists('get_query_var') ? (int) get_query_var('paged') : 0;
+    $page = $paged > 1 ? $paged : 1;
+    $totalPages = $query !== null && isset($query->max_num_pages) ? (int) $query->max_num_pages : 1;
+    if ($totalPages < 1) {
+        $totalPages = 1;
+    }
+    if ($page > $totalPages) {
+        $totalPages = $page;
+    }
+    return array(
+        'posts' => $posts,
+        'page' => $page,
+        'totalPages' => $totalPages,
+        'basePath' => $basePath,
     );
 }
 
@@ -1332,7 +1463,15 @@ function twins_overhaul_render_classified_content(string $classification, array 
         );
     } elseif ($classification === 'service') {
         $rendered = twins_overhaul_brand_runtime()->renderService($context);
+    } elseif ($classification === 'blog-index') {
+        $rendered = twins_overhaul_brand_runtime()->renderBlogIndex(
+            $context,
+            twins_overhaul_blog_index_view($context)
+        );
     } elseif (in_array($classification, array('location', 'trust', 'article'), true)) {
+        if ($classification === 'article') {
+            $context['articleHero'] = twins_overhaul_article_hero_path();
+        }
         $rendered = twins_overhaul_brand_runtime()->renderEditorial(
             $context,
             twins_overhaul_prepare_family_content($content),
@@ -1628,6 +1767,33 @@ function twins_overhaul_replace_main_content(string $content): string {
 }
 
 /**
+ * Serve the branded posts index through the fixed bundled template.
+ *
+ * Singular routes keep their existing render path. Only the proven main
+ * posts-index request may switch templates, and only to the one fixed file
+ * shipped inside this MU plugin.
+ *
+ * @param mixed $template Theme-resolved template path.
+ * @return mixed
+ */
+function twins_overhaul_filter_blog_index_template($template) {
+    if (!function_exists('is_home') || !is_home() || is_singular()) {
+        return $template;
+    }
+    if (!twins_overhaul_is_allowed_chrome_request()) {
+        return $template;
+    }
+    if (twins_overhaul_current_classification() !== 'blog-index') {
+        return $template;
+    }
+    $fixed = __DIR__ . '/templates/blog-index.php';
+    if (!is_file($fixed) || is_link($fixed)) {
+        twins_overhaul_refuse_route('blog index template is unavailable.');
+    }
+    return $fixed;
+}
+
+/**
  * Print the shared footer once for a proven chrome-eligible request.
  *
  * @return void
@@ -1661,6 +1827,7 @@ function twins_overhaul_register_frontend_hooks(): void {
     add_filter('elementor/widget/render_content', 'twins_overhaul_filter_legacy_elementor_widget', PHP_INT_MAX, 2);
     add_filter('elementor/frontend/the_content', 'twins_overhaul_filter_elementor_document_content', PHP_INT_MAX, 1);
     add_filter('get_search_form', 'twins_overhaul_filter_search_form', PHP_INT_MAX, 2);
+    add_filter('template_include', 'twins_overhaul_filter_blog_index_template', PHP_INT_MAX, 1);
     add_action('wp_head', 'twins_overhaul_output_local_font_sentinel', 1, 0);
     add_action('wp_body_open', 'twins_overhaul_output_header', 5, 0);
     add_filter('the_content', 'twins_overhaul_replace_main_content', PHP_INT_MAX, 1);

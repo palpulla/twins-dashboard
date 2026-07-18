@@ -169,7 +169,7 @@ try {
         )
     ));
     sort($publicMethods);
-    $expectedMethods = ['applicationAdapter', 'asset', 'assetHandles', 'bookingAdapter', 'contextualRouteLabel', 'markets', 'quoteAdapter', 'renderCareers', 'renderCatalog', 'renderContact', 'renderEditorial', 'renderFooter', 'renderHeader', 'renderHome', 'renderReviews', 'renderService', 'renderTeam', 'reviewCollection', 'route'];
+    $expectedMethods = ['applicationAdapter', 'asset', 'assetHandles', 'bookingAdapter', 'contextualRouteLabel', 'markets', 'quoteAdapter', 'renderBlogIndex', 'renderCareers', 'renderCatalog', 'renderContact', 'renderEditorial', 'renderFooter', 'renderHeader', 'renderHome', 'renderReviews', 'renderService', 'renderTeam', 'reviewCollection', 'route'];
     sort($expectedMethods);
     $expect($publicMethods === $expectedMethods, 'portable Experience surface drift: ' . json_encode($publicMethods));
 

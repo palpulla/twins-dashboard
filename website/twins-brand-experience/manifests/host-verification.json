@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "remoteDirectory": "/home/customer/staging-safety/staging-remediation-r7-20260717/verification/",
+  "remoteDirectory": "/home/customer/staging-safety/staging-remediation-r8-20260717/verification/",
   "productionWriteAuthority": false,
   "files": [
     {
@@ -60,20 +60,26 @@
     {
       "role": "verify",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/renderers.php",
-      "size": 65283,
-      "sha256": "f3d2e4bd0ab75c5aa59679d8135c64e0c2364ee4e668cdcdd5937b828d9532bd"
+      "size": 71298,
+      "sha256": "54f1f62a3ab1ed767ac19e48533cd694104971998bdf46ff327b3fced7bc4e42"
     },
     {
       "role": "verify",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/routes.php",
-      "size": 8531,
-      "sha256": "c00ad95c51b04e2a29ed61cabd6b1ed61347b8062f1745583874a5d4e2e99a01"
+      "size": 8553,
+      "sha256": "8ff492a53bcf1aa29f4d94c9ddb94db1b78666c826fc16e519a1243f5cc77f5d"
     },
     {
       "role": "verify",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/templates/article.php",
       "size": 1357,
       "sha256": "51e709bae65a40998783ba176c6d3b48ad87211bce952491b4fdd39fa7ff7397"
+    },
+    {
+      "role": "verify",
+      "source": "staging-safety/mu-plugins/twins-staging-overhaul/templates/blog-index.php",
+      "size": 695,
+      "sha256": "306248bf5a9957d538cc0880d667454378cd9144ca08265346c802a4de8641f6"
     },
     {
       "role": "verify",
@@ -180,8 +186,8 @@
     {
       "role": "verify",
       "source": "staging-safety/tests/staging-overhaul-renderers-harness.php",
-      "size": 82048,
-      "sha256": "e71fb9d976029bb835d6ed6ac4065dcb49b8bf11688a741b4018c91ff8691fce"
+      "size": 91791,
+      "sha256": "dff1d5bfc54e2d7f07bf913a95c9fd79efaeef1317ab6195b94f4320f6e2b651"
     },
     {
       "role": "verify",
@@ -210,8 +216,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/assets/css/twins-brand.css",
-      "size": 62590,
-      "sha256": "fca98b38b19d1bc1a73482e1142f4ef85101d56203ef44cd74ebb58f2b065c29"
+      "size": 66807,
+      "sha256": "74b5201b13761f7b7e699a08ea4edfadf9f463349ca07b35558f4ff6115a1a70"
     },
     {
       "role": "verify",
@@ -294,8 +300,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/manifests/staging-runtime.json",
-      "size": 363944,
-      "sha256": "29400070838f3b5cbfeeeabd096669896cf3e4c996e9c5ae829461bd081e0d90"
+      "size": 364527,
+      "sha256": "3738a983b7681f538454c11ebb6774020646d52e569c9cd053c436e86cb69ae7"
     },
     {
       "role": "verify",
@@ -306,8 +312,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/src/Experience.php",
-      "size": 12532,
-      "sha256": "10fea0e3f34e80efa2beb53287cab6afa08fa764aa6eec84ebb0408034493a90"
+      "size": 15503,
+      "sha256": "5158266cc50bbc66a8d668ecc0c4343868f702154cb8806e0a44e09182282a6e"
     },
     {
       "role": "verify",
@@ -326,6 +332,12 @@
       "source": "twins-brand-experience/src/ReviewCodec.php",
       "size": 4489,
       "sha256": "62bcddd002e844e8b2419da919297177b80232144a8a5793a06a77f670a31d9c"
+    },
+    {
+      "role": "verify",
+      "source": "twins-brand-experience/templates/blog-index.php",
+      "size": 4396,
+      "sha256": "0a05a83cfca08579b4042d80c68490e9b77a17e75d693a84462a5ed2d0b27d2c"
     },
     {
       "role": "verify",
@@ -348,8 +360,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/templates/editorial.php",
-      "size": 4622,
-      "sha256": "bfdd518df2c85acef870e5c528dd5ecccd871615452e5f52208150db17923456"
+      "size": 6737,
+      "sha256": "05c9491f474809b091897be91c5a67025854f2642f9e5b949fae8d05133134ae"
     },
     {
       "role": "verify",
@@ -444,8 +456,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/tests/php/portable-core-harness.php",
-      "size": 21150,
-      "sha256": "ae31c6541cb0fb5094ecb9e629be288c6b84034108f315078a3e7fa241719c7d"
+      "size": 21169,
+      "sha256": "c327aad3476943d2d61c100834791643c407a415deced199d764b38a028ddfb4"
     },
     {
       "role": "verify",
@@ -469,7 +481,7 @@
       "role": "verify",
       "source": "twins-brand-experience/tools/private-staging-deploy.php",
       "size": 69391,
-      "sha256": "5693777b384e8e25782ab1bee1a14e110ef6492ed2523c0f86dc3a9e04921f1a"
+      "sha256": "56ddfabc9f25a0b36c6838cbfbaacb546f121d84a2a23ba94947da9a768d4201"
     }
   ]
 }

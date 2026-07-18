@@ -74,6 +74,17 @@ final class Experience
                 if (!is_string($content) || !is_string($kind) || !in_array($kind, ['location', 'trust', 'article'], true)) {
                     throw new \DomainException('Editorial render context is incomplete.');
                 }
+                $articleHero = '';
+                if (isset($context['articleHero'])) {
+                    if (!is_string($context['articleHero'])) {
+                        throw new \DomainException('Article hero context is invalid.');
+                    }
+                    if ($context['articleHero'] !== '') {
+                        $articleHero = $this->rootRelativePath($context['articleHero'], 'Article hero path is invalid.');
+                    }
+                }
+            } elseif ($template === 'blog-index') {
+                $blogIndex = $this->blogIndexView($context);
             }
             $quote = $this->quote->action($context);
             if ($template === 'catalog') {
@@ -151,6 +162,11 @@ final class Experience
         return $this->render('catalog', $context, $catalogView);
     }
 
+    public function renderBlogIndex(array $context, array $blogView): string
+    {
+        return $this->render('blog-index', array_replace($context, ['blogIndex' => $blogView]));
+    }
+
     public function renderEditorial(array $context, string $content, string $kind): string
     {
         if (!in_array($kind, ['location', 'trust', 'article'], true)) {
@@ -216,6 +232,57 @@ final class Experience
             throw new \DomainException('Normalized contact context does not match.');
         }
         return [$phone, $phoneHref];
+    }
+
+    private function blogIndexView(array $context): array
+    {
+        $view = $context['blogIndex'] ?? null;
+        if (
+            !is_array($view)
+            || !isset($view['posts'], $view['page'], $view['totalPages'], $view['basePath'])
+            || !is_array($view['posts'])
+            || !is_int($view['page'])
+            || !is_int($view['totalPages'])
+            || !is_string($view['basePath'])
+            || $view['page'] < 1
+            || $view['totalPages'] < 1
+            || $view['page'] > $view['totalPages']
+            || count($view['posts']) > 60
+        ) {
+            throw new \DomainException('Blog index render context is incomplete.');
+        }
+        $view['basePath'] = $this->rootRelativePath($view['basePath'], 'Blog index base path is invalid.');
+        if (substr($view['basePath'], -1) !== '/') {
+            throw new \DomainException('Blog index base path is invalid.');
+        }
+        $posts = [];
+        foreach ($view['posts'] as $post) {
+            if (
+                !is_array($post)
+                || !isset($post['path'], $post['title'], $post['excerpt'], $post['date'], $post['thumbnail'])
+                || !is_string($post['path'])
+                || !is_string($post['title'])
+                || !is_string($post['excerpt'])
+                || !is_string($post['date'])
+                || !is_string($post['thumbnail'])
+                || trim($post['title']) === ''
+            ) {
+                throw new \DomainException('Blog index record is incomplete.');
+            }
+            $post['path'] = $this->rootRelativePath($post['path'], 'Blog index record path is invalid.');
+            if ($post['thumbnail'] !== '') {
+                $post['thumbnail'] = $this->rootRelativePath($post['thumbnail'], 'Blog index thumbnail path is invalid.');
+            }
+            $posts[] = [
+                'path' => $post['path'],
+                'title' => trim($post['title']),
+                'excerpt' => trim($post['excerpt']),
+                'date' => trim($post['date']),
+                'thumbnail' => $post['thumbnail'],
+            ];
+        }
+        $view['posts'] = $posts;
+        return $view;
     }
 
     private function rootRelativePath(string $path, string $message): string

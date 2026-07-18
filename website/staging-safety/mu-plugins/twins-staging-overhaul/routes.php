@@ -99,6 +99,7 @@ function twins_overhaul_is_known_classification(string $classification): bool {
         'location',
         'trust',
         'article',
+        'blog-index',
         'cost-madison',
         'cost-milwaukee',
         'builder',

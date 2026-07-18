@@ -23,6 +23,7 @@ if (!isset($editorialKinds[$kind])) {
     throw new DomainException('Editorial kind is unavailable.');
 }
 $editorial = $editorialKinds[$kind];
+$isArticle = $kind === 'article';
 $title = isset($context['title']) && is_string($context['title']) && trim($context['title']) !== ''
     ? trim($context['title'])
     : 'Twins Garage Doors';
@@ -44,21 +45,38 @@ $locationServiceLinks = $kind === 'location'
         ['Customer Reviews', 'reviews'],
     ]
     : [];
+$articleServiceLinks = $isArticle
+    ? [
+        ['Garage Door Repair', 'repair'],
+        ['Garage Door Installation', 'installation'],
+        ['Spring Repair', 'spring-repair'],
+        ['Opener Repair', 'opener-repair'],
+        ['Customer Reviews', 'reviews'],
+    ]
+    : [];
+$articleHeroImage = $isArticle && isset($articleHero) && is_string($articleHero) ? $articleHero : '';
 ?>
-<main id="twins-overhaul-main" class="twins-brand-page twins-brand-editorial-page">
-  <header class="twins-brand-editorial-hero" aria-labelledby="twins-brand-editorial-title">
+<main id="twins-overhaul-main" class="twins-brand-page twins-brand-editorial-page<?= $isArticle ? ' twins-brand-article-page' : '' ?>">
+  <?php if ($articleHeroImage !== ''): ?>
+    <figure class="twins-brand-article-hero-media">
+      <img src="<?= htmlspecialchars($articleHeroImage, ENT_QUOTES, 'UTF-8') ?>" width="1200" height="675" alt="" decoding="async" fetchpriority="high">
+    </figure>
+  <?php endif; ?>
+  <header class="twins-brand-editorial-hero<?= $isArticle ? ' twins-brand-article-hero' : '' ?>" aria-labelledby="twins-brand-editorial-title">
     <span class="twins-brand-kicker"><?= htmlspecialchars($editorial['kicker'], ENT_QUOTES, 'UTF-8') ?></span>
     <h1 id="twins-brand-editorial-title"><?= htmlspecialchars($title, ENT_QUOTES, 'UTF-8') ?></h1>
   </header>
 
-  <section class="twins-brand-editorial-answer" aria-labelledby="twins-brand-editorial-answer-title">
-    <div>
-      <span class="twins-brand-kicker">Direct answer</span>
-      <h2 id="twins-brand-editorial-answer-title">What to know first</h2>
-      <p><?= htmlspecialchars($editorial['answer'], ENT_QUOTES, 'UTF-8') ?></p>
-    </div>
-    <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call <?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
-  </section>
+  <?php if (!$isArticle): ?>
+    <section class="twins-brand-editorial-answer" aria-labelledby="twins-brand-editorial-answer-title">
+      <div>
+        <span class="twins-brand-kicker">Direct answer</span>
+        <h2 id="twins-brand-editorial-answer-title">What to know first</h2>
+        <p><?= htmlspecialchars($editorial['answer'], ENT_QUOTES, 'UTF-8') ?></p>
+      </div>
+      <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call <?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
+    </section>
+  <?php endif; ?>
 
   <?php if ($locationServiceLinks !== []): ?>
     <section class="twins-brand-editorial-services" aria-labelledby="twins-brand-location-services-title">
@@ -76,17 +94,35 @@ $locationServiceLinks = $kind === 'location'
 
   <?php if ($kind === 'location') require dirname(__DIR__) . '/components/service-areas-panel.php'; ?>
 
-  <section class="twins-brand-editorial-body">
-    <article class="twins-brand-editorial-content">
+  <section class="twins-brand-editorial-body<?= $isArticle ? ' twins-brand-article-body' : '' ?>">
+    <article class="twins-brand-editorial-content<?= $isArticle ? ' twins-brand-article-content' : '' ?>">
       <?= $content ?>
     </article>
   </section>
+
+  <?php if ($articleServiceLinks !== []): ?>
+    <section class="twins-brand-editorial-services twins-brand-article-services" aria-labelledby="twins-brand-article-services-title">
+      <div class="twins-brand-section-heading">
+        <span class="twins-brand-kicker">Need hands-on help?</span>
+        <h2 id="twins-brand-article-services-title">Services related to this guide</h2>
+      </div>
+      <nav class="twins-brand-location-links" aria-label="Related garage door services">
+        <?php foreach ($articleServiceLinks as [$articleLabel, $articleRoute]): ?>
+          <a href="<?= htmlspecialchars($experience->route($articleRoute, $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($experience->contextualRouteLabel($articleRoute, $marketKey, $articleLabel), ENT_QUOTES, 'UTF-8') ?></a>
+        <?php endforeach; ?>
+      </nav>
+    </section>
+  <?php endif; ?>
 
   <section class="twins-brand-final-cta" aria-labelledby="twins-brand-editorial-final-title">
     <span class="twins-brand-kicker"><?= htmlspecialchars($market['label'], ENT_QUOTES, 'UTF-8') ?></span>
     <h2 id="twins-brand-editorial-final-title">Need a project-specific answer?</h2>
     <div class="twins-brand-final-actions">
-      <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call Twins</a>
+      <?php if ($isArticle): ?>
+        <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call <?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
+      <?php else: ?>
+        <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call Twins</a>
+      <?php endif; ?>
       <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
     </div>
   </section>
