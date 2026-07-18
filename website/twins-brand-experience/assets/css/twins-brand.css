@@ -1375,3 +1375,6 @@ body.twins-brand-experience .twins-brand-blog-page-link:is(:hover, :focus-visibl
 .twins-brand-catalog-compare th, .twins-brand-catalog-compare td { padding: 10px 14px; border-bottom: 1px solid rgba(7, 29, 59, .14); text-align: left; color: var(--twins-ink); }
 .twins-brand-catalog-compare thead th { background: var(--twins-navy-950); color: var(--twins-white); font-weight: 900; letter-spacing: .03em; }
 .twins-brand-catalog-compare tbody th a { color: var(--twins-navy-700); font-weight: 800; }
+body.single-post #primary,
+body.single-post .site-main,
+body.single-post main.twins-brand-page { width: 100% !important; max-width: 100% !important; }

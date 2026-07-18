@@ -15,8 +15,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/assets/css/twins-brand.css",
       "destination": "twins-brand-experience/assets/css/twins-brand.css",
-      "size": 66807,
-      "sha256": "74b5201b13761f7b7e699a08ea4edfadf9f463349ca07b35558f4ff6115a1a70"
+      "size": 66958,
+      "sha256": "bd409bd04d8829a41d0b2f3faeb0fcbd6d418fb97e63c9357a8429547ef59296"
     },
     {
       "role": "deploy",
