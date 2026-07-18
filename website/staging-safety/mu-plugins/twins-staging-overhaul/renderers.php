@@ -1767,30 +1767,56 @@ function twins_overhaul_replace_main_content(string $content): string {
 }
 
 /**
- * Serve the branded posts index through the fixed bundled template.
+ * Resolve one fixed bundled template file by allowlisted name only.
  *
- * Singular routes keep their existing render path. Only the proven main
- * posts-index request may switch templates, and only to the one fixed file
- * shipped inside this MU plugin.
+ * @param string $name Fixed bundled template file name.
+ * @return string
+ */
+function twins_overhaul_fixed_template(string $name): string {
+    if (!in_array($name, array('blog-index.php', 'single-article.php'), true)) {
+        twins_overhaul_refuse_route('bundled template name is outside the fixed allowlist.');
+    }
+    $fixed = __DIR__ . '/templates/' . $name;
+    if (!is_file($fixed) || is_link($fixed)) {
+        twins_overhaul_refuse_route('bundled template is unavailable.');
+    }
+    return $fixed;
+}
+
+/**
+ * Serve the branded posts index and singular articles through fixed bundled
+ * templates.
+ *
+ * The proven main posts-index request switches to the blog-index template.
+ * A proven singular blog post (post_type "post", classification "article")
+ * switches to the single-article template so the branded article layout
+ * renders without the legacy Elementor single-post shell. Every other
+ * classification — including legal-preserve, campaign-preserve, and all
+ * page-based routes — keeps its theme-resolved template.
  *
  * @param mixed $template Theme-resolved template path.
  * @return mixed
  */
-function twins_overhaul_filter_blog_index_template($template) {
-    if (!function_exists('is_home') || !is_home() || is_singular()) {
-        return $template;
-    }
+function twins_overhaul_filter_branded_template($template) {
     if (!twins_overhaul_is_allowed_chrome_request()) {
         return $template;
     }
-    if (twins_overhaul_current_classification() !== 'blog-index') {
+    if (function_exists('is_home') && is_home() && !is_singular()) {
+        if (twins_overhaul_current_classification() !== 'blog-index') {
+            return $template;
+        }
+        return twins_overhaul_fixed_template('blog-index.php');
+    }
+    if (!twins_overhaul_is_allowed_singular_request()) {
         return $template;
     }
-    $fixed = __DIR__ . '/templates/blog-index.php';
-    if (!is_file($fixed) || is_link($fixed)) {
-        twins_overhaul_refuse_route('blog index template is unavailable.');
+    if ((string) get_post_type((int) get_queried_object_id()) !== 'post') {
+        return $template;
     }
-    return $fixed;
+    if (twins_overhaul_current_classification() !== 'article') {
+        return $template;
+    }
+    return twins_overhaul_fixed_template('single-article.php');
 }
 
 /**
@@ -1827,7 +1853,7 @@ function twins_overhaul_register_frontend_hooks(): void {
     add_filter('elementor/widget/render_content', 'twins_overhaul_filter_legacy_elementor_widget', PHP_INT_MAX, 2);
     add_filter('elementor/frontend/the_content', 'twins_overhaul_filter_elementor_document_content', PHP_INT_MAX, 1);
     add_filter('get_search_form', 'twins_overhaul_filter_search_form', PHP_INT_MAX, 2);
-    add_filter('template_include', 'twins_overhaul_filter_blog_index_template', PHP_INT_MAX, 1);
+    add_filter('template_include', 'twins_overhaul_filter_branded_template', PHP_INT_MAX, 1);
     add_action('wp_head', 'twins_overhaul_output_local_font_sentinel', 1, 0);
     add_action('wp_body_open', 'twins_overhaul_output_header', 5, 0);
     add_filter('the_content', 'twins_overhaul_replace_main_content', PHP_INT_MAX, 1);

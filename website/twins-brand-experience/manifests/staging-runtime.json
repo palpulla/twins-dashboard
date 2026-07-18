@@ -6140,8 +6140,8 @@
       "role": "deploy",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/renderers.php",
       "destination": "twins-staging-overhaul/renderers.php",
-      "size": 71298,
-      "sha256": "54f1f62a3ab1ed767ac19e48533cd694104971998bdf46ff327b3fced7bc4e42"
+      "size": 72362,
+      "sha256": "de6b8e643faac79829098d0779e17d77c8c580b133e34a78c18718df13e941b7"
     },
     {
       "role": "deploy",
@@ -6161,8 +6161,8 @@
       "role": "deploy",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/templates/blog-index.php",
       "destination": "twins-staging-overhaul/templates/blog-index.php",
-      "size": 695,
-      "sha256": "306248bf5a9957d538cc0880d667454378cd9144ca08265346c802a4de8641f6"
+      "size": 692,
+      "sha256": "dbf03f5b3e91a046e787320bd5df87f524bfaf85e2f37bdc92c29b14e2275d5f"
     },
     {
       "role": "deploy",
@@ -6198,6 +6198,13 @@
       "destination": "twins-staging-overhaul/templates/service.php",
       "size": 283,
       "sha256": "d9797dd23ca1fe496a2871b1479c7dcb0040fc4f023c17695b2385c88aa968bb"
+    },
+    {
+      "role": "deploy",
+      "source": "staging-safety/mu-plugins/twins-staging-overhaul/templates/single-article.php",
+      "destination": "twins-staging-overhaul/templates/single-article.php",
+      "size": 1252,
+      "sha256": "f35671e9b5c703ff906cf32229300b0bf6b52e3c0d2e8d30df8b1e947dc1b367"
     },
     {
       "role": "deploy",

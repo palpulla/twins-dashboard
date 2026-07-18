@@ -587,10 +587,10 @@ if ($scenario === 'hooks') {
     twins_overhaul_renderer_assert($imageAttributesHook[3] === PHP_INT_MAX && $imageAttributesHook[4] === 3, 'legacy image-attributes isolation priority mismatch');
     twins_overhaul_renderer_assert($searchFormHook[2] === 'twins_overhaul_filter_search_form', 'search-form isolation callback mismatch');
     twins_overhaul_renderer_assert($searchFormHook[3] === PHP_INT_MAX && $searchFormHook[4] === 2, 'search-form isolation priority mismatch');
-    twins_overhaul_renderer_assert($blogTemplateHook[2] === 'twins_overhaul_filter_blog_index_template', 'blog index template callback mismatch');
+    twins_overhaul_renderer_assert($blogTemplateHook[2] === 'twins_overhaul_filter_branded_template', 'blog index template callback mismatch');
     twins_overhaul_renderer_assert($blogTemplateHook[3] === PHP_INT_MAX && $blogTemplateHook[4] === 1, 'blog index template priority mismatch');
     twins_overhaul_renderer_assert(
-        twins_overhaul_filter_blog_index_template('/legacy-theme/singular.php') === '/legacy-theme/singular.php',
+        twins_overhaul_filter_branded_template('/legacy-theme/singular.php') === '/legacy-theme/singular.php',
         'singular request lost its theme template to the blog index boundary'
     );
     twins_overhaul_renderer_assert($headerHook[2] === 'twins_overhaul_output_header', 'header callback mismatch');
@@ -822,7 +822,7 @@ if ($scenario === 'blog-index') {
     twins_overhaul_renderer_assert(substr_count($footer, '<footer class="twins-brand-footer"') === 1, 'posts index portable footer once guard failed');
 
     $expectedTemplate = realpath(dirname($argv[1]) . '/twins-staging-overhaul/templates/blog-index.php');
-    $switchedTemplate = twins_overhaul_filter_blog_index_template('/legacy-theme/index.php');
+    $switchedTemplate = twins_overhaul_filter_branded_template('/legacy-theme/index.php');
     twins_overhaul_renderer_assert(
         is_string($expectedTemplate)
             && is_string($switchedTemplate)
@@ -1435,6 +1435,23 @@ if ($scenario === 'article') {
     twins_overhaul_renderer_assert(strpos($rendered, 'Services related to this guide') !== false, 'article lost the related-services block');
     twins_overhaul_renderer_assert(strpos($rendered, '(833) 833-2010') !== false, 'article lost the normalized regional phone');
     twins_overhaul_renderer_assert(strpos($rendered, '/contact-us/') !== false, 'article lost the quote adapter action');
+    twins_overhaul_renderer_assert(
+        stripos($rendered, '<aside') === false
+            && stripos($rendered, 'elementor') === false
+            && stripos($rendered, 'type="search"') === false
+            && stripos($rendered, '<input') === false
+            && stripos($rendered, 'share') === false,
+        'article render retained legacy single-post shell markup'
+    );
+
+    $expectedArticleTemplate = realpath(dirname($argv[1]) . '/twins-staging-overhaul/templates/single-article.php');
+    $switchedArticleTemplate = twins_overhaul_filter_branded_template('/legacy-theme/elementor-single-post.php');
+    twins_overhaul_renderer_assert(
+        is_string($expectedArticleTemplate)
+            && is_string($switchedArticleTemplate)
+            && realpath($switchedArticleTemplate) === $expectedArticleTemplate,
+        'article post did not switch to the fixed branded single-article template'
+    );
 
     twins_overhaul_renderer_set([
         'path' => '/published-story-without-image/',
@@ -1451,6 +1468,48 @@ if ($scenario === 'article') {
     twins_overhaul_renderer_assert(strpos($withoutImage, 'twins-brand-article-hero-media') === false, 'image-free article rendered an empty hero figure');
     twins_overhaul_renderer_assert(preg_match_all('/<h1\b/i', $withoutImage) === 1, 'image-free article frame does not render exactly one H1');
     twins_overhaul_renderer_assert(substr_count($withoutImage, 'PLAIN-ARTICLE-BYTES') === 1, 'image-free article lost its inert body');
+
+    twins_overhaul_renderer_set([
+        'path' => '/unknown-page/',
+        'postType' => 'page',
+        'postId' => 812,
+        'renderedPostType' => 'page',
+        'renderedPostId' => 812,
+        'title' => 'Unknown Page',
+    ]);
+    twins_overhaul_renderer_assert(twins_overhaul_current_classification() === 'article', 'unknown page is no longer article-classified');
+    twins_overhaul_renderer_assert(
+        twins_overhaul_filter_branded_template('/legacy-theme/page.php') === '/legacy-theme/page.php',
+        'article-classified page lost its theme template to the branded boundary'
+    );
+
+    twins_overhaul_renderer_set([
+        'path' => '/privacy-policy/',
+        'postType' => 'page',
+        'postId' => 2009,
+        'renderedPostType' => 'page',
+        'renderedPostId' => 2009,
+        'title' => 'Privacy Policy',
+    ]);
+    twins_overhaul_renderer_assert(twins_overhaul_current_classification() === 'legal-preserve', 'privacy policy is no longer legal-preserve');
+    twins_overhaul_renderer_assert(
+        twins_overhaul_filter_branded_template('/legacy-theme/page.php') === '/legacy-theme/page.php',
+        'legal-preserve lost its theme template to the branded boundary'
+    );
+
+    twins_overhaul_renderer_set([
+        'path' => '/madison-garage-door-repair-lp/',
+        'postType' => 'page',
+        'postId' => 7092,
+        'renderedPostType' => 'page',
+        'renderedPostId' => 7092,
+        'title' => 'Madison Garage Door Repair',
+    ]);
+    twins_overhaul_renderer_assert(twins_overhaul_current_classification() === 'campaign-preserve', 'campaign is no longer campaign-preserve');
+    twins_overhaul_renderer_assert(
+        twins_overhaul_filter_branded_template('/legacy-theme/page.php') === '/legacy-theme/page.php',
+        'campaign-preserve lost its theme template to the branded boundary'
+    );
     $legalOriginal = '<div data-original="legal"><H1 class="legal-title" DATA-KEEP="yes">LEGAL TITLE</H1><p>LEGAL-BYTES</p></div>';
     $legalContext = ['title' => 'Privacy Policy', 'classification' => 'legal-preserve'];
     $legal = twins_overhaul_render_article_template($legalContext, $legalOriginal);

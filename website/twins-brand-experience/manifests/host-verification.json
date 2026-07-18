@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "remoteDirectory": "/home/customer/staging-safety/staging-remediation-r8-20260717/verification/",
+  "remoteDirectory": "/home/customer/staging-safety/staging-remediation-r9-20260717/verification/",
   "productionWriteAuthority": false,
   "files": [
     {
@@ -60,8 +60,8 @@
     {
       "role": "verify",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/renderers.php",
-      "size": 71298,
-      "sha256": "54f1f62a3ab1ed767ac19e48533cd694104971998bdf46ff327b3fced7bc4e42"
+      "size": 72362,
+      "sha256": "de6b8e643faac79829098d0779e17d77c8c580b133e34a78c18718df13e941b7"
     },
     {
       "role": "verify",
@@ -78,8 +78,8 @@
     {
       "role": "verify",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/templates/blog-index.php",
-      "size": 695,
-      "sha256": "306248bf5a9957d538cc0880d667454378cd9144ca08265346c802a4de8641f6"
+      "size": 692,
+      "sha256": "dbf03f5b3e91a046e787320bd5df87f524bfaf85e2f37bdc92c29b14e2275d5f"
     },
     {
       "role": "verify",
@@ -110,6 +110,12 @@
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/templates/service.php",
       "size": 283,
       "sha256": "d9797dd23ca1fe496a2871b1479c7dcb0040fc4f023c17695b2385c88aa968bb"
+    },
+    {
+      "role": "verify",
+      "source": "staging-safety/mu-plugins/twins-staging-overhaul/templates/single-article.php",
+      "size": 1252,
+      "sha256": "f35671e9b5c703ff906cf32229300b0bf6b52e3c0d2e8d30df8b1e947dc1b367"
     },
     {
       "role": "verify",
@@ -186,8 +192,8 @@
     {
       "role": "verify",
       "source": "staging-safety/tests/staging-overhaul-renderers-harness.php",
-      "size": 91791,
-      "sha256": "dff1d5bfc54e2d7f07bf913a95c9fd79efaeef1317ab6195b94f4320f6e2b651"
+      "size": 94552,
+      "sha256": "64d3c47a0871381436de6d4e386f446a5c94737edac8d015eb2546c2878efd77"
     },
     {
       "role": "verify",
@@ -300,8 +306,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/manifests/staging-runtime.json",
-      "size": 364527,
-      "sha256": "3738a983b7681f538454c11ebb6774020646d52e569c9cd053c436e86cb69ae7"
+      "size": 364840,
+      "sha256": "ccb2395e85b2ae28764c47f1009a97b88eff5addf4479bed980a175e7099e359"
     },
     {
       "role": "verify",
@@ -481,7 +487,7 @@
       "role": "verify",
       "source": "twins-brand-experience/tools/private-staging-deploy.php",
       "size": 69391,
-      "sha256": "56ddfabc9f25a0b36c6838cbfbaacb546f121d84a2a23ba94947da9a768d4201"
+      "sha256": "f508265aab6606af3895196f400340edc77684c454c464ecb76017e3e19289ff"
     }
   ]
 }
