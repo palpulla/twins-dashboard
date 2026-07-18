@@ -1351,7 +1351,49 @@ function twins_overhaul_render_classified_content(string $classification, array 
     if (!is_string($rendered) || preg_match('~</?form\b~i', $rendered)) {
         twins_overhaul_refuse_route('classified staging output retained form markup.');
     }
+    if ($classification === 'location') {
+        $rendered .= twins_overhaul_location_map_markup($context);
+    }
     return $rendered . twins_overhaul_brand_schema_markup($classification, $context);
+}
+
+/**
+ * Render the service-area map block for location routes.
+ *
+ * Staging renders an outbound link card only; the live iframe embed renders
+ * exclusively under a production environment constant.
+ *
+ * @param array $context Proven current request context.
+ * @return string
+ */
+function twins_overhaul_location_map_markup(array $context): string {
+    $regions = twins_overhaul_regions();
+    $blogId = (int) get_current_blog_id();
+    if (!isset($regions[$blogId])) {
+        return '';
+    }
+    $states = array('wi' => 'WI', 'ky' => 'KY', 'il' => 'IL');
+    $state = $states[$regions[$blogId]['key']] ?? '';
+    $city = isset($context['title']) && is_string($context['title']) ? trim($context['title']) : '';
+    if ($city === '' || str_word_count($city) > 4) {
+        return '';
+    }
+    $query = $state !== '' ? $city . ', ' . $state : $city;
+    if (stripos($city, 'madison') !== false) {
+        $query = 'Twins Garage Doors, 2921 Landmark Pl #206, Madison, WI 53713';
+    }
+    $cityHtml = esc_html($city);
+    $queryEncoded = rawurlencode($query);
+    $isProduction = defined('WP_ENVIRONMENT_TYPE') && WP_ENVIRONMENT_TYPE === 'production';
+    $mapInner = $isProduction
+        ? '<iframe class="twins-brand-location-map" title="Map of ' . esc_attr($query) . '" src="https://maps.google.com/maps?q=' . $queryEncoded . '&amp;z=11&amp;output=embed" width="600" height="380" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>'
+        : '<a class="twins-brand-location-map twins-brand-location-map--link" href="https://www.google.com/maps/search/' . $queryEncoded . '" target="_blank" rel="noopener noreferrer"><span class="twins-brand-door-map-pin" aria-hidden="true"></span>Open the ' . $cityHtml . ' map on Google Maps</a>'
+        . '<p class="twins-brand-location-map-note">The live map embed loads on the published site.</p>';
+    return '<section class="twins-brand-editorial-map" aria-labelledby="twins-brand-location-map-title">'
+        . '<div class="twins-brand-section-heading"><span class="twins-brand-kicker">Find us on the map</span>'
+        . '<h2 id="twins-brand-location-map-title">' . $cityHtml . ' service area</h2></div>'
+        . $mapInner
+        . '</section>';
 }
 
 /**
@@ -1436,6 +1478,13 @@ function twins_overhaul_brand_schema_markup(string $classification, array $conte
             'reviewCount' => $rating['count'],
             'bestRating' => 5,
         );
+        $schema['address'] = array(
+            '@type' => 'PostalAddress',
+            'streetAddress' => '2921 Landmark Pl #206',
+            'addressLocality' => 'Madison',
+            'addressRegion' => 'WI',
+            'postalCode' => '53713',
+        );
     } elseif ($classification === 'location') {
         $schema = array(
             '@context' => 'https://schema.org',
@@ -1505,33 +1554,23 @@ function twins_overhaul_brand_schema_service_record(string $path) {
  * @return array{value:float,count:int}|null
  */
 function twins_overhaul_brand_schema_review_rating() {
-    $file = dirname(__DIR__) . '/twins-brand-experience/data/reviews/google-business-reviews-collection-2178.json';
+    $file = dirname(__DIR__) . '/twins-brand-experience/config/review-summary.php';
     if (!is_file($file)) {
-        $file = dirname(__DIR__, 3) . '/twins-brand-experience/data/reviews/google-business-reviews-collection-2178.json';
+        $file = dirname(__DIR__, 3) . '/twins-brand-experience/config/review-summary.php';
     }
     if (!is_file($file)) {
         return null;
     }
-    $raw = @file_get_contents($file);
-    if (!is_string($raw) || $raw === '') {
+    $summary = require $file;
+    if (
+        !is_array($summary)
+        || !isset($summary['ratingValue'], $summary['reviewCountFloor'])
+        || !is_float($summary['ratingValue'])
+        || !is_int($summary['reviewCountFloor'])
+    ) {
         return null;
     }
-    $decoded = json_decode($raw, true);
-    if (!is_array($decoded) || !isset($decoded['records']) || !is_array($decoded['records'])) {
-        return null;
-    }
-    $sum = 0;
-    $count = 0;
-    foreach ($decoded['records'] as $record) {
-        if (is_array($record) && isset($record['rating']) && is_int($record['rating'])) {
-            $sum += $record['rating'];
-            $count++;
-        }
-    }
-    if ($count === 0) {
-        return null;
-    }
-    return array('value' => round($sum / $count, 1), 'count' => $count);
+    return array('value' => $summary['ratingValue'], 'count' => $summary['reviewCountFloor']);
 }
 
 /**

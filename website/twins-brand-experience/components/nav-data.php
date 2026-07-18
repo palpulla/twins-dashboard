@@ -32,9 +32,6 @@ $serviceItems = array_values(array_filter(
 
 $garageDoorItems = [
     ['Garage Door Collections', 'garage-doors'],
-    ['Classic Collection', 'classic-collection'],
-    ['Modern Steel', 'modern-steel'],
-    ['Gallery Steel', 'gallery-steel'],
     ['Garage Door Openers', 'openers'],
     ['Design Your Door', 'door-builder'],
 ];
@@ -84,17 +81,16 @@ $twinsNavCityLinks = [
     ],
 ];
 
-$serviceAreas = [];
+$serviceAreasCompact = [];
 if ($marketKey === 'main') {
-    $serviceAreas[] = ['All Service Areas', 'service-area'];
+    $serviceAreasCompact[] = ['All Service Areas', 'service-area'];
 }
 foreach ($experience->markets()->all($environment) as $twinsNavMarketKey => $twinsNavMarket) {
     if ($twinsNavMarketKey === 'main') continue;
-    $serviceAreas[] = [$twinsNavMarket['label'], $twinsNavMarketKey];
+    $serviceAreasCompact[] = [$twinsNavMarket['label'], $twinsNavMarketKey];
 }
-foreach ($twinsNavCityLinks[$marketKey] ?? [] as $twinsNavCityItem) {
-    $serviceAreas[] = $twinsNavCityItem;
-}
+$marketCityLinks = $twinsNavCityLinks[$marketKey] ?? [];
+$serviceAreas = array_merge($serviceAreasCompact, $marketCityLinks);
 
 $resourceItems = [
     ['Reviews', 'reviews'],

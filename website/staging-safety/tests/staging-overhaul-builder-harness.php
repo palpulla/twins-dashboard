@@ -63,7 +63,7 @@ $catalog = twins_overhaul_builder_catalog();
 builder_assert(($catalog['schemaVersion'] ?? null) === 1, 'catalog schema mismatch');
 builder_assert(count($catalog['products'] ?? array()) === 23, 'catalog product count mismatch');
 
-$phones = array(1 => '(833) 833-2010', 3 => '(833) 833-2010', 4 => '(608) 420-2377', 5 => '(815) 800-2025');
+$phones = array(1 => '(833) 833-2010', 3 => '(859) 440-2227', 4 => '(608) 420-2377', 5 => '(815) 800-2025');
 foreach ($phones as $blogId => $phone) {
     $GLOBALS['twins_builder_blog_id'] = $blogId;
     $markup = twins_overhaul_render_builder(array('phone' => '(000) 000-0000', 'base' => '/spoof/'));

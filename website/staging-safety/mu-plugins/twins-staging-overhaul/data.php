@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 function twins_overhaul_regions(): array {
     return array(
         1 => array('key' => 'main', 'phone' => '(833) 833-2010', 'tel' => '+18338332010', 'base' => '/'),
-        3 => array('key' => 'ky', 'phone' => '(833) 833-2010', 'tel' => '+18338332010', 'base' => '/ky/'),
+        3 => array('key' => 'ky', 'phone' => '(859) 440-2227', 'tel' => '+18594402227', 'base' => '/ky/'),
         4 => array('key' => 'wi', 'phone' => '(608) 420-2377', 'tel' => '+16084202377', 'base' => '/wi/'),
         5 => array('key' => 'il', 'phone' => '(815) 800-2025', 'tel' => '+18158002025', 'base' => '/il/'),
     );

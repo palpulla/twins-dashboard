@@ -26,6 +26,7 @@ $editorial = $editorialKinds[$kind];
 $title = isset($context['title']) && is_string($context['title']) && trim($context['title']) !== ''
     ? trim($context['title'])
     : 'Twins Garage Doors';
+$locationCity = $title;
 if (
     $kind === 'location'
     && str_word_count($title) <= 3
@@ -72,6 +73,8 @@ $locationServiceLinks = $kind === 'location'
       </nav>
     </section>
   <?php endif; ?>
+
+  <?php if ($kind === 'location') require dirname(__DIR__) . '/components/service-areas-panel.php'; ?>
 
   <section class="twins-brand-editorial-body">
     <article class="twins-brand-editorial-content">

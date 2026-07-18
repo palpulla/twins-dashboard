@@ -6,7 +6,7 @@ require __DIR__ . '/nav-data.php';
 $footerGroups = [
     'Services' => $serviceItems,
     'Garage Doors' => $garageDoorItems,
-    'Service Areas' => $serviceAreas,
+    'Service Areas' => $serviceAreasCompact,
     'Resources' => $resourceItems,
     'About' => $aboutItems,
 ];
@@ -24,7 +24,7 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
     <a class="twins-brand-phone" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
     <address class="twins-brand-footer-nap">
       <span>Twins Garage Doors</span>
-      <span>Madison, Wisconsin</span>
+      <span>2921 Landmark Pl #206, Madison, WI 53713</span>
       <a href="mailto:contact@twinsgaragedoors.com">contact@twinsgaragedoors.com</a>
       <span>Licensed and insured</span>
     </address>

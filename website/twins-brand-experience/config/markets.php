@@ -22,8 +22,8 @@ return [
     ],
     'ky' => [
         'label' => 'Kentucky',
-        'phoneDisplay' => '(833) 833-2010',
-        'phoneHref' => 'tel:+18338332010',
+        'phoneDisplay' => '(859) 440-2227',
+        'phoneHref' => 'tel:+18594402227',
         'routePrefix' => '/ky/',
         'stagingEnabled' => true,
         'productionEnabled' => true,

@@ -252,7 +252,11 @@
 
       function renderReference(parent) {
         if (!state.product) return;
-        const composed = Boolean(state.design);
+        const designDoorShaped = Boolean(
+          state.design
+          && state.design.image.width >= state.design.image.height * 1.4,
+        );
+        const composed = designDoorShaped;
         const panel = composed ? state.design.image : state.product.showcase;
         const figure = builderElement(owner, 'figure', 'twins-builder__reference');
         const stagePane = builderElement(owner, 'div', 'twins-builder__composite');
@@ -291,9 +295,14 @@
         }
         figure.appendChild(stagePane);
         const selections = configurationRows().slice(1).map(row => row[1]).join(', ');
-        const caption = composed
-          ? `Illustrative preview of your selections${selections ? `: ${selections}` : ''}. Manufacturer reference only. Twins confirms final appearance before ordering.`
-          : 'Manufacturer reference only. Pick a panel or design and your color, window, and hardware choices appear on the door; Twins confirms final appearance before ordering.';
+        let caption;
+        if (composed) {
+          caption = `Illustrative preview of your selections${selections ? `: ${selections}` : ''}. Manufacturer reference only. Twins confirms final appearance before ordering.`;
+        } else if (state.design) {
+          caption = `Real ${builderCleanTitle(state.product.title)} door shown; your selections${selections ? ` (${selections})` : ''} appear as manufacturer samples below. Manufacturer reference only. Twins confirms final appearance before ordering.`;
+        } else {
+          caption = 'Manufacturer reference only. Pick a panel or design and your color, window, and hardware choices appear on the door; Twins confirms final appearance before ordering.';
+        }
         figure.appendChild(builderElement(
           owner,
           'figcaption',
@@ -302,7 +311,13 @@
         ));
         parent.appendChild(figure);
 
-        const samples = [state.color, state.window, state.glass, state.hardware].filter(Boolean);
+        const samples = [
+          composed ? null : state.design,
+          state.color,
+          state.window,
+          state.glass,
+          state.hardware,
+        ].filter(Boolean);
         if (samples.length) {
           const sampleStrip = builderElement(owner, 'div', 'twins-builder__samples');
           sampleStrip.setAttribute('aria-label', 'Selected manufacturer samples');

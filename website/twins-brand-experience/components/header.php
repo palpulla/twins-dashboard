@@ -64,9 +64,16 @@ body:has(.twins-brand-header) :where(
         <?php endforeach; ?>
       </div>
     </details>
-    <a class="twins-brand-phone" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">
-      <?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?>
-    </a>
+    <?php if ($marketKey === 'wi'): ?>
+      <span class="twins-brand-utility-phones">
+        <a class="twins-brand-phone" href="tel:+16084202377"><small>Madison</small> (608) 420-2377</a>
+        <a class="twins-brand-phone" href="tel:+14148009271"><small>Milwaukee</small> (414) 800-9271</a>
+      </span>
+    <?php else: ?>
+      <a class="twins-brand-phone" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">
+        <?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?>
+      </a>
+    <?php endif; ?>
   </div>
   <div class="twins-brand-fascia">
     <a class="twins-brand-logo" href="<?= htmlspecialchars($experience->route('home', $marketKey), ENT_QUOTES, 'UTF-8') ?>" aria-label="Twins Garage Doors home">
