@@ -442,8 +442,21 @@ After the report above was drafted, the owner authenticated staging in Chrome an
 
 These live results strengthen the report's verdict: the structural quality gates (single chrome, overflow, privacy, review presentation, a11y scaffolding) pass, and the substance gaps (builder preview, copy, localization) are exactly where the No-Go stands.
 
+## Remediation and deployment addendum (2026-07-17, end of day)
+
+All in-scope findings were implemented on branch `claude/staging-remediation` (13 commits) and deployed to the private staging host through the sealed pipeline in three transactions (`staging-remediation-r1/r2/r3-20260717`), each passing the full remote preflight (host PHP lint of every file, 14 host harnesses, prerequisite verification). The SiteGround dynamic cache was flushed via `site-tools-client`, and the unauthenticated origin still returns HTTP 401.
+
+**Verified live on the deployed build (authenticated Chrome, desktop):**
+- Hero: gold-emphasis H1, $0 Service Call chip, 5.0 star strip on `/`, `/wi/`; staging banner no longer overlaps the market chooser.
+- Navigation: WI Service Areas = 25 links (hub + 21 cities, two-column), IL = 16, KY includes Lexington and no longer advertises the WI cost guide; "Illinois preview" label gone; per-market phones correct ((833)/(608)/(815)).
+- Builder `/door-builder/?product=12`: selecting Short Panel swaps the door; **Almond visibly tints the door** (`data-tint-ready`, rgb(255,242,226) from the real swatch); **ARCH3 windows render onto the door**; selections persist together; caption reads "Illustrative preview of your selections… Manufacturer reference only." Vendor codes stripped from option cards.
+- Content/schema: `/garage-door-cable-repair/` serves its new bespoke record with Service+FAQPage+BreadcrumbList; `/wi/location/fitchburg/` renders "Garage Door Service in Fitchburg" with a six-link local services grid and LocalBusiness+BreadcrumbList; `/reviews/` emits AggregateRating 5.0 × 87; `/clopay-gallery-steel/` emits Product and carries no staging jargon; home emits LocalBusiness; footer NAP present.
+- Chrome integrity: one header everywhere checked (home, markets, builder, catalog, reviews, careers, blog, cost, locations), no horizontal overflow, zero console errors, blog archive renders 200 posts, careers has zero live forms, cost pages intact.
+
+Score movements vs §3 (still short of publication only on the §20 owner/cutover gates): Content 4.5→7, SEO 4→6.5, Local SEO 4→6.5, AEO/GEO 5→7, Site architecture 6.5→8, Door builder 3→6.5 (honest composed preview; full manufacturer matrix still pending licensing), Brand consistency 6.5→8, UI 6→7.5. Remaining No-Go gates are unchanged: live lead capture at cutover, redirect/coexistence plan, IL phone evidence, owner claim confirmations, Clopay licensing for the full preview matrix.
+
 ## Evidence still unavailable
-- True 390px/320px rendering (real-Chrome window floor was 606px; rely on the local Playwright 7-width matrix or a device-emulation run), KY market pages, WI market home, cost pages, team/careers/faqs/financing/offers detail pass, the other 20 catalog routes, reduced-motion behavior live, console/network deep-dive, rendered titles/meta + JSON-LD confirmation per route, CWV numbers.
+- True 390px/320px live rendering (real-Chrome window floor was 606px; covered by the local Playwright 7-width matrix), reduced-motion behavior live, CWV field numbers, per-route rendered titles/meta audit, the other 20 catalog routes visually (spot-checked one), IL phone forwarding (owner-only), Clopay licensing scope (owner-only).
 - IL phone forwarding (owner-only evidence).
 - Clopay licensing scope (owner/dealer-portal document).
 - Production Rank Math full redirect table (only spot-checked; WP admin is out of audit scope).
