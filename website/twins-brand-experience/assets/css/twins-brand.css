@@ -963,7 +963,7 @@ body.twins-brand-experience .twins-brand-service-phone { color: var(--twins-whit
 .twins-brand-faq details { color: var(--twins-ink); background: var(--twins-white); border: 3px solid var(--twins-navy-950); border-radius: 6px 20px 6px 20px; box-shadow: 5px 6px 0 var(--twins-gold); }
 .twins-brand-faq summary { min-height: 52px; display: flex; align-items: center; padding: 14px 20px; color: var(--twins-navy-950); cursor: pointer; font-weight: 1000; }
 .twins-brand-faq details p { padding: 0 20px 20px; color: var(--twins-ink); }
-.twins-brand-editorial-hero { min-height: 370px; }
+.twins-brand-editorial-hero { min-height: 0; align-content: start; padding-block: clamp(52px, 6vw, 92px); }
 .twins-brand-editorial-answer {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;

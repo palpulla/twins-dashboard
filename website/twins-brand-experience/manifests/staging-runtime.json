@@ -8,15 +8,15 @@
       "role": "deploy",
       "source": "twins-brand-experience/assets/css/twins-brand-families.css",
       "destination": "twins-brand-experience/assets/css/twins-brand-families.css",
-      "size": 49883,
-      "sha256": "4aed6828e8e5cc1f62ae228b7c4164bd636ef47b99a689d927a605aa328b1f65"
+      "size": 49932,
+      "sha256": "8bfb855366111b32604b2e34f39c6eee2e65a88065a4a70ca9ce8d5e3f3fb5d0"
     },
     {
       "role": "deploy",
       "source": "twins-brand-experience/assets/css/twins-brand.css",
       "destination": "twins-brand-experience/assets/css/twins-brand.css",
-      "size": 69597,
-      "sha256": "62a93616d89ac25e3559f35b05394dc1ef46adaa41f8fee2dc72dc4298784843"
+      "size": 69654,
+      "sha256": "4a8bc8b4cdf230dc1aec08154ff94bb2400f4d31ee3ccada85c43879232ea577"
     },
     {
       "role": "deploy",
