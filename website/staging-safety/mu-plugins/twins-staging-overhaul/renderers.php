@@ -1562,13 +1562,34 @@ function twins_overhaul_brand_schema_markup(string $classification, array $conte
         'telephone' => $telephone,
         'url' => home_url('/'),
     );
+    // Enriched entity for pages where the business is the primary subject
+    // (home, reviews, location). Carries the real Google rating and the
+    // verified NAP address so local-search engines see the full signal. The
+    // service "provider" deliberately stays lean ($business).
+    $primaryBusiness = $business;
+    $primaryBusiness['address'] = array(
+        '@type' => 'PostalAddress',
+        'streetAddress' => '2921 Landmark Pl #206',
+        'addressLocality' => 'Madison',
+        'addressRegion' => 'WI',
+        'postalCode' => '53713',
+    );
+    $rating = twins_overhaul_brand_schema_review_rating();
+    if (is_array($rating) && isset($rating['value'], $rating['count'])) {
+        $primaryBusiness['aggregateRating'] = array(
+            '@type' => 'AggregateRating',
+            'ratingValue' => $rating['value'],
+            'reviewCount' => $rating['count'],
+            'bestRating' => 5,
+        );
+    }
     $title = isset($context['title']) && is_string($context['title']) && trim($context['title']) !== ''
         ? trim($context['title'])
         : 'Twins Garage Doors';
 
     $schema = null;
     if ($classification === 'home-brand') {
-        $schema = $business;
+        $schema = $primaryBusiness;
         $schema['@context'] = 'https://schema.org';
         $schema['image'] = home_url('/wp-content/mu-plugins/twins-brand-experience/assets/images/brand/twins-logo.png');
     } elseif ($classification === 'service') {
@@ -1605,30 +1626,16 @@ function twins_overhaul_brand_schema_markup(string $classification, array $conte
             ),
         );
     } elseif ($classification === 'reviews-brand') {
-        $rating = twins_overhaul_brand_schema_review_rating();
-        if ($rating === null) {
+        if (!isset($primaryBusiness['aggregateRating'])) {
             return '';
         }
-        $schema = $business;
+        $schema = $primaryBusiness;
         $schema['@context'] = 'https://schema.org';
-        $schema['aggregateRating'] = array(
-            '@type' => 'AggregateRating',
-            'ratingValue' => $rating['value'],
-            'reviewCount' => $rating['count'],
-            'bestRating' => 5,
-        );
-        $schema['address'] = array(
-            '@type' => 'PostalAddress',
-            'streetAddress' => '2921 Landmark Pl #206',
-            'addressLocality' => 'Madison',
-            'addressRegion' => 'WI',
-            'postalCode' => '53713',
-        );
     } elseif ($classification === 'location') {
         $schema = array(
             '@context' => 'https://schema.org',
             '@graph' => array(
-                $business + array('areaServed' => $title),
+                $primaryBusiness + array('areaServed' => $title),
                 array(
                     '@type' => 'BreadcrumbList',
                     'itemListElement' => array(
