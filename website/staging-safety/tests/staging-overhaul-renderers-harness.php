@@ -558,7 +558,19 @@ if ($scenario === 'hooks') {
     $imageAttributesHook = twins_overhaul_renderer_hook('filter', 'wp_get_attachment_image_attributes');
     $searchFormHook = twins_overhaul_renderer_hook('filter', 'get_search_form');
     $blogTemplateHook = twins_overhaul_renderer_hook('filter', 'template_include');
-    $fontSentinelHook = twins_overhaul_renderer_hook('action', 'wp_head');
+    $wpHeadHooks = twins_overhaul_renderer_hooks('action', 'wp_head');
+    twins_overhaul_renderer_assert(count($wpHeadHooks) === 2, 'wp_head action count mismatch');
+    $fontSentinelHook = null;
+    $seoMetaHook = null;
+    foreach ($wpHeadHooks as $wpHeadHook) {
+        if ($wpHeadHook[2] === 'twins_overhaul_output_local_font_sentinel') {
+            $fontSentinelHook = $wpHeadHook;
+        } elseif ($wpHeadHook[2] === 'twins_overhaul_output_seo_meta') {
+            $seoMetaHook = $wpHeadHook;
+        }
+    }
+    twins_overhaul_renderer_assert($fontSentinelHook !== null && $seoMetaHook !== null, 'wp_head actions are not the font sentinel and SEO meta emitter');
+    $documentTitleHook = twins_overhaul_renderer_hook('filter', 'pre_get_document_title');
     $headerHook = twins_overhaul_renderer_hook('action', 'wp_body_open');
     $contentHook = twins_overhaul_renderer_hook('filter', 'the_content');
     $footerHook = twins_overhaul_renderer_hook('action', 'wp_footer');
@@ -577,6 +589,9 @@ if ($scenario === 'hooks') {
     twins_overhaul_renderer_assert($resourceHintsHook[2] === 'twins_overhaul_filter_remote_resource_hints', 'resource-hints callback mismatch');
     twins_overhaul_renderer_assert($resourceHintsHook[3] === PHP_INT_MAX && $resourceHintsHook[4] === 2, 'resource-hints callback priority mismatch');
     twins_overhaul_renderer_assert($fontSentinelHook[2] === 'twins_overhaul_output_local_font_sentinel', 'local-font sentinel callback mismatch');
+    twins_overhaul_renderer_assert($seoMetaHook[3] === 2 && $seoMetaHook[4] === 0, 'seo-meta wp_head priority mismatch');
+    twins_overhaul_renderer_assert($documentTitleHook[2] === 'twins_overhaul_filter_document_title', 'document-title callback mismatch');
+    twins_overhaul_renderer_assert($documentTitleHook[3] === PHP_INT_MAX && $documentTitleHook[4] === 1, 'document-title priority mismatch');
     twins_overhaul_renderer_assert($styleTagHook[2] === 'twins_overhaul_filter_isolated_style_tag', 'style-tag callback mismatch');
     twins_overhaul_renderer_assert($scriptTagHook[2] === 'twins_overhaul_filter_isolated_script_tag', 'script-tag callback mismatch');
     twins_overhaul_renderer_assert($elementorWidgetHook[2] === 'twins_overhaul_filter_legacy_elementor_widget', 'Elementor widget isolation callback mismatch');

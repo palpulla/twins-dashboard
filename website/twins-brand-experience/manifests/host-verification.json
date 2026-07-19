@@ -192,8 +192,8 @@
     {
       "role": "verify",
       "source": "staging-safety/tests/staging-overhaul-renderers-harness.php",
-      "size": 94552,
-      "sha256": "64d3c47a0871381436de6d4e386f446a5c94737edac8d015eb2546c2878efd77"
+      "size": 95643,
+      "sha256": "4cfdcd475541ad9b9cf7d0ca3137c29b849ba417bea67704a87b5e13da53eacf"
     },
     {
       "role": "verify",
