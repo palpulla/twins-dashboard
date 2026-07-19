@@ -80,6 +80,24 @@ $articleHeroImage = $isArticle && isset($articleHero) && is_string($articleHero)
     </section>
   <?php endif; ?>
 
+  <?php if ($kind === 'location' && isset($market['address']) && is_string($market['address']) && $market['address'] !== ''):
+    $napSummaryFile = dirname(__DIR__) . '/config/review-summary.php';
+    $napSummary = is_file($napSummaryFile) ? require $napSummaryFile : [];
+    $napRating = isset($napSummary['ratingValue']) ? $napSummary['ratingValue'] : null;
+    $napCount = isset($napSummary['displayCount']) ? (string) $napSummary['displayCount'] : '';
+  ?>
+    <section class="twins-brand-editorial-answer" aria-labelledby="twins-brand-nap-title">
+      <div>
+        <span class="twins-brand-kicker">Where we are</span>
+        <h2 id="twins-brand-nap-title">Twins Garage Doors</h2>
+        <p><?= htmlspecialchars($market['address'], ENT_QUOTES, 'UTF-8') ?></p>
+        <?php if ($napRating !== null): ?>
+          <p><span class="twins-brand-stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <?= htmlspecialchars((string) $napRating, ENT_QUOTES, 'UTF-8') ?> on Google<?= $napCount !== '' ? ' &middot; ' . htmlspecialchars($napCount, ENT_QUOTES, 'UTF-8') . ' reviews' : '' ?> &middot; Licensed and insured</p>
+        <?php endif; ?>
+      </div>
+    </section>
+  <?php endif; ?>
+
   <?php if ($locationServiceLinks !== []): ?>
     <section class="twins-brand-editorial-services" aria-labelledby="twins-brand-location-services-title">
       <div class="twins-brand-section-heading">

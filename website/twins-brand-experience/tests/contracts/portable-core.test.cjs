@@ -28,7 +28,7 @@ test('portable regional literals byte-match the fixed staging registry', () => {
   );
 
   const stagingMarkets = new Map();
-  const stagingPattern = /\d+\s*=>\s*array\(\s*'key'\s*=>\s*'(main|wi|ky|il)'\s*,\s*'phone'\s*=>\s*'([^']*)'\s*,\s*'tel'\s*=>\s*'([^']*)'\s*,\s*'base'\s*=>\s*'([^']*)'\s*\)/g;
+  const stagingPattern = /\d+\s*=>\s*array\(\s*'key'\s*=>\s*'(main|wi|ky|il)'\s*,\s*'phone'\s*=>\s*'([^']*)'\s*,\s*'tel'\s*=>\s*'([^']*)'\s*,\s*'base'\s*=>\s*'([^']*)'/g;
   for (const match of stagingSource.matchAll(stagingPattern)) {
     stagingMarkets.set(match[1], {
       phoneDisplay: match[2],

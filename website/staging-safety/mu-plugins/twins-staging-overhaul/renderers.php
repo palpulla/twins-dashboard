@@ -1571,13 +1571,15 @@ function twins_overhaul_brand_schema_markup(string $classification, array $conte
     // verified NAP address so local-search engines see the full signal. The
     // service "provider" deliberately stays lean ($business).
     $primaryBusiness = $business;
-    $primaryBusiness['address'] = array(
-        '@type' => 'PostalAddress',
-        'streetAddress' => '2921 Landmark Pl #206',
-        'addressLocality' => 'Madison',
-        'addressRegion' => 'WI',
-        'postalCode' => '53713',
-    );
+    if (isset($region['address']) && is_array($region['address'])) {
+        $primaryBusiness['address'] = array(
+            '@type' => 'PostalAddress',
+            'streetAddress' => (string) $region['address']['street'],
+            'addressLocality' => (string) $region['address']['locality'],
+            'addressRegion' => (string) $region['address']['region'],
+            'postalCode' => (string) $region['address']['postalCode'],
+        );
+    }
     $rating = twins_overhaul_brand_schema_review_rating();
     if (is_array($rating) && isset($rating['value'], $rating['count'])) {
         $primaryBusiness['aggregateRating'] = array(
