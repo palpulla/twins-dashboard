@@ -60,8 +60,8 @@
     {
       "role": "verify",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/renderers.php",
-      "size": 72362,
-      "sha256": "de6b8e643faac79829098d0779e17d77c8c580b133e34a78c18718df13e941b7"
+      "size": 83067,
+      "sha256": "d31e31f80e04defb37d0a1eacbf90f7e53d66865b0b5febf461c47d956f0dd0b"
     },
     {
       "role": "verify",
@@ -313,7 +313,7 @@
       "role": "verify",
       "source": "twins-brand-experience/manifests/staging-runtime.json",
       "size": 365117,
-      "sha256": "81b625540bb54d61f643939c6d19e0321e7ddeac064fd7e4e2561751b521bad5"
+      "sha256": "91bc9d0f605b3884320766514a687d2e8c216a5ea74eb9a0a5c13879daa33344"
     },
     {
       "role": "verify",

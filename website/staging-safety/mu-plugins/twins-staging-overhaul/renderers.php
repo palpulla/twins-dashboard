@@ -1713,6 +1713,211 @@ function twins_overhaul_brand_schema_review_rating() {
 }
 
 /**
+ * Curated meta descriptions for the bespoke service records, keyed by the
+ * market-normalized path. Titles come from each record's H1; these are the
+ * hand-authored answer-first descriptions. Evergreen (no review counts), crew
+ * voice, no em-dashes, no AI-tell words. Kept in the deployed renderer so no
+ * new file has to be registered in the deploy manifests.
+ *
+ * @return array<string,string>
+ */
+function twins_overhaul_seo_service_descriptions(): array {
+    return array(
+        '/garage-door-repair/' => 'Stuck, crooked, or noisy garage door? A Twins tech looks over the whole door, tells you what is wrong, and gives you the exact price before touching anything.',
+        '/garage-door-installation/' => 'Ready for a new garage door? Twins measures your opening, helps you pick a style, and gives you the exact price before we install it. Licensed and insured.',
+        '/garage-door-spring-repair/' => 'Broke a torsion spring? Do not lift the door. Twins replaces worn and snapped springs safely and gives you the price up front. Call the number for your area.',
+        '/garage-door-opener-repair/' => 'Opener humming, clicking, or dead? Twins checks the motor, trolley, photo eyes, and remotes, finds the fault, and prices the fix before any work begins.',
+        '/emergency-garage-services/' => 'Garage door stuck open, off its track, or a dropped spring? Keep everyone clear and call Twins. We come out fast and price the fix before we start.',
+        '/garage-door-services/' => 'Repairs, new doors, opener work, and the emergencies that cannot wait, all in one place. See what Twins handles and get the exact price before any work starts.',
+        '/garage-door-cable-repair/' => 'Garage door hanging crooked or stopped dead? A frayed or off-track cable is often why. Twins replaces cables safely and prices the fix before starting.',
+        '/garage-door-openers/' => 'Shopping for a garage door opener? Twins installs LiftMaster belt, chain, and wall-mount drives and helps you pick the right one for your garage.',
+        '/garage-weatherstripping-repair/' => 'Daylight or a draft under your garage door? Twins replaces worn bottom seals and the side and top trim so the cold, the rain, and pests stay out.',
+        '/garage-door-tune-up/' => 'A Twins tune-up tightens the hardware, lubricates the rollers and springs, and checks the balance so small problems get caught before they strand you.',
+        '/maintenance-plans/' => 'Put your garage door on our calendar. A Twins maintenance plan runs the full tune-up at set intervals and flags wear before it becomes a breakdown.',
+        '/property-management-services/' => 'Manage rentals or commercial property? Twins is the one call for every garage door in your portfolio. Licensed, insured, and scheduled around your tenants.',
+        '/protection-plans/' => 'TwinShield is our membership plan for the whole garage door system: scheduled tech visits plus member benefits. See what is covered and how to join.',
+    );
+}
+
+/**
+ * Title/description for the singleton brand routes, keyed by classification.
+ * 'geo' marks routes that take a market suffix (" in Wisconsin", etc.).
+ *
+ * @return array<string,array{title:string,description:string,geo:bool}>
+ */
+function twins_overhaul_seo_singleton_map(): array {
+    return array(
+        'home-brand' => array(
+            'title' => 'Garage Door Repair & Installation',
+            'description' => 'Garage door stuck, noisy, or off its track? Twins Garage Doors repairs and installs doors and openers and gives you the exact price before any work starts.',
+            'geo' => true,
+        ),
+        'reviews-brand' => array(
+            'title' => 'Customer Reviews',
+            'description' => 'See what neighbors say about Twins Garage Doors. Real Google reviews from the doors we have repaired and installed across the communities we serve.',
+            'geo' => false,
+        ),
+        'team-brand' => array(
+            'title' => 'Meet the Crew',
+            'description' => 'Meet the people behind Twins Garage Doors. The techs and staff who show up, look over your door, and give you the exact price before any work starts.',
+            'geo' => false,
+        ),
+        'careers-brand' => array(
+            'title' => 'Careers',
+            'description' => 'Want to work with Twins Garage Doors? See what we look for in techs and staff and how to reach us about joining the crew.',
+            'geo' => false,
+        ),
+        'contact-brand' => array(
+            'title' => 'Contact Us',
+            'description' => 'Reach Twins Garage Doors. Request a callback or book online, and we will get a tech out to look over your garage door and price the work up front.',
+            'geo' => true,
+        ),
+        'blog-index' => array(
+            'title' => 'Garage Door Tips & Guides',
+            'description' => 'Practical garage door advice from the Twins crew: how repairs work, what the parts do, and how to keep your door running so it does not strand you.',
+            'geo' => false,
+        ),
+        'builder' => array(
+            'title' => 'Design Your Garage Door',
+            'description' => 'Build your garage door your way. Pick the style, panels, windows, and color, then send it to the Twins crew for an exact price.',
+            'geo' => false,
+        ),
+    );
+}
+
+/**
+ * Resolve the title and meta description for a classified brand route.
+ * Returns null for routes we intentionally leave to WordPress (preserved
+ * articles, legal, campaign, cost pages with their own legacy templates).
+ *
+ * @param string $classification Proven route classification.
+ * @param array $context Proven current request context.
+ * @return array{title:string,description:string}|null
+ */
+function twins_overhaul_seo_metadata(string $classification, array $context): ?array {
+    $brand = 'Twins Garage Doors';
+    $geoLabels = array('wi' => 'Wisconsin', 'ky' => 'Kentucky', 'il' => 'Illinois');
+    $marketKey = 'main';
+    if (function_exists('get_current_blog_id')) {
+        $regions = twins_overhaul_regions();
+        $blogId = (int) get_current_blog_id();
+        if (isset($regions[$blogId]['key'])) {
+            $marketKey = (string) $regions[$blogId]['key'];
+        }
+    }
+    $geoSuffix = isset($geoLabels[$marketKey]) ? ' in ' . $geoLabels[$marketKey] : '';
+    $path = isset($context['path']) && is_string($context['path']) ? $context['path'] : '';
+    $contextTitle = isset($context['title']) && is_string($context['title']) ? trim($context['title']) : '';
+
+    if ($classification === 'service') {
+        $record = twins_overhaul_brand_schema_service_record($path);
+        if ($record === null || !isset($record['h1'])) {
+            return null;
+        }
+        $normalized = '/' . trim(preg_replace('~^/(wi|ky|il)/~', '/', '/' . ltrim($path, '/')), '/') . '/';
+        $descriptions = twins_overhaul_seo_service_descriptions();
+        if (!isset($descriptions[$normalized])) {
+            return null;
+        }
+        return array(
+            'title' => (string) $record['h1'] . $geoSuffix . ' | ' . $brand,
+            'description' => $descriptions[$normalized],
+        );
+    }
+
+    $singletons = twins_overhaul_seo_singleton_map();
+    if (isset($singletons[$classification])) {
+        $entry = $singletons[$classification];
+        $suffix = !empty($entry['geo']) ? $geoSuffix : '';
+        return array(
+            'title' => $entry['title'] . $suffix . ' | ' . $brand,
+            'description' => $entry['description'],
+        );
+    }
+
+    if ($classification === 'location' && $contextTitle !== '') {
+        return array(
+            'title' => 'Garage Door Repair in ' . $contextTitle . ' | ' . $brand,
+            'description' => 'Twins Garage Doors serves ' . $contextTitle . ' with garage door repair, spring and opener work, and new door installation, priced before any work starts.',
+        );
+    }
+
+    if ($classification === 'catalog-preserve' && $contextTitle !== '') {
+        return array(
+            'title' => $contextTitle . ' | Clopay Garage Doors | ' . $brand,
+            'description' => 'See the ' . $contextTitle . ' from Clopay, installed by Twins Garage Doors. Compare the look and finish and get the exact price for your garage.',
+        );
+    }
+
+    return null;
+}
+
+/**
+ * Resolve, once per request, the SEO metadata for the current front-end route.
+ *
+ * @return array{title:string,description:string}|null
+ */
+function twins_overhaul_active_seo_metadata(): ?array {
+    static $resolved = false;
+    static $cache = null;
+    if ($resolved) {
+        return $cache;
+    }
+    $resolved = true;
+    if (function_exists('is_admin') && is_admin()) {
+        return $cache;
+    }
+    if (!function_exists('twins_overhaul_current_classification')) {
+        return $cache;
+    }
+    $classification = twins_overhaul_current_classification();
+    if (!twins_overhaul_is_known_classification($classification)) {
+        return $cache;
+    }
+    $context = twins_overhaul_current_context($classification);
+    $cache = twins_overhaul_seo_metadata($classification, $context);
+    return $cache;
+}
+
+/**
+ * Own the document title for brand-classified routes; leave everything else to
+ * WordPress so preserved pages keep their existing SEO.
+ *
+ * @param string $title Incoming WordPress-resolved title.
+ * @return string
+ */
+function twins_overhaul_filter_document_title($title): string {
+    $meta = twins_overhaul_active_seo_metadata();
+    if (is_array($meta) && isset($meta['title']) && trim($meta['title']) !== '') {
+        return trim($meta['title']);
+    }
+    return is_string($title) ? $title : '';
+}
+
+/**
+ * Emit the meta description and Open Graph tags for brand-classified routes.
+ *
+ * @return void
+ */
+function twins_overhaul_output_seo_meta(): void {
+    $meta = twins_overhaul_active_seo_metadata();
+    if (!is_array($meta) || !isset($meta['description'], $meta['title'])) {
+        return;
+    }
+    $description = trim((string) $meta['description']);
+    $title = trim((string) $meta['title']);
+    if ($description === '') {
+        return;
+    }
+    $descAttr = htmlspecialchars($description, ENT_QUOTES, 'UTF-8');
+    $titleAttr = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+    echo "\n<meta name=\"description\" content=\"" . $descAttr . "\">\n";
+    echo "<meta property=\"og:title\" content=\"" . $titleAttr . "\">\n";
+    echo "<meta property=\"og:description\" content=\"" . $descAttr . "\">\n";
+    echo "<meta property=\"og:type\" content=\"website\">\n";
+}
+
+/**
  * Revalidate output already produced by one authenticated request-local path.
  *
  * @param string $content Previously rendered classified output.
@@ -1854,7 +2059,9 @@ function twins_overhaul_register_frontend_hooks(): void {
     add_filter('elementor/frontend/the_content', 'twins_overhaul_filter_elementor_document_content', PHP_INT_MAX, 1);
     add_filter('get_search_form', 'twins_overhaul_filter_search_form', PHP_INT_MAX, 2);
     add_filter('template_include', 'twins_overhaul_filter_branded_template', PHP_INT_MAX, 1);
+    add_filter('pre_get_document_title', 'twins_overhaul_filter_document_title', PHP_INT_MAX, 1);
     add_action('wp_head', 'twins_overhaul_output_local_font_sentinel', 1, 0);
+    add_action('wp_head', 'twins_overhaul_output_seo_meta', 2, 0);
     add_action('wp_body_open', 'twins_overhaul_output_header', 5, 0);
     add_filter('the_content', 'twins_overhaul_replace_main_content', PHP_INT_MAX, 1);
     add_action('wp_footer', 'twins_overhaul_output_footer', 5, 0);
