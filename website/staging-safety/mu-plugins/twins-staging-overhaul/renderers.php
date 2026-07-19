@@ -1476,6 +1476,9 @@ function twins_overhaul_render_classified_content(string $classification, array 
         if ($classification === 'article') {
             $context['articleHero'] = twins_overhaul_article_hero_path();
         }
+        if ($classification === 'trust' && twins_overhaul_is_faq_path((string) ($context['path'] ?? ''))) {
+            $context['faqPage'] = twins_overhaul_faq_page_content();
+        }
         $rendered = twins_overhaul_brand_runtime()->renderEditorial(
             $context,
             twins_overhaul_prepare_family_content($content),
@@ -1549,6 +1552,41 @@ function twins_overhaul_location_map_markup(array $context): string {
  * @param array  $context Proven current request context.
  * @return string
  */
+/**
+ * Owner-approved FAQ page content (crew voice, no invented facts). Rendered as a
+ * branded accordion on /faqs/ and emitted as FAQPage schema. Kept in the
+ * deployed renderer so no new file has to be registered in the manifests.
+ *
+ * @return array{intro:string,faqs:array<int,array{question:string,answer:string}>}
+ */
+function twins_overhaul_faq_page_content(): array {
+    return array(
+        'intro' => 'Common garage door questions, answered straight. If your door is acting up and you are not sure why, start here. If you do not see your question, call the number for your area and a real person will help.',
+        'faqs' => array(
+            array('question' => 'My garage door spring is broken. What should I do?', 'answer' => 'Stop using the door and keep everyone clear of it. A broken spring makes the door weigh a ton, so do not try to lift it or touch the spring yourself. Springs are under heavy tension and are dangerous to handle. Call us and a tech will replace the spring safely and get the door working again.'),
+            array('question' => 'Which garage door opener should I get?', 'answer' => 'It depends on your garage and how you use it. We install LiftMaster openers and can walk you through belt, chain, and wall-mount drives, plus keypads and remotes. Tell us how your garage is set up and we will help you pick the right one. No pressure.'),
+            array('question' => 'Do you install new doors, or only repair them?', 'answer' => 'Both. If your door is past saving or you just want a new look, we measure your opening, help you pick a style, and give you the exact price before we install. We work with steel, wood, aluminum, glass, and fiberglass.'),
+            array('question' => 'How often should I get a tune-up?', 'answer' => 'About once a year keeps a door running quiet and catches wear before it strands you. If you would rather not track it, our maintenance plan puts your door on our calendar and we run the full tune-up at set intervals.'),
+            array('question' => 'What if my garage door will not open?', 'answer' => 'Usually a part has failed, like a spring, cable, or the opener. Do not force it. Call us and a tech will look the door over, tell you what is wrong, and in most cases fix it the same day.'),
+            array('question' => 'Can you program my keypad or remote?', 'answer' => 'Yes. Keypad and remote programming is one of the things we handle. We will get them working so you can open and close the door without stepping out of the car.'),
+            array('question' => 'How much do you charge?', 'answer' => 'It depends on the work, so we look the door over in person first. You see the exact price before we start anything, and there are no hidden costs.'),
+            array('question' => 'Do you handle emergencies?', 'answer' => 'A door that will not close, jumped its track, or dropped a spring is not a wait-and-see problem. Keep everyone clear and call us. We handle the garage door emergencies that cannot wait.'),
+            array('question' => 'How do I schedule a repair?', 'answer' => 'Call the number for your area and our team will set up a time and answer your questions. You can also request a quote and we will follow up.'),
+        ),
+    );
+}
+
+/**
+ * True when the given request path is the FAQ page (any market prefix).
+ *
+ * @param string $path Current request path.
+ * @return bool
+ */
+function twins_overhaul_is_faq_path(string $path): bool {
+    $normalized = '/' . trim(preg_replace('~^/(wi|ky|il)/~', '/', '/' . ltrim($path, '/')), '/') . '/';
+    return $normalized === '/faqs/';
+}
+
 function twins_overhaul_brand_schema_markup(string $classification, array $context): string {
     if (!function_exists('get_current_blog_id') || !function_exists('home_url')) {
         return '';
@@ -1658,6 +1696,20 @@ function twins_overhaul_brand_schema_markup(string $classification, array $conte
                 ),
             ),
         );
+    } elseif ($classification === 'trust') {
+        if (!twins_overhaul_is_faq_path((string) ($context['path'] ?? ''))) {
+            return '';
+        }
+        $faqData = twins_overhaul_faq_page_content();
+        $questions = array();
+        foreach ($faqData['faqs'] as $faq) {
+            $questions[] = array(
+                '@type' => 'Question',
+                'name' => (string) $faq['question'],
+                'acceptedAnswer' => array('@type' => 'Answer', 'text' => (string) $faq['answer']),
+            );
+        }
+        $schema = array('@context' => 'https://schema.org', '@type' => 'FAQPage', 'mainEntity' => $questions);
     } elseif ($classification === 'catalog-preserve') {
         $schema = array(
             '@context' => 'https://schema.org',

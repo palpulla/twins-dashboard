@@ -114,11 +114,28 @@ $articleHeroImage = $isArticle && isset($articleHero) && is_string($articleHero)
 
   <?php if ($kind === 'location') require dirname(__DIR__) . '/components/service-areas-panel.php'; ?>
 
-  <section class="twins-brand-editorial-body<?= $isArticle ? ' twins-brand-article-body' : '' ?>">
-    <article class="twins-brand-editorial-content<?= $isArticle ? ' twins-brand-article-content' : '' ?>">
-      <?= $content ?>
-    </article>
-  </section>
+  <?php if (isset($context['faqPage']['faqs']) && is_array($context['faqPage']['faqs'])): ?>
+    <section class="twins-brand-faq" aria-labelledby="twins-brand-faq-page-title">
+      <div class="twins-brand-section-heading">
+        <span class="twins-brand-kicker">Frequently asked questions</span>
+        <h2 id="twins-brand-faq-page-title">Garage door questions, answered straight</h2>
+      </div>
+      <div class="twins-brand-faq-list">
+        <?php foreach ($context['faqPage']['faqs'] as $faq): ?>
+          <details>
+            <summary><?= htmlspecialchars((string) $faq['question'], ENT_QUOTES, 'UTF-8') ?></summary>
+            <p><?= htmlspecialchars((string) $faq['answer'], ENT_QUOTES, 'UTF-8') ?></p>
+          </details>
+        <?php endforeach; ?>
+      </div>
+    </section>
+  <?php else: ?>
+    <section class="twins-brand-editorial-body<?= $isArticle ? ' twins-brand-article-body' : '' ?>">
+      <article class="twins-brand-editorial-content<?= $isArticle ? ' twins-brand-article-content' : '' ?>">
+        <?= $content ?>
+      </article>
+    </section>
+  <?php endif; ?>
 
   <?php if ($articleServiceLinks !== []): ?>
     <section class="twins-brand-editorial-services twins-brand-article-services" aria-labelledby="twins-brand-article-services-title">
