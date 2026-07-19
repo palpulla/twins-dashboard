@@ -16,6 +16,22 @@ shim). The new site makes `/garage-door-repair/` a primary service page.
 routes go live.** The shim was always temporary (pending Rank Math PRO
 3.0.116+); cutover is its natural end of life.
 
+> **CORRECTION (2026-07-19) — HARD PRE-LAUNCH BLOCKER. The source above is
+> WRONG.** Re-verification on staging shows `/garage-door-repair/` returns HTTP
+> **200 and then a CLIENT-SIDE redirect** (JS or meta refresh) to the article —
+> it is NOT a server 301. Ruled out on staging: Rank Math redirections (no
+> `url_to` to the article), all active WPCode snippets (7327 is only a wp-admin
+> form fix; 6781 is an Elementor template — neither redirects this URL),
+> `.htaccess`, a WP post at that path (none — virtual route), WP core old-slug
+> meta (article ID 4591 has none), and the active snippets' JS. **Retiring the
+> WPCode shim will therefore NOT clear this**, and the flagship
+> `/garage-door-repair/` keyword URL would ship serving a blog post instead of
+> the (built, schema-rich) service page. The real injector of the client-side
+> redirect must be found and removed before launch. The staging CSP
+> (`connect-src 'none'`) blocks fetching the raw HTML in-browser, so trace it
+> server-side (render the URL via wp-cli / capture output, or check page-builder
+> / theme / mu-plugin front-end injection).
+
 ## Finding 2: no Rank Math source collides with the new route registry
 
 All 73 sources are legacy slugs (unprefixed Clopay names, old city-service
