@@ -105,6 +105,13 @@ final class ProductionApplicationAdapter implements ApplicationAdapter
     {
         return '<a class="twins-brand-cta twins-brand-cta--quote" href="/careers/#apply">Start your application</a>';
     }
+
+    public function assertReady(): void
+    {
+        if (strpos($this->renderExperience([]), '/careers/#apply') === false) {
+            throw new DomainException('Production application flow lost its careers destination.');
+        }
+    }
 }
 
 /*
