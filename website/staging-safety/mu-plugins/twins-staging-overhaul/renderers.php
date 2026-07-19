@@ -146,7 +146,11 @@ function twins_overhaul_current_context(string $classification): array {
     $context['path'] = $path;
     $context['postId'] = $postId;
     $context['postType'] = (string) get_post_type($postId);
-    $context['title'] = (string) get_the_title($postId);
+    // Decode any HTML entities stored in the WordPress title (some imported
+    // titles hold a literal entity such as "&#8217;"). Brand templates re-escape
+    // with htmlspecialchars on output, so double-encoding would otherwise render
+    // the raw entity (e.g. "FAQ&#8217;S") in the visible H1.
+    $context['title'] = html_entity_decode((string) get_the_title($postId), ENT_QUOTES, 'UTF-8');
     $context['classification'] = $classification;
     return $context;
 }
