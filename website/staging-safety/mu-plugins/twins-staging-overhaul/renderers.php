@@ -1641,6 +1641,13 @@ function twins_overhaul_brand_schema_markup(string $classification, array $conte
             '@graph' => array(
                 $primaryBusiness + array('areaServed' => $title),
                 array(
+                    '@type' => 'Service',
+                    'name' => 'Garage Door Repair and Installation',
+                    'serviceType' => 'Garage door repair, spring repair, opener repair, cable repair, and installation',
+                    'provider' => $business,
+                    'areaServed' => array('@type' => 'Place', 'name' => $title),
+                ),
+                array(
                     '@type' => 'BreadcrumbList',
                     'itemListElement' => array(
                         array('@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => home_url('/')),

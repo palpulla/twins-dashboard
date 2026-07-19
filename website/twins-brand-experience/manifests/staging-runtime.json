@@ -435,8 +435,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/templates/editorial.php",
       "destination": "twins-brand-experience/templates/editorial.php",
-      "size": 6897,
-      "sha256": "d7dceb547d2b60d212d3830b3b6a7179cbbe4a9bea17d3887ddf709c5c59b477"
+      "size": 7381,
+      "sha256": "69857da802c8f21be0d7565c656812e520f5e085f45c295661adedbed4d180d3"
     },
     {
       "role": "deploy",
@@ -6147,8 +6147,8 @@
       "role": "deploy",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/renderers.php",
       "destination": "twins-staging-overhaul/renderers.php",
-      "size": 83847,
-      "sha256": "61a3b9e5eacb748826aca327fa1e0223d62c699df4746c28a9eada4a4ca1195a"
+      "size": 84247,
+      "sha256": "b534610e1271663dc5a43ef27b04dae6c7433d204eb6ee60c891f2aa709f010b"
     },
     {
       "role": "deploy",

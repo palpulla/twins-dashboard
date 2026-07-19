@@ -28,12 +28,14 @@ $title = isset($context['title']) && is_string($context['title']) && trim($conte
     ? trim($context['title'])
     : 'Twins Garage Doors';
 $locationCity = $title;
-if (
-    $kind === 'location'
+$locationCityIsClean = $kind === 'location'
     && str_word_count($title) <= 3
-    && stripos($title, 'garage') === false
-) {
-    $title = 'Garage Door Service in ' . $title;
+    && stripos($title, 'garage') === false;
+if ($locationCityIsClean) {
+    $title = 'Garage Door Service in ' . $locationCity;
+    // City-aware answer: only names the city when the title is a clean city
+    // name, so pages with an odd title fall back to the generic wording.
+    $editorial['answer'] = 'Twins Garage Doors repairs and installs garage doors, springs, openers, and cables in ' . $locationCity . ' and the nearby area. Call the local number for help today, or request a quote and the crew will follow up with straight answers and upfront options.';
 }
 $locationServiceLinks = $kind === 'location'
     ? [
