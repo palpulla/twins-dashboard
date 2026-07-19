@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "remoteDirectory": "/home/customer/staging-safety/staging-remediation-r12-20260717/verification/",
+  "remoteDirectory": "/home/customer/staging-safety/staging-remediation-r13-20260717/verification/",
   "productionWriteAuthority": false,
   "files": [
     {
@@ -493,7 +493,7 @@
       "role": "verify",
       "source": "twins-brand-experience/tools/private-staging-deploy.php",
       "size": 69392,
-      "sha256": "01257ac430502fc8b5c1cf3d42442d98325c644df740567cc7dd3c3f92481831"
+      "sha256": "d013444ade688949c614200a11400c681ca5900ee2555640785bc225699ff4db"
     }
   ]
 }

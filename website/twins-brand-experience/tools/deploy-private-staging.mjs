@@ -8,7 +8,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const APPLICATION_IDENTITY = 'https://danielj140.sg-host.com/';
 const WEB_ROOT = '/home/customer/www/danielj140.sg-host.com/public_html';
 const TRANSACTION_PARENT = '/home/customer/staging-safety';
-const TRANSACTION_ROOT = '/home/customer/staging-safety/staging-remediation-r12-20260717';
+const TRANSACTION_ROOT = '/home/customer/staging-safety/staging-remediation-r13-20260717';
 const SSH_PORT = '18765';
 const allowed = new Set(['--dry-run', '--capture-expected-old', '--deploy', '--rollback']);
 const operation = process.argv[2] || '';
@@ -33,7 +33,7 @@ try { keyStat = fs.lstatSync(key); } catch { finish('TRANSPORT_KEY_UNAVAILABLE',
 if (!keyStat.isFile() || keyStat.isSymbolicLink()) finish('TRANSPORT_KEY_INVALID', 1);
 
 const stateParent = path.join(root, 'dist/.staging-deploy');
-const stateRoot = path.join(stateParent, 'staging-remediation-r12-20260717');
+const stateRoot = path.join(stateParent, 'staging-remediation-r13-20260717');
 const knownHosts = path.join(stateRoot, 'known_hosts');
 const transportState = path.join(stateRoot, 'transport.json');
 const deployAttempt = path.join(stateRoot, 'deploy-attempt.json');
