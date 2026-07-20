@@ -15,16 +15,22 @@ step 6; owner authorization is required to begin step 4 onward.
 
 ## 1. Build the production package
 
-- The pipeline currently marks the production package DEFERRED by design.
-  Extend `tools/build-packages.mjs` with the production manifest: same brand
-  core + overhaul files, MINUS `twins-staging-safety.php` behaviors (the
-  safety plugin refuses to boot outside staging on its own; do not ship it),
-  PLUS `website/production-cutover/production-adapters.php` wired into
-  `brand-runtime.php` under `environment === 'production'`.
+Follow `production-build-spec.md` — it has the exact file manifest, the two
+security-contract changes this requires (an owner-reviewed un-seal of
+`build-packages.mjs`, and an environment gate on the overhaul's form scan so the
+production callback form is not refused), the brand-runtime adapter env branch,
+and the build sequence. Summary:
+
+- The pipeline marks the production package DEFERRED by design
+  (`build-packages.mjs:187`); the build tool also structurally refuses
+  production-cutover sources (line 89). Both need a reviewed change.
+- Ship the brand core + overhaul MINUS `twins-staging-safety.php` (never
+  deployed), PLUS `production-adapters.php` (wired into `brand-runtime.php`
+  under `WP_ENVIRONMENT_TYPE === 'production'`) and `production-callback.js`
+  (production-only asset; staging JS contract bans fetch).
 - Booking = HCP external; Quote = live callback form -> `lp-lead-intake`;
-  Careers = production flow. See `production-adapters.php`.
-- Add the callback submission JS to the production asset build (staging
-  contracts ban fetch in the shared JS; keep it a production-only file).
+  Careers = external `/careers/#apply`. See `production-adapters.php`.
+- Assembling the package (`build:packages`) is not deploying — deploy is step 4.
 
 ## 2. Content/SEO preflight (on production, before switching themes/routes)
 
