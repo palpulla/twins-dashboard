@@ -96,6 +96,18 @@ leave it hardened. Do NOT weaken these globally.
 
 ## Mechanical piece — brand-runtime adapter env branch
 
+> **STATUS: drafted + validated on staging (commit `642409f4`).** Implemented
+> exactly as below, using the shared seam. Only the three quote/booking/careers
+> adapters swap; the portable infra (asset resolver, route adapter, reviews
+> provider) stays shared. Inert on staging (production-adapters.php is never
+> shipped there and the LOADER fails closed outside staging). Added
+> `production-adapters-harness.php` — the first execution proof of the production
+> adapters (interface conformance, assertReady, the callback form the gate
+> allows). Full gate green; not deployed. The production `require_once` target is
+> `adapters/production-adapters.php` next to brand-runtime.php — Blocker A's build
+> must copy `production-cutover/production-adapters.php` there.
+
+
 `brand-runtime.php` currently wires the three staging adapters unconditionally.
 Add an environment branch (inert on staging — staging keeps the exact current
 path):
