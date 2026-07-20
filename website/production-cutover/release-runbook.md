@@ -29,10 +29,14 @@ and the build sequence. Summary:
 - The pipeline marks the production package DEFERRED by design
   (`build-packages.mjs:187`); the build tool also structurally refuses
   production-cutover sources (line 89). Both need a reviewed change.
-- Ship the brand core + overhaul MINUS `twins-staging-safety.php` (never
-  deployed), PLUS `production-adapters.php` (wired into `brand-runtime.php`
-  under `WP_ENVIRONMENT_TYPE === 'production'`) and `production-callback.js`
-  (production-only asset; staging JS contract bans fetch).
+- Ship the brand core + overhaul MINUS `twins-staging-safety.php` and the
+  staging loader `twins-staging-overhaul.php` (neither is deployed), PLUS
+  `production-adapters.php` (wired into `brand-runtime.php` under
+  `WP_ENVIRONMENT_TYPE === 'production'`), `production-callback.js`
+  (production-only asset; staging JS contract bans fetch), and
+  `production-overhaul-loader.php` → `twins-overhaul.php` (production needs its
+  own loader; the staging one refuses non-staging boot — see
+  `blocker-a-build-unseal.md`).
 - Booking = HCP external; Quote = live callback form -> `lp-lead-intake`;
   Careers = external `/careers/#apply`. See `production-adapters.php`.
 - Assembling the package (`build:packages`) is not deploying — deploy is step 4.
@@ -40,6 +44,10 @@ and the build sequence. Summary:
 ## 2. Content/SEO preflight (on production, before switching themes/routes)
 
 - [ ] Execute `redirect-plan.md` findings 3 and 4 in Rank Math.
+- [ ] Apply the blog prune (`blog-prune-list.md`): unpublish the pruned posts and
+      301 the once-published ones → `/blog/`. Required, not optional —
+      `redirect_guess` is ON (redirect-plan standing caveat), so a pruned URL
+      without a 301 gets guessed to a wrong slug.
 - [ ] Create the 3 missing service-page WP pages so they render instead of
       breaking: `/garage-door-repair/`, `/garage-door-tune-up/`,
       `/protection-plans/`. Finding 1 was a missing-page permalink guess, NOT a
@@ -48,8 +56,11 @@ and the build sequence. Summary:
 - [ ] Remove OTTO / Search Atlas per `otto-removal-runbook.md` (delete the
       plugin, revoke Search Atlas, clean residue) so its client-side overlay
       does not override the new site's titles/meta/schema/redirects.
-- [ ] Confirm titles/meta strategy: brand routes render one H1; Rank Math
-      continues to own `<title>`/meta (verify on the first deployed page).
+- [ ] Confirm titles/meta: brand routes render their OWN managed
+      `<title>`/meta/OG (Wave 1 — the overhaul's `pre_get_document_title` filter +
+      `wp_head` emitter) and exactly one H1. OTTO removal (above) is what lets
+      those win; verify on the first deployed page that the overhaul title shows,
+      not an OTTO or stale Rank Math one.
 - [ ] robots.txt unchanged (AI crawlers already allowlisted); staging host
       keeps its 401/noindex.
 - [ ] Snapshot current GSC coverage + top-100 queries for before/after.
