@@ -24,7 +24,7 @@ function twins_overhaul_resolve_context(array $context): array {
     unset($context);
     $regions = array(
         1 => array('key' => 'main', 'phone' => '(833) 833-2010', 'tel' => '+18338332010', 'base' => '/'),
-        3 => array('key' => 'ky', 'phone' => '(833) 833-2010', 'tel' => '+18338332010', 'base' => '/ky/'),
+        3 => array('key' => 'ky', 'phone' => '(859) 440-2227', 'tel' => '+18594402227', 'base' => '/ky/'),
         4 => array('key' => 'wi', 'phone' => '(608) 420-2377', 'tel' => '+16084202377', 'base' => '/wi/'),
         5 => array('key' => 'il', 'phone' => '(815) 800-2025', 'tel' => '+18158002025', 'base' => '/il/'),
     );
@@ -63,14 +63,14 @@ $catalog = twins_overhaul_builder_catalog();
 builder_assert(($catalog['schemaVersion'] ?? null) === 1, 'catalog schema mismatch');
 builder_assert(count($catalog['products'] ?? array()) === 23, 'catalog product count mismatch');
 
-$phones = array(1 => '(833) 833-2010', 3 => '(833) 833-2010', 4 => '(608) 420-2377', 5 => '(815) 800-2025');
+$phones = array(1 => '(833) 833-2010', 3 => '(859) 440-2227', 4 => '(608) 420-2377', 5 => '(815) 800-2025');
 foreach ($phones as $blogId => $phone) {
     $GLOBALS['twins_builder_blog_id'] = $blogId;
     $markup = twins_overhaul_render_builder(array('phone' => '(000) 000-0000', 'base' => '/spoof/'));
     builder_assert(preg_match_all('/<h1\b/i', $markup) === 1, 'builder must have one H1 for blog ' . $blogId);
     builder_assert(strpos($markup, 'class="twins-brand-page twins-overhaul-main twins-builder-page"') !== false, 'shared brand page shell missing');
-    builder_assert(strpos($markup, 'Frozen Clopay builder') !== false, 'frozen builder eyebrow missing');
-    builder_assert(strpos($markup, 'fixed local 23-product catalog') !== false, 'bounded builder lead missing');
+    builder_assert(strpos($markup, 'Official Clopay dealer') !== false, 'builder dealer eyebrow missing');
+    builder_assert(strpos($markup, 'Explore Clopay collections') !== false, 'builder lead missing');
     builder_assert(strpos($markup, 'twins-builder__notice') === false, 'large debug-style builder notice survived');
     builder_assert(strpos($markup, 'Manufacturer reference only.') !== false, 'manufacturer truth missing');
     builder_assert(strpos($markup, 'This private staging preview does not submit or store lead information.') !== false, 'compact staging preview note missing');

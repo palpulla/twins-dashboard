@@ -21,7 +21,7 @@ const phpHarnessSource = name => {
 };
 
 test('header exposes the approved complete navigation and CTA copy', () => {
-  const html = source('header.php');
+  const html = source('header.php') + source('nav-data.php');
   for (const label of ['Services', 'Garage Doors', 'Service Areas', 'Resources', 'About', 'Our Team', 'Careers', 'Book Online', 'Request a Quote']) {
     assert.match(html, new RegExp(label.replace(' ', '\\s+')));
   }

@@ -7,19 +7,22 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
 ?>
 <main id="twins-overhaul-main" class="twins-brand-page twins-brand-home">
   <section class="twins-brand-hero" data-section="brand-hero">
+    <div class="twins-brand-hero-door" aria-hidden="true"></div>
     <div class="twins-brand-hero-copy">
+      <span class="twins-brand-offer-chip">$0 Service Call</span>
       <span class="twins-brand-kicker">Local garage door service across our communities</span>
-      <h1>Garage Door Repair & Installation, Done Right Today.</h1>
+      <h1>Garage Door <em>Repair</em> & Installation, Done Right <em>Today</em>.</h1>
       <p>Fast local service, straight answers, and upfront options from the Twins crew.</p>
       <div class="twins-brand-hero-actions">
         <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($market['phoneHref'], ENT_QUOTES, 'UTF-8') ?>">Call Twins</a>
         <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
       </div>
+      <p class="twins-brand-hero-proof"><span class="twins-brand-stars" aria-hidden="true">★★★★★</span> 4.9 on Google from 699 reviews · Licensed and insured</p>
     </div>
     <div class="twins-brand-hero-art" aria-label="The Twins Garage Doors team">
-      <img class="twins-brand-truck twins-brand-truck--hero" src="<?= htmlspecialchars($experience->asset('truck-webp'), ENT_QUOTES, 'UTF-8') ?>" width="1398" height="821" alt="Twins Garage Doors branded service truck">
-      <img class="twins-brand-twin twins-brand-twin--left" src="<?= htmlspecialchars($experience->asset('twin-left'), ENT_QUOTES, 'UTF-8') ?>" width="196" height="534" alt="Twins Garage Doors technician character">
-      <img class="twins-brand-twin twins-brand-twin--right" src="<?= htmlspecialchars($experience->asset('twin-right'), ENT_QUOTES, 'UTF-8') ?>" width="297" height="538" alt="Twins Garage Doors technician character">
+      <img class="twins-brand-truck twins-brand-truck--hero" src="<?= htmlspecialchars($experience->asset('truck-webp'), ENT_QUOTES, 'UTF-8') ?>" width="1398" height="821" alt="Twins Garage Doors branded service truck" loading="eager" fetchpriority="high" decoding="async">
+      <img class="twins-brand-twin twins-brand-twin--left" src="<?= htmlspecialchars($experience->asset('twin-left'), ENT_QUOTES, 'UTF-8') ?>" width="196" height="534" alt="Twins Garage Doors technician character" loading="eager" fetchpriority="high" decoding="async">
+      <img class="twins-brand-twin twins-brand-twin--right" src="<?= htmlspecialchars($experience->asset('twin-right'), ENT_QUOTES, 'UTF-8') ?>" width="297" height="538" alt="Twins Garage Doors technician character" loading="eager" fetchpriority="high" decoding="async">
     </div>
   </section>
 
@@ -122,6 +125,8 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
     </div>
   </section>
 
+  <?php require dirname(__DIR__) . '/components/service-areas-panel.php'; ?>
+
   <section class="twins-brand-careers" data-section="careers" aria-labelledby="twins-brand-careers-title">
     <div class="twins-brand-careers-image">
       <?php
@@ -145,6 +150,8 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
   </section>
 
   <section class="twins-brand-final-cta" data-section="final-cta" aria-labelledby="twins-brand-final-cta-title">
+    <?php require_once dirname(__DIR__) . '/components/door-art.php'; ?>
+    <?= twins_brand_door_art('door-open', 'twins-brand-cta-art', 'home-final') ?>
     <span class="twins-brand-kicker">Ready when you are</span>
     <h2 id="twins-brand-final-cta-title">Let’s get your garage door moving.</h2>
     <div class="twins-brand-final-actions">

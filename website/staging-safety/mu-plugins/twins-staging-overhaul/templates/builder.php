@@ -143,7 +143,7 @@ function twins_overhaul_render_builder(array $context): string {
         'contact-preview' => 'Contact Preview',
     );
     $markup = '<div id="twins-overhaul-main" class="twins-brand-page twins-overhaul-main twins-builder-page" tabindex="-1">';
-    $markup .= '<section class="twins-builder-hero"><div class="twins-overhaul-shell"><p class="twins-overhaul-eyebrow">Frozen Clopay builder</p><h1>Design your garage door with Twins</h1><p>Compare the fixed local 23-product catalog, review manufacturer references, and prepare a plain-text summary for a conversation with Twins.</p></div></section>';
+    $markup .= '<section class="twins-builder-hero"><div class="twins-overhaul-shell"><p class="twins-overhaul-eyebrow">Official Clopay dealer</p><h1>Design your garage door with Twins</h1><p>Explore Clopay collections, pick the panel style, color, windows, and hardware you like, and share your design with the Twins team for a real quote.</p></div></section>';
     $markup .= '<section class="twins-overhaul-section twins-builder"><div class="twins-overhaul-shell">';
     $markup .= '<p class="twins-builder__truth"><strong>Manufacturer reference only.</strong> Images show product, panel, color, window, glass, hardware, or inspiration references. Your selected options are listed separately, and Twins will confirm the final appearance before ordering.</p>';
     $markup .= '<p class="twins-builder__truth" role="note">This private staging preview does not submit or store lead information. Selections remain in this page until you leave or reload.</p>';

@@ -10,8 +10,9 @@ test('portable navigation exposes the dedicated repair route in every market', (
   const adapter = read('website/staging-safety/mu-plugins/twins-staging-overhaul/adapters/BrandStagingAdapters.php');
   const registry = read('website/twins-brand-experience/src/PageContentRegistry.php');
   const home = read('website/twins-brand-experience/templates/home.php');
-  const header = read('website/twins-brand-experience/components/header.php');
-  const footer = read('website/twins-brand-experience/components/footer.php');
+  const navData = read('website/twins-brand-experience/components/nav-data.php');
+  const header = read('website/twins-brand-experience/components/header.php') + navData;
+  const footer = read('website/twins-brand-experience/components/footer.php') + navData;
   const rendererHarness = read('website/twins-brand-experience/tests/php/renderer-contract-harness.php');
   const stagingHarness = read('website/staging-safety/tests/staging-brand-adapters-harness.php');
 
@@ -41,8 +42,9 @@ test('portable navigation exposes the dedicated repair route in every market', (
 test('context-aware labels keep Illinois anchors truthful and qualify the Wisconsin cost guide', () => {
   const experience = read('website/twins-brand-experience/src/Experience.php');
   const service = read('website/twins-brand-experience/templates/service.php');
-  const header = read('website/twins-brand-experience/components/header.php');
-  const footer = read('website/twins-brand-experience/components/footer.php');
+  const navData = read('website/twins-brand-experience/components/nav-data.php');
+  const header = read('website/twins-brand-experience/components/header.php') + navData;
+  const footer = read('website/twins-brand-experience/components/footer.php') + navData;
   const rendererHarness = read('website/twins-brand-experience/tests/php/renderer-contract-harness.php');
   const stagingHarness = read('website/staging-safety/tests/staging-brand-adapters-harness.php');
 

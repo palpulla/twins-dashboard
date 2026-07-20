@@ -76,7 +76,7 @@ phpTest('bootstrap harness fails closed for every missing or false gate', () => 
 });
 
 phpTest('renderer harness validates every approved request state', () => {
-  for (const scenario of ['routes', 'asset-versions', 'hooks', 'blog-index', 'campaign', 'family-once', 'path-contact-context', 'service-brand-chrome', 'catalog-brand-chrome', 'home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand', 'elementor-theme-content', 'elementor-document-content', 'legacy-location-document', 'ineligible', 'article', 'unknown-blog']) {
+  for (const scenario of ['routes', 'asset-versions', 'hooks', 'blog-index', 'campaign', 'family-once', 'path-contact-context', 'service-brand-chrome', 'catalog-brand-chrome', 'home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand', 'environment-gate', 'elementor-theme-content', 'elementor-document-content', 'legacy-location-document', 'ineligible', 'article', 'unknown-blog']) {
     assert.equal(
       runPhp('staging-overhaul-renderers-harness.php', [LOADER, scenario]),
       `STAGING_OVERHAUL_RENDERERS_HARNESS_OK:${scenario}`,
@@ -95,6 +95,13 @@ phpTest('staging brand adapters are fixed-origin, fail-closed, and invoke no sid
   assert.equal(
     runPhp('staging-brand-adapters-harness.php', [LOADER, path.resolve(ROOT, '..', 'twins-brand-experience')]),
     'STAGING_BRAND_ADAPTERS_HARNESS_OK',
+  );
+});
+
+phpTest('production adapters satisfy the brand interfaces and render the trusted callback form', () => {
+  assert.equal(
+    runPhp('production-adapters-harness.php', [path.resolve(ROOT, '..', 'twins-brand-experience')]),
+    'PRODUCTION_ADAPTERS_HARNESS_OK',
   );
 });
 

@@ -151,7 +151,7 @@ foreach ($interface_arity as $function_name => $arity) {
 
 $expected_regions = [
     1 => ['main', '(833) 833-2010'],
-    3 => ['ky', '(833) 833-2010'],
+    3 => ['ky', '(859) 440-2227'],
     4 => ['wi', '(608) 420-2377'],
     5 => ['il', '(815) 800-2025'],
 ];

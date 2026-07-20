@@ -231,8 +231,9 @@ test('fixed routing preserves campaign work while branding Careers and retaining
   assert.match(classify, /in_array\(\s*\$postId,\s*array\(7092,\s*7093\),\s*true\)/);
   assert.match(classify, /\$postId\s*===\s*7341[\s\S]*?return\s+['"]careers-brand['"]/);
   for (const [blog, route] of [[1, '/door-builder'], [3, '/ky/design-your-door'], [4, '/wi/door-builder'], [5, '/il/door-builder']]) {
-    assert.match(classify, new RegExp(`${blog}\\s*=>\\s*['"]${route.replaceAll('/', '\\/')}['"]`));
+    assert.match(classify, new RegExp(`${blog}\\s*=>\\s*array\\(['"]${route.replaceAll('/', '\\/')}['"]`));
   }
+  assert.match(classify, /1\s*=>\s*array\('\/door-builder',\s*'\/design-your-door'\)/);
   assert.equal((data.match(/twins_overhaul_navigation_item\(['"]Careers['"],\s*['"]\/careers\/['"]\)/g) || []).length, 4);
 });
 

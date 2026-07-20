@@ -11,6 +11,14 @@ const routes = [
   '/garage-door-spring-repair/',
   '/garage-door-opener-repair/',
   '/emergency-garage-services/',
+  '/garage-door-services/',
+  '/garage-door-cable-repair/',
+  '/garage-door-openers/',
+  '/garage-weatherstripping-repair/',
+  '/garage-door-tune-up/',
+  '/maintenance-plans/',
+  '/property-management-services/',
+  '/protection-plans/',
 ];
 const requiredKeys = ['h1', 'directAnswer', 'needs', 'safety', 'process', 'options', 'prepare', 'faqs', 'links'];
 
@@ -41,7 +49,7 @@ function customerValues(block) {
   return [...block.matchAll(/=>\s*'((?:\\'|[^'])*)'/g)].map(match => unescapePhp(match[1]));
 }
 
-test('fixed page-content config contains exactly five conservative bespoke records', () => {
+test('fixed page-content config contains exactly thirteen conservative bespoke records', () => {
   const source = read('config/page-content.php');
   const keys = [...source.matchAll(/^ {4}'(\/[^']+\/)'\s*=>\s*\[/gm)].map(match => match[1]);
   assert.deepEqual(keys, routes);
@@ -171,10 +179,10 @@ test('renderer harness pins spring safety, one H1, FAQ depth, and raw-body remov
     '$milwaukeeBody = twins_overhaul_render_classified_content(',
     '$milwaukeeFooter = twins_overhaul_render_footer($milwaukeeContext)',
     "strpos($milwaukeeWithoutMarketMenu, '(608) 420-2377') === false",
-    "substr_count($milwaukeeWithoutMarketMenu, '(414) 800-9271') === 3",
-    "substr_count($milwaukeeWithoutMarketMenu, 'tel:+14148009271') === 5",
-    "substr_count($wisconsinWithoutMarketMenu, '(608) 420-2377') === 3",
-    "substr_count($wisconsinWithoutMarketMenu, 'tel:+16084202377') === 6",
+    "substr_count($milwaukeeWithoutMarketMenu, '(414) 800-9271') === 2",
+    "substr_count($milwaukeeWithoutMarketMenu, 'tel:+14148009271') === 4",
+    "substr_count($wisconsinWithoutMarketMenu, '(608) 420-2377') === 2",
+    "substr_count($wisconsinWithoutMarketMenu, 'tel:+16084202377') === 5",
     "substr_count($illinoisWithoutMarketMenu, '(815) 800-2025') === 3",
     "substr_count($illinoisWithoutMarketMenu, 'tel:+18158002025') === 6",
   ]) assert.ok(harness.includes(assertion), assertion);
