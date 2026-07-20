@@ -98,6 +98,13 @@ phpTest('staging brand adapters are fixed-origin, fail-closed, and invoke no sid
   );
 });
 
+phpTest('production adapters satisfy the brand interfaces and render the trusted callback form', () => {
+  assert.equal(
+    runPhp('production-adapters-harness.php', [path.resolve(ROOT, '..', 'twins-brand-experience')]),
+    'PRODUCTION_ADAPTERS_HARNESS_OK',
+  );
+});
+
 phpTest('legacy image harness removes only the two pinned stale candidates', () => {
   assert.equal(runPhp('staging-legacy-image-srcset-harness.php', [SAFETY]), 'STAGING_LEGACY_IMAGE_SRCSET_HARNESS_OK');
 });

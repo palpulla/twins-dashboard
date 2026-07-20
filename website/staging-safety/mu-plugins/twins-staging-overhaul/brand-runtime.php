@@ -31,9 +31,24 @@ function twins_overhaul_brand_runtime(): Experience
     require_once __DIR__ . '/adapters/BrandStagingAdapters.php';
     require_once __DIR__ . '/adapters/BrandStagingPreviews.php';
 
-    $quote = new StagingQuoteAdapter();
-    $booking = new StagingBookingAdapter();
-    $applications = new StagingApplicationAdapter();
+    // Quote, Booking, and Careers are the only environment-specific adapters.
+    // The portable infrastructure above (asset resolver, route adapter, reviews
+    // provider) is shared across environments. On production the sealed build
+    // installs production-adapters.php next to this file, and this branch swaps
+    // in the live callback form, Housecall Pro booking, and careers flow. The
+    // staging package never ships that file, so the production branch cannot run
+    // there. The seam is the same one the renderer form scan and map embed use,
+    // so the environments cannot drift. See production-build-spec.md.
+    if (twins_overhaul_environment_is_production()) {
+        require_once __DIR__ . '/adapters/production-adapters.php';
+        $quote = new ProductionQuoteAdapter();
+        $booking = new ProductionBookingAdapter();
+        $applications = new ProductionApplicationAdapter();
+    } else {
+        $quote = new StagingQuoteAdapter();
+        $booking = new StagingBookingAdapter();
+        $applications = new StagingApplicationAdapter();
+    }
     $quote->assertReady();
     $booking->assertReady();
     $applications->assertReady();

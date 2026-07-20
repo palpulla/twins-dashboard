@@ -6119,8 +6119,8 @@
       "role": "deploy",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/brand-runtime.php",
       "destination": "twins-staging-overhaul/brand-runtime.php",
-      "size": 2304,
-      "sha256": "b2446703bd132d255a22a6e5376d03b2bc8a28cc751829b5a9c968d020f23d57"
+      "size": 3248,
+      "sha256": "ee7b79de7404bcc039744dc2c7df249dd03cce0977bdd75a8e6ee7f2df493453"
     },
     {
       "role": "deploy",

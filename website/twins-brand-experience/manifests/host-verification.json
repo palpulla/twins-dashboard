@@ -36,8 +36,8 @@
     {
       "role": "verify",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/brand-runtime.php",
-      "size": 2304,
-      "sha256": "b2446703bd132d255a22a6e5376d03b2bc8a28cc751829b5a9c968d020f23d57"
+      "size": 3248,
+      "sha256": "ee7b79de7404bcc039744dc2c7df249dd03cce0977bdd75a8e6ee7f2df493453"
     },
     {
       "role": "verify",
@@ -313,7 +313,7 @@
       "role": "verify",
       "source": "twins-brand-experience/manifests/staging-runtime.json",
       "size": 365117,
-      "sha256": "3e08e4b9403a818728ebafa20db6bb28f3d80efb0332a0adf30bf89130183d35"
+      "sha256": "88a95824e0a63b404467cd7da95c3c5683150aeeeb1c8daa3f0a3b0a166a9310"
     },
     {
       "role": "verify",
