@@ -20,6 +20,8 @@ So: finish wiring the capture that already exists (web), and add the capture tha
 3. ROI resolver prefers `job_attribution_web` **only when HCP `lead_source` normalizes to Unattributed** (same safe-scoping the GHL rescue landed on in PR #331).
 - **The production website callback form posts to `lp-lead-intake`** (the path we just fixed), so once the site is live, every web lead self-attributes with zero human step. Phase 1 turns that captured source into job attribution.
 
+> **BUILD FINDING 2026-07-20 (read-only dry-run on jwrpj) — Phase 1 is launch-gated; do not build the backfill yet.** `lp_leads` holds only **17 rows, all since 2026-07-10** (web capture just started; the production site isn't live). Against the **423** currently-Unattributed completed jobs / **$475,566** (365d), web-phone matches = **0**. Valid forward matches across all jobs = **1**, of which currently-Unknown = **0**. The Unknown bucket is **phone callers** (they already confirmed this in the 2026-07-06 RESULTS), which Phase 1 structurally cannot touch. **Sequence the Phase 1 table + resolver build with the website cutover** (build it against real web volume, not 1 row). The needle-mover for the current Unknown is **Phase 2 (call tracking)**.
+
 ### Phase 2 — Call tracking + dynamic number insertion (the big one — needs Daniel budget approval)
 Phone is where the Unknown revenue actually hides, and no software captures it today.
 1. Per-channel tracked numbers (Google LSA, Google Ads, Facebook, GBP, plus a DNI pool that swaps the site number by referrer/utm) via a call-tracking provider (CallRail-class). **Paid service → test cap + kill criterion + Daniel approval per the authority matrix.**
