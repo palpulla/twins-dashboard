@@ -70,8 +70,7 @@ Owner decision needed: **suppress (recommended) / keep-and-clean / defer.** On
 > so location pages ship the clean brand experience (city answer, NAP, services,
 > service-area panel, map, Service schema) with no legacy essay. Trust/article
 > keep their body. Renderers harness 21/21 (3 location scenarios updated),
-> contracts 75/75, check:repo PASSED. Not yet deployed — an r18 staging release
-> will show it live. Curated per-city copy can be added later.
+> contracts 75/75, check:repo PASSED. Deployed as r18 and verified live 2026-07-20 (Madison + Lexington clean; trust/article bodies intact). Curated per-city copy can be added later.
 
 ## Everything else: signed off
 
