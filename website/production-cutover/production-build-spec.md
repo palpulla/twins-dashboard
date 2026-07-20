@@ -52,6 +52,18 @@ it should be reviewed as its own change, not folded into content work.
 
 ## BLOCKER B — the overhaul refuses the production callback form
 
+> **STATUS: reviewable patch drafted + validated on staging (commit `a0cb62d0`).**
+> The gate below is implemented via one shared environment seam
+> (`twins_overhaul_environment_is_production()`); the pre-existing map embed gate
+> now uses it too. Inert on staging (the staging LOADER fails closed outside
+> `WP_ENVIRONMENT_TYPE === 'staging'`, so the production branch is exercised only
+> by the production package boot — same testability profile as the map embed).
+> Added the `environment-gate` renderers-harness scenario (locks the staging
+> side). Full gate green (renderers 21/21, contracts 75/75, check:repo). Not
+> deployed. The production-side end-to-end proof lands with the brand-runtime
+> adapter env branch + production package boot.
+
+
 `renderers.php:1497` scans every classified route's output for `<form>` and
 refuses the route if any survives. It ships to production and is **not**
 environment-gated. The contact page renders the callback form via
