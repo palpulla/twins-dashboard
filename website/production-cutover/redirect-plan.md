@@ -31,6 +31,21 @@ routes go live.** The shim was always temporary (pending Rank Math PRO
 > (`connect-src 'none'`) blocks fetching the raw HTML in-browser, so trace it
 > server-side (render the URL via wp-cli / capture output, or check page-builder
 > / theme / mu-plugin front-end injection).
+>
+> **RESOLVED (2026-07-19). It was never a configured redirect.**
+> `/garage-door-repair/` had **no backing WP page** (a virtual service route with
+> no post; get_page_by_path returned nothing). With no page it 404s, and
+> WordPress core's `redirect_guess_404_permalink()` guessed the closest published
+> slug — `garage-door-repairs-to-make-before-spring`, which literally starts with
+> "garage-door-repair" — and redirected there. Same root cause as
+> `/garage-door-tune-up/` and `/protection-plans/`, which 404'd outright.
+> **Fix = create the backing page** (done on staging: repair 7726, tune-up 7724,
+> protection-plans 7725; the overhaul then renders the service page from the code
+> registry, with full Service/FAQPage/Breadcrumb schema). **CUTOVER ACTION:
+> create these three pages on PRODUCTION.** No WPCode/Rank Math/OTTO change is
+> needed for this. (Leftover Metasync/OTTO residue — options, empty
+> `*_metasync_redirections` tables, `searchatlas_api_key`, `metasync_data/` logs —
+> is unrelated to this redirect but worth cleaning up.)
 
 ## Finding 2: no Rank Math source collides with the new route registry
 
