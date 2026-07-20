@@ -41,6 +41,14 @@ Recent Unattributed falls automatically, phone jobs carry channels, and the chan
 
 GHL is already live, so the **sync + backfill can start now** against whatever call history GHL holds. The website-DNI portion (if needed) pairs with the cutover (the new site is where the swappable number lives).
 
+## Build status (2026-07-20)
+
+Wiring built and ready (reversible), waiting on the GHL pools + sync:
+- **`job_attribution_calls` table created** (migration `create_job_attribution_calls`; RLS mirrors `job_attribution_ghl` — admin/manager read, service write). `DROP TABLE` to revert.
+- **Match backfill written:** `2026-07-20-phase2-call-attribution-backfill.sql` (deterministic phone match → channel; runs once `calls_inbound` has data).
+- **GHL setup config for Daniel:** `2026-07-20-ghl-number-pool-setup.md`.
+- **Still to do (after pools deploy):** the GHL→`calls_inbound` sync (needs GHL access), run the backfill, report the before/after, then wire the ROI resolver's call tier (Unattributed-only) — resolver wired only after the numbers check out, per the GHL-build guardrail.
+
 ## The ask
 
 Approve: **build the GHL→`calls_inbound` sync + call→job attribution now (no spend)**, and — only if the confirm step shows GHL isn't capturing per-call channel — a small **GHL tracking-number usage budget (~$20–30/mo) to test**. Report the before/after in the Monday brief. Nothing purchased outside the GHL platform you already have.
