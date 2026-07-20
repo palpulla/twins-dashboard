@@ -49,9 +49,10 @@ production.
       catalog, builder). **One finding:** every location page (`/wi/location/*`,
       `/ky/location/*`, ~25+) dumps its raw legacy Elementor essay below the clean
       brand experience — typos, unverified claims ("lifetime warranty", "24/7",
-      "#1", "Superpro"), banned words ("hassle"), duplicate blocks. Owner decision:
-      suppress the legacy body for launch (recommended; small code change I can
-      make) / keep-and-clean / defer.
+      "#1", "Superpro"), banned words ("hassle"), duplicate blocks. **Resolved
+      2026-07-20: owner chose suppress; implemented (`1ba717d3`) — location pages
+      now ship the clean brand experience only, full gate green. Not yet deployed
+      to staging (needs an r18 release to see it live).**
 - [x] **Review numbers current** — [verified 2026-07-20]. Re-checked against the
       live Google Business listing (place ChIJ6WuQE9VSBogRgy76ORRGfHs): 4.9 stars,
       699 reviews — unchanged, so the pinned summary is current. Re-verify once
