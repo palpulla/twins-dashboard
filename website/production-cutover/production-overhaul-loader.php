@@ -56,23 +56,26 @@ if (defined('TWINS_STAGING_SAFETY') && TWINS_STAGING_SAFETY === true) {
 require_once __DIR__ . '/twins-staging-overhaul/bootstrap.php';
 
 /**
- * Load the callback submission handler on top of the shared overhaul script.
+ * Load the callback submission handler on top of the portable brand script.
  *
- * The shared twins-overhaul.js contains no network calls (staging JS contract);
- * production adds this small script, which POSTs the callback form to the
- * approved lead-intake edge function. Declared as dependent on the main overhaul
- * handle so it always loads after it. Deployed inside the overhaul package dir
- * (a deploy namespace), so the sealed build ships it without touching the
- * verify-prerequisite asset directory.
+ * The shared brand script (handle `twins-brand-experience`) contains no network
+ * calls (staging JS contract); production adds this small script, which POSTs the
+ * callback form to the approved lead-intake edge function. The brand routes that
+ * render the callback form (e.g. contact-brand) enqueue `twins-brand-experience`,
+ * NOT `twins-staging-overhaul` (that handle is enqueued only on campaign-preserve
+ * routes — see twins_overhaul_enqueue_assets). So guard on and depend on the
+ * brand handle, or the callback never loads and the form falls back to a native
+ * submit. Deployed inside the overhaul package dir (a deploy namespace) so the
+ * sealed build ships it without touching the verify-prerequisite asset directory.
  */
 function twins_overhaul_production_enqueue_callback() {
-    if (!wp_script_is('twins-staging-overhaul', 'enqueued')) {
+    if (!wp_script_is('twins-brand-experience', 'enqueued')) {
         return;
     }
     wp_enqueue_script(
         'twins-overhaul-callback',
         '/wp-content/mu-plugins/twins-staging-overhaul/production-callback.js',
-        array('twins-staging-overhaul'),
+        array('twins-brand-experience'),
         '0.1.0',
         true
     );

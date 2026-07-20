@@ -115,35 +115,9 @@ final class ProductionApplicationAdapter implements ApplicationAdapter
 }
 
 /*
- * Companion JS (add to twins-brand.js production build or a small
- * production-only script):
- *
- * document.querySelectorAll('[data-callback-endpoint] form.twins-brand-callback')
- *   .forEach(form => form.addEventListener('submit', async event => {
- *     event.preventDefault();
- *     const wrap = form.closest('[data-callback-endpoint]');
- *     const status = form.querySelector('[data-callback-status]');
- *     const data = {
- *       name: form.name.value.trim(),
- *       phone: form.phone.value.trim(),
- *       email: '', zip: '', message: '',
- *       service: form.service.value,
- *       page: location.href,
- *       form_variant: 'site-callback',
- *       chooser_token: '',
- *       consent: 'true',
- *       website: form.website.value,
- *     };
- *     if (!data.name || !data.phone) { status.hidden = false; status.textContent = 'Please add your name and phone number.'; return; }
- *     const btn = form.querySelector('button[type="submit"]');
- *     btn.disabled = true; btn.textContent = 'Sending...';
- *     try {
- *       await fetch(wrap.dataset.callbackEndpoint, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(data) });
- *       form.hidden = true; status.hidden = false;
- *       status.textContent = 'Got it. We will call you back shortly.';
- *     } catch (error) {
- *       btn.disabled = false; btn.textContent = 'Get My Call Back';
- *       status.hidden = false; status.textContent = 'Something went wrong. Please call us instead.';
- *     }
- *   }));
+ * Companion JS: production-callback.js (in this directory). It binds the submit
+ * handler and POSTs the payload above to data-callback-endpoint. Use that file
+ * rather than re-deriving the handler here — it reads controls via form.elements
+ * (form.name would collide with the form's name IDL attribute), treats a non-ok
+ * fetch response as a failure, and waits for the DOM before binding.
  */
