@@ -18,11 +18,14 @@ So this isn't "buy a call tracker" — it's **turn on the GHL call sync that was
 2. **Match → attribution.** `calls_inbound.phone_number` (last-10) → HCP job → write channel to `job_attribution_calls` (or extend `job_attribution_ghl`). ROI resolver prefers it **only when HCP `lead_source` normalizes to Unattributed** (same safe scoping as PR #331). HCP `lead_source` never overwritten; reversible (drop the table).
 3. **Report** the before/after Unknown split in the Monday brief.
 
-## The one thing to confirm first (don't assume)
+## Confirm step — DONE 2026-07-20 (GHL sample from `ghl_phone_channel_map`, 14,714 contacts)
 
-Does GHL capture a **channel/source per inbound call**, or does it only log the call? The `calls_inbound.source` column assumes the former, but `ghl_contacts.source` is null on 83% of contacts and the 2026-07-06 RESULTS found HCP-pushed contacts carry no source. **First build step (interactive, GHL access): pull a sample of GHL call logs and check whether `source` is populated with a real channel.**
-- **If yes** → the sync + match is the whole job. Zero new spend, done.
-- **If no** (calls ring the published number directly with no channel) → set up **GHL's own tracking numbers + DNI within LC Phone** (per channel + a website pool), so calls carry a source. Still inside the GHL platform — only GHL's per-number / per-minute usage (cents), no third-party subscription. This needs a small GHL usage OK, not a CallRail bill.
+Result: **GHL is not capturing a channel for most calls today, but it has the native capability — it's just switched off.**
+- **94% of GHL contacts (13,877 / 14,714) have a null/blank source**; 458 of the ~last-60-day adds are still blank.
+- The 6% with a source carry **real channels** (Google Ads 91, Facebook 63, WI Google LSA 25, Thumbtack 26, …) — GHL captures channel fine *when the lead comes through a tracked path*.
+- One source value is **"Landing Page Number Pool (Number Pool)" (11 contacts)** — that is **GHL's own dynamic number-pool call tracking**. It works, but it's on 11 contacts ever and **0 in the last 60 days**. Not deployed on the live call flows.
+
+**Conclusion → we're on the "deploy GHL's own tracking" branch (no third party).** Set up **GHL number pools + DNI within LC Phone** on the call flows (website pool + a GBP/organic tracked number, all forwarding to (608) 888-8785), so inbound calls carry a channel. GHL then stamps `source`, the existing `job_attribution_ghl` pipeline attributes the resulting job, and `calls_inbound` fills. Cost = GHL's per-number/per-minute usage only (cents), no CallRail. Needs a small GHL usage OK + the in-GHL setup — not a new subscription.
 
 ## Test cap & kill criterion
 
