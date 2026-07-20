@@ -839,6 +839,8 @@ body.twins-brand-experience .twins-brand-careers-hero a.twins-brand-cta {
   color: var(--twins-white);
   font-size: clamp(3rem, 6vw, 6.2rem);
   text-transform: uppercase;
+  overflow-wrap: normal;
+  hyphens: auto;
 }
 .twins-brand-service-hero p { max-width: 760px; color: #e8f1fb; font-size: 1.15rem; font-weight: 750; }
 .twins-brand-service-hero-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 14px; }
