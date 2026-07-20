@@ -129,7 +129,12 @@ $articleHeroImage = $isArticle && isset($articleHero) && is_string($articleHero)
         <?php endforeach; ?>
       </div>
     </section>
-  <?php else: ?>
+  <?php elseif ($kind !== 'location'): ?>
+    <?php // Location pages ship the clean brand experience only (city answer, NAP,
+          // services, service-area panel, map, Service schema). The preserved
+          // legacy per-city essays carry typos, unverified claims, and duplicate
+          // blocks (see production-cutover/page-signoff.md), so they are not
+          // rendered; trust and article pages keep their preserved body. ?>
     <section class="twins-brand-editorial-body<?= $isArticle ? ' twins-brand-article-body' : '' ?>">
       <article class="twins-brand-editorial-content<?= $isArticle ? ' twins-brand-article-content' : '' ?>">
         <?= $content ?>

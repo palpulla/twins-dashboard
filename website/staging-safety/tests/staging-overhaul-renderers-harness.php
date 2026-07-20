@@ -1277,7 +1277,7 @@ if ($scenario === 'elementor-theme-content') {
         strpos($location, 'twins-brand-editorial-page') !== false,
         'Elementor location fallback did not render the portable editorial family: ' . substr($location, 0, 320)
     );
-    twins_overhaul_renderer_assert(substr_count($location, 'LEGACY LOCATION BODY') === 1, 'Elementor location fallback did not retain safe legacy facts exactly once');
+    twins_overhaul_renderer_assert(strpos($location, 'LEGACY LOCATION BODY') === false, 'Elementor location fallback rendered the preserved legacy body (location ships the brand experience only; body suppressed)');
     twins_overhaul_renderer_assert(stripos($location, '<form') === false && stripos($location, 'spoofed-lead') === false, 'spoofed legacy main marker bypassed Elementor form isolation');
     twins_overhaul_renderer_assert(
         ($elementorWidgetHook[2])($legacyLocation, new Twins_Overhaul_Renderer_Widget('theme-post-content', 'location-body-duplicate')) === '',
@@ -1328,7 +1328,7 @@ if ($scenario === 'elementor-document-content') {
     $renderedLocation = ($elementorDocumentHook[2])($directLocation);
     twins_overhaul_renderer_assert(substr_count($renderedLocation, 'id="twins-overhaul-main"') === 1, 'direct Elementor document did not render one fixed main wrapper');
     twins_overhaul_renderer_assert(strpos($renderedLocation, 'twins-brand-editorial-page') !== false, 'direct Elementor document did not render the portable editorial family');
-    twins_overhaul_renderer_assert(substr_count($renderedLocation, 'DIRECT ELEMENTOR LOCATION FACT') === 1, 'direct Elementor document did not retain safe legacy facts exactly once');
+    twins_overhaul_renderer_assert(strpos($renderedLocation, 'DIRECT ELEMENTOR LOCATION FACT') === false, 'direct Elementor document rendered the preserved legacy body (location ships the brand experience only; body suppressed)');
     twins_overhaul_renderer_assert(stripos($renderedLocation, '<form') === false && stripos($renderedLocation, 'direct-lead') === false, 'direct Elementor document retained form or action authority');
     twins_overhaul_renderer_assert(
         twins_overhaul_replace_main_content($renderedLocation) === $renderedLocation,
@@ -1366,7 +1366,7 @@ if ($scenario === 'legacy-location-document') {
     $renderedLocation = ($elementorDocumentHook[2])($legacyTemplate);
     twins_overhaul_renderer_assert(substr_count($renderedLocation, 'id="twins-overhaul-main"') === 1, 'fixed Lexington template did not render one overhaul root');
     twins_overhaul_renderer_assert(strpos($renderedLocation, 'twins-brand-editorial-page') !== false, 'fixed Lexington template did not render the portable editorial family');
-    twins_overhaul_renderer_assert(substr_count($renderedLocation, 'LEGACY LEXINGTON FACT') === 1, 'fixed Lexington template did not retain its inert factual text exactly once');
+    twins_overhaul_renderer_assert(strpos($renderedLocation, 'LEGACY LEXINGTON FACT') === false, 'fixed Lexington template rendered the preserved legacy body (location ships the brand experience only; body suppressed)');
     twins_overhaul_renderer_assert(stripos($renderedLocation, '<form') === false && stripos($renderedLocation, 'legacy-lead') === false, 'fixed Lexington template retained form or action authority');
 }
 
