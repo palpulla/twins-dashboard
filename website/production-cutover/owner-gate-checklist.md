@@ -35,9 +35,11 @@ production.
 - [x] **Lead flows** — [decided 2026-07-17]. Booking = Housecall Pro; Quote =
       callback form → `lp-lead-intake`; Careers = external application. Confirm
       the HCP link and the edge-function endpoint are still current.
-- [ ] **Blog prune list** — [open]. Approve the list of posts to prune/redirect
-      to `/blog/` (redirect-plan Finding 4 notes the list is pending owner
-      approval; off-topic HVAC/paint/energy posts included only if approved).
+- [ ] **Blog prune list** — [framed — needs owner approval]. The concrete list is
+      `blog-prune-list.md`: the revamp already curated 187 keepers and demoted 69
+      (16 off-topic, 2 junk, 51 superseded duplicates). Recommendation: approve all
+      69, 301 each → `/blog/` at cutover. Owner action: approve the set (or flag
+      any single title to rescue with a rewrite).
 
 ## B. Content sign-off
 

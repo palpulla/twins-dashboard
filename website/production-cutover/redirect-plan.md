@@ -87,9 +87,9 @@ point it at `/ky/garage-door-repair/`. Indianapolis sources point at
 | `/location/madison/` | `/wi/location/madison/` | Merge legacy location CPT duplicate |
 | `/shorewood-hills/` | `/wi/service-area/` | Root-level stray city page |
 | `/hormann-garage-doors/` | `/clopay-garage-doors/` | Owner decision: retire Hormann line |
-| 10 pruned blog posts (see cutover decisions doc) | `/blog/` | Owner-approved prune |
+| Pruned blog posts (69 — see `blog-prune-list.md`) | `/blog/` | Demoted during revamp; 16 off-topic + 2 junk + 51 superseded |
 | `/madison-garage-door-repair/` | keep as-is | Live SEO page; do NOT redirect (campaign-preserve) |
-| Off-topic blog posts (HVAC, paint colors, energy tips) | `/blog/` | Only if pruned; list pending owner approval |
+| Off-topic blog posts (HVAC, paint, energy, etc.) | `/blog/` | Now enumerated in `blog-prune-list.md` (the 16 off-topic of the 69); no longer a separate pending item |
 
 ## Finding 5: keep-list
 
