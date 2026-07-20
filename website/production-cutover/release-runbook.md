@@ -29,7 +29,14 @@ step 6; owner authorization is required to begin step 4 onward.
 ## 2. Content/SEO preflight (on production, before switching themes/routes)
 
 - [ ] Execute `redirect-plan.md` findings 3 and 4 in Rank Math.
-- [ ] Retire the WPCode stale-redirections shim entries (finding 1).
+- [ ] Create the 3 missing service-page WP pages so they render instead of
+      breaking: `/garage-door-repair/`, `/garage-door-tune-up/`,
+      `/protection-plans/`. Finding 1 was a missing-page permalink guess, NOT a
+      WPCode shim (see redirect-plan.md correction) — creating the pages is the
+      fix; no shim retirement needed.
+- [ ] Remove OTTO / Search Atlas per `otto-removal-runbook.md` (delete the
+      plugin, revoke Search Atlas, clean residue) so its client-side overlay
+      does not override the new site's titles/meta/schema/redirects.
 - [ ] Confirm titles/meta strategy: brand routes render one H1; Rank Math
       continues to own `<title>`/meta (verify on the first deployed page).
 - [ ] robots.txt unchanged (AI crawlers already allowlisted); staging host
