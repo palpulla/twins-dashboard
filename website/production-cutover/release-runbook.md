@@ -85,8 +85,20 @@ and the build sequence. Summary:
       /reviews/, /door-builder/, /contact-us/: one header, correct phones,
       no staging banner, no "Private staging preview" strings anywhere.
 - [ ] Book Online opens HCP in a new tab.
-- [ ] Callback form submits; lead arrives in the dashboard/GHL; phone gets
-      the notification. Send exactly ONE test lead, labeled TEST.
+- [ ] Callback form end-to-end (this path is production-only — it has never run
+      on staging, so verify it deliberately). On `/contact-us/`, send exactly ONE
+      test lead, labeled TEST, and confirm all of:
+  - [ ] `production-callback.js` is actually loaded on the page (view source / no
+        404 for it, and the submit handler is attached — the enqueue guards on the
+        `twins-brand-experience` script handle, which must be present on this route).
+  - [ ] Submitting fires a `POST` to `lp-lead-intake` in the Network tab and the
+        page does NOT navigate (a page reload / URL gaining `?name=...` means the
+        handler didn't bind and the form did a native submit).
+  - [ ] The payload carries the real `name` and `phone` values (not empty), and
+        the "Got it, we will call you back" message appears ONLY after a `200`
+        (force/observe a non-2xx once if you can — it must show the error message,
+        not false success).
+  - [ ] The lead arrives in the dashboard/GHL and the phone gets the notification.
 - [ ] Careers application reaches the hiring pipeline (one TEST entry).
 - [ ] Schema validates (Rich Results test) on home, a service page, a city
       page, reviews.
