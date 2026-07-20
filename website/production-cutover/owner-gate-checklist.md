@@ -16,10 +16,18 @@ production.
 
 ## A. Business decisions
 
-- [ ] **Clopay licensing / door-builder matrix** — [open]. Ship the builder
-      matrix or explicitly defer it for launch. Done = "shipping with matrix" or
-      "launching without it, add later" written down. Blocks nothing else if
-      deferred; the builder route already renders.
+- [ ] **Clopay door-builder + catalog** — [decided: SHIP — pending dealer
+      confirmation]. Launch WITH the catalog (`/clopay-garage-doors/`) and the
+      interactive door-builder (`/door-builder/`, `/design-your-door/`, per
+      market) — 23 Clopay models, already built + validated, high-intent, and the
+      Hormann retire-redirect lands there. Only remaining owner action: **confirm
+      authorized-Clopay-dealer status** via clopaydealer.com or your Clopay rep
+      (near-certain — you install Clopay, reviews cite Clopay models). No
+      engineering work; it ships as-is on confirmation. Check this box once dealer
+      status is confirmed. Fallback only if it cannot be confirmed by go-live:
+      defer = redirect the ~6 builder routes + the catalog, strip the "Design Your
+      Door" CTAs, edit builder-referencing copy, and re-point the Hormann redirect
+      (reversible; I can build that surgery if needed).
 - [x] **Hormann line** — [decided: retire]. `/hormann-garage-doors/` redirects to
       `/clopay-garage-doors/` (redirect-plan Finding 4). Confirm still the call.
 - [x] **Illinois market** — [decided: dark at launch]. IL stays unpublished
@@ -89,8 +97,9 @@ On GO, the ordered execution (from the runbooks, all owner-authorized) is:
 
 ## Quick status — what is actually blocking GO right now
 
-- **Owner answers needed:** Clopay/builder-matrix call, blog prune list, final
-  page-by-page sign-off. (Review numbers verified current 2026-07-20.)
+- **Owner answers needed:** blog prune list, final page-by-page sign-off.
+  (Review numbers verified current 2026-07-20. Clopay builder decided: SHIP —
+  only needs a quick authorized-dealer confirmation, no engineering work.)
 - **Owner must provide:** production WP admin + SiteGround access, verified
   restorable backup, Search Atlas login.
 - **Owner must authorize:** the Blocker A un-seal, the deploy window.
