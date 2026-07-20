@@ -67,6 +67,33 @@ that one at its nearest keeper instead of the generic `/blog/` for better equity
 Worth checking GSC top-URLs for the pruned slugs before launch; otherwise `/blog/`
 is fine for all.
 
+## Staging state + redirect scope (verified 2026-07-20)
+
+On the staging clone the prune is **already in effect**: all 69 are unpublished
+(drafts), published count is exactly 187, so the site/index already show only the
+keepers. There is nothing to "deploy" for the unpublish — the production cutover
+replicates this state (unpublish the 69) on the live site.
+
+The redirect layer is production-only (staging has no active Rank Math
+redirections table). It matters because **`redirect_canonical` /
+`redirect_guess_404_permalink` is ON** — an unpublished post whose URL is hit will
+be *guessed* to a similar published slug (exactly the `/garage-door-repair/`
+failure mode). So every pruned URL that was ever public needs an explicit 301.
+
+Scope refinement: of the 69, only **12 ever had a public slug** (once-published)
+on the clone; the other **57 were never-published drafts** with no URL (nothing to
+redirect — just leave unpublished). The 12 reference slugs:
+`duramaster-torsion-springs`, `how-to-permanently-repair-a-garage-floor-crack`,
+`keeping-your-home-clutter-free`, `air-filters-and-their-impact-on-your-health`,
+`simple-steps-to-declutter-and-organize-your-garage`, `looking-for-home-reno-expert`,
+`home-improvement-trends-enhancing-your-living-spaces`,
+`the-benefits-of-regular-hvac-system-maintenance`,
+`the-ultimate-guide-to-choosing-the-right-paint-colors-for-your-home`,
+`top-10-energy-saving-tips-for-lowering-your-utility-bills`,
+`the-future-of-home-automation`, `opener-battery-backup`. Production may have more
+of the 69 still published (it has not been pruned yet), so derive the final
+redirect set from production's own live posts at cutover (step 1 below).
+
 ## Cutover mechanics
 
 1. On production, pull the live post list: `wp post list --post_type=post
