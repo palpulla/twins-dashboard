@@ -15,5 +15,5 @@ return [
     'ratingValue' => 4.9,
     'reviewCountFloor' => 699,
     'displayCount' => '699',
-    'checkedAt' => '2026-07-17',
+    'checkedAt' => '2026-07-20',
 ];

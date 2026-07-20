@@ -359,7 +359,7 @@
       "source": "twins-brand-experience/config/review-summary.php",
       "destination": "twins-brand-experience/config/review-summary.php",
       "size": 549,
-      "sha256": "5e66465336ac3aa106d753321d235390956255e82835b9f5bf7293018f12dd53"
+      "sha256": "add7e94184b9556f29b857cf16b97cfca3cb451e67d512410d4cd6e34d12c230"
     },
     {
       "role": "deploy",

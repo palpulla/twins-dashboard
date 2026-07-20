@@ -36,8 +36,10 @@ production.
 - [ ] **Page-by-page sign-off** — [open]. Final owner OK on the staged site, page
       by page (most were walked in the sign-off session). Done = every page type
       approved or its change noted.
-- [ ] **Review numbers current** — [open]. The site shows 4.9 / 699. Refresh from
-      the live Google listing at cutover so launch numbers are accurate.
+- [x] **Review numbers current** — [verified 2026-07-20]. Re-checked against the
+      live Google Business listing (place ChIJ6WuQE9VSBogRgy76ORRGfHs): 4.9 stars,
+      699 reviews — unchanged, so the pinned summary is current. Re-verify once
+      more on go-live day.
 - [x] **FAQ / body copy** — [decided]. The 9-question FAQ and Wave 1–4 copy are
       owner-approved. Confirm no wording changes wanted before launch.
 - [x] **Addresses** — [decided]. Madison WI (2921 Landmark Pl #206), KY Mt
@@ -88,7 +90,7 @@ On GO, the ordered execution (from the runbooks, all owner-authorized) is:
 ## Quick status — what is actually blocking GO right now
 
 - **Owner answers needed:** Clopay/builder-matrix call, blog prune list, final
-  page-by-page sign-off, refreshed review numbers.
+  page-by-page sign-off. (Review numbers verified current 2026-07-20.)
 - **Owner must provide:** production WP admin + SiteGround access, verified
   restorable backup, Search Atlas login.
 - **Owner must authorize:** the Blocker A un-seal, the deploy window.
