@@ -88,6 +88,11 @@ and the build sequence. Summary:
 - [ ] Callback form end-to-end (this path is production-only — it has never run
       on staging, so verify it deliberately). On `/contact-us/`, send exactly ONE
       test lead, labeled TEST, and confirm all of:
+  > Fix already in place (PR #4, `52d83bc9`): the enqueue-handle, `form.name`,
+  > `response.ok`, and load-timing bugs the code review found are fixed on the
+  > branch, so these checks are *expected* to pass — this step confirms the
+  > never-on-staging path actually works live. Still unchecked on purpose: it can
+  > only be verified after the production deploy.
   - [ ] `production-callback.js` is actually loaded on the page (view source / no
         404 for it, and the submit handler is attached — the enqueue guards on the
         `twins-brand-experience` script handle, which must be present on this route).
