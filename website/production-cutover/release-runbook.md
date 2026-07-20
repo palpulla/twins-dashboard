@@ -5,6 +5,11 @@ step 6; owner authorization is required to begin step 4 onward.
 
 ## 0. Preconditions (all must be true)
 
+> Work these through `owner-gate-checklist.md` first — it is the owner-facing
+> decision tracker (business calls, access, verified backup, authorizations) that
+> culminates in the go-decision. The list below is the same gates in runbook form.
+
+
 - [ ] Owner sign-off on the staged site (danielj140.sg-host.com) page by page.
 - [ ] Clopay licensing answered (builder matrix either shipped or explicitly deferred).
 - [ ] Hormann decision executed (redesign or redirect).
