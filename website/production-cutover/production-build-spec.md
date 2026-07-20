@@ -32,6 +32,18 @@ function; Careers = external `/careers/#apply`. All three live in
 
 ## BLOCKER A — the sealed build tool refuses production sources
 
+> **STATUS: designed for review (`blocker-a-build-unseal.md`); un-seal NOT
+> applied.** That doc has the measured deploy set (84 staging deploy entries +
+> the 3 production files = 86), the additive `kind: 'production'` patch for
+> `build-packages.mjs` (staging scope guard untouched; default runs byte-
+> identical; write authority stays false), and the fixpoint chain. Also drafted +
+> syntax-validated: `production-overhaul-loader.php` — production needs its own
+> mu-plugin loader because the staging loader hard-refuses non-staging boot and is
+> a verify-prerequisite (never deployed), and the safety plugin is absent on
+> production. Remaining before this can be applied: owner authorization +
+> production host inventory (to resolve the verify-prerequisite asset set).
+
+
 `tools/build-packages.mjs` is sealed against exactly this package:
 
 - **Line 89** rejects any `role: 'deploy'` entry whose source path contains
