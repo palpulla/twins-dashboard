@@ -1494,13 +1494,32 @@ function twins_overhaul_render_classified_content(string $classification, array 
         twins_overhaul_refuse_route('classified content has no fixed renderer.');
     }
 
-    if (!is_string($rendered) || preg_match('~</?form\b~i', $rendered)) {
+    // Staging enforces zero forms in classified output. Production intentionally
+    // renders exactly one trusted form: the quote adapter callback on the
+    // contact route (production-adapters.php; see production-build-spec.md,
+    // Blocker B). The environment seam is shared with the service-area map
+    // embed below; a non-string render always fails closed in both environments.
+    if (!is_string($rendered) || (!twins_overhaul_environment_is_production() && preg_match('~</?form\b~i', $rendered))) {
         twins_overhaul_refuse_route('classified staging output retained form markup.');
     }
     if ($classification === 'location') {
         $rendered .= twins_overhaul_location_map_markup($context);
     }
     return $rendered . twins_overhaul_brand_schema_markup($classification, $context);
+}
+
+/**
+ * Single environment seam for the overhaul's production-only behaviors.
+ *
+ * Staging (and any non-production environment) keeps the hardened defaults:
+ * zero forms in classified output, map link card instead of the live embed.
+ * Production opts into the trusted callback form and the map iframe. Kept as one
+ * function so those behaviors can never drift apart across environments.
+ *
+ * @return bool True only when running under the production environment constant.
+ */
+function twins_overhaul_environment_is_production(): bool {
+    return defined('WP_ENVIRONMENT_TYPE') && WP_ENVIRONMENT_TYPE === 'production';
 }
 
 /**
@@ -1530,7 +1549,7 @@ function twins_overhaul_location_map_markup(array $context): string {
     }
     $cityHtml = esc_html($city);
     $queryEncoded = rawurlencode($query);
-    $isProduction = defined('WP_ENVIRONMENT_TYPE') && WP_ENVIRONMENT_TYPE === 'production';
+    $isProduction = twins_overhaul_environment_is_production();
     $mapInner = $isProduction
         ? '<iframe class="twins-brand-location-map" title="Map of ' . esc_attr($query) . '" src="https://maps.google.com/maps?q=' . $queryEncoded . '&amp;z=11&amp;output=embed" width="600" height="380" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>'
         : '<a class="twins-brand-location-map twins-brand-location-map--link" href="https://www.google.com/maps/search/' . $queryEncoded . '" target="_blank" rel="noopener noreferrer"><span class="twins-brand-door-map-pin" aria-hidden="true"></span>Open the ' . $cityHtml . ' map on Google Maps</a>'

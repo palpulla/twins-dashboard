@@ -356,7 +356,7 @@ if ($argc !== 3 || !is_file($argv[1])) {
 }
 
 $scenario = $argv[2];
-if (!in_array($scenario, ['routes', 'asset-versions', 'hooks', 'blog-index', 'campaign', 'family-once', 'path-contact-context', 'service-brand-chrome', 'catalog-brand-chrome', 'home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand', 'elementor-theme-content', 'elementor-document-content', 'legacy-location-document', 'ineligible', 'article', 'unknown-blog'], true)) {
+if (!in_array($scenario, ['routes', 'asset-versions', 'hooks', 'blog-index', 'campaign', 'family-once', 'path-contact-context', 'service-brand-chrome', 'catalog-brand-chrome', 'home-brand', 'team-brand', 'careers-brand', 'reviews-brand', 'contact-brand', 'environment-gate', 'elementor-theme-content', 'elementor-document-content', 'legacy-location-document', 'ineligible', 'article', 'unknown-blog'], true)) {
     fwrite(STDERR, "UNKNOWN_RENDERER_SCENARIO\n");
     exit(2);
 }
@@ -1546,6 +1546,41 @@ if ($scenario === 'unknown-blog') {
     }
     twins_overhaul_renderer_assert($refusal instanceof Twins_Overhaul_Renderer_Refusal, 'unknown mapped blog silently kept legacy chrome');
     twins_overhaul_renderer_assert($refusal->response === 503, 'unknown mapped blog refusal did not use 503');
+}
+
+if ($scenario === 'environment-gate') {
+    // The classified-output form scan (twins_overhaul_render_classified_content)
+    // and the service-area map embed share ONE environment seam,
+    // twins_overhaul_environment_is_production(). Blocker B (production-build-spec.md)
+    // opens that seam so production can render the single trusted quote-callback form.
+    //
+    // The staging LOADER (twins-staging-overhaul.php) fails closed unless
+    // WP_ENVIRONMENT_TYPE === 'staging', so — exactly like the pre-existing map
+    // embed gate — the production branch is exercised by the production package
+    // boot, never by this staging harness. We must not bypass that boot contract
+    // to fake production here. What this scenario locks is the staging side: the
+    // seam stays closed, and the real classified pipeline still yields form-free
+    // output through the gated scan.
+    twins_overhaul_renderer_assert(WP_ENVIRONMENT_TYPE === 'staging', 'renderers harness must boot under the staging environment');
+    twins_overhaul_renderer_assert(twins_overhaul_environment_is_production() === false, 'environment seam reported production under a staging boot');
+
+    twins_overhaul_renderer_set([
+        'blogId' => 1,
+        'path' => '/contact-us/',
+        'postType' => 'page',
+        'postId' => 2030,
+        'renderedPostType' => 'page',
+        'renderedPostId' => 2030,
+        'title' => 'Contact',
+    ]);
+    twins_overhaul_renderer_assert(twins_overhaul_current_classification() === 'contact-brand', 'environment-gate scenario did not classify the contact route');
+    $rendered = twins_overhaul_render_classified_content(
+        'contact-brand',
+        twins_overhaul_current_context('contact-brand'),
+        '<section>LEGACY-CONTACT-BODY</section>'
+    );
+    twins_overhaul_renderer_assert(is_string($rendered) && $rendered !== '', 'staging contact route produced no classified output');
+    twins_overhaul_renderer_assert(stripos($rendered, '<form') === false, 'staging classified output retained form authority through the gated scan');
 }
 
 echo 'STAGING_OVERHAUL_RENDERERS_HARNESS_OK:' . $scenario . "\n";

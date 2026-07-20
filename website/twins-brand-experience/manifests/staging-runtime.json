@@ -6147,8 +6147,8 @@
       "role": "deploy",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/renderers.php",
       "destination": "twins-staging-overhaul/renderers.php",
-      "size": 88895,
-      "sha256": "6c972d0a5d833448701c3e1dbf703750d82e27c6c7caa9a53975a32e6ac77331"
+      "size": 89933,
+      "sha256": "9defd19ec3db4231c1a3818d4898c1403777d01fa13157d8dc8c6e7140fb977b"
     },
     {
       "role": "deploy",
