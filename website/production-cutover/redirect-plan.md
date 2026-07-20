@@ -4,6 +4,24 @@ Captured 2026-07-17 from the live Rank Math redirections table (73 items,
 read-only via wp-admin) plus HTTP verification. Review date matters: re-read
 the table before executing cutover.
 
+## Standing caveat: WordPress guesses missing URLs (verified 2026-07-20)
+
+`redirect_canonical` / `redirect_guess_404_permalink` is **active** on the site.
+Any URL with no published post — a pruned/unpublished blog post, a removed page, a
+retired legacy slug — does **not** cleanly 404. WordPress guesses the closest
+published slug and 301s the visitor there on its own. This is exactly what made
+`/garage-door-repair/` land on a blog article (Finding 1): the real cause was a
+missing page, not a configured redirect.
+
+Consequence: **every retired or pruned public URL needs an explicit 301 to a real
+target, or WP will silently send it somewhere wrong.** Applies to the pruned blog
+posts (`blog-prune-list.md` — the once-published slugs), any removed pages, and
+the Hormann retirement. At verification (step 4), a pruned URL that returns 200 or
+lands on an *unexpected* target means the guess fired instead of your redirect —
+treat that as a failure, not a pass. (Disabling the guess wholesale via a
+`redirect_canonical` filter is possible, but per-URL 301s are safer and preserve
+link equity.)
+
 ## Finding 1: the one real conflict comes from the WPCode shim, not Rank Math
 
 `/garage-door-repair/` 301s to `/garage-door-repairs-to-make-before-spring/`
@@ -100,7 +118,13 @@ product redirects carry live hits; keep.
 ## Execution order at cutover
 
 1. Update the chain targets (Finding 3) in Rank Math.
-2. Add the new redirects (Finding 4).
-3. Retire the WPCode shim entries superseded by the above (Finding 1).
-4. Crawl every source and every new-registry URL: assert exactly one hop,
-   no loops, no 404s.
+2. Add the new redirects (Finding 4), including the pruned blog posts
+   (`blog-prune-list.md`).
+3. Create the 3 missing service pages — `/garage-door-repair/`,
+   `/garage-door-tune-up/`, `/protection-plans/` — so they render instead of
+   being guessed elsewhere (Finding 1 was a missing page, NOT a WPCode shim; no
+   shim retirement is needed).
+4. Crawl every source, every retired/pruned URL, and every new-registry URL:
+   assert exactly one hop to the INTENDED target, no loops, no 404s. Per the
+   standing caveat, a 200 or an unexpected target on a retired URL is a failure —
+   the guess fired instead of the redirect.
