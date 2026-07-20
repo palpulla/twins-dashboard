@@ -43,9 +43,15 @@ production.
 
 ## B. Content sign-off
 
-- [ ] **Page-by-page sign-off** — [open]. Final owner OK on the staged site, page
-      by page (most were walked in the sign-off session). Done = every page type
-      approved or its change noted.
+- [ ] **Page-by-page sign-off** — [pass with 1 finding — see `page-signoff.md`].
+      2026-07-20 pass: all page types render correctly (home, markets, the 3
+      rebuilt service pages, reviews, team, contact, FAQ, financing, blog, article,
+      catalog, builder). **One finding:** every location page (`/wi/location/*`,
+      `/ky/location/*`, ~25+) dumps its raw legacy Elementor essay below the clean
+      brand experience — typos, unverified claims ("lifetime warranty", "24/7",
+      "#1", "Superpro"), banned words ("hassle"), duplicate blocks. Owner decision:
+      suppress the legacy body for launch (recommended; small code change I can
+      make) / keep-and-clean / defer.
 - [x] **Review numbers current** — [verified 2026-07-20]. Re-checked against the
       live Google Business listing (place ChIJ6WuQE9VSBogRgy76ORRGfHs): 4.9 stars,
       699 reviews — unchanged, so the pinned summary is current. Re-verify once
@@ -99,9 +105,11 @@ On GO, the ordered execution (from the runbooks, all owner-authorized) is:
 
 ## Quick status — what is actually blocking GO right now
 
-- **Owner answers needed:** blog prune list, final page-by-page sign-off.
-  (Review numbers verified current 2026-07-20. Clopay builder decided: SHIP —
-  only needs a quick authorized-dealer confirmation, no engineering work.)
+- **Owner answers needed:** blog prune approval; location-page disposition (the
+  one page-signoff finding — suppress the legacy essays vs keep-and-clean).
+  (Review numbers verified current 2026-07-20. Page-by-page pass done 2026-07-20,
+  clean except that one finding. Clopay builder decided: SHIP — needs only a quick
+  authorized-dealer confirmation.)
 - **Owner must provide:** production WP admin + SiteGround access, verified
   restorable backup, Search Atlas login.
 - **Owner must authorize:** the Blocker A un-seal, the deploy window.
