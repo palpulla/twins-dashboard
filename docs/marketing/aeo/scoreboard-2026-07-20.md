@@ -50,8 +50,11 @@ Retrieval layer = WebSearch (proxy for what AI assistants cite), same method as 
 1. **Phase 2 directory sweep is now the top priority** — claim/optimize Expertise,
    ThreeBestRated, Yelp, Angi, ServiceAgent, HomeBlue, Thumbtack. That is where the
    citations come from.
-2. **Dedicated spring-cost page** — the single query Twins is absent from where it
-   already owns better data. Split it out of the Madison cost page.
+2. ~~**Dedicated spring-cost page**~~ — **DECLINED by Daniel 2026-07-20.** He prefers a
+   technician to diagnose on site and give the price, rather than publishing more
+   pricing pages. Do not re-propose. (Note: the existing Madison/Milwaukee cost pages
+   already publish planning ranges and are framed to support that model — "not quotes,
+   exact price after on-site inspection, $49 waived with a completed repair.")
 3. **Publish the trust tokens** as extractable facts everywhere: founding year,
    "family owned and operated by twin brothers", 4.9/699 review count, hours, and the
    canonical (608) 888-8785. (`llms.txt` now carries most of these — publish it.)
