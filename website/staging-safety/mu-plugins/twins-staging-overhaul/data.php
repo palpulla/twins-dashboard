@@ -100,13 +100,28 @@ function twins_overhaul_metros(): array {
  * @param string $citySlug Fixed lowercase city slug.
  * @return array{key:string,metro:array<string,mixed>}|null Null when unknown.
  */
-function twins_overhaul_metro_for_city(string $citySlug) {
+function twins_overhaul_metro_for_city(string $citySlug, string $marketKey = '') {
     foreach (twins_overhaul_metros() as $key => $metro) {
+        // A city slug alone is ambiguous across states. Caledonia and Beloit
+        // exist in both Wisconsin and Illinois, so a metro only matches when
+        // its market matches the market the page is actually served from.
+        if ($marketKey !== '' && $metro['market'] !== $marketKey) {
+            continue;
+        }
         if ($citySlug === $key || in_array($citySlug, $metro['cities'], true)) {
             return array('key' => $key, 'metro' => $metro);
         }
     }
     return null;
+}
+
+function twins_overhaul_market_from_path(string $path): string {
+    $segments = array_values(array_filter(explode('/', $path), 'strlen'));
+    if (count($segments) === 0) {
+        return '';
+    }
+    $first = strtolower((string) $segments[0]);
+    return in_array($first, array('wi', 'il', 'ky'), true) ? $first : '';
 }
 
 function twins_overhaul_metro_address_line(array $address): string {
@@ -129,7 +144,13 @@ function twins_overhaul_apply_metro_context(array $context): array {
     if ($slug === '') {
         return $context;
     }
-    $found = twins_overhaul_metro_for_city($slug);
+    // The market comes from the served path, so a city page can never inherit a
+    // metro from another state even when the two states share a city name.
+    $marketKey = twins_overhaul_market_from_path($path);
+    if ($marketKey === '') {
+        return $context;
+    }
+    $found = twins_overhaul_metro_for_city($slug, $marketKey);
     if ($found === null) {
         return $context;
     }
