@@ -118,6 +118,52 @@ Lodi, New Glarus, Barneveld, Sauk City.
    (Known open item: the Google listing shows (608) 422-4900 and the WI market shows
    (608) 420-2377 — NAP reconciliation is pending, do not "fix" it in copy.)
 
+## 4b. URL architecture — state → metro → city (decided 2026-07-20)
+
+Daniel's structure: state, then major city, then the rest. Expressed as **hub pages
+with flat URLs** (not nested paths):
+
+```
+/wi/                  state hub
+/wi/madison/          metro hub   (1,581 completed jobs)
+/wi/milwaukee/        metro hub
+/wi/verona/           city page   ← peer depth, not /wi/madison/verona/
+/wi/fitchburg/        city page
+/il/                  state hub
+/il/rockford/         metro hub
+/ky/                  state hub
+/ky/lexington/        metro hub
+```
+
+- The `/location/` path segment is **dropped** (`/wi/location/verona/` → `/wi/verona/`).
+- Metro hubs own the "<metro> area" queries and link down to their cluster; individual
+  cities link back up. The hierarchy lives in **internal linking + schema `areaServed`**,
+  not in nested URLs. Verona is a peer city, not a child of Madison.
+- These URLs are **not live yet**, so changing them now only costs a route-registry
+  edit plus updating `production-cutover/redirect-plan.md` targets. Do that as part of
+  this work.
+
+### Market / metro NAP — real, confirmed by Daniel 2026-07-20
+
+| Metro | Address | Phone |
+|---|---|---|
+| Madison (WI) | 2921 Landmark Pl #206, Madison, WI 53713 | (608) 420-2377 |
+| Milwaukee (WI) | 11220 W Burleigh St Ste 100, Wauwatosa, WI 53222 | (414) 800-9271 |
+| Rockford (IL) | 5758 Elaine Dr Ste 110, Rockford, IL 61108 | (815) 800-2025 |
+| Mt Sterling (KY) | 3651 Aarons Run Rd, Mt Sterling, KY 40353 | (859) 440-2227 |
+
+Main office number for company-level NAP: **(608) 888-8785**.
+
+**Data-model change required:** today `twins_overhaul_regions()` carries one address
+per *market*. Wisconsin now needs **two metros** (Madison and Milwaukee) with their own
+address and phone, so the model needs a **metro layer between market and city**, and
+each city must be assigned to its metro. A city page shows the NAP and phone of the
+metro that serves it.
+
+**Milwaukee and Illinois carry real NAP but no job history** (1 completed job each).
+They may use the address, phone, founding year, reviews and price ranges. They must
+**not** claim completed-job counts or "serving since" for those cities.
+
 ## 5. Where the per-city copy must live (architecture)
 
 **Do not put city content in `config/page-content.php`.** That registry is locked:
