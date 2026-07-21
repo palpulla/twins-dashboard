@@ -3,9 +3,9 @@
 Give the writing agent everything below the line. It is written to be pasted whole.
 
 Before pasting, confirm one open decision with the owner:
-**may the Milwaukee pages state plainly that Twins is newer in that market?**
-The prompt currently says yes. If the answer is no, delete rule 6 and the
-"Milwaukee framing" section.
+**may the Milwaukee and Rockford pages state plainly that Twins is newer in those
+markets?** The prompt currently says yes. If the answer is no, delete rule 6 and the
+"Both Milwaukee and Rockford are new markets" paragraph.
 
 ---
 
@@ -66,9 +66,10 @@ avoid leaving a field empty.
 5. **Banned words**, they read as machine-written: ultimate, comprehensive, seamless,
    hassle-free, elevate, unlock, delve, robust, cutting-edge, top-notch, nestled,
    bustling, in today's world, when it comes to.
-6. **Milwaukee framing.** Twins opened its Wauwatosa location recently and has very
-   little completed work in the Milwaukee metro. Those pages must not imply a long
-   local history. Being new is fine and true; say it plainly if it comes up.
+6. **New-market framing.** Twins opened its Wauwatosa (Milwaukee) and Rockford
+   (Illinois) locations recently and has very little completed work in either metro.
+   Those pages must not imply a long local history. Being new is fine and true; say it
+   plainly if it comes up.
 7. **No two pages may share sentences.** If you find yourself swapping a city name
    into a sentence you already used, rewrite it. Near-duplicate city pages get
    classified as doorway pages and can damage rankings for the whole site.
@@ -98,12 +99,20 @@ Do not put addresses in copy. Listed only so your writing matches the right regi
 |---|---|---|
 | madison | 2921 Landmark Pl #206, Madison, WI 53713 | 40 |
 | milwaukee | 11220 W Burleigh St Ste 100, Wauwatosa, WI 53222 | 7 |
+| rockford | 5758 Elaine Dr Ste 110, Rockford, IL 61108 | 12 |
+
+Rockford is a real staffed Illinois office. Its 12 cities are Illinois, not Wisconsin.
+Never describe an Illinois city as being in Wisconsin or served from Madison.
 
 ## Cities with no citable job number
 
 `madison`, `fitchburg`, `monona` share ZIP codes with each other, so no separable
 per-city figure exists. `wauwatosa`, `brookfield`, `new-berlin`, `greenfield`,
-`oak-creek` have no completed jobs yet. For all eight, cite no number at all.
+`oak-creek` have no completed jobs yet, and neither does any Rockford-metro city.
+For all twenty, cite no number at all.
+
+Both Milwaukee and Rockford are new markets with almost no completed work. Rule 6
+applies to Rockford exactly as it does to Milwaukee.
 
 Madison is the flagship page and has the most real material to work with even
 without a job count. Give it the most care.
@@ -115,6 +124,7 @@ Write highest-value first, so the most traffic benefits soonest:
 1. madison, verona, sun-prairie, middleton, fitchburg, janesville
 2. every other madison-metro city
 3. the seven milwaukee-metro cities
+4. the twelve rockford-metro cities (Illinois)
 
 ## Done means
 

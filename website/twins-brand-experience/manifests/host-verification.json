@@ -288,8 +288,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/config/location-content.php",
-      "size": 10095,
-      "sha256": "75c8da827d32796681a004dafd17ce954947975ab7def3eebb3880f1b4489e81"
+      "size": 12459,
+      "sha256": "6b6deb61139c391e22cf1eddda59af021b7efd69eb2f174feb917ce1daad8701"
     },
     {
       "role": "verify",
@@ -319,7 +319,7 @@
       "role": "verify",
       "source": "twins-brand-experience/manifests/staging-runtime.json",
       "size": 365404,
-      "sha256": "a361ba3f31d3c062c18716e2730d410ba3cd6a8b8dae2c555f028c8e918beee2"
+      "sha256": "56f6d879b5daf0a4e1fcbcf0d5532b501534c103ac6fa456bab7467cb80d4abf"
     },
     {
       "role": "verify",
