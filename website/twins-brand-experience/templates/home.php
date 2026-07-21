@@ -9,7 +9,7 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
   <section class="twins-brand-hero" data-section="brand-hero">
     <div class="twins-brand-hero-door" aria-hidden="true"></div>
     <div class="twins-brand-hero-copy">
-      <span class="twins-brand-offer-chip">$0 Service Call</span>
+      <span class="twins-brand-offer-chip">$0 Service Call With Repair</span>
       <span class="twins-brand-kicker">Local garage door service across our communities</span>
       <h1>Garage Door <em>Repair</em> & Installation, Done Right <em>Today</em>.</h1>
       <p>Fast local service, straight answers, and upfront options from the Twins crew.</p>

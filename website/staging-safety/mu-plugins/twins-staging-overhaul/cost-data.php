@@ -25,7 +25,7 @@ function twins_overhaul_cost_data(string $market): array {
             'service' => 'Service call and diagnostic',
             'range' => '$49',
             'label' => 'Current service-call fee',
-            'coverage' => 'On-site inspection and exact repair quote',
+            'coverage' => 'On-site inspection and exact repair quote. Waived when you complete a repair with us.',
         ),
         array(
             'service' => 'Garage door repair',
