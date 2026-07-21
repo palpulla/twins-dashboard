@@ -20,23 +20,35 @@ closed. The overhaul now emits: `LocalBusiness`, `AggregateRating`, `PostalAddre
 `Place`, `Brand`, `Service`, `FAQPage`, `Question`/`Answer`, `BreadcrumbList`,
 `ListItem`, `Product`.
 
-## ⚠️ Two facts to confirm before publishing anything extractable
+## ✅ Both facts resolved by Daniel 2026-07-20
 
-AEO works by publishing **specifics** that AI assistants extract and cite.
-Publishing *contradictory* specifics is worse than publishing none — so these two
-must be resolved first. Both are flagged `[CONFIRM]` in `llms.txt`.
+- **Service call = $49** (current fee).
+- **Canonical phone = (608) 888-8785** — the main office number. Used as NAP in
+  `llms.txt`.
 
-1. **Service call price — $0 or $49?**
-   - Homepage hero + STRATEGY confirmed offers say **"$0 service call."**
-   - `cost-data.php` says **"Service call and diagnostic: $49 — Current service-call fee."**
-   - These are published on the same site and cannot both be true.
+### ⚠️ But this exposes a live content bug — the homepage advertises "$0 Service Call"
 
-2. **Phone number — three different 608 numbers in circulation.**
-   - Site (Wisconsin market): **(608) 420-2377**
-   - Google Business Profile (the NAP AI actually cites): **(608) 422-4900**
-   - STRATEGY "contact used in all marketing": **(608) 888-8785**
-   - NAP consistency is a pillar of this program; three numbers undercuts it.
-     Pick the canonical one and make site + GBP + directories match.
+`templates/home.php` renders an offer chip reading **"$0 Service Call"**, and it is
+live on staging (and would ship to production). With the fee confirmed at **$49**,
+that hero claim is **factually wrong as written** — a customer-facing pricing claim
+that contradicts the cost page on the same site.
+
+Needs Daniel's call, then a small website fix before launch:
+- **(a)** the $0 offer is dead → change/remove the chip (say `$49 Service Call`, or
+  drop it), **or**
+- **(b)** it's a live *conditional* promo (STRATEGY lists "$0 service call" for
+  repair-capture campaigns) → the chip must state the condition (e.g. service call
+  waived with a completed repair) so it stops contradicting the $49 fee.
+
+Do not publish `llms.txt` (or the money pages) while the site still advertises a
+contradictory price — that is exactly the failure mode AEO punishes.
+
+### NAP follow-up (Phase 2, not blocking)
+
+The Google Business Profile currently lists **(608) 422-4900**, and the site's
+Wisconsin market shows **(608) 420-2377** — neither matches the canonical
+(608) 888-8785. Per-market site numbers may be intentional routing, but **GBP should
+be reconciled** with the canonical NAP as part of the Phase 2 directory sweep.
 
 ## Pricing available for the money pages (real, dated, sourced)
 
@@ -50,7 +62,7 @@ published as historical planning ranges with the standard disclaimer:
 | New garage door installed | $3,000 to $4,100 |
 | New door and opener | $4,400 to $7,250 |
 | Repair jobs including spring replacement | $780 to $1,660 (middle 50% of total invoices) |
-| Service call and diagnostic | **[CONFIRM]** |
+| Service call and diagnostic | $49 (confirmed 2026-07-20) |
 
 This is exactly what the baseline audit says competitors publish and Twins hides —
 the reason Twins is absent from "garage door spring repair **cost** Madison."
