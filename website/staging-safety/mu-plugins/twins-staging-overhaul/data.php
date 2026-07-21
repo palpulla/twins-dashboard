@@ -58,6 +58,7 @@ function twins_overhaul_metros(): array {
                 'evansville', 'monroe', 'cambridge', 'rio', 'cross-plains', 'beloit',
                 'brooklyn', 'marshall', 'columbus', 'fall-river', 'lodi', 'milton',
                 'new-glarus', 'barneveld', 'windsor', 'sauk-city', 'fort-atkinson',
+                'prairie-du-sac',
             ),
         ),
         'milwaukee' => array(
@@ -74,7 +75,11 @@ function twins_overhaul_metros(): array {
             'phone' => '(815) 800-2025',
             'tel' => '+18158002025',
             'address' => $rockford,
-            'cities' => array(),
+            'cities' => array(
+                'loves-park', 'machesney-park', 'belvidere', 'roscoe', 'rockton',
+                'cherry-valley', 'poplar-grove', 'south-beloit', 'winnebago',
+                'byron', 'caledonia',
+            ),
         ),
         'lexington' => array(
             'label' => 'Lexington',
