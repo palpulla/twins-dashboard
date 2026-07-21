@@ -67,7 +67,9 @@ function twins_overhaul_metros(): array {
             'phone' => '(414) 800-9271',
             'tel' => '+14148009271',
             'address' => $wauwatosa,
-            'cities' => array(),
+            'cities' => array(
+                'wauwatosa', 'waukesha', 'brookfield', 'new-berlin', 'greenfield', 'oak-creek',
+            ),
         ),
         'rockford' => array(
             'label' => 'Rockford',
@@ -105,6 +107,40 @@ function twins_overhaul_metro_for_city(string $citySlug) {
         }
     }
     return null;
+}
+
+function twins_overhaul_metro_address_line(array $address): string {
+    return $address['street'] . ', ' . $address['locality'] . ', '
+        . $address['region'] . ' ' . $address['postalCode'];
+}
+
+function twins_overhaul_city_slug_from_path(string $path): string {
+    $segments = array_values(array_filter(explode('/', $path), 'strlen'));
+    if (count($segments) === 0) {
+        return '';
+    }
+    $slug = strtolower((string) end($segments));
+    return preg_match('~^[a-z0-9-]+$~', $slug) === 1 ? $slug : '';
+}
+
+function twins_overhaul_apply_metro_context(array $context): array {
+    $path = isset($context['path']) && is_string($context['path']) ? $context['path'] : '';
+    $slug = twins_overhaul_city_slug_from_path($path);
+    if ($slug === '') {
+        return $context;
+    }
+    $found = twins_overhaul_metro_for_city($slug);
+    if ($found === null) {
+        return $context;
+    }
+    $metro = $found['metro'];
+    // Contact context requires the display and href pair to be set together or
+    // not at all, so both are assigned in the same branch.
+    $context['phone'] = $metro['phone'];
+    $context['tel'] = $metro['tel'];
+    $context['metroAddress'] = twins_overhaul_metro_address_line($metro['address']);
+    $context['metroKey'] = $found['key'];
+    return $context;
 }
 
 /**

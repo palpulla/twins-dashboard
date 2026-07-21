@@ -143,6 +143,9 @@ final class StagingRouteAdapter implements RouteAdapter
             'city-rio' => '/wi/location/rio/', 'city-sauk-city' => '/wi/location/sauk-city/',
             'city-stoughton' => '/wi/location/stoughton/', 'city-watertown' => '/wi/location/watertown/',
             'city-waunakee' => '/wi/location/waunakee/', 'city-windsor' => '/wi/location/windsor/',
+            'city-brookfield' => '/wi/location/brookfield/', 'city-greenfield' => '/wi/location/greenfield/',
+            'city-new-berlin' => '/wi/location/new-berlin/', 'city-oak-creek' => '/wi/location/oak-creek/',
+            'city-waukesha' => '/wi/location/waukesha/', 'city-wauwatosa' => '/wi/location/wauwatosa/',
         ],
         'ky' => [
             'home' => '/ky/', 'services' => '/ky/garage-door-services/', 'installation' => '/ky/garage-door-installation/',

@@ -1473,6 +1473,9 @@ function twins_overhaul_render_classified_content(string $classification, array 
             twins_overhaul_blog_index_view($context)
         );
     } elseif (in_array($classification, array('location', 'trust', 'article'), true)) {
+        if ($classification === 'location' && function_exists('twins_overhaul_apply_metro_context')) {
+            $context = twins_overhaul_apply_metro_context($context);
+        }
         if ($classification === 'article') {
             $context['articleHero'] = twins_overhaul_article_hero_path();
         }

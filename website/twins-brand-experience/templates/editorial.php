@@ -80,7 +80,12 @@ $articleHeroImage = $isArticle && isset($articleHero) && is_string($articleHero)
     </section>
   <?php endif; ?>
 
-  <?php if ($kind === 'location' && isset($market['address']) && is_string($market['address']) && $market['address'] !== ''):
+  <?php
+  $napAddress = isset($context['metroAddress']) && is_string($context['metroAddress']) && $context['metroAddress'] !== ''
+    ? $context['metroAddress']
+    : (isset($market['address']) && is_string($market['address']) ? $market['address'] : '');
+  ?>
+  <?php if ($kind === 'location' && $napAddress !== ''):
     $napSummaryFile = dirname(__DIR__) . '/config/review-summary.php';
     $napSummary = is_file($napSummaryFile) ? require $napSummaryFile : [];
     $napRating = isset($napSummary['ratingValue']) ? $napSummary['ratingValue'] : null;
@@ -90,7 +95,7 @@ $articleHeroImage = $isArticle && isset($articleHero) && is_string($articleHero)
       <div>
         <span class="twins-brand-kicker">Where we are</span>
         <h2 id="twins-brand-nap-title">Twins Garage Doors</h2>
-        <p><?= htmlspecialchars($market['address'], ENT_QUOTES, 'UTF-8') ?></p>
+        <p><?= htmlspecialchars($napAddress, ENT_QUOTES, 'UTF-8') ?></p>
         <?php if ($napRating !== null): ?>
           <p><span class="twins-brand-stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <?= htmlspecialchars((string) $napRating, ENT_QUOTES, 'UTF-8') ?> on Google<?= $napCount !== '' ? ' &middot; ' . htmlspecialchars($napCount, ENT_QUOTES, 'UTF-8') . ' reviews' : '' ?> &middot; Licensed and insured</p>
         <?php endif; ?>
