@@ -11,7 +11,7 @@ pages + a monthly AI-visibility scoreboard. Started 2026-07-20.
 | Service / FAQPage schema | ✅ **Already done** — closed by the Wave 2–4 website work |
 | `llms.txt` | 🟡 **Drafted** (`llms.txt` here) — 2 facts to confirm, then publish |
 | 5 extractable money pages | ⬜ Next — real pricing exists, so this is unblocked |
-| Monthly AI-visibility scoreboard | ⬜ Next — define the fixed prompt set + run a baseline |
+| Monthly AI-visibility scoreboard | ✅ **Baseline run 2026-07-20** — see scoreboard-2026-07-20.md |
 
 ### Schema — done (re-audited 2026-07-20)
 
