@@ -6140,8 +6140,8 @@
       "role": "deploy",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/data.php",
       "destination": "twins-staging-overhaul/data.php",
-      "size": 12681,
-      "sha256": "761838135e0e1a8214800c5fc57af38aa9e73c205a00b02401b5b52165a96bd2"
+      "size": 15997,
+      "sha256": "97d6463042a906d064523bb082aad903ca2d1c50687e29f51cd5a82662abcd29"
     },
     {
       "role": "deploy",

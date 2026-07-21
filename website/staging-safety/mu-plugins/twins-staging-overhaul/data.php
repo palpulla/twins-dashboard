@@ -25,6 +25,84 @@ function twins_overhaul_regions(): array {
 }
 
 /**
+ * Metro layer for the state -> metro -> city structure.
+ *
+ * A market (state) can hold more than one metro, and each metro carries its own
+ * real NAP. Wisconsin has two: Madison and Milwaukee. A city page shows the phone
+ * and address of the metro that serves it, not a single market-wide address.
+ *
+ * Addresses and phones confirmed by the owner 2026-07-20. 'cities' lists the
+ * satellite city slugs served from that metro; the hub city itself is the key.
+ * Empty 'cities' means the satellite list is not yet confirmed for that metro.
+ *
+ * @return array<string,array<string,mixed>> Fixed metro definitions.
+ */
+function twins_overhaul_metros(): array {
+    $madison = array('street' => '2921 Landmark Pl #206', 'locality' => 'Madison', 'region' => 'WI', 'postalCode' => '53713');
+    $wauwatosa = array('street' => '11220 W Burleigh St Ste 100', 'locality' => 'Wauwatosa', 'region' => 'WI', 'postalCode' => '53222');
+    $rockford = array('street' => '5758 Elaine Dr Ste 110', 'locality' => 'Rockford', 'region' => 'IL', 'postalCode' => '61108');
+    $mtSterling = array('street' => '3651 Aarons Run Rd', 'locality' => 'Mt Sterling', 'region' => 'KY', 'postalCode' => '40353');
+
+    return array(
+        'madison' => array(
+            'label' => 'Madison',
+            'market' => 'wi',
+            'phone' => '(608) 420-2377',
+            'tel' => '+16084202377',
+            'address' => $madison,
+            'cities' => array(
+                'verona', 'fitchburg', 'sun-prairie', 'middleton', 'deforest', 'oregon',
+                'waunakee', 'janesville', 'mcfarland', 'monona', 'cottage-grove',
+                'pardeeville', 'baraboo', 'deerfield', 'stoughton', 'portage',
+                'belleville', 'reedsburg', 'mount-horeb', 'watertown', 'edgerton',
+                'evansville', 'monroe', 'cambridge', 'rio', 'cross-plains', 'beloit',
+                'brooklyn', 'marshall', 'columbus', 'fall-river', 'lodi', 'milton',
+                'new-glarus', 'barneveld', 'windsor', 'sauk-city', 'fort-atkinson',
+            ),
+        ),
+        'milwaukee' => array(
+            'label' => 'Milwaukee',
+            'market' => 'wi',
+            'phone' => '(414) 800-9271',
+            'tel' => '+14148009271',
+            'address' => $wauwatosa,
+            'cities' => array(),
+        ),
+        'rockford' => array(
+            'label' => 'Rockford',
+            'market' => 'il',
+            'phone' => '(815) 800-2025',
+            'tel' => '+18158002025',
+            'address' => $rockford,
+            'cities' => array(),
+        ),
+        'lexington' => array(
+            'label' => 'Lexington',
+            'market' => 'ky',
+            'phone' => '(859) 440-2227',
+            'tel' => '+18594402227',
+            'address' => $mtSterling,
+            'cities' => array(),
+        ),
+    );
+}
+
+/**
+ * Resolve the metro that serves a city slug.
+ *
+ * @param string $citySlug Fixed lowercase city slug.
+ * @return array{key:string,metro:array<string,mixed>}|null Null when unknown.
+ */
+function twins_overhaul_metro_for_city(string $citySlug) {
+    foreach (twins_overhaul_metros() as $key => $metro) {
+        if ($citySlug === $key || in_array($citySlug, $metro['cities'], true)) {
+            return array('key' => $key, 'metro' => $metro);
+        }
+    }
+    return null;
+}
+
+/**
  * Create one fixed navigation item.
  *
  * @param string $label Visible label.
