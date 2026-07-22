@@ -126,3 +126,11 @@ test('location Twin characters are scoped, non-interactive, responsive, and moti
   assert.doesNotMatch(css, /(^|\n)\s*\.twins-location-twin/,
     'location Twin selectors must never escape the location-page scope');
 });
+
+test('location mascots are restrained to hero, guidance, and one final CTA cameo', () => {
+  assert.match(template, /twins-location-hero-media[\s\S]*?\$placement = 'hero'/);
+  assert.match(template, /twins-location-guidance[\s\S]*?\$placement = 'guidance'/);
+  assert.match(template, /twins-location-final-cta[\s\S]*?\$placement = 'final-right'/);
+  assert.doesNotMatch(template, /\$placement = 'system'/);
+  assert.doesNotMatch(template, /\$placement = 'final-left'/);
+});

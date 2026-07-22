@@ -191,6 +191,11 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
         $loading = 'eager';
         require dirname(__DIR__) . '/components/picture.php';
         ?>
+        <?php
+        $character = 'left';
+        $placement = 'hero';
+        require $twinCharacterComponent;
+        ?>
         <figcaption>Careful diagnosis. Clear options. Work built around the complete door system.</figcaption>
       </figure>
     </header>
@@ -210,11 +215,6 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
     </section>
 
     <section class="twins-location-system" aria-labelledby="twins-location-system-title">
-      <?php
-      $character = 'left';
-      $placement = 'system';
-      require $twinCharacterComponent;
-      ?>
       <div class="twins-location-system-visual">
         <?= twins_brand_door_art('door-open', 'twins-location-system-art', 'location-system') ?>
       </div>
@@ -414,9 +414,6 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
   <section class="twins-brand-final-cta<?= $isLocation ? ' twins-location-final-cta' : '' ?>" aria-labelledby="twins-brand-editorial-final-title">
     <?php if ($isLocation): ?>
       <?php
-      $character = 'left';
-      $placement = 'final-left';
-      require $twinCharacterComponent;
       $character = 'right';
       $placement = 'final-right';
       require $twinCharacterComponent;
