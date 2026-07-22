@@ -92,6 +92,25 @@
     items.forEach(item => observer.observe(item));
   }
 
+  function initLocationMobileActions(root) {
+    const hero = root.querySelector('.twins-location-hero');
+    const actions = root.querySelector('.twins-brand-mobile-actions');
+    if (!hero || !actions) return;
+
+    const update = () => {
+      const isMobile = matchMedia('(max-width: 768px)').matches;
+      const heroRect = hero.getBoundingClientRect();
+      const actionHeight = actions.getBoundingClientRect().height;
+      const heroIsActive = isMobile && heroRect.top < innerHeight && heroRect.bottom > actionHeight;
+      document.body.dataset.twinsLocationHeroActive = String(heroIsActive);
+    };
+
+    update();
+    requestAnimationFrame(update);
+    window.addEventListener('resize', update, { passive: true });
+    window.addEventListener('scroll', update, { passive: true });
+  }
+
   function start() {
     initZip(document);
     const header = document.querySelector('[data-twins-header]');
@@ -245,6 +264,7 @@
 
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
     initLocationReveals(document, reducedMotion);
+    initLocationMobileActions(document);
     document.querySelectorAll('[data-twins-review-slider][data-review-mode="featured"]').forEach(slider => {
       const track = slider.querySelector('.twins-brand-review-track');
       const cards = [...slider.querySelectorAll('.twins-brand-review-card')];

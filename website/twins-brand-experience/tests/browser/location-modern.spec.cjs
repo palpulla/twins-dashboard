@@ -20,6 +20,11 @@ function luminance(color) {
   return 0.2126 * linear(channels[0]) + 0.7152 * linear(channels[1]) + 0.0722 * linear(channels[2]);
 }
 
+function contrastRatio(first, second) {
+  const [lighter, darker] = [luminance(first), luminance(second)].sort((a, b) => b - a);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
 function visibleTargetAudit(page) {
   return page.locator([
     '.twins-location-service-link',
@@ -135,6 +140,16 @@ for (const viewport of viewports) {
     expect(visualSystem.proofBackdrop).toContain('blur');
     expect(luminance(visualSystem.warmBackground)).toBeGreaterThan(luminance(visualSystem.darkBackground));
 
+    const serviceKicker = await page.locator('.twins-location-services .twins-brand-kicker').evaluate(kicker => {
+      const services = kicker.closest('.twins-location-services');
+      return {
+        color: getComputedStyle(kicker).color,
+        background: getComputedStyle(services).backgroundColor,
+      };
+    });
+    expect(contrastRatio(serviceKicker.color, serviceKicker.background), `${viewport.width}px complete-service kicker remains readable on navy`)
+      .toBeGreaterThanOrEqual(4.5);
+
     const cinematicHero = await page.locator('.twins-location-hero-stage').evaluate(stage => {
       const rect = node => node.getBoundingClientRect();
       const copy = stage.querySelector('.twins-location-hero-copy');
@@ -160,6 +175,19 @@ for (const viewport of viewports) {
         .toBeGreaterThan(cinematicHero.media.top);
       expect(cinematicHero.proofColumns, `${viewport.width}px proof follows the responsive column contract`)
         .toBe(viewport.width <= 768 ? 1 : 3);
+    }
+
+    if (viewport.width === 1440) {
+      const heroReadability = await page.locator('.twins-location-hero-stage').evaluate(stage => {
+        const paragraph = stage.querySelector('.twins-location-hero-copy > p').getBoundingClientRect();
+        const media = stage.querySelector('.twins-location-hero-media').getBoundingClientRect();
+        return {
+          paragraphRight: paragraph.right,
+          brightMediaStart: media.left + (media.width * 0.2),
+        };
+      });
+      expect(heroReadability.paragraphRight, 'desktop hero paragraph stops before the bright media zone')
+        .toBeLessThanOrEqual(heroReadability.brightMediaStart);
     }
 
     const processConnector = await page.locator('.twins-location-process-list').evaluate(list => {
@@ -321,6 +349,27 @@ for (const viewport of viewports) {
       expect(mobileHero.photoTop).toBeGreaterThanOrEqual(mobileHero.copyBottom - 1);
       expect(mobileHero.photoHeight).toBeGreaterThanOrEqual(240);
       expect(mobileHero.proofTop).toBeGreaterThan(mobileHero.photoTop);
+    }
+
+    if (viewport.width <= 390) {
+      await expect(page.locator('body')).toHaveAttribute('data-twins-location-hero-active', 'true');
+      const mobileActionAudit = await page.evaluate(() => {
+        const actions = document.querySelector('.twins-brand-mobile-actions').getBoundingClientRect();
+        const intersects = (one, two) => one.left < two.right && one.right > two.left && one.top < two.bottom && one.bottom > two.top;
+        return [...document.querySelectorAll([
+          '.twins-location-hero-copy',
+          '.twins-location-hero-media',
+          '.twins-location-hero-proof',
+          '.twins-location-actions',
+        ].join(', '))]
+          .filter(node => {
+            const style = getComputedStyle(node);
+            return style.display !== 'none' && style.visibility !== 'hidden';
+          })
+          .filter(node => intersects(actions, node.getBoundingClientRect()))
+          .map(node => node.className);
+      });
+      expect(mobileActionAudit, `${viewport.width}px mobile quick actions do not cover hero content`).toEqual([]);
     }
 
     const targets = await visibleTargetAudit(page);

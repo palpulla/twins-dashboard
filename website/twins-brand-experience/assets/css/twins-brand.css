@@ -1094,7 +1094,7 @@ body.twins-brand-experience .twins-location-hero .twins-brand-kicker { color: va
 }
 .twins-location-title-accent { color: var(--twins-gold); }
 .twins-location-hero-copy > p {
-  max-width: 640px;
+  max-width: 510px;
   margin: 0;
   color: #eaf2fb;
   font-size: clamp(1.05rem, 1.35vw, 1.22rem);
@@ -1114,7 +1114,7 @@ body.twins-brand-experience .twins-location-hero .twins-brand-kicker { color: va
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(90deg, #05152e 0%, rgba(5,21,46,.76) 14%, transparent 48%), linear-gradient(0deg, rgba(2,13,32,.9), transparent 48%);
+  background: linear-gradient(90deg, #05152e 0%, #05152e 34%, rgba(5,21,46,.82) 48%, rgba(5,21,46,.3) 60%, transparent 68%), linear-gradient(0deg, rgba(2,13,32,.9), transparent 48%);
 }
 .twins-location-hero-media picture { display: block; width: 100%; height: 100%; }
 .twins-location-hero-image { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
@@ -1322,6 +1322,7 @@ body.twins-brand-experience .twins-location-system .twins-brand-kicker { color: 
 }
 .twins-location-section-heading > p { max-width: 620px; margin: 0; color: var(--twins-muted); font-size: 1.05rem; font-weight: 700; }
 .twins-location-services { color: var(--twins-white); background: #061831; }
+body.twins-brand-experience .twins-location-services .twins-brand-kicker { color: #ffeeb8; }
 .twins-location-services .twins-location-section-heading h2 { color: var(--twins-white); }
 .twins-location-services .twins-location-section-heading > p { color: #cbd9e8; }
 .twins-location-service-pathway {
@@ -1934,6 +1935,7 @@ body.twins-brand-experience .twins-brand-blog-page-link:is(:hover, :focus-visibl
   }
   .twins-brand-mobile-actions a { min-height: 48px; display: grid; place-items: center; padding: 8px; color: var(--twins-white); background: var(--twins-navy-800); border: 2px solid var(--twins-gold); border-radius: 999px; font-weight: 1000; text-align: center; text-decoration: none; }
   .twins-brand-mobile-actions a:last-child { color: var(--twins-navy-950); background: var(--twins-gold); }
+  body[data-twins-location-hero-active="true"] .twins-brand-mobile-actions { display: none; }
   .twins-brand-footer { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
   .twins-brand-page-nav { position: relative; top: auto; justify-content: flex-start; overflow-x: auto; }
   .twins-brand-page-nav a { flex: 0 0 auto; }

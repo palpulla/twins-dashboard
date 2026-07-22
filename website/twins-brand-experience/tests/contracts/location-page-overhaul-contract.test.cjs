@@ -70,6 +70,19 @@ test('location services form one connected complete-system pathway', () => {
     'services must not return to three generic detached cards');
 });
 
+test('location review safeguards keep hero copy readable and mobile quick actions clear', () => {
+  assert.match(css, /\.twins-location-hero-copy > p\s*\{[^}]*max-width:\s*510px/,
+    'desktop hero copy must end before the bright photo zone');
+  assert.match(css, /\.twins-location-hero-media::after\s*\{[^}]*linear-gradient\(90deg,\s*#05152e 0%,\s*#05152e 34%,\s*rgba\(5,21,46,\.82\) 48%,\s*rgba\(5,21,46,\.3\) 60%,\s*transparent 68%\)/,
+    'desktop hero media needs a long navy feather instead of a hard seam');
+  assert.match(css, /body\.twins-brand-experience \.twins-location-services \.twins-brand-kicker\s*\{[^}]*color:\s*#ffeeb8/,
+    'complete-service kicker needs an explicit readable color on navy');
+  assert.match(css, /body\[data-twins-location-hero-active="true"\] \.twins-brand-mobile-actions\s*\{[^}]*display:\s*none/,
+    'fixed mobile quick actions must yield while the location hero is in view');
+  assert.match(script, /function initLocationMobileActions\(root\)/,
+    'location pages need hero-aware mobile quick-action behavior');
+});
+
 test('location copy never positions a branch as new or unproven', () => {
   for (const phrase of [
     'recently opened',
