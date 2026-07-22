@@ -33,6 +33,7 @@ Date: 2026-07-22
 ## Rendered review
 
 - Desktop: `/Users/daniel/Documents/Codex/2026-07-21/files-mentioned-by-the-user-you/modern-location-desktop.png` (1440 × 1000).
-- Mobile: `/Users/daniel/Documents/Codex/2026-07-21/files-mentioned-by-the-user-you/modern-location-mobile.png` (full-page capture from the requested 390 × 844 viewport, retained so the hero, actions, proof row, and photo stack can be reviewed together).
+- Mobile: `/Users/daniel/Documents/Codex/2026-07-21/files-mentioned-by-the-user-you/modern-location-mobile.png` (exact 390 × 844 viewport capture at scroll position 0).
+- Optional full-page reference: `/Users/daniel/Documents/Codex/2026-07-21/files-mentioned-by-the-user-you/modern-location-mobile-full.png` (390 × 5596, captured from the same 390 × 844 viewport so the proof row and full photo stack remain available for review).
 
 Manual visual inspection found the rounded display font, technician photography, small hero cameo, quote-first hierarchy, quiet phone action, and clean one-pixel editorial geometry. No copy overlap, clipping, horizontal overflow, badge cluster, giant side mascot, offset-shadow treatment, or task-scoped visual defect required a CSS change.
