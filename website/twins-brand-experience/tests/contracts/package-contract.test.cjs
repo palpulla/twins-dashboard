@@ -42,6 +42,7 @@ test('staging manifest is closed, hash-pinned, and has no production payload', (
   assert.equal(deploy.has('twins-brand-experience/assets/css/twins-brand-families.css'), true);
   assert.equal(deploy.has('twins-brand-experience/assets/js/twins-builder.js'), true);
   assert.equal(deploy.has('twins-brand-experience/assets/images/door-builder/twins-before-after-install.webp'), true);
+  assert.equal(deploy.has('twins-brand-experience/components/twin-character.php'), true);
   assert.equal(deploy.has('twins-brand-experience/templates/catalog.php'), true);
   assert.equal(deploy.has('twins-staging-overhaul/brand-runtime.php'), true);
   assert.equal(deploy.has('twins-staging-overhaul/adapters/BrandStagingAdapters.php'), true);
@@ -59,7 +60,7 @@ test('host verification manifest is separate, closed, and non-deployable', () =>
   const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifests/host-verification.json'), 'utf8'));
   assert.equal(manifest.schemaVersion, 1);
   assert.equal(manifest.productionWriteAuthority, false);
-  assert.equal(manifest.remoteDirectory, '/home/customer/staging-safety/staging-remediation-r27-20260722/verification/');
+  assert.equal(manifest.remoteDirectory, '/home/customer/staging-safety/staging-remediation-r28-20260722/verification/');
   assert.equal(manifest.files.some(file => file.source.endsWith('private-staging-deploy-harness.php')), true);
   assert.equal(manifest.files.some(file => file.source.endsWith('private-staging-deploy.php')), true);
   for (const required of [
@@ -73,6 +74,7 @@ test('host verification manifest is separate, closed, and non-deployable', () =>
     'twins-brand-experience/assets/css/twins-brand-families.css',
     'twins-brand-experience/assets/js/twins-brand.js',
     'twins-brand-experience/assets/js/twins-builder.js',
+    'twins-brand-experience/components/twin-character.php',
     'twins-brand-experience/tests/php/portable-core-harness.php',
     'twins-brand-experience/tests/php/renderer-contract-harness.php',
     'twins-brand-experience/tests/php/review-codec-harness.php',
