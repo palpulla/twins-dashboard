@@ -68,6 +68,30 @@
     if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
   }
 
+  function initLocationReveals(root, reducedMotion) {
+    const items = [...root.querySelectorAll('[data-location-reveal]')];
+    const reveal = item => item.setAttribute('data-location-visible', 'true');
+    if (!items.length) return;
+    if (reducedMotion.matches) {
+      items.forEach(reveal);
+      return;
+    }
+    if (!('IntersectionObserver' in window)) {
+      items.forEach(reveal);
+      return;
+    }
+
+    document.documentElement.classList.add('twins-location-motion-ready');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        reveal(entry.target);
+        observer.unobserve(entry.target);
+      });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.12 });
+    items.forEach(item => observer.observe(item));
+  }
+
   function start() {
     initZip(document);
     const header = document.querySelector('[data-twins-header]');
@@ -220,6 +244,7 @@
     });
 
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    initLocationReveals(document, reducedMotion);
     document.querySelectorAll('[data-twins-review-slider][data-review-mode="featured"]').forEach(slider => {
       const track = slider.querySelector('.twins-brand-review-track');
       const cards = [...slider.querySelectorAll('.twins-brand-review-card')];

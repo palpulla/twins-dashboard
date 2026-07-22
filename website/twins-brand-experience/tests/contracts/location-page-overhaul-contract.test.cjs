@@ -9,6 +9,7 @@ const locationContent = fs.readFileSync(path.join(root, 'config/location-content
 const footer = fs.readFileSync(path.join(root, 'components/footer.php'), 'utf8');
 const experience = fs.readFileSync(path.join(root, 'src/Experience.php'), 'utf8');
 const css = fs.readFileSync(path.join(root, 'assets/css/twins-brand.css'), 'utf8');
+const script = fs.readFileSync(path.join(root, 'assets/js/twins-brand.js'), 'utf8');
 const navData = fs.readFileSync(path.join(root, 'components/nav-data.php'), 'utf8');
 const markets = fs.readFileSync(path.join(root, 'config/markets.php'), 'utf8');
 const fixture = fs.readFileSync(path.join(root, 'tests/browser/fixtures/location-modern.html'), 'utf8');
@@ -261,4 +262,16 @@ test('quote is primary copy and unverified urgency claims stay absent', () => {
   assert.match(footer, /\$isLocationFooter \? 'Get a Free Quote' : 'Request a Quote'/);
   assert.match(footer, /\$isLocationFooter \? 'Call Now' : 'Call Twins'/);
   assert.doesNotMatch(template.toLowerCase(), /same[- ]day|within \d+|guaranteed response|recently opened/);
+});
+
+test('location reveals are progressive enhancement and reduced motion is static', () => {
+  assert.match(script, /function initLocationReveals\(root, reducedMotion\)/);
+  assert.match(script, /IntersectionObserver/);
+  assert.match(script, /twins-location-motion-ready/);
+  assert.match(script, /data-location-visible/);
+  assert.match(script, /if \(reducedMotion\.matches\)/);
+  assert.match(css, /\.twins-location-motion-ready \[data-location-reveal\]/);
+  assert.doesNotMatch(css, /(^|\n)\[data-location-reveal\]\s*\{[^}]*opacity:\s*0/,
+    'content must not disappear when JavaScript is unavailable');
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*\[data-location-reveal\][^{]*\{[^}]*opacity:\s*1 !important/);
 });
