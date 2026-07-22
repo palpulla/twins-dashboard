@@ -8,7 +8,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const APPLICATION_IDENTITY = 'https://danielj140.sg-host.com/';
 const WEB_ROOT = '/home/customer/www/danielj140.sg-host.com/public_html';
 const TRANSACTION_PARENT = '/home/customer/staging-safety';
-const TRANSACTION_ROOT = '/home/customer/staging-safety/staging-remediation-r26-20260722';
+const TRANSACTION_ROOT = '/home/customer/staging-safety/staging-remediation-r27-20260722';
 const SSH_PORT = '18765';
 const allowed = new Set(['--dry-run', '--capture-expected-old', '--deploy', '--rollback']);
 const operation = process.argv[2] || '';
@@ -33,7 +33,7 @@ try { keyStat = fs.lstatSync(key); } catch { finish('TRANSPORT_KEY_UNAVAILABLE',
 if (!keyStat.isFile() || keyStat.isSymbolicLink()) finish('TRANSPORT_KEY_INVALID', 1);
 
 const stateParent = path.join(root, 'dist/.staging-deploy');
-const stateRoot = path.join(stateParent, 'staging-remediation-r26-20260722');
+const stateRoot = path.join(stateParent, 'staging-remediation-r27-20260722');
 const knownHosts = path.join(stateRoot, 'known_hosts');
 const transportState = path.join(stateRoot, 'transport.json');
 const deployAttempt = path.join(stateRoot, 'deploy-attempt.json');
@@ -226,6 +226,8 @@ const scpOptions = [
   '-P', SSH_PORT,
   ...transportOptions,
 ];
+const shellQuote = value => `'${String(value).replaceAll("'", "'\\\"'\\\"'")}'`;
+const rsyncRemoteShell = ['ssh', '-p', SSH_PORT, ...transportOptions].map(shellQuote).join(' ');
 const remoteRootGuard = `test -d '${TRANSACTION_PARENT}' && test ! -L '${TRANSACTION_PARENT}' && test -d '${TRANSACTION_ROOT}' && test ! -L '${TRANSACTION_ROOT}'`;
 const assertRemoteRoot = () => run('ssh', [...sshOptions, target, remoteRootGuard], { failure: 'REMOTE_TRANSACTION_ROOT_INVALID' });
 const remoteScript = `${TRANSACTION_ROOT}/verification/twins-brand-experience/tools/private-staging-deploy.php`;
@@ -251,7 +253,13 @@ if (operation === '--deploy') {
   assertRemoteRoot();
   run('ssh', [...sshOptions, target, `${remoteRootGuard} && rm -rf '${TRANSACTION_ROOT}/candidate.incoming' '${TRANSACTION_ROOT}/verification.incoming'`], { failure: 'REMOTE_UPLOAD_PREP_FAILED' });
   assertRemoteRoot();
-  run('scp', [...scpOptions, '-r', path.join(root, 'dist/staging-runtime'), `${target}:${TRANSACTION_ROOT}/candidate.incoming`], { failure: 'CANDIDATE_UPLOAD_FAILED' });
+  run('rsync', [
+    '-rltz',
+    `--copy-dest=${WEB_ROOT}`,
+    '-e', rsyncRemoteShell,
+    `${path.join(root, 'dist/staging-runtime')}/`,
+    `${target}:${TRANSACTION_ROOT}/candidate.incoming/`,
+  ], { failure: 'CANDIDATE_UPLOAD_FAILED' });
   assertRemoteRoot();
   run('scp', [...scpOptions, '-r', path.join(root, 'dist/host-verification'), `${target}:${TRANSACTION_ROOT}/verification.incoming`], { failure: 'VERIFICATION_UPLOAD_FAILED' });
   const stdout = run('ssh', [...sshOptions, target, `${remoteRootGuard} && test -d '${TRANSACTION_ROOT}/candidate.incoming' && test ! -L '${TRANSACTION_ROOT}/candidate.incoming' && test -d '${TRANSACTION_ROOT}/verification.incoming' && test ! -L '${TRANSACTION_ROOT}/verification.incoming' && rm -rf '${TRANSACTION_ROOT}/candidate' '${TRANSACTION_ROOT}/verification' && mv '${TRANSACTION_ROOT}/candidate.incoming' '${TRANSACTION_ROOT}/candidate' && mv '${TRANSACTION_ROOT}/verification.incoming' '${TRANSACTION_ROOT}/verification' && ${remoteCommand(operation)}`], { failure: 'REMOTE_DEPLOY_FAILED' });
