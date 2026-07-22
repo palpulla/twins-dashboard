@@ -108,21 +108,17 @@ test('location sections use accessible CSS-only garage door panel framing', () =
     'decorative location textures must not add template markup');
 });
 
-test('location Twin characters are scoped, non-interactive, responsive, and motion-safe', () => {
-  assert.match(css, /\.twins-location-page \.twins-location-twin\s*\{[\s\S]*?pointer-events:\s*none/);
-  assert.match(css, /\.twins-location-page \.twins-location-twin--system\s*\{[\s\S]*?clamp\(132px,\s*12vw,\s*176px\)/);
-  assert.match(css, /\.twins-location-page \.twins-location-twin--guidance\s*\{[\s\S]*?clamp\(180px,\s*16vw,\s*218px\)/);
-  assert.match(css, /\.twins-location-page \.twins-location-twin--final-left\s*\{[\s\S]*?clamp\(128px,\s*11vw,\s*166px\)/);
-  assert.match(css, /\.twins-location-page \.twins-location-twin--final-right\s*\{[\s\S]*?clamp\(180px,\s*16vw,\s*224px\)/);
-  assert.match(css, /twins-location-float-left 4\.8s ease-in-out infinite/);
-  assert.match(css, /twins-location-float-right 6\.2s ease-in-out \.7s infinite/);
-  assert.match(css, /@keyframes twins-location-float-left[\s\S]*translateY\(-6px\) rotate\(-1\.25deg\)/);
-  assert.match(css, /@keyframes twins-location-float-right[\s\S]*translateY\(-6px\) rotate\(1\.25deg\)/);
-  assert.match(css, /@media \(max-width: 768px\)[\s\S]*\.twins-location-page \.twins-location-twin--system[\s\S]*width:\s*min\(112px,\s*29vw\)/);
-  assert.match(css, /@media \(max-width: 768px\)[\s\S]*\.twins-location-page \.twins-location-twin--guidance[\s\S]*width:\s*min\(142px,\s*37vw\)/);
-  assert.match(css, /@media \(max-width: 768px\)[\s\S]*\.twins-location-page \.twins-location-twin--final-left\s*\{\s*display:\s*none/);
-  assert.match(css, /@media \(max-width: 768px\)[\s\S]*\.twins-location-page \.twins-location-twin--final-right[\s\S]*width:\s*min\(148px,\s*38vw\)/);
-  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.twins-location-page \.twins-location-twin[\s\S]*animation:\s*none !important[\s\S]*transform:\s*none !important/);
+test('location design preserves the old display font and uses restrained premium geometry', () => {
+  assert.match(css, /\.twins-location-hero h1\s*\{[^}]*font-family:\s*'Lilita One'/);
+  assert.match(css, /\.twins-location-hero-media\s*\{[^}]*border-left:\s*2px solid var\(--twins-gold\)/);
+  assert.match(css, /\.twins-location-service-card\s*\{[^}]*border:\s*1px solid/);
+  assert.doesNotMatch(css, /\.twins-location-service-card\s*\{[^}]*box-shadow:\s*8px 9px 0/);
+  assert.match(css, /\.twins-location-page \.twins-location-twin\s*\{[^}]*pointer-events:\s*none/);
+  assert.match(css, /\.twins-location-page \.twins-location-twin--hero\s*\{[^}]*clamp\(72px,\s*7vw,\s*104px\)/);
+  assert.match(css, /\.twins-location-page \.twins-location-twin--guidance\s*\{[^}]*clamp\(92px,\s*8vw,\s*124px\)/);
+  assert.match(css, /\.twins-location-page \.twins-location-twin--final-right\s*\{[^}]*clamp\(96px,\s*9vw,\s*132px\)/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.twins-location-page \.twins-location-twin\s*\{[^}]*animation:\s*none !important[^}]*transform:\s*none !important/);
+  assert.doesNotMatch(css, /twins-location-twin--system|twins-location-twin--final-left/);
   assert.doesNotMatch(css, /(^|\n)\s*\.twins-location-twin/,
     'location Twin selectors must never escape the location-page scope');
 });
