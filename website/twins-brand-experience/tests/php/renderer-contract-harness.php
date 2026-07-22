@@ -507,6 +507,15 @@ foreach ($locationRecords as $slug => $record) {
     foreach (['twins-location-hero', 'twins-location-services', 'twins-location-guidance', 'twins-location-process', 'twins-location-branch', 'twins-location-nearby'] as $className) {
         $expect(strpos($renderedLocation, $className) !== false, $slug . ' omitted ' . $className);
     }
+    foreach (['system', 'guidance', 'final-left', 'final-right'] as $placement) {
+        $expect(
+            substr_count($renderedLocation, 'twins-location-twin--' . $placement) === 1,
+            $slug . ' did not render exactly one ' . $placement . ' Twin'
+        );
+    }
+    $expect(substr_count($renderedLocation, '/brand/twin-left.png') === 2, $slug . ' did not render exactly two left Twins');
+    $expect(substr_count($renderedLocation, '/brand/twin-right.png') === 2, $slug . ' did not render exactly two right Twins');
+    $expect(substr_count($renderedLocation, 'alt="" aria-hidden="true"') === 4, $slug . ' Twin accessibility markup drifted');
     $expect(substr_count($renderedLocation, '<details>') === 5, $slug . ' did not render five FAQs');
     $recordText = strtolower($record['intro'] . ' ' . $record['localNotes']);
     foreach ($record['faq'] as $faq) {
@@ -550,6 +559,22 @@ foreach (['spring', 'keypad', 'door'] as $artKind) {
         'Rockford omitted service art: ' . $artKind
     );
 }
+
+$trustEditorial = $stagingExperience->renderEditorial([
+    'environment' => 'staging',
+    'market' => 'main',
+    'path' => '/about-us/',
+    'title' => 'About Twins Garage Doors',
+], '<p>Trusted local garage door service.</p>', 'trust');
+$expect(strpos($trustEditorial, 'twins-location-twin') === false, 'trust editorial rendered location Twin markup');
+
+$articleEditorial = $stagingExperience->renderEditorial([
+    'environment' => 'staging',
+    'market' => 'main',
+    'path' => '/blog/garage-door-guide/',
+    'title' => 'Garage Door Guide',
+], '<p>Garage door care guidance.</p>', 'article');
+$expect(strpos($articleEditorial, 'twins-location-twin') === false, 'article editorial rendered location Twin markup');
 
 $systemTwin = $renderComponent($stagingExperience, $root . '/components/twin-character.php', [
     'character' => 'left',

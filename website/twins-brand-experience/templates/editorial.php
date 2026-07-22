@@ -168,6 +168,7 @@ if ($isLocation) {
     )), 0, 6);
 }
 require_once dirname(__DIR__) . '/components/door-art.php';
+$twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
 ?>
 <main id="twins-overhaul-main" class="twins-brand-page twins-brand-editorial-page<?= $isArticle ? ' twins-brand-article-page' : '' ?><?= $isLocation ? ' twins-location-page' : '' ?>">
   <?php if ($isLocation): ?>
@@ -209,6 +210,11 @@ require_once dirname(__DIR__) . '/components/door-art.php';
     </section>
 
     <section class="twins-location-system" aria-labelledby="twins-location-system-title">
+      <?php
+      $character = 'left';
+      $placement = 'system';
+      require $twinCharacterComponent;
+      ?>
       <div class="twins-location-system-visual">
         <?= twins_brand_door_art('door-open', 'twins-location-system-art', 'location-system') ?>
       </div>
@@ -249,6 +255,11 @@ require_once dirname(__DIR__) . '/components/door-art.php';
     </section>
 
     <section class="twins-location-guidance" aria-labelledby="twins-location-guidance-title">
+      <?php
+      $character = 'right';
+      $placement = 'guidance';
+      require $twinCharacterComponent;
+      ?>
       <div class="twins-location-guidance-copy">
         <span class="twins-brand-kicker">Local garage door guidance</span>
         <h2 id="twins-location-guidance-title">What affects garage doors in <?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?></h2>
@@ -401,6 +412,16 @@ require_once dirname(__DIR__) . '/components/door-art.php';
 
   <?php $finalCtaArtKind = $isLocation ? 'door' : 'door-open'; ?>
   <section class="twins-brand-final-cta<?= $isLocation ? ' twins-location-final-cta' : '' ?>" aria-labelledby="twins-brand-editorial-final-title">
+    <?php if ($isLocation): ?>
+      <?php
+      $character = 'left';
+      $placement = 'final-left';
+      require $twinCharacterComponent;
+      $character = 'right';
+      $placement = 'final-right';
+      require $twinCharacterComponent;
+      ?>
+    <?php endif; ?>
     <?= twins_brand_door_art($finalCtaArtKind, 'twins-brand-cta-art', 'editorial-final') ?>
     <span class="twins-brand-kicker"><?= htmlspecialchars($isLocation ? $locationLabel : $market['label'], ENT_QUOTES, 'UTF-8') ?></span>
     <h2 id="twins-brand-editorial-final-title"><?= $isLocation ? 'Tell us what your garage door is doing.' : 'Need a project-specific answer?' ?></h2>
