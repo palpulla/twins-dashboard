@@ -415,16 +415,16 @@ Inspect the staged diff and confirm it contains only the CSS texture system and 
 
 **Interfaces:**
 - Consumes: the verified `twins-brand.css` texture implementation and the existing fixed staging deployment boundary
-- Produces: immutable transaction `staging-remediation-r25-20260722` and closed, hash-pinned staging packages
+- Produces: immutable transaction `staging-remediation-r26-20260722` and closed, hash-pinned staging packages
 
-**Execution recovery:** The first pre-activation r24 deploy attempt stopped after uploading 79 of 85 verification files at the former 120-second transport ceiling. A failing deployment-tool contract now pins `timeout: options.timeout || 180000`, and the deploy tool uses that bounded three-minute default. Because deploy attempts are intentionally single-use, all remaining steps use the fresh r25 transaction; r24 never reached activation.
+**Execution recovery:** The pre-activation r24 deploy attempt stopped after uploading 79 of 85 verification files at the former 120-second transport ceiling. The r25 dry run also stopped safely before activation at the extended 180-second ceiling after uploading 53 of 85 verification files. Local evidence showed the text-heavy host-verification package compresses from 3.4 MB to 605 KB, so a failing deployment-tool contract was added before enabling fixed SSH/SCP compression with `'-C'`. The bounded three-minute default remains in place. Because deploy attempts are intentionally single-use, all remaining steps use the fresh r26 transaction; neither r24 nor r25 reached activation.
 
 - [ ] **Step 1: Rotate the immutable staging transaction**
 
 Replace every current `staging-remediation-r23-20260722` transaction literal in the six files listed above with:
 
 ```text
-staging-remediation-r25-20260722
+staging-remediation-r26-20260722
 ```
 
 Do not change the fixed application identity, SSH port, remote web root, write-authority flags, or production boundary.
@@ -535,7 +535,7 @@ git diff --cached --check
 git commit -m "chore: package location textures for staging"
 ```
 
-Inspect the staged diff before committing and confirm it contains only the r25 transaction rotation and exact package identities.
+Inspect the staged diff before committing and confirm it contains only the r26 transaction rotation, transport compression, and exact package identities.
 
 ---
 
@@ -546,7 +546,7 @@ Inspect the staged diff before committing and confirm it contains only the r25 t
 - Verify: live private staging at `https://danielj140.sg-host.com/`
 
 **Interfaces:**
-- Consumes: immutable r25 staging package, fixed SSH identity, and exact expected-old capture flow
+- Consumes: immutable r26 staging package, fixed SSH identity, and exact expected-old capture flow
 - Produces: a live, rollback-safe location texture release plus desktop/mobile visual evidence
 
 - [ ] **Step 1: Run the fixed remote dry run**
@@ -561,7 +561,7 @@ TWINS_STAGE_SSH_HOSTKEY_SHA256='SHA256:HlFY3XZvLg3jVR6hUb/G5YQzCs81HtAc1+XvqSRbP
   tools/deploy-private-staging.mjs --dry-run
 ```
 
-Expected: `PRIVATE_STAGING_DRY_RUN_PASSED` for transaction r25 with `productionWriteAuthority: false`.
+Expected: `PRIVATE_STAGING_DRY_RUN_PASSED` for transaction r26 with `productionWriteAuthority: false`.
 
 - [ ] **Step 2: Capture exact rollback state**
 
@@ -592,7 +592,7 @@ Expected: `PRIVATE_STAGING_DEPLOYED`, with `writeAuthority: false` and `producti
 Open:
 
 ```text
-https://danielj140.sg-host.com/il/location/rockford/?r25=1
+https://danielj140.sg-host.com/il/location/rockford/?r26=1
 ```
 
 At the default desktop viewport, verify:
@@ -620,7 +620,7 @@ At 390 by 844 pixels, verify:
 Open:
 
 ```text
-https://danielj140.sg-host.com/il/location/loves-park/?r25=1
+https://danielj140.sg-host.com/il/location/loves-park/?r26=1
 ```
 
 Confirm the same section texture system appears without Rockford-specific selectors or missing sections. Verify the Loves Park content remains distinct and readable.
@@ -635,4 +635,4 @@ git status --short
 git log -5 --oneline
 ```
 
-Expected: no unstaged implementation or deployment files, no whitespace errors, and the texture contract, implementation, and r25 package commits at the top of the feature branch. Preserve the worktree after completion because local `main` contains unrelated uncommitted work.
+Expected: no unstaged implementation or deployment files, no whitespace errors, and the texture contract, implementation, and r26 package commits at the top of the feature branch. Preserve the worktree after completion because local `main` contains unrelated uncommitted work.
