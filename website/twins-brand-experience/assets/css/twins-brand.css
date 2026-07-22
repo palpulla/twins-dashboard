@@ -1474,17 +1474,17 @@ body.twins-brand-experience .twins-location-nearby-grid a:is(:hover, :focus-visi
   }
   .twins-location-page .twins-location-system {
     padding-right: 20px;
-    padding-bottom: 142px;
+    padding-bottom: clamp(277px, calc(79vw + 24px), 329px);
     padding-left: 20px;
   }
   .twins-location-page .twins-location-guidance {
     padding-right: 20px;
-    padding-bottom: 174px;
+    padding-bottom: clamp(239px, calc(67.1vw + 24px), 282px);
     padding-left: 20px;
   }
   .twins-location-page .twins-location-final-cta {
     padding-right: 20px;
-    padding-bottom: 174px;
+    padding-bottom: clamp(245px, calc(68.9vw + 24px), 293px);
     padding-left: 20px;
   }
   .twins-location-page .twins-location-twin--system {
