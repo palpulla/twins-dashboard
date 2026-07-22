@@ -456,7 +456,7 @@ wc -c website/twins-brand-experience/tools/private-staging-deploy.php
 shasum -a 256 website/twins-brand-experience/tools/private-staging-deploy.php
 ```
 
-Update its matching records in both manifests, then recompute and update the staging-manifest identity in `host-verification.json` once more.
+Update its matching record in `host-verification.json`. The PHP deploy harness is verification-only and does not appear in `staging-runtime.json`. Then recompute and update the staging-manifest identity in `host-verification.json` once more.
 
 - [ ] **Step 4: Build and verify the closed packages**
 
