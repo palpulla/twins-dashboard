@@ -28,6 +28,13 @@ for (const viewport of viewports) {
     await expect(page.locator('.twins-location-twin')).toHaveCount(3);
     await expect(page.locator('.twins-location-hero .twins-brand-cta--quote')).toHaveCount(1);
     await expect(page.locator('.twins-location-hero .twins-brand-cta--call')).toHaveCount(1);
+    await expect(page.locator('.twins-location-final-cta > .twins-brand-cta-art')).toHaveCount(1);
+    await expect(page.locator('.twins-location-final-cta')).toHaveAttribute('aria-labelledby', 'twins-brand-editorial-final-title');
+    await expect(page.locator('.twins-location-final-cta .twins-brand-kicker')).toHaveText('Madison');
+    await expect(page.locator('.twins-location-final-cta h2')).toHaveAttribute('id', 'twins-brand-editorial-final-title');
+    await expect(page.locator('.twins-location-final-cta > p')).toHaveText('Call Twins or request a quote. We will help you choose the right next step for the door, opener, or installation.');
+    await expect(page.locator('.twins-location-final-cta .twins-brand-final-actions > a').first()).toHaveClass(/twins-brand-cta--call/);
+    await expect(page.locator('.twins-location-final-cta .twins-brand-final-actions > a').last()).toHaveClass(/twins-brand-cta--quote/);
 
     const hierarchy = await page.locator('.twins-location-hero').evaluate(hero => {
       const quote = hero.querySelector('.twins-brand-cta--quote');
@@ -44,9 +51,49 @@ for (const viewport of viewports) {
     expect(luminance(hierarchy.quoteBackground), `${viewport.width}px quote action remains the brighter primary target`)
       .toBeGreaterThan(luminance(hierarchy.callBackground));
 
+    const mascotVisibility = await page.locator('.twins-location-twin').evaluateAll(nodes => nodes.map(node => {
+      const style = getComputedStyle(node);
+      const rect = node.getBoundingClientRect();
+      return {
+        className: node.className,
+        visible: style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0,
+      };
+    }));
+    const expectedVisibility = {
+      'twins-location-twin--hero': viewport.width >= 481,
+      'twins-location-twin--guidance': true,
+      'twins-location-twin--final-right': true,
+    };
+    for (const [placement, expected] of Object.entries(expectedVisibility)) {
+      const mascot = mascotVisibility.find(entry => entry.className.includes(placement));
+      expect(mascot, `${viewport.width}px ${placement} fixture mascot is present`).toBeTruthy();
+      expect(mascot.visible, `${viewport.width}px ${placement} visibility follows the responsive contract`).toBe(expected);
+    }
+
     const layout = await page.evaluate(() => {
       const overlaps = [];
+      const clipped = [];
       const textSelectors = 'h1, h2, h3, p, a, button, [role="button"]';
+      const viewportTolerance = 1;
+      const layoutSelectors = [
+        '.twins-location-hero',
+        '.twins-location-hero-copy',
+        '.twins-location-hero-media',
+        '.twins-location-hero-image',
+        '.twins-location-proof',
+        '.twins-location-proof > div',
+        '.twins-location-system',
+        '.twins-location-system-visual',
+        '.twins-location-system > div:last-child',
+        '.twins-location-services',
+        '.twins-location-service-card',
+        '.twins-location-guidance',
+        '.twins-location-guidance-copy',
+        '.twins-location-warning-card',
+        '.twins-location-final-cta',
+        '.twins-location-final-cta > :not(.twins-location-twin)',
+        '.twins-brand-final-actions',
+      ];
       const intersects = (one, two) => one.left < two.right && one.right > two.left && one.top < two.bottom && one.bottom > two.top;
       const visible = node => {
         const style = getComputedStyle(node);
@@ -59,6 +106,15 @@ for (const viewport of viewports) {
         range.selectNodeContents(node);
         return Array.from(range.getClientRects()).filter(rect => rect.width > 0 && rect.height > 0);
       };
+
+      for (const selector of layoutSelectors) {
+        for (const node of document.querySelectorAll(selector)) {
+          const rect = node.getBoundingClientRect();
+          if (rect.width <= 0 || rect.height <= 0 || rect.left < -viewportTolerance || rect.right > innerWidth + viewportTolerance) {
+            clipped.push({ selector, left: rect.left, right: rect.right, width: rect.width, height: rect.height });
+          }
+        }
+      }
 
       for (const twin of document.querySelectorAll('.twins-location-twin')) {
         if (!visible(twin)) continue;
@@ -79,6 +135,7 @@ for (const viewport of viewports) {
       const root = document.scrollingElement;
       return {
         overlaps,
+        clipped,
         rootScrollWidth: root.scrollWidth,
         rootClientWidth: root.clientWidth,
         documentScrollWidth: document.documentElement.scrollWidth,
@@ -87,6 +144,8 @@ for (const viewport of viewports) {
     });
 
     expect(layout.overlaps, `${viewport.width}px mascots may compose with media or empty space, never readable content or controls`)
+      .toEqual([]);
+    expect(layout.clipped, `${viewport.width}px significant sections and content stay within the horizontal viewport; only explicitly decorative mascots may clip`)
       .toEqual([]);
     expect(layout.rootScrollWidth, `${viewport.width}px page scrolling root has no horizontal overflow`)
       .toBeLessThanOrEqual(layout.rootClientWidth);
