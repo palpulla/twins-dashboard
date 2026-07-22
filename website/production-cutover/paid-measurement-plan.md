@@ -403,3 +403,53 @@ payload so it lands in the `utm` jsonb alongside the existing keys.
 22:01:36Z and 22:03:16Z), phone `6088888785` (Twins' own LP number, chosen so
 any automation looped back in-house). Both synced, so the matching GHL
 contacts need deleting too.
+
+### CORRECTION 2026-07-22: UTMs are NOT lost — they are in `page`
+
+The defect above is overstated. Further testing found the attribution data is
+already captured and queryable today, with no code change.
+
+The engine's payload whitelist is exactly
+`name, phone, email, zip, message, service, chooser_token, website`
+(extracted from snippet 7326 without reading its source, which a content filter
+blocks). So UTMs genuinely never reach the `utm` jsonb — that part stands.
+
+**But `lp_leads.page` preserves the full URL including the query string:**
+
+```
+https://twinsgaragedoors.com/madison-financing-lp/?utm_source=facebook
+  &utm_medium=paid_social&utm_campaign=hidden_input_probe&utm_id=1202549111...
+```
+
+Verified parse over the live table:
+
+```sql
+select substring(page from 'utm_source=([^&]+)')   as utm_source,
+       substring(page from 'utm_medium=([^&]+)')   as utm_medium,
+       substring(page from 'utm_campaign=([^&]+)') as utm_campaign,
+       substring(page from 'utm_id=([^&]+)')       as utm_id
+from lp_leads;
+```
+
+Returns `facebook / paid_social / <campaign> / <id>` correctly. This works
+**retroactively** for every historical lead too.
+
+**Revised conclusion: DB-side lead attribution is NOT blocked.** A lead from
+the financing ad can be traced to its campaign today. Budget is not gated on
+this.
+
+**A hypothesis worth recording as tested and rejected:** injecting hidden
+`utm_*` inputs into the form does not work — the engine reads a fixed
+whitelist, not a generic field sweep. Do not implement that.
+
+**What genuinely remains:**
+1. UTMs are not broken out into structured columns — a read-side view
+   (`lp_leads_attributed`) would remove the repeated `substring()` parsing.
+   Additive and reversible; note the project's migration replay is broken, so
+   prefer a tracked migration only when it can be reviewed.
+2. The UTM set most likely does not reach the **GHL contact**, since the edge
+   function forwards the same whitelist. That leaves GHL-side (CSR-facing)
+   attribution blind even though the database knows the answer — which is the
+   "Unknown lead source" gap from [[twins-automate-not-manual]]. Fixing that
+   means changing `lp-lead-intake` to parse `page` and attach the UTMs to the
+   contact. Unverified — needs a look at the function and GHL.
