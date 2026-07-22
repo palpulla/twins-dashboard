@@ -5,14 +5,18 @@ $characters = [
     'left' => ['asset' => 'twin-left', 'width' => 196, 'height' => 534],
     'right' => ['asset' => 'twin-right', 'width' => 297, 'height' => 538],
 ];
-$placements = ['hero', 'guidance', 'final-right'];
+$allowedPairs = [
+    ['left', 'hero'],
+    ['right', 'guidance'],
+    ['right', 'final-right'],
+];
 
 if (
     !isset($character, $placement)
     || !is_string($character)
     || !is_string($placement)
     || !isset($characters[$character])
-    || !in_array($placement, $placements, true)
+    || !in_array([$character, $placement], $allowedPairs, true)
 ) {
     return;
 }

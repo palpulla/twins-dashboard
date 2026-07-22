@@ -32,13 +32,39 @@ test('header exposes the approved complete navigation and CTA copy', () => {
   assert.match(html, /===\s*['"]external['"]/);
 });
 
+test('location classification selects a compact direct-service header with no booking CTA', () => {
+  const header = source('header.php');
+
+  assert.match(header, /\$context\['classification'\]\s*===\s*['"]location['"]/);
+  assert.match(header, /twins-brand-header--location/);
+  assert.match(header, /twins-brand-location-nav/);
+  for (const [label, route] of [
+    ['Garage Door Repair', 'repair'],
+    ['New Garage Doors', 'installation'],
+    ['Garage Door Openers', 'openers'],
+  ]) {
+    assert.match(header, new RegExp(`\\['${label}', '${route}'\\]`));
+  }
+  assert.match(header, /twins-brand-location-phone[\s\S]*?\$phoneHref[\s\S]*?\$phone/);
+  assert.match(header, /if \(\$isLocationHeader\)[\s\S]*?twins-brand-drawer--location/);
+  assert.match(header, /if \(!\$isLocationHeader && \$bookingMode === 'dialog'\)/);
+  assert.match(header, /if \(!\$isLocationHeader && \$bookingMode === 'external'\)/);
+});
+
+test('conversion controls retain the display font and location service links are touch-sized text actions', () => {
+  const css = fs.readFileSync(path.join(root, 'assets/css/twins-brand.css'), 'utf8');
+
+  assert.match(css, /\.twins-brand-cta\s*\{[^}]*font-family:\s*'Lilita One', Impact, sans-serif/);
+  assert.match(css, /\.twins-location-service-card a\s*\{[^}]*display:\s*(?:inline-)?flex[^}]*align-items:\s*center[^}]*min-height:\s*44px/);
+});
+
 test('header carries a cache-independent guard against duplicate legacy chrome', () => {
   const html = source('header.php');
   const guard = html.match(/<style id="twins-brand-critical-chrome">([\s\S]*?)<\/style>/);
 
   assert.ok(guard, 'header is missing its inline critical chrome guard');
   assert.ok(
-    html.indexOf('<style id="twins-brand-critical-chrome">') < html.indexOf('<header class="twins-brand-header"'),
+    html.indexOf('<style id="twins-brand-critical-chrome">') < html.indexOf('<header class="twins-brand-header'),
     'critical chrome guard must render before the branded header',
   );
   assert.match(guard[1], /body:has\(\.twins-brand-header\)\s+:where\(/);

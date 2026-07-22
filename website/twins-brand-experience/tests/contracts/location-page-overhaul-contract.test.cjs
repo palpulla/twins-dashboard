@@ -135,3 +135,13 @@ test('location mascots are restrained to hero, guidance, and one final CTA cameo
   assert.doesNotMatch(template, /\$placement = 'system'/);
   assert.doesNotMatch(template, /\$placement = 'final-left'/);
 });
+
+test('Twin component fails closed unless its character and placement are an approved exact pair', () => {
+  const twinCharacter = fs.readFileSync(path.join(root, 'components/twin-character.php'), 'utf8');
+
+  assert.match(twinCharacter, /\['left', 'hero'\]/);
+  assert.match(twinCharacter, /\['right', 'guidance'\]/);
+  assert.match(twinCharacter, /\['right', 'final-right'\]/);
+  assert.match(twinCharacter, /!in_array\(\[\$character, \$placement\], \$allowedPairs, true\)/);
+  assert.doesNotMatch(twinCharacter, /\$placements\s*=/);
+});

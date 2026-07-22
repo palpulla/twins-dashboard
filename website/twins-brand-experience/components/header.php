@@ -10,6 +10,12 @@ $nav = [
     'Resources' => $resourceItems,
     'About' => $aboutItems,
 ];
+$isLocationHeader = isset($context['classification']) && $context['classification'] === 'location';
+$locationHeaderNav = [
+    ['Garage Door Repair', 'repair'],
+    ['New Garage Doors', 'installation'],
+    ['Garage Door Openers', 'openers'],
+];
 
 if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '') {
     throw new DomainException('Quote action is unavailable.');
@@ -49,7 +55,34 @@ body:has(.twins-brand-header) :where(
   #menuhopin.twx2-header
 ) { display: none !important; }
 </style>
-<header class="twins-brand-header" data-twins-header>
+<header class="twins-brand-header<?= $isLocationHeader ? ' twins-brand-header--location' : '' ?>" data-twins-header>
+  <?php if ($isLocationHeader): ?>
+  <div class="twins-brand-fascia twins-brand-fascia--location">
+    <a class="twins-brand-logo" href="<?= htmlspecialchars($experience->route('home', $marketKey), ENT_QUOTES, 'UTF-8') ?>" aria-label="Twins Garage Doors home">
+      <img src="<?= htmlspecialchars($experience->asset('logo'), ENT_QUOTES, 'UTF-8') ?>" width="711" height="325" alt="Twins Garage Doors">
+    </a>
+    <nav class="twins-brand-location-nav" aria-label="Location services">
+      <?php foreach ($locationHeaderNav as [$label, $routeKey]): ?>
+        <a href="<?= htmlspecialchars($experience->route($routeKey, $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($label, ENT_QUOTES, 'UTF-8') ?></a>
+      <?php endforeach; ?>
+    </nav>
+    <a class="twins-brand-location-phone" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
+    <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
+    <button type="button" class="twins-brand-menu-trigger" aria-expanded="false" aria-controls="twins-brand-drawer">Menu</button>
+  </div>
+  <div id="twins-brand-drawer" class="twins-brand-drawer twins-brand-drawer--location" hidden aria-hidden="true">
+    <div class="twins-brand-drawer-panel" role="dialog" aria-modal="true" aria-label="Location services">
+      <button type="button" class="twins-brand-drawer-close" aria-label="Close menu">Close</button>
+      <nav class="twins-brand-drawer-location-nav" aria-label="Location services">
+        <?php foreach ($locationHeaderNav as [$label, $routeKey]): ?>
+          <a href="<?= htmlspecialchars($experience->route($routeKey, $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($label, ENT_QUOTES, 'UTF-8') ?></a>
+        <?php endforeach; ?>
+      </nav>
+      <a class="twins-brand-location-phone" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
+      <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
+    </div>
+  </div>
+  <?php else: ?>
   <div class="twins-brand-utility">
     <details class="twins-brand-market-menu">
       <summary>Choose your service area</summary>
@@ -91,9 +124,9 @@ body:has(.twins-brand-header) :where(
         </div>
       <?php endforeach; ?>
     </nav>
-    <?php if ($bookingMode === 'dialog'): ?>
+    <?php if (!$isLocationHeader && $bookingMode === 'dialog'): ?>
       <button type="button" class="twins-brand-cta twins-brand-cta--book" data-twins-booking-open>Book Online</button>
-    <?php elseif ($bookingMode === 'external'): ?>
+    <?php elseif (!$isLocationHeader && $bookingMode === 'external'): ?>
       <a class="twins-brand-cta twins-brand-cta--book" href="<?= htmlspecialchars($booking['href'], ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener noreferrer">Book Online</a>
     <?php endif; ?>
     <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
@@ -112,13 +145,14 @@ body:has(.twins-brand-header) :where(
           </div>
         <?php endforeach; ?>
       </nav>
-      <?php if ($bookingMode === 'dialog'): ?>
+      <?php if (!$isLocationHeader && $bookingMode === 'dialog'): ?>
         <button type="button" class="twins-brand-cta twins-brand-cta--book" data-twins-booking-open>Book Online</button>
-      <?php elseif ($bookingMode === 'external'): ?>
+      <?php elseif (!$isLocationHeader && $bookingMode === 'external'): ?>
         <a class="twins-brand-cta twins-brand-cta--book" href="<?= htmlspecialchars($booking['href'], ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener noreferrer">Book Online</a>
       <?php endif; ?>
       <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
     </div>
   </div>
-  <?php if ($bookingMode === 'dialog') echo $booking['experienceHtml']; ?>
+  <?php if (!$isLocationHeader && $bookingMode === 'dialog') echo $booking['experienceHtml']; ?>
+  <?php endif; ?>
 </header>

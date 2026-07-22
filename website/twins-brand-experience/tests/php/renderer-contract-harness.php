@@ -373,6 +373,28 @@ $expect(substr_count($header, 'id="booking-dialog-fixture"') === 1, 'dialog expe
 $expect(strpos($header, 'Illinois') !== false, 'staging header omitted Illinois');
 $expect(strpos($header, 'Private staging preview') !== false, 'staging header omitted the Illinois preview marker');
 
+$locationHeader = $stagingExperience->renderHeader([
+    'environment' => 'staging',
+    'market' => 'wi',
+    'path' => '/wi/location/madison/',
+    'classification' => 'location',
+]);
+$expect(strpos($locationHeader, 'twins-brand-header--location') !== false, 'location header did not select the compact variant');
+$expect(strpos($locationHeader, 'twins-brand-utility') === false, 'location header retained the market utility bar');
+$expect(strpos($locationHeader, 'Book Online') === false, 'location header rendered a booking CTA');
+$expect(strpos($locationHeader, 'data-twins-booking-open') === false, 'location header rendered a booking trigger');
+$expect(strpos($locationHeader, 'booking-dialog-fixture') === false, 'location header rendered booking dialog markup');
+foreach ([
+    'Garage Door Repair' => '/garage-door-repair/',
+    'New Garage Doors' => '/garage-door-installation/',
+    'Garage Door Openers' => '/garage-door-openers/',
+] as $label => $route) {
+    $expect(substr_count($locationHeader, $label) === 2, 'location header did not render ' . $label . ' in both desktop and drawer navigation');
+    $expect(substr_count($locationHeader, 'href="' . $route . '"') === 2, 'location header did not use the normalized ' . $label . ' route');
+}
+$expect(substr_count($locationHeader, 'Request a Quote') === 2, 'location header did not render the quote action in both desktop and drawer navigation');
+$expect(substr_count($locationHeader, 'href="tel:+16084202377"') === 2, 'location header did not render the normalized market phone in both desktop and drawer navigation');
+
 [$productionExperience] = $makeExperience($verifiedCollection, $externalBookingAction);
 $productionHeader = $productionExperience->renderHeader(['environment' => 'production', 'market' => 'main']);
 $expect(substr_count($productionHeader, RendererHarnessBookingAdapter::EXTERNAL_URL) === 2, 'external booking URL must render in both approved header actions');
@@ -381,6 +403,15 @@ $expect(substr_count($productionHeader, 'data-twins-booking-open') === 0, 'exter
 $expect(strpos($productionHeader, 'booking-dialog-fixture') === false, 'external booking mode rendered dialog HTML');
 $expect(strpos($productionHeader, 'Illinois') === false, 'production header exposed Illinois');
 $expect(strpos($productionHeader, 'Private staging preview') === false, 'production header exposed the staging preview marker');
+
+$productionLocationHeader = $productionExperience->renderHeader([
+    'environment' => 'production',
+    'market' => 'wi',
+    'path' => '/wi/location/madison/',
+    'classification' => 'location',
+]);
+$expect(strpos($productionLocationHeader, RendererHarnessBookingAdapter::EXTERNAL_URL) === false, 'location header rendered the production booking URL');
+$expect(strpos($productionLocationHeader, 'Book Online') === false, 'production location header rendered a booking CTA');
 
 $invalidBookingCases = [
     'staging-missing-mode' => ['environment' => 'staging', 'action' => []],
@@ -598,6 +629,23 @@ $invalidTwinPlacement = $renderComponent($stagingExperience, $root . '/component
     'placement' => 'system',
 ]);
 $expect($invalidTwinPlacement === '', 'Twin renderer accepted a retired placement');
+
+foreach ([
+    ['left', 'hero', '/brand/twin-left.png'],
+    ['right', 'guidance', '/brand/twin-right.png'],
+    ['right', 'final-right', '/brand/twin-right.png'],
+] as [$character, $placement, $asset]) {
+    $twin = $renderComponent($stagingExperience, $root . '/components/twin-character.php', compact('character', 'placement'));
+    $expect(strpos($twin, 'src="' . $asset . '"') !== false, 'Twin renderer rejected approved ' . $character . ' + ' . $placement . ' pair');
+}
+foreach ([
+    ['left', 'guidance'],
+    ['left', 'final-right'],
+    ['right', 'hero'],
+] as [$character, $placement]) {
+    $twin = $renderComponent($stagingExperience, $root . '/components/twin-character.php', compact('character', 'placement'));
+    $expect($twin === '', 'Twin renderer accepted unsupported ' . $character . ' + ' . $placement . ' pair');
+}
 
 $crewPicture = $renderComponent($stagingExperience, $root . '/components/picture.php', [
     'logicalKey' => 'crew-fleet',
