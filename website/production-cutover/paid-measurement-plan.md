@@ -187,8 +187,20 @@ Each step is blocked by the one above it.
    "Review and publish (3)"; someone who knows what the tune-up drafts are needs
    to clear or publish them, then this ships with them.
 
-   Still to do on the other traffic ad, `Review Proof Carousel – 7 cards`
-   (same treatment, not yet touched).
+   **ALSO APPLIED 2026-07-22 to `Review Proof Carousel – 7 cards`
+   (ad 120255240333670399) — ALSO STAGED AS A DRAFT.** Checked `Website events`
+   (same pixel) and set `URL parameters` to **`utm_id={{campaign.id}}` only**.
+
+   Deliberately different from the other ad: this is a 7-card carousel whose
+   destination is `/wi/` and whose card URLs render lazily, one expansion at a
+   time. Editing seven inline query strings by hand risks missing one and
+   double-emitting a parameter on that card. The three inline UTMs
+   (`utm_source`, `utm_medium`, `utm_campaign`) are already correct, so adding
+   only the missing `utm_id` gets the identical end state — exactly one set of
+   four parameters — with none of that risk. If these cards are ever rebuilt,
+   move them to the full macro string for consistency.
+
+   Account draft count after both edits: **"Review and publish (4)"**.
 
    **Caveat Meta surfaced when saving:** campaign/ad-set/ad names are frozen at
    publish time and `{{campaign.name}}` keeps resolving to the original name even
