@@ -27,6 +27,10 @@ that first; it hands off to `release-runbook.md` step 1.
   the 301→`/blog/` scope, and the once-published slugs that need redirects.
 
 **Decisions / status**
+- `paid-measurement-plan.md` — why paid website traffic is currently unmeasurable
+  (GA4 property is ~84% ghost spam, zero key events, no forms on the LP the
+  financing ad points at, Meta spend is all non-website objectives) and the
+  dependency-ordered build that fixes it at cutover. Feeds runbook task 0.7.
 - `owner-gate-checklist.md` — the gate tracker + go-decision.
 - `page-signoff.md` — the 2026-07-20 page-by-page pass (all types signed off;
   the location-essay finding fixed and deployed as r18).
