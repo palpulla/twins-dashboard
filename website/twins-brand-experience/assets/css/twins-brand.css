@@ -1483,6 +1483,12 @@ body.twins-brand-experience .twins-location-nearby-grid a:is(:hover, :focus-visi
 }
 
 @media (max-width: 480px) {
+  .twins-location-hero { gap: 24px; padding: 30px 20px; }
+  .twins-location-hero h1 { margin: 12px 0 16px; font-size: clamp(2.35rem, 11vw, 2.75rem); }
+  .twins-location-hero-copy > p:not(.twins-location-hero-note) { font-size: 1rem; line-height: 1.5; }
+  .twins-location-actions { gap: 10px; margin-top: 20px; }
+  .twins-location-hero-note { margin-top: 14px; font-size: .85rem; }
+  .twins-location-hero-image { min-height: 220px; }
   .twins-location-page .twins-location-twin--hero { display: none; }
   .twins-location-hero-note span { margin-inline: 4px; }
   .twins-location-service-card,

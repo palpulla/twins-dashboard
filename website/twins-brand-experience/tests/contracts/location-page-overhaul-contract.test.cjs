@@ -9,6 +9,9 @@ const locationContent = fs.readFileSync(path.join(root, 'config/location-content
 const footer = fs.readFileSync(path.join(root, 'components/footer.php'), 'utf8');
 const experience = fs.readFileSync(path.join(root, 'src/Experience.php'), 'utf8');
 const css = fs.readFileSync(path.join(root, 'assets/css/twins-brand.css'), 'utf8');
+const navData = fs.readFileSync(path.join(root, 'components/nav-data.php'), 'utf8');
+const markets = fs.readFileSync(path.join(root, 'config/markets.php'), 'utf8');
+const fixture = fs.readFileSync(path.join(root, 'tests/browser/fixtures/location-modern.html'), 'utf8');
 
 test('location template contains the approved high-density landing page sections', () => {
   for (const className of [
@@ -76,6 +79,42 @@ test('location pages move the animated door up and give every service a fixed vi
   assert.match(css, /\.twins-location-service-art/);
 });
 
+test('full location fixture retains exact generated door curtain classes and the WI footer catalog', () => {
+  const arts = fixture.match(/<svg\b[^>]*twins-brand-door-art--(?:door-open|door)\b[\s\S]*?<\/svg>/g) || [];
+  assert.equal(arts.length, 3, 'fixture must include system, final-CTA, and footer door art');
+  for (const art of arts) {
+    assert.equal((art.match(/class="twins-da-window-frame"/g) || []).length, 4);
+    assert.equal((art.match(/class="twins-da-glass"/g) || []).length, 4);
+    assert.equal((art.match(/class="twins-da-glass-hi"/g) || []).length, 4);
+    assert.equal((art.match(/class="twins-da-panel"/g) || []).length, 12);
+    assert.equal((art.match(/class="twins-da-panel-inner"/g) || []).length, 12);
+  }
+  assert.match(arts[0], /class="twins-da-curtain"/);
+
+  const expectedGroups = [
+    ['Services', 9, 'Garage Door Installation'],
+    ['Garage Doors', 3, 'Garage Door Collections'],
+    ['Service Areas', 3, 'Illinois'],
+    ['Resources', 6, 'Wisconsin Garage Door Cost Guide'],
+    ['About', 4, 'Contact Us'],
+  ];
+  const footerGroups = fixture.match(/<div class="twins-brand-footer-group">[\s\S]*?<\/div>/g) || [];
+  assert.equal(footerGroups.length, expectedGroups.length);
+  for (const [index, [label, count, requiredLabel]] of expectedGroups.entries()) {
+    assert.match(footerGroups[index], new RegExp(`<h2>${label}</h2>`));
+    assert.equal((footerGroups[index].match(/<a\b/g) || []).length, count);
+    assert.match(footerGroups[index], new RegExp(`>${requiredLabel}<`));
+    if (label === 'Service Areas') {
+      assert.match(markets, new RegExp(`'label'\\s*=>\\s*'${requiredLabel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}'`));
+    } else {
+      assert.match(navData, new RegExp(`\\['${requiredLabel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}',`));
+    }
+  }
+  assert.match(markets, /'wi'/);
+  assert.match(markets, /'ky'/);
+  assert.match(markets, /'il-preview'/);
+});
+
 test('location sections use accessible CSS-only garage door panel framing', () => {
   for (const section of [
     'system',
@@ -126,6 +165,10 @@ test('location design preserves the old display font and uses restrained premium
   assert.doesNotMatch(css, /twins-location-twin--system|twins-location-twin--final-left/);
   assert.doesNotMatch(css, /(^|\n)\s*\.twins-location-twin/,
     'location Twin selectors must never escape the location-page scope');
+  assert.match(css, /@media \(max-width: 480px\)[\s\S]*?\.twins-location-hero\s*\{[^}]*gap:\s*24px[^}]*padding:\s*30px 20px/,
+    'small screens must bring the real hero photo into the first viewport');
+  assert.match(css, /@media \(max-width: 480px\)[\s\S]*?\.twins-location-hero h1\s*\{[^}]*font-size:\s*clamp\(2\.35rem,\s*11vw,\s*2\.75rem\)/,
+    'small screens must use the compact readable hero heading scale');
 });
 
 test('location mascots are restrained to hero, guidance, and one final CTA cameo', () => {

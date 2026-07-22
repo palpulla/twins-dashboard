@@ -24,9 +24,11 @@ function visibleTargetAudit(page) {
   return page.locator([
     '.twins-location-service-card a',
     '.twins-brand-header--location .twins-brand-location-nav a',
+    '.twins-brand-header--location .twins-brand-drawer-location-nav a',
     '.twins-brand-header--location .twins-brand-location-phone',
     '.twins-brand-header--location .twins-brand-cta--quote',
     '.twins-brand-header--location .twins-brand-menu-trigger',
+    '.twins-brand-header--location .twins-brand-drawer-close',
     '.twins-brand-mobile-actions a',
   ].join(', ')).evaluateAll(nodes => nodes.map(node => {
     const style = getComputedStyle(node);
@@ -58,6 +60,9 @@ for (const viewport of viewports) {
     await expect(page.locator('.twins-location-nearby')).toHaveCount(1);
     await expect(page.locator('.twins-location-faq')).toHaveCount(1);
     await expect(page.locator('.twins-brand-footer')).toHaveCount(1);
+    await expect(page.locator('.twins-brand-footer-group h2')).toHaveText(['Services', 'Garage Doors', 'Service Areas', 'Resources', 'About']);
+    expect(await page.locator('.twins-brand-footer-group').evaluateAll(groups => groups.map(group => group.querySelectorAll('a').length)))
+      .toEqual([9, 3, 3, 6, 4]);
     await expect(page.locator('.twins-brand-mobile-actions > a')).toHaveCount(2);
     await expect(page.locator('.twins-location-service-card .twins-brand-door-art')).toHaveCount(3);
     await expect(page.locator('.twins-location-twin')).toHaveCount(3);
@@ -70,6 +75,19 @@ for (const viewport of viewports) {
     await expect(page.locator('.twins-location-final-cta > p')).toHaveText('Call Twins or request a quote. We will help you choose the right next step for the door, opener, or installation.');
     await expect(page.locator('.twins-location-final-cta .twins-brand-final-actions > a').first()).toHaveClass(/twins-brand-cta--call/);
     await expect(page.locator('.twins-location-final-cta .twins-brand-final-actions > a').last()).toHaveClass(/twins-brand-cta--quote/);
+    for (const selector of [
+      '.twins-location-system .twins-brand-door-art--door-open',
+      '.twins-location-final-cta .twins-brand-door-art--door',
+      '.twins-brand-footer-door.twins-brand-door-art--door',
+    ]) {
+      const art = page.locator(selector);
+      await expect(art.locator('.twins-da-window-frame')).toHaveCount(4);
+      await expect(art.locator('.twins-da-glass')).toHaveCount(4);
+      await expect(art.locator('.twins-da-glass-hi')).toHaveCount(4);
+      await expect(art.locator('.twins-da-panel')).toHaveCount(12);
+      await expect(art.locator('.twins-da-panel-inner')).toHaveCount(12);
+    }
+    await expect(page.locator('.twins-location-system .twins-da-curtain')).toHaveCount(1);
 
     const hierarchy = await page.locator('.twins-location-hero').evaluate(hero => {
       const quote = hero.querySelector('.twins-brand-cta--quote');
@@ -108,7 +126,7 @@ for (const viewport of viewports) {
     const layout = await page.evaluate(() => {
       const overlaps = [];
       const clipped = [];
-      const textSelectors = 'h1, h2, h3, p, a, button, [role="button"]';
+      const textSelectors = 'h1, h2, h3, h4, p, a, button, [role="button"], li, summary, figcaption, strong, span:not([aria-hidden="true"])';
       const viewportTolerance = 1;
       const layoutSelectors = [
         '.twins-brand-header--location',
@@ -126,6 +144,22 @@ for (const viewport of viewports) {
         '.twins-location-guidance',
         '.twins-location-guidance-copy',
         '.twins-location-warning-card',
+        '.twins-location-process',
+        '.twins-location-process > .twins-location-section-heading',
+        '.twins-location-process-list',
+        '.twins-location-process-list > li',
+        '.twins-location-branch',
+        '.twins-location-branch > div',
+        '.twins-location-branch > aside',
+        '.twins-location-nearby',
+        '.twins-location-nearby > .twins-location-section-heading',
+        '.twins-location-nearby-grid',
+        '.twins-location-nearby-grid > a',
+        '.twins-location-faq',
+        '.twins-location-faq > .twins-location-section-heading',
+        '.twins-location-faq .twins-brand-faq-list',
+        '.twins-location-faq details',
+        '.twins-location-faq summary',
         '.twins-location-final-cta',
         '.twins-location-final-cta > :not(.twins-location-twin)',
         '.twins-brand-final-actions',
@@ -194,6 +228,15 @@ for (const viewport of viewports) {
     expect(layout.documentScrollWidth, `${viewport.width}px document has no horizontal overflow`)
       .toBeLessThanOrEqual(layout.documentClientWidth);
 
+    if (viewport.width === 390) {
+      const mobileHero = await page.locator('.twins-location-hero').evaluate(hero => {
+        const photo = hero.querySelector('.twins-location-hero-image').getBoundingClientRect();
+        const actions = document.querySelector('.twins-brand-mobile-actions').getBoundingClientRect();
+        return { visiblePhotoHeight: actions.top - photo.top, photoTop: photo.top, actionTop: actions.top };
+      });
+      expect(mobileHero.visiblePhotoHeight, '390px hero exposes a substantive technician-photo area above fixed actions').toBeGreaterThanOrEqual(180);
+    }
+
     const targets = await visibleTargetAudit(page);
     for (const target of targets.filter(target => target.visible)) {
       expect(target.height, `${viewport.width}px visible target ${target.label} is at least 44px tall`).toBeGreaterThanOrEqual(44);
@@ -206,10 +249,11 @@ for (const viewport of viewports) {
       '.twins-brand-header--location .twins-brand-cta--quote:visible',
       '.twins-brand-header--location .twins-brand-menu-trigger:visible',
     ].join(', '));
+    await page.keyboard.press('Tab');
     const actionCount = await focusableHeaderActions.count();
     for (let index = 0; index < actionCount; index += 1) {
       const action = focusableHeaderActions.nth(index);
-      await action.focus();
+      await page.keyboard.press('Tab');
       const focus = await action.evaluate(node => {
         const style = getComputedStyle(node);
         return {
@@ -228,10 +272,15 @@ for (const viewport of viewports) {
 
     const menu = page.locator('.twins-brand-header--location .twins-brand-menu-trigger:visible');
     if (await menu.count()) {
-      await menu.press('Enter');
+      await page.keyboard.press('Enter');
       await expect(page.locator('.twins-brand-drawer--location')).not.toHaveAttribute('hidden', '');
       await expect(page.locator('.twins-brand-drawer-close')).toBeFocused();
-      await page.locator('.twins-brand-drawer-close').press('Enter');
+      const drawerTargets = await visibleTargetAudit(page);
+      for (const target of drawerTargets.filter(target => target.visible)) {
+        expect(target.height, `${viewport.width}px opened-drawer target ${target.label} is at least 44px tall`).toBeGreaterThanOrEqual(44);
+        expect(target.width, `${viewport.width}px opened-drawer target ${target.label} is usable at its rendered width`).toBeGreaterThanOrEqual(44);
+      }
+      await page.keyboard.press('Enter');
       await expect(menu).toBeFocused();
     }
   });
