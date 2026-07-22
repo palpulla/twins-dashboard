@@ -1141,9 +1141,6 @@ body.twins-brand-experience .twins-location-system .twins-brand-kicker { color: 
   bottom: -10px;
   width: clamp(96px,9vw,132px);
 }
-.twins-location-page .twins-location-guidance {
-  padding-right: max(160px,calc((100vw - 1320px)/2 + 124px));
-}
 .twins-location-page .twins-location-final-cta {
   position: relative;
   isolation: isolate;
@@ -1268,6 +1265,9 @@ body.twins-brand-experience .twins-location-service-card a { margin-top: auto; c
   padding: clamp(68px, 7vw, 104px) var(--twins-content-shell);
   background: var(--twins-white);
 }
+.twins-location-page .twins-location-guidance {
+  padding-right: max(160px,calc((100vw - 1320px)/2 + 124px));
+}
 .twins-location-guidance-copy { align-self: center; max-width: 760px; }
 .twins-location-guidance-copy > p { color: var(--twins-muted); font-size: 1.06rem; }
 .twins-location-guidance-copy h3 { margin: 34px 0 10px; color: var(--twins-navy-900); font-size: 1.75rem; text-transform: uppercase; }
@@ -1305,7 +1305,7 @@ body.twins-brand-experience .twins-location-warning-card .twins-brand-kicker { c
 .twins-location-branch h2 { color: var(--twins-white); }
 .twins-location-branch > div > p { max-width: 740px; color: #e8f1fb; }
 .twins-location-address { color: var(--twins-gold) !important; font-size: 1.08rem; font-weight: 1000; }
-.twins-location-branch aside { align-self: center; padding: 30px; color: var(--twins-navy-950); background: var(--twins-gold); border: 1px solid rgba(255,255,255,.72); border-radius: 10px; box-shadow: none; }
+.twins-location-branch aside { align-self: center; padding: 30px; color: var(--twins-navy-950); background: var(--twins-white); border: 1px solid rgba(255,200,61,.72); border-radius: 10px; box-shadow: none; }
 .twins-location-branch aside strong { font-family: 'Lilita One', Impact, sans-serif; font-size: 1.8rem; text-transform: uppercase; }
 .twins-location-branch aside ul { display: grid; gap: 10px; margin: 20px 0 0; padding-left: 22px; font-weight: 900; }
 
@@ -1437,7 +1437,7 @@ body.twins-brand-experience .twins-location-nearby-grid a:is(:hover, :focus-visi
   .twins-location-branch aside { padding: 24px; }
   .twins-location-nearby-grid { grid-template-columns: 1fr; }
   .twins-location-page .twins-location-guidance,
-  .twins-location-page .twins-location-final-cta { padding-right: 20px; padding-bottom: 154px; }
+  .twins-location-page .twins-location-final-cta { padding-right: 20px; padding-bottom: 210px; }
   .twins-location-system,
   .twins-location-services,
   .twins-location-guidance,

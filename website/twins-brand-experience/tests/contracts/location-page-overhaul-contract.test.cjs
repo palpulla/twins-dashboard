@@ -117,6 +117,11 @@ test('location design preserves the old display font and uses restrained premium
   assert.match(css, /\.twins-location-page \.twins-location-twin--hero\s*\{[^}]*clamp\(72px,\s*7vw,\s*104px\)/);
   assert.match(css, /\.twins-location-page \.twins-location-twin--guidance\s*\{[^}]*clamp\(92px,\s*8vw,\s*124px\)/);
   assert.match(css, /\.twins-location-page \.twins-location-twin--final-right\s*\{[^}]*clamp\(96px,\s*9vw,\s*132px\)/);
+  assert.match(css, /@media \(max-width: 480px\)\s*\{[\s\S]*?\.twins-location-page \.twins-location-guidance,\s*\.twins-location-page \.twins-location-final-cta\s*\{[^}]*padding-bottom:\s*210px/,
+    'small screens must reserve 210px for the right Twin and content clearance');
+  assert.match(css, /\.twins-location-branch aside\s*\{[^}]*color:\s*var\(--twins-navy-950\)[^}]*background:\s*var\(--twins-white\)[^}]*border:\s*1px solid rgba\(255,200,61,\.72\)/);
+  assert.doesNotMatch(css, /\.twins-location-branch aside\s*\{[^}]*background:\s*var\(--twins-gold\)/,
+    'the branch panel must not return to a full gold surface');
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.twins-location-page \.twins-location-twin\s*\{[^}]*animation:\s*none !important[^}]*transform:\s*none !important/);
   assert.doesNotMatch(css, /twins-location-twin--system|twins-location-twin--final-left/);
   assert.doesNotMatch(css, /(^|\n)\s*\.twins-location-twin/,
