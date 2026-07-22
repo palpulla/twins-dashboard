@@ -122,15 +122,15 @@ $loading = $placement === 'hero' ? 'eager' : 'lazy';
 <img src="<?= htmlspecialchars($experience->asset($selectedCharacter['asset']), ENT_QUOTES, 'UTF-8') ?>" width="<?= (int) $selectedCharacter['width'] ?>" height="<?= (int) $selectedCharacter['height'] ?>" class="twins-location-twin twins-location-twin--<?= htmlspecialchars($placement, ENT_QUOTES, 'UTF-8') ?> twins-location-twin--<?= htmlspecialchars($character, ENT_QUOTES, 'UTF-8') ?>" alt="" aria-hidden="true" loading="<?= $loading ?>" decoding="async">
 ```
 
-- [ ] **Step 4: Run focused contracts**
+- [ ] **Step 4: Run the focused PHP wrapper and record deferred package drift**
 
 Run:
 
 ```bash
-/Users/daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test tests/contracts/package-contract.test.cjs tests/php-harnesses.test.cjs
+/Users/daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test tests/php-harnesses.test.cjs
 ```
 
-Expected: package contract PASS; PHP harness executes and PASSes when PHP is available, otherwise reports only the documented PHP-unavailable skips.
+Expected: PHP harness executes and PASSes when PHP is available, otherwise reports only the documented PHP-unavailable skips. Do not rebuild manifests during this task: source-byte changes intentionally leave the hash-pinned package contract failing until Task 5 performs the single final package rebuild after all source changes.
 
 - [ ] **Step 5: Commit**
 
@@ -208,7 +208,7 @@ Replace the location final CTA mascot block with:
 Run:
 
 ```bash
-/Users/daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test tests/contracts/location-page-overhaul-contract.test.cjs tests/contracts/package-contract.test.cjs
+/Users/daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test tests/contracts/location-page-overhaul-contract.test.cjs
 ```
 
 Expected: PASS.
@@ -358,7 +358,7 @@ Use one-pixel structure, small radii, and no hard offset shadows:
 Run:
 
 ```bash
-/Users/daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test tests/contracts/location-page-overhaul-contract.test.cjs tests/contracts/site-unification.test.cjs
+/Users/daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test tests/contracts/location-page-overhaul-contract.test.cjs
 ```
 
 Expected: PASS.
@@ -460,13 +460,24 @@ git commit -m "test: verify modern location layout"
 ### Task 5: Verify and render the coded draft without deploying
 
 **Files:**
-- Modify only generated/ignored local preview and test-result artifacts.
+- Modify: `website/twins-brand-experience/manifests/staging-runtime.json`
+- Modify: `website/twins-brand-experience/manifests/host-verification.json`
+- Modify: `website/twins-brand-experience/tests/contracts/site-unification.test.cjs` when the generated CSS identity changes
+- Modify generated/ignored package, preview, and test-result artifacts.
 
 **Interfaces:**
 - Consumes: Tasks 1–4.
 - Produces: clean contract/package gates plus desktop and mobile screenshots for user review. Does not deploy to staging or production.
 
-- [ ] **Step 1: Run the complete local contract suite**
+- [ ] **Step 1: Rebuild the closed staging packages once after all source changes**
+
+```bash
+/Users/daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/build-packages.mjs
+```
+
+Expected: package and host-verification manifests are regenerated from the final source bytes with `writeAuthority:false` and `productionWriteAuthority:false`; the CSS identity in `tests/contracts/site-unification.test.cjs` is updated to the generated first 16 SHA-256 characters when required.
+
+- [ ] **Step 2: Run the complete local contract suite**
 
 ```bash
 /Users/daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test tests/contracts/*.test.cjs
@@ -474,7 +485,7 @@ git commit -m "test: verify modern location layout"
 
 Expected: all contracts PASS with zero failures.
 
-- [ ] **Step 2: Verify assets and package drift**
+- [ ] **Step 3: Verify assets and package drift**
 
 ```bash
 /Users/daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/build-owned-images.mjs --check
@@ -483,7 +494,7 @@ Expected: all contracts PASS with zero failures.
 
 Expected: asset check exits 0; package checker reports `STAGING_PACKAGES_VERIFIED`, `writeAuthority:false`, and `productionWriteAuthority:false`.
 
-- [ ] **Step 3: Run repository gate with the pinned npm shim**
+- [ ] **Step 4: Run repository gate with the pinned npm shim**
 
 ```bash
 env PATH=/tmp/twins-location-twins-npm:/usr/bin:/bin:/usr/sbin:/sbin /Users/daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/check-repository.mjs
@@ -491,7 +502,7 @@ env PATH=/tmp/twins-location-twins-npm:/usr/bin:/bin:/usr/sbin:/sbin /Users/dani
 
 Expected: `REPOSITORY_CHECK_PASSED`; PHP-unavailable skips are recorded rather than misreported as local PHP execution.
 
-- [ ] **Step 4: Render desktop and mobile screenshots from the coded fixture**
+- [ ] **Step 5: Render desktop and mobile screenshots from the coded fixture**
 
 Capture:
 
@@ -502,7 +513,7 @@ Capture:
 
 Save both images under the current writable handoff directory with `modern-location-desktop.png` and `modern-location-mobile.png`.
 
-- [ ] **Step 5: Inspect the screenshots and correct any remaining visual defect**
+- [ ] **Step 6: Inspect the screenshots and correct any remaining visual defect**
 
 Acceptance checklist:
 
@@ -516,7 +527,7 @@ Acceptance checklist:
 - no text clipping or horizontal overflow.
 ```
 
-- [ ] **Step 6: Request independent code review**
+- [ ] **Step 7: Request independent code review**
 
 Review the implementation commits against:
 
@@ -527,6 +538,6 @@ docs/superpowers/plans/2026-07-22-location-page-modern-conversion-redesign.md
 
 Fix every Critical or Important finding before showing the draft.
 
-- [ ] **Step 7: Show the coded desktop and mobile draft to the user**
+- [ ] **Step 8: Show the coded desktop and mobile draft to the user**
 
 Do not deploy. Present both rendered screenshots and state clearly that staging remains on r29 until the user approves the new coded direction.
