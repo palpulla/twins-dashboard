@@ -131,10 +131,32 @@ Each step is blocked by the one above it.
    - Both need to survive the classified-output form scan (Blocker B env gate is
      already drafted).
 
-3. **Financing landing page**, built once on the new site, modelled on
-   `/madison-tune-up-lp/` — same layout, same form shape, same honeypot +
-   consent, LP number (608) 888-8785, `form_variant` distinct so financing leads
-   are separable in `lp_leads`.
+3. **Financing landing page** — **BUILT on staging 2026-07-22, page ID 7727,
+   `/madison-financing-lp/`.** Cloned from `/madison-tune-up-lp/` (7093): same
+   `.tlp` design system and style block verbatim, `elementor_canvas` template,
+   `rank_math_robots = ['noindex']`, LP number (608) 888-8785, identical form
+   shape (`name, phone, service, website` honeypot, `consent`), with
+   `data-page="/madison-financing-lp/"`. Copy adapted to the GoodLeap financing
+   offer that the `Install Financing – Real Before/After` ad runs.
+
+   Content verified stored intact (15,868 bytes; `<style>`, font `<link>`, form,
+   honeypot all survived WP sanitization).
+
+   **Open items on this page:**
+   - **The form is inert on staging** — there is no WPCode plugin and no
+     `lp-lead-intake` reference anywhere on the staging filesystem; the handler
+     is production-only. `/madison-tune-up-lp/` on staging has the same dead
+     form, so this matches existing conditions rather than adding a defect. The
+     handler must be ported at cutover, or the page rebuilt against
+     `ProductionQuoteAdapter` / `production-callback.js`.
+   - Give it a distinct `form_variant` (e.g. `financing-lp`) when the handler is
+     wired, so financing leads are separable in `lp_leads`.
+   - **Not visually verified.** Staging is behind nginx basic auth (401 from both
+     the browser and the server's own loopback), so no render check was possible.
+     Needs an eyes-on pass by someone with the staging credentials.
+   - Uses **4.9** for the Google rating (the re-verified 4.9/699 figure).
+     `/madison-tune-up-lp/` still says **5.0** — one of the two is stale and they
+     should be reconciled.
 
 4. **Meta tagging**, applied with the destination repoint (task 0.7):
    - Move UTMs out of the inline Website URL into the ad's **`URL parameters`**
