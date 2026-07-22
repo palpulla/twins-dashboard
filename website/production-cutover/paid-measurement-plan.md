@@ -172,6 +172,28 @@ Each step is blocked by the one above it.
      rather than by hand.
    - Enable **Website events** on the traffic ads, pointed at pixel
      `554750209097175`.
+
+   **APPLIED 2026-07-22 to `Install Financing – Real Before/After`
+   (ad 120255240336000399) — STAGED AS A DRAFT, NOT PUBLISHED.** Set the
+   `URL parameters` field to the macro string above, checked `Website events`
+   (auto-linked to pixel `554750209097175`), and stripped the inline query
+   string so the Website URL is now the bare
+   `https://twinsgaragedoors.com/wi/financing/` with no duplicate parameters.
+
+   **It is deliberately unpublished.** Meta publishes the whole draft batch at
+   once, and the account already held two unrelated drafts — an
+   "Updated: Creative" change and a new `$49 Tune-Up – Hook Fixed (burnout)` ad.
+   Publishing this tagging would also push those live. The account now shows
+   "Review and publish (3)"; someone who knows what the tune-up drafts are needs
+   to clear or publish them, then this ships with them.
+
+   Still to do on the other traffic ad, `Review Proof Carousel – 7 cards`
+   (same treatment, not yet touched).
+
+   **Caveat Meta surfaced when saving:** campaign/ad-set/ad names are frozen at
+   publish time and `{{campaign.name}}` keeps resolving to the original name even
+   if the campaign is later renamed. `utm_id={{campaign.id}}` is unaffected — one
+   more reason the ID is the join key and the name is only a label.
    - Keep `utm_medium=paid_social` (do not switch to `cpc` later — changing it
      breaks historical joins).
 
