@@ -20,11 +20,46 @@ function luminance(color) {
   return 0.2126 * linear(channels[0]) + 0.7152 * linear(channels[1]) + 0.0722 * linear(channels[2]);
 }
 
+function visibleTargetAudit(page) {
+  return page.locator([
+    '.twins-location-service-card a',
+    '.twins-brand-header--location .twins-brand-location-nav a',
+    '.twins-brand-header--location .twins-brand-location-phone',
+    '.twins-brand-header--location .twins-brand-cta--quote',
+    '.twins-brand-header--location .twins-brand-menu-trigger',
+    '.twins-brand-mobile-actions a',
+  ].join(', ')).evaluateAll(nodes => nodes.map(node => {
+    const style = getComputedStyle(node);
+    const rect = node.getBoundingClientRect();
+    return {
+      label: node.textContent.trim() || node.getAttribute('aria-label'),
+      visible: style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0,
+      width: rect.width,
+      height: rect.height,
+    };
+  }));
+}
+
 for (const viewport of viewports) {
   test(`modern location layout holds at ${viewport.width}px`, async ({ page }) => {
     await page.setViewportSize(viewport);
     await page.goto(fixture);
 
+    await expect(page.locator('.twins-brand-header--location')).toHaveCount(1);
+    await expect(page.locator('.twins-brand-header--location .twins-brand-location-nav > a')).toHaveCount(3);
+    await expect(page.locator('.twins-brand-header--location .twins-brand-fascia--location > .twins-brand-location-phone')).toHaveCount(1);
+    await expect(page.locator('.twins-brand-header--location .twins-brand-fascia--location > .twins-brand-cta--quote')).toHaveCount(1);
+    await expect(page.locator('.twins-brand-header--location .twins-brand-cta--book')).toHaveCount(0);
+    await expect(page.locator('body')).not.toContainText('Book Online');
+    await expect(page.locator('.twins-brand-drawer--location')).toHaveCount(1);
+    await expect(page.locator('.twins-location-system .twins-brand-door-art--door-open')).toHaveCount(1);
+    await expect(page.locator('.twins-location-process')).toHaveCount(1);
+    await expect(page.locator('.twins-location-branch')).toHaveCount(1);
+    await expect(page.locator('.twins-location-nearby')).toHaveCount(1);
+    await expect(page.locator('.twins-location-faq')).toHaveCount(1);
+    await expect(page.locator('.twins-brand-footer')).toHaveCount(1);
+    await expect(page.locator('.twins-brand-mobile-actions > a')).toHaveCount(2);
+    await expect(page.locator('.twins-location-service-card .twins-brand-door-art')).toHaveCount(3);
     await expect(page.locator('.twins-location-twin')).toHaveCount(3);
     await expect(page.locator('.twins-location-hero .twins-brand-cta--quote')).toHaveCount(1);
     await expect(page.locator('.twins-location-hero .twins-brand-cta--call')).toHaveCount(1);
@@ -76,6 +111,7 @@ for (const viewport of viewports) {
       const textSelectors = 'h1, h2, h3, p, a, button, [role="button"]';
       const viewportTolerance = 1;
       const layoutSelectors = [
+        '.twins-brand-header--location',
         '.twins-location-hero',
         '.twins-location-hero-copy',
         '.twins-location-hero-media',
@@ -93,6 +129,10 @@ for (const viewport of viewports) {
         '.twins-location-final-cta',
         '.twins-location-final-cta > :not(.twins-location-twin)',
         '.twins-brand-final-actions',
+        '.twins-brand-footer',
+        '.twins-brand-footer-intro',
+        '.twins-brand-footer-nav',
+        '.twins-brand-mobile-actions',
       ];
       const intersects = (one, two) => one.left < two.right && one.right > two.left && one.top < two.bottom && one.bottom > two.top;
       const visible = node => {
@@ -109,7 +149,9 @@ for (const viewport of viewports) {
 
       for (const selector of layoutSelectors) {
         for (const node of document.querySelectorAll(selector)) {
+          const style = getComputedStyle(node);
           const rect = node.getBoundingClientRect();
+          if (style.display === 'none' || style.visibility === 'hidden') continue;
           if (rect.width <= 0 || rect.height <= 0 || rect.left < -viewportTolerance || rect.right > innerWidth + viewportTolerance) {
             clipped.push({ selector, left: rect.left, right: rect.right, width: rect.width, height: rect.height });
           }
@@ -151,6 +193,47 @@ for (const viewport of viewports) {
       .toBeLessThanOrEqual(layout.rootClientWidth);
     expect(layout.documentScrollWidth, `${viewport.width}px document has no horizontal overflow`)
       .toBeLessThanOrEqual(layout.documentClientWidth);
+
+    const targets = await visibleTargetAudit(page);
+    for (const target of targets.filter(target => target.visible)) {
+      expect(target.height, `${viewport.width}px visible target ${target.label} is at least 44px tall`).toBeGreaterThanOrEqual(44);
+      expect(target.width, `${viewport.width}px visible target ${target.label} is usable at its rendered width`).toBeGreaterThanOrEqual(44);
+    }
+
+    const focusableHeaderActions = page.locator([
+      '.twins-brand-header--location .twins-brand-location-nav a:visible',
+      '.twins-brand-header--location .twins-brand-location-phone:visible',
+      '.twins-brand-header--location .twins-brand-cta--quote:visible',
+      '.twins-brand-header--location .twins-brand-menu-trigger:visible',
+    ].join(', '));
+    const actionCount = await focusableHeaderActions.count();
+    for (let index = 0; index < actionCount; index += 1) {
+      const action = focusableHeaderActions.nth(index);
+      await action.focus();
+      const focus = await action.evaluate(node => {
+        const style = getComputedStyle(node);
+        return {
+          active: document.activeElement === node,
+          outline: style.outlineStyle,
+          outlineWidth: Number.parseFloat(style.outlineWidth),
+          color: style.color,
+        };
+      });
+      expect(focus.active, `${viewport.width}px compact header action ${index + 1} accepts keyboard focus`).toBeTruthy();
+      expect(
+        focus.outline !== 'none' || focus.outlineWidth > 0 || focus.color === 'rgb(255, 200, 61)',
+        `${viewport.width}px focused compact header action ${index + 1} has visible focus styling`,
+      ).toBeTruthy();
+    }
+
+    const menu = page.locator('.twins-brand-header--location .twins-brand-menu-trigger:visible');
+    if (await menu.count()) {
+      await menu.press('Enter');
+      await expect(page.locator('.twins-brand-drawer--location')).not.toHaveAttribute('hidden', '');
+      await expect(page.locator('.twins-brand-drawer-close')).toBeFocused();
+      await page.locator('.twins-brand-drawer-close').press('Enter');
+      await expect(menu).toBeFocused();
+    }
   });
 }
 
@@ -158,7 +241,7 @@ test('reduced motion keeps mascots static', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(fixture);
 
-  const motion = await page.locator('.twins-location-twin').evaluateAll(nodes => nodes.map(node => {
+  const motion = await page.locator('.twins-location-twin, .twins-brand-door-art--door-open .twins-da-curtain').evaluateAll(nodes => nodes.map(node => {
     const style = getComputedStyle(node);
     return { animationName: style.animationName, transform: style.transform };
   }));
