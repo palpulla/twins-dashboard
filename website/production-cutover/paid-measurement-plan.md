@@ -500,3 +500,34 @@ deploy.
 **Still to clean up:** four `ZZTEST` rows in `lp_leads` (22:01, 22:03, 22:10,
 22:33 UTC) plus their GHL contacts. All used phone `6088888785`, Twins' own LP
 number, so no outside party was ever contacted.
+
+## Ad repointed 2026-07-22 — Install Financing → the new LP (runbook task 0.7)
+
+`Install Financing – Real Before/After` (ad 120255240336000399) destination
+changed from `https://twinsgaragedoors.com/wi/financing/` (the page with no
+form) to `https://twinsgaragedoors.com/madison-financing-lp/` (page 7367, the
+working form).
+
+Published cleanly on its own — "Ad updated, 1 ad was updated"; the ad went to
+"Processing" (Meta re-reviewing the new destination) and the draft batch
+cleared. Verified nothing else regressed:
+- URL parameters intact: keys `utm_source, utm_medium, utm_campaign, utm_id`,
+  ending in the `{{campaign.id}}` macro (96 chars).
+- Website events still checked, pixel `554750209097175`.
+- New Website URL is the bare `/madison-financing-lp/` with no inline query
+  string, so the URL-parameters field is the single source of the UTMs — no
+  duplication.
+
+**The full loop is now closed for this ad:** Meta appends
+utm_source/medium/campaign/utm_id → lands on the LP that has a working form →
+lp_leads row carries the campaign (parsed from `page` by v39) → GHL contact
+tagged TGD_SRC_/MED_/CAMP_ → and GA4's Meta import joins cost to sessions on
+utm_id. A financing lead is now traceable end to end.
+
+**Still to do (owner calls):**
+- Turn the traffic campaign on with the ~$300–500/mo test budget (was owner-
+  approved earlier; the funnel is now genuinely measurable, so it is no longer
+  blocked).
+- `Review Proof Carousel – 7 cards` still points at `/wi/` — repoint it too if
+  that campaign is turned on.
+- Clean up the four ZZTEST rows + their GHL contacts.
