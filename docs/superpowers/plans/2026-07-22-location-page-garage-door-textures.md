@@ -97,6 +97,7 @@ Inspect `git diff --cached` before committing and confirm only the new location 
 
 **Files:**
 - Modify: `website/twins-brand-experience/assets/css/twins-brand.css`
+- Modify: `website/twins-brand-experience/tests/contracts/site-unification.test.cjs`
 - Test: `website/twins-brand-experience/tests/contracts/location-page-overhaul-contract.test.cjs`
 
 **Interfaces:**
@@ -349,18 +350,34 @@ Inside the existing `@media (max-width: 480px)` location block, append:
 
 Expected: seven tests pass, zero fail.
 
-- [ ] **Step 6: Run the complete contract suite**
+- [ ] **Step 6: Synchronize the bounded stylesheet version contract**
+
+The asset-version contract pins the first 16 characters of the stylesheet SHA-256 digest. Update only its CSS value in `tests/contracts/site-unification.test.cjs`:
+
+```js
+  assert.deepEqual(versions, {
+    css: 'f3d9198e6787465e',
+    familyCss: '8bfb855366111b32',
+    js: 'a27a7a219e280a80',
+    builderJs: 'fb10e274bd3fcbf6',
+  });
+```
+
+The complete manifest suite remains intentionally red until Task 3 synchronizes both manifests. This sequence keeps the CSS implementation commit separate from deployment metadata.
+
+- [ ] **Step 7: Run the focused source contracts**
 
 From `website/twins-brand-experience`, run:
 
 ```bash
 /Users/daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node \
-  --test tests/contracts/*.test.cjs
+  --test tests/contracts/location-page-overhaul-contract.test.cjs \
+  tests/contracts/site-unification.test.cjs
 ```
 
-Expected: all contract tests pass with zero failures. The current baseline is 81 tests; this task adds one new test.
+Expected: all location and site-unification source contracts pass with zero failures.
 
-- [ ] **Step 7: Run the local browser safety suite**
+- [ ] **Step 8: Run the local browser safety suite**
 
 From `website/twins-brand-experience`, run:
 
@@ -372,15 +389,16 @@ env PATH=/Users/daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/
 
 Expected: all site-unification tests pass with zero overflow, contrast, or interaction failures.
 
-- [ ] **Step 8: Commit the texture implementation**
+- [ ] **Step 9: Commit the texture implementation**
 
 ```bash
-git add website/twins-brand-experience/assets/css/twins-brand.css
+git add website/twins-brand-experience/assets/css/twins-brand.css \
+  website/twins-brand-experience/tests/contracts/site-unification.test.cjs
 git diff --cached --check
 git commit -m "feat: add location garage door textures"
 ```
 
-Inspect the staged CSS diff and confirm there are no template, JavaScript, content, or unrelated asset changes.
+Inspect the staged diff and confirm it contains only the CSS texture system and its exact derived short-hash contract. There must be no template, JavaScript, content, or unrelated asset changes.
 
 ---
 
