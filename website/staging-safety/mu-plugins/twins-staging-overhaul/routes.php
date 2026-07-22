@@ -125,7 +125,7 @@ function twins_overhaul_classify_request(int $blogId, string $path, string $post
     $postType = strtolower($postType);
 
     if ($blogId === 1) {
-        if (in_array($postId, array(7092, 7093), true)) {
+        if (in_array($postId, array(7092, 7093, 7727), true)) {
             return 'campaign-preserve';
         }
         if ($postId === 7341) {

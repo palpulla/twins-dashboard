@@ -368,6 +368,7 @@ if ($scenario === 'routes') {
     $cases = [
         [1, '/madison-garage-door-repair-lp/', 'page', 7092, 'campaign-preserve'],
         [1, '/madison-tune-up-lp/', 'page', 7093, 'campaign-preserve'],
+        [1, '/madison-financing-lp/', 'page', 7727, 'campaign-preserve'],
         [1, '/careers/', 'page', 7341, 'careers-brand'],
         [1, '/our-team/', 'page', 6955, 'team-brand'],
         [1, '/reviews/', 'page', 2186, 'reviews-brand'],
