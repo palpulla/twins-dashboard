@@ -25,4 +25,4 @@ Implemented only the Task 6 owned header, mascot, stylesheet, contracts, PHP ren
 
 ## Commit
 
-Pending atomic commit `fix: complete location conversion chrome`.
+`3bb5f8a8 fix: complete location conversion chrome`
