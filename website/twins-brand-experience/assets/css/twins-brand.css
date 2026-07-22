@@ -1411,13 +1411,15 @@ body.twins-brand-experience .twins-location-nearby-grid a:is(:hover, :focus-visi
 .twins-location-final-cta > p { max-width: 680px; margin: 0 auto 26px; color: #e8f1fb; font-size: 1.08rem; }
 
 @media (max-width: 1024px) {
-  .twins-location-hero,
   .twins-location-guidance,
   .twins-location-branch { grid-template-columns: 1fr; }
-  .twins-location-hero-media { width: min(760px,100%); }
-  .twins-location-proof { grid-template-columns: 1fr; }
-  .twins-location-proof > div { min-height: 86px; border-top: 1px solid rgba(7,29,59,.14); border-left: 0; }
-  .twins-location-proof > div:first-child { border-top: 0; }
+  .twins-location-hero { min-height: 0; }
+  .twins-location-hero-stage { display: grid; grid-template-columns: 1fr; min-height: 0; }
+  .twins-location-hero-copy { width: 100%; padding: clamp(52px, 8vw, 82px) clamp(24px, 6vw, 64px) 36px; }
+  .twins-location-hero-media { position: relative; inset: auto; width: auto; min-height: 360px; }
+  .twins-location-hero-proof { position: relative; right: auto; bottom: auto; left: auto; grid-template-columns: 1fr; margin: 0 24px 24px; }
+  .twins-location-hero-proof > div { min-height: 86px; border-top: 1px solid rgba(184,210,237,.2); border-left: 0; }
+  .twins-location-hero-proof > div:first-child { border-top: 0; }
   .twins-location-service-grid,
   .twins-location-process-list { grid-template-columns: 1fr; }
   .twins-location-process-list li { min-height: 0; }
@@ -1447,11 +1449,12 @@ body.twins-brand-experience .twins-location-nearby-grid a:is(:hover, :focus-visi
   .twins-location-branch,
   .twins-location-nearby,
   .twins-location-faq { padding: 54px 20px; }
-  .twins-location-hero { gap: 42px; padding: 58px 20px; }
+  .twins-location-hero { gap: 42px; padding: 36px 20px 46px; }
+  .twins-location-hero-stage { border-radius: 20px; }
+  .twins-location-hero-copy { width: 100%; padding: clamp(42px, 8vw, 64px) clamp(20px, 6vw, 42px) 30px; }
   .twins-location-hero h1 { font-size: clamp(2.7rem,12vw,4.1rem); }
-  .twins-location-hero-media { padding-left: 14px; }
-  .twins-location-hero-image { min-height: 280px; }
-  .twins-location-proof { padding-inline: 20px; }
+  .twins-location-hero-media { min-height: clamp(280px, 58vw, 420px); padding-left: 0; }
+  .twins-location-hero-proof { margin: 0 16px 16px; }
   .twins-location-system {
     grid-template-columns: 1fr;
     gap: 34px;
@@ -1522,11 +1525,14 @@ body.twins-brand-experience .twins-location-nearby-grid a:is(:hover, :focus-visi
 
 @media (max-width: 480px) {
   .twins-location-hero { gap: 24px; padding: 30px 20px; }
+  .twins-location-hero-stage { border-radius: 16px; }
+  .twins-location-hero-copy { width: 100%; padding: 34px 20px 26px; }
   .twins-location-hero h1 { margin: 12px 0 16px; font-size: clamp(2.35rem, 11vw, 2.75rem); }
   .twins-location-hero-copy > p:not(.twins-location-hero-note) { font-size: 1rem; line-height: 1.5; }
   .twins-location-actions { gap: 10px; margin-top: 20px; }
   .twins-location-hero-note { margin-top: 14px; font-size: .85rem; }
-  .twins-location-hero-image { min-height: 220px; }
+  .twins-location-hero-media { min-height: clamp(220px, 70vw, 300px); padding-left: 0; }
+  .twins-location-hero-proof { margin: 0 12px 12px; }
   .twins-location-page .twins-location-twin--hero { display: none; }
   .twins-location-hero-note span { margin-inline: 4px; }
   .twins-location-service-card,

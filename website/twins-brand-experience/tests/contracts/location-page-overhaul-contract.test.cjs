@@ -45,6 +45,15 @@ test('location hero is one cinematic composition with integrated proof', () => {
     'proof must remain inside the unified hero stage');
 });
 
+test('cinematic hero becomes a contained copy-media-proof sequence on narrow screens', () => {
+  assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.twins-location-hero-stage\s*\{[^}]*display:\s*grid[^}]*grid-template-columns:\s*1fr/);
+  assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.twins-location-hero-media\s*\{[^}]*position:\s*relative[^}]*inset:\s*auto[^}]*width:\s*auto/);
+  assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.twins-location-hero-proof\s*\{[^}]*position:\s*relative[^}]*grid-template-columns:\s*1fr/);
+  assert.match(css, /@media \(max-width: 768px\)[\s\S]*?\.twins-location-hero-copy\s*\{[^}]*width:\s*100%/);
+  assert.match(css, /@media \(max-width: 480px\)[\s\S]*?\.twins-location-hero-media\s*\{[^}]*min-height:\s*clamp\(220px,\s*70vw,\s*300px\)/);
+  assert.match(css, /@media \(max-width: 480px\)[\s\S]*?\.twins-location-page \.twins-location-twin--hero\s*\{[^}]*display:\s*none/);
+});
+
 test('location service navigation has one repair destination and three explained cards', () => {
   assert.match(template, /twins-location-service-card/);
   assert.equal((template.match(/\['Garage Door Repair', 'repair'\]/g) || []).length, 1);

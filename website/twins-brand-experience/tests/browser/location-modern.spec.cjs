@@ -68,6 +68,9 @@ for (const viewport of viewports) {
     await expect(page.locator('.twins-location-twin')).toHaveCount(3);
     await expect(page.locator('.twins-location-hero .twins-brand-cta--quote')).toHaveCount(1);
     await expect(page.locator('.twins-location-hero .twins-brand-cta--call')).toHaveCount(1);
+    await expect(page.locator('.twins-location-hero-stage')).toHaveCount(1);
+    await expect(page.locator('.twins-location-hero-proof[role="list"]')).toHaveCount(1);
+    await expect(page.locator('.twins-location-hero-proof > [role="listitem"]')).toHaveCount(3);
     await expect(page.locator('.twins-location-final-cta > .twins-brand-cta-art')).toHaveCount(1);
     await expect(page.locator('.twins-location-final-cta')).toHaveAttribute('aria-labelledby', 'twins-brand-editorial-final-title');
     await expect(page.locator('.twins-location-final-cta .twins-brand-kicker')).toHaveText('Madison');
@@ -111,6 +114,31 @@ for (const viewport of viewports) {
     expect(luminance(hierarchy.quoteBackground), `${viewport.width}px quote action remains the brighter primary target`)
       .toBeGreaterThan(luminance(hierarchy.callBackground));
 
+    const cinematicHero = await page.locator('.twins-location-hero-stage').evaluate(stage => {
+      const rect = node => node.getBoundingClientRect();
+      const copy = stage.querySelector('.twins-location-hero-copy');
+      const media = stage.querySelector('.twins-location-hero-media');
+      const proof = stage.querySelector('.twins-location-hero-proof');
+      return {
+        stage: rect(stage),
+        copy: rect(copy),
+        media: rect(media),
+        proof: rect(proof),
+        mediaPosition: getComputedStyle(media).position,
+        proofPosition: getComputedStyle(proof).position,
+        proofColumns: getComputedStyle(proof).gridTemplateColumns.split(' ').filter(Boolean).length,
+      };
+    });
+    expect(cinematicHero.stage.left, `${viewport.width}px cinematic stage starts within the viewport`).toBeGreaterThanOrEqual(-1);
+    expect(cinematicHero.stage.right, `${viewport.width}px cinematic stage ends within the viewport`).toBeLessThanOrEqual(viewport.width + 1);
+    if (viewport.width <= 1024) {
+      expect(cinematicHero.mediaPosition, `${viewport.width}px hero media enters normal document flow`).toBe('relative');
+      expect(cinematicHero.proofPosition, `${viewport.width}px proof remains integrated in normal document flow`).toBe('relative');
+      expect(cinematicHero.copy.bottom, `${viewport.width}px copy precedes media`).toBeLessThanOrEqual(cinematicHero.media.top + 1);
+      expect(cinematicHero.media.bottom, `${viewport.width}px media precedes proof`).toBeLessThanOrEqual(cinematicHero.proof.top + 1);
+      expect(cinematicHero.proofColumns, `${viewport.width}px proof stacks into one column`).toBe(1);
+    }
+
     const mascotVisibility = await page.locator('.twins-location-twin').evaluateAll(nodes => nodes.map(node => {
       const style = getComputedStyle(node);
       const rect = node.getBoundingClientRect();
@@ -138,11 +166,12 @@ for (const viewport of viewports) {
       const layoutSelectors = [
         '.twins-brand-header--location',
         '.twins-location-hero',
+        '.twins-location-hero-stage',
         '.twins-location-hero-copy',
         '.twins-location-hero-media',
         '.twins-location-hero-image',
-        '.twins-location-proof',
-        '.twins-location-proof > div',
+        '.twins-location-hero-proof',
+        '.twins-location-hero-proof > div',
         '.twins-location-system',
         '.twins-location-system-visual',
         '.twins-location-system > div:last-child',
