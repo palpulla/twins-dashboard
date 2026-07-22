@@ -453,3 +453,50 @@ whitelist, not a generic field sweep. Do not implement that.
    "Unknown lead source" gap from [[twins-automate-not-manual]]. Fixing that
    means changing `lp-lead-intake` to parse `page` and attach the UTMs to the
    contact. Unverified — needs a look at the function and GHL.
+
+## GHL attribution fix — `lp-lead-intake` v39, deployed 2026-07-22
+
+The lead record now carries its campaign, and so does the GHL contact.
+
+**Three changes, nothing else touched** (full diff reviewed before deploy;
+original v38 preserved at
+`scratchpad/lp-lead-intake-backup/index.ORIGINAL.v38.ts` for rollback):
+
+1. `utm_id` added to `UTM_KEYS`. It was absent — the list had utm_term,
+   utm_content, gclid and fbclid but not utm_id, which is exactly the key the
+   GA4 campaign-data import joins on and the one now emitted by both Meta
+   traffic ads.
+2. New `utmFromPage()` parses the UTM set out of the `page` href server-side.
+   The forms-v2 engine posts a fixed whitelist and never forwarded UTMs, but it
+   does send the full href — so attribution is recoverable without touching the
+   10KB client engine or the landing pages. Body values still win; the helper is
+   wrapped in try/catch so an unparseable `page` can never cost a lead.
+3. GHL contact gains additive attribution tags — `TGD_SRC_*`, `TGD_MED_*`,
+   `TGD_CAMP_*` — so the campaign is visible to a CSR in GHL.
+
+**`source` deliberately left as the exact literal `"Website LP"`.** An earlier
+draft changed it to `Website LP - facebook`; that was reverted before deploy
+because GHL workflows and reporting may filter on the exact string. Attribution
+rides on additive tags instead, so every existing trigger keeps firing.
+
+**Verification.** `verify_jwt` confirmed still false (public endpoint).
+Dry-run parsed all four UTMs. Live end-to-end through the real form stored:
+
+```json
+{"utm_source":"facebook","utm_medium":"paid_social",
+ "utm_campaign":"challenger_financing_2026_07","utm_id":"120255240336000399",
+ "service":"New garage door — interested in financing","form_variant":"A"}
+```
+
+`status: synced`, GHL contact created. Regression-tested three shapes that must
+not break the sitewide contact form — no query string, `page:"unknown"`, and a
+malformed value — all HTTP 200 with an empty `utm`. Edge-function logs show all
+v39 invocations at 200, no errors.
+
+Note the deploy reported an entrypoint of `source/source/index.ts` (doubled).
+Cosmetic — imports resolve and the function runs; worth tidying on the next
+deploy.
+
+**Still to clean up:** four `ZZTEST` rows in `lp_leads` (22:01, 22:03, 22:10,
+22:33 UTC) plus their GHL contacts. All used phone `6088888785`, Twins' own LP
+number, so no outside party was ever contacted.
