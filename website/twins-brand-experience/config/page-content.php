@@ -782,59 +782,63 @@ return [
         ],
     ],
     '/protection-plans/' => [
-        'h1' => 'TwinShield Protection Plan',
-        'directAnswer' => 'TwinShield is our service plan for the whole garage door system: scheduled attention from our techs plus the plan benefits that come with membership. What it includes, what it costs, and how visits get scheduled are all spelled out by our office before you enroll. Call the number shown for your area and ask.',
+        'h1' => 'TwinShield Protection Plans',
+        'directAnswer' => 'TwinShield is our 12-month garage-door membership in three tiers: Core, Priority, and Premier. Every tier includes 10% off the qualifying repair when you enroll, tune-up visits, savings on future qualifying repairs, and equipment credit toward qualifying new door or opener equipment. Pay once for the year or in 12 automatic monthly payments.',
         'needs' => [
-            'You want ongoing care for the door and opener instead of booking visits one at a time.',
-            'You want the plan explained in plain terms before you commit to anything.',
-            'You are comparing a plan against just calling us when something breaks.',
+            'You want ongoing care for the door and opener plus savings on repairs instead of booking visits one at a time.',
+            'You want to build equipment credit toward a future door or opener purchase.',
+            'You are comparing a membership against just calling us when something breaks.',
         ],
         'safety' => 'A plan changes how the door gets looked after, not what to do in a bad moment. If the door acts unsafe, stop using it and keep everyone clear. Do not touch the springs or cables. Springs are under dangerous tension and should be handled by trained professionals.',
         'process' => [
-            'Call the number shown and ask about TwinShield.',
-            'We go over what the plan includes, what it costs, and how the visits work.',
-            'Enroll once it all makes sense. If it does not fit your situation, we will say so.',
-            'After you enroll, use the plan contact info our office gives you whenever the door acts up.',
+            'Call the number shown and ask about TwinShield Core, Priority, or Premier.',
+            'Pick a tier and a payment option: one annual payment, or 12 automatic monthly payments for the fixed 12-month term. Monthly billing is a payment schedule, not a cancel-anytime plan.',
+            'Enroll on a qualifying repair and that job gets 10% off. You sign the membership acknowledgment at enrollment.',
+            'Use your included tune-up visits and member discounts during the term. Our office verifies equipment credit before it is applied.',
         ],
         'options' => [
             [
-                'option' => 'Ask about TwinShield',
-                'tradeoff' => 'Sit down with the details before deciding: inclusions, price, and scheduling, all in writing from our office.',
+                'option' => 'TwinShield Core - Essential Care',
+                'tradeoff' => 'The basic tier. 1 tune-up and safety inspection during the term, 5% off future qualifying repairs, 50% off future standard service-call fees, and equipment credit of 25 cents per dollar in eligible membership payments, up to the Core maximum.',
             ],
             [
-                'option' => 'Maintenance plan instead',
-                'tradeoff' => 'If scheduled tune-ups are all you are after, the maintenance plan may be the simpler fit. Ask us to compare them for your door.',
+                'option' => 'TwinShield Priority (recommended)',
+                'tradeoff' => '1 tune-up and safety inspection, priority scheduling subject to availability, 7.5% off future qualifying repairs, 1 standard service-call fee waived then 50% off additional, and equipment credit of 35 cents per dollar, up to the Priority maximum.',
             ],
             [
-                'option' => 'No plan at all',
-                'tradeoff' => 'Also fine. Plenty of customers just call when something breaks, and we treat those jobs the same way.',
+                'option' => 'TwinShield Premier - Maximum Care',
+                'tradeoff' => '2 tune-ups and safety inspections, highest scheduling priority subject to availability, 10% off future qualifying repairs, 1 standard service-call fee waived then 50% off additional, an opener surge-protection device benefit, and equipment credit of 50 cents per dollar, up to the Premier maximum.',
             ],
         ],
         'prepare' => [
             'Note roughly how old the door and opener are, if you know.',
+            'Decide whether one annual payment or 12 monthly payments fits your budget better. Both cover the same fixed 12-month membership.',
             'Write down the questions you want answered before signing anything.',
-            'Decide who in the house or the business will manage the plan.',
         ],
         'faqs' => [
             [
-                'question' => 'What is the TwinShield Protection Plan?',
-                'answer' => 'It is our service plan for the garage door system. Our office walks you through exactly what it includes, what it costs, and how visits are scheduled, and nothing counts until it is confirmed with you in writing at enrollment.',
+                'question' => 'Is the monthly option month-to-month?',
+                'answer' => 'No. TwinShield is a fixed 12-month membership. Monthly billing means 12 automatic monthly payments for that term; it is not a month-to-month or cancel-anytime plan.',
             ],
             [
                 'question' => 'How much does TwinShield cost?',
-                'answer' => 'The office quotes it when you call, based on your door and setup. We keep the number off this page so nobody signs up around a stale price.',
+                'answer' => 'Pricing is set per tier, with one annual payment or 12 automatic monthly payments. Our office quotes the exact numbers when you call, so nobody enrolls around a stale figure posted online.',
             ],
             [
-                'question' => 'What does the plan include?',
-                'answer' => 'The current inclusions are laid out by our office before you enroll, and that conversation is the source of truth, not this page. Ask us to walk through it line by line.',
+                'question' => 'How does equipment credit work?',
+                'answer' => 'Core earns 25 cents, Priority 35 cents, and Premier 50 cents for every dollar in eligible membership payments received, up to a fixed maximum for each tier. Failed, refunded, or charged-back payments do not earn credit. Our office verifies the exact balance before it is quoted or applied toward qualifying new door or opener equipment.',
+            ],
+            [
+                'question' => 'Can a technician tell me my exact credit balance?',
+                'answer' => 'The technician can explain the earning rule, but the office verifies the exact amount after reviewing payments, refunds, prior use, plan status, and equipment eligibility.',
+            ],
+            [
+                'question' => 'Does TwinShield cover every repair for free?',
+                'answer' => 'No. TwinShield is a maintenance-and-savings membership. It is not insurance and not a promise of free repairs or free replacement equipment. Each tier provides the specific maintenance, discount, scheduling, service-call, and equipment-credit benefits listed, governed by the TwinShield Membership Agreement.',
             ],
             [
                 'question' => 'How is TwinShield different from a maintenance plan?',
-                'answer' => 'The maintenance plan is about scheduled tune-up visits. TwinShield is the broader plan built around the whole door system. Ask us to compare the two for your door, since the right answer depends on how you use the garage.',
-            ],
-            [
-                'question' => 'If I am on the plan and the door breaks, what do I do?',
-                'answer' => 'Same as anyone: stop using an unsafe door, keep everyone clear, leave the springs alone, and call us. Being on the plan changes the paperwork, not the safety rules.',
+                'answer' => 'The maintenance plan is about scheduled tune-up visits. TwinShield adds repair discounts, service-call savings, scheduling priority on higher tiers, and equipment credit. Ask us to compare the two for your door.',
             ],
         ],
         'links' => [

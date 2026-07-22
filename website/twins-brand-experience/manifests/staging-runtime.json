@@ -365,8 +365,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/config/page-content.php",
       "destination": "twins-brand-experience/config/page-content.php",
-      "size": 58107,
-      "sha256": "a9bc416ef20fe80fe4d545979673a12d00fec16ffdc459aad64b0ef0e6985af4"
+      "size": 59524,
+      "sha256": "19050d1bdd5b9e4b70e0d97de5a9ccf1384bfdcdb117ac14fccec5597dc37b83"
     },
     {
       "role": "deploy",
