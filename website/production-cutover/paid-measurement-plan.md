@@ -182,9 +182,24 @@ Each step is blocked by the one above it.
      `ProductionQuoteAdapter` / `production-callback.js`.
    - Give it a distinct `form_variant` (e.g. `financing-lp`) when the handler is
      wired, so financing leads are separable in `lp_leads`.
-   - **Not visually verified.** Staging is behind nginx basic auth (401 from both
-     the browser and the server's own loopback), so no render check was possible.
-     Needs an eyes-on pass by someone with the staging credentials.
+   - **Rendered wrong on first look, root-caused and fixed in source
+     (`2751e061`), NOT YET DEPLOYED.** The owner viewed it and it appeared as
+     unstyled prose inside the full site chrome. Cause: `routes.php` classifies
+     campaign landing pages by **hard-coded post ID** — `array(7092, 7093)` — and
+     7727 was not in the list, so it fell through to the editorial path, which
+     preserves the body as prose and discards the inline design. Fixed by adding
+     7727; covered in both harnesses (33/33 green).
+
+     Note `_wp_page_template = elementor_canvas` is inert on staging regardless —
+     **no plugins are active there**, so Elementor's canvas template does not
+     exist and WP falls back to the Astra theme. `campaign-preserve` is what
+     actually disables chrome.
+
+     **Deploy blocked, not by this change:** the contract suite is red at
+     81 pass / 3 fail on CSS-hash mismatches in `site-unification.test.cjs`,
+     from another session's in-flight work in this worktree. Verified
+     pre-existing — stashing the routes fix gives the identical 81/3. Shipping
+     r19 now would carry that half-finished CSS state, so the release waits.
    - Uses **4.9** for the Google rating (the re-verified 4.9/699 figure).
      `/madison-tune-up-lp/` still says **5.0** — one of the two is stale and they
      should be reconciled.
