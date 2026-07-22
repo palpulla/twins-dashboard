@@ -204,12 +204,21 @@ Each step is blocked by the one above it.
    string so the Website URL is now the bare
    `https://twinsgaragedoors.com/wi/financing/` with no duplicate parameters.
 
-   **It is deliberately unpublished.** Meta publishes the whole draft batch at
-   once, and the account already held two unrelated drafts — an
-   "Updated: Creative" change and a new `$49 Tune-Up – Hook Fixed (burnout)` ad.
-   Publishing this tagging would also push those live. The account now shows
-   "Review and publish (3)"; someone who knows what the tune-up drafts are needs
-   to clear or publish them, then this ships with them.
+   **PUBLISHED 2026-07-22 on the owner's explicit instruction.** The batch was
+   atomic — 4 items, no errors — so publishing the tagging also shipped two
+   pre-existing drafts that were not part of this work: an "Updated: Creative"
+   change on an unnamed ad, and a **new** `$49 Tune-Up – Hook Fixed (burnout)`
+   ad. Owner authorised this after being shown the batch contents.
+
+   Post-publish check: the "Active ads" view (campaign delivery active AND
+   campaign impressions > 0) returns the same **7** ads as before, and the new
+   tune-up ad is **not** among them — a strong indication it is not delivering.
+   Not conclusive: that filter excludes a brand-new campaign with zero
+   impressions. **Worth an eyes-on check that the tune-up ad is not spending
+   unintentionally.**
+
+   Both tagged traffic ads remain in "Campaign off" campaigns, so the tagging
+   itself cannot spend.
 
    **ALSO APPLIED 2026-07-22 to `Review Proof Carousel – 7 cards`
    (ad 120255240333670399) — ALSO STAGED AS A DRAFT.** Checked `Website events`
