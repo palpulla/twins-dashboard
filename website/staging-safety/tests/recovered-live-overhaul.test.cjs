@@ -228,7 +228,7 @@ test('fixed routing preserves campaign work while branding Careers and retaining
   assert.match(redirect, /return\s+['"]\/wi\/['"]\s*\.\s*\$suffix/);
   assert.match(redirect, /['"]\/wi\/careers\/['"]\s*=>\s*['"]\/careers\/['"]/);
   assert.match(redirect, /['"]\/ky\/careers\/['"]\s*=>\s*['"]\/careers\/['"]/);
-  assert.match(classify, /in_array\(\s*\$postId,\s*array\(7092,\s*7093\),\s*true\)/);
+  assert.match(classify, /in_array\(\s*\$postId,\s*array\(7092,\s*7093,\s*7727\),\s*true\)/);
   assert.match(classify, /\$postId\s*===\s*7341[\s\S]*?return\s+['"]careers-brand['"]/);
   for (const [blog, route] of [[1, '/door-builder'], [3, '/ky/design-your-door'], [4, '/wi/door-builder'], [5, '/il/door-builder']]) {
     assert.match(classify, new RegExp(`${blog}\\s*=>\\s*array\\(['"]${route.replaceAll('/', '\\/')}['"]`));
