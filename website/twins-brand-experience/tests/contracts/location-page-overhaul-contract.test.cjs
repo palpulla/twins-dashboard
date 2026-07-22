@@ -55,6 +55,7 @@ test('cinematic hero becomes a contained copy-media-proof sequence on narrow scr
 });
 
 test('location services form one connected complete-system pathway', () => {
+  assert.match(template, /<section class="twins-location-services" aria-labelledby="twins-location-services-title" data-location-reveal>/);
   assert.match(template, /twins-location-service-pathway/);
   assert.match(template, /twins-location-service-node/);
   assert.match(template, /twins-location-service-index/);

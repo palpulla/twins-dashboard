@@ -227,7 +227,7 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
       </div>
     </section>
 
-    <section class="twins-location-services" aria-labelledby="twins-location-services-title">
+    <section class="twins-location-services" aria-labelledby="twins-location-services-title" data-location-reveal>
       <div class="twins-location-section-heading">
         <div>
           <span class="twins-brand-kicker">Complete garage door service</span>
