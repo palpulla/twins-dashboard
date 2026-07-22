@@ -458,6 +458,8 @@ $expect(
     strpos($rockfordFooter, '5758 Elaine Dr Ste 110, Rockford, IL 61108') !== false,
     'Rockford footer omitted the local branch address'
 );
+$expect(strpos($rockfordFooter, 'Call Now') !== false, 'location footer is missing Call Now');
+$expect(substr_count($rockfordFooter, 'Get a Free Quote') >= 2, 'location footer must repeat Get a Free Quote');
 
 $illinoisService = $stagingExperience->renderService([
     'environment' => 'staging',

@@ -216,7 +216,7 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
       </div>
     </header>
 
-    <section class="twins-location-system" aria-labelledby="twins-location-system-title">
+    <section class="twins-location-system" aria-labelledby="twins-location-system-title" data-location-reveal>
       <div class="twins-location-system-visual">
         <?= twins_brand_door_art('door-open', 'twins-location-system-art', 'location-system') ?>
       </div>
@@ -257,7 +257,7 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
       </div>
     </section>
 
-    <section class="twins-location-guidance" aria-labelledby="twins-location-guidance-title">
+    <section class="twins-location-guidance" aria-labelledby="twins-location-guidance-title" data-location-reveal>
       <?php
       $character = 'right';
       $placement = 'guidance';
@@ -286,7 +286,7 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
       </aside>
     </section>
 
-    <section class="twins-location-process" aria-labelledby="twins-location-process-title">
+    <section class="twins-location-process" aria-labelledby="twins-location-process-title" data-location-reveal>
       <div class="twins-location-section-heading">
         <div>
           <span class="twins-brand-kicker">A straightforward service visit</span>
@@ -301,14 +301,14 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
       </ol>
     </section>
 
-    <section class="twins-location-branch" aria-labelledby="twins-location-branch-title">
+    <section class="twins-location-branch" aria-labelledby="twins-location-branch-title" data-location-reveal>
       <div>
         <span class="twins-brand-kicker">Your Twins Garage Doors team</span>
         <h2 id="twins-location-branch-title">Garage door service for <?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?></h2>
         <?php if ($napAddress !== ''): ?><p class="twins-location-address"><?= htmlspecialchars($napAddress, ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?>
         <p>Call to describe the problem or request a quote online. We will help you identify the right next step for repair, opener service, or replacement planning.</p>
         <div class="twins-location-actions">
-          <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
+          <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Get a Free Quote</a>
         </div>
       </div>
       <aside>
@@ -322,7 +322,7 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
       </aside>
     </section>
 
-    <section class="twins-location-nearby" aria-labelledby="twins-location-nearby-title">
+    <section class="twins-location-nearby" aria-labelledby="twins-location-nearby-title" data-location-reveal>
       <div class="twins-location-section-heading">
         <div>
           <span class="twins-brand-kicker">Nearby service areas</span>
@@ -339,7 +339,7 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
       <?php endif; ?>
     </section>
 
-    <section class="twins-brand-faq twins-location-faq" aria-labelledby="twins-location-faq-title">
+    <section class="twins-brand-faq twins-location-faq" aria-labelledby="twins-location-faq-title" data-location-reveal>
       <div class="twins-location-section-heading">
         <div>
           <span class="twins-brand-kicker">Common questions</span>
@@ -414,7 +414,7 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
   <?php endif; ?>
 
   <?php $finalCtaArtKind = $isLocation ? 'door' : 'door-open'; ?>
-  <section class="twins-brand-final-cta<?= $isLocation ? ' twins-location-final-cta' : '' ?>" aria-labelledby="twins-brand-editorial-final-title">
+  <section class="twins-brand-final-cta<?= $isLocation ? ' twins-location-final-cta' : '' ?>" aria-labelledby="twins-brand-editorial-final-title"<?= $isLocation ? ' data-location-reveal' : '' ?>>
     <?php if ($isLocation): ?>
       <?php
       $character = 'right';
@@ -427,8 +427,13 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
     <h2 id="twins-brand-editorial-final-title"><?= $isLocation ? 'Tell us what your garage door is doing.' : 'Need a project-specific answer?' ?></h2>
     <?php if ($isLocation): ?><p>Call Twins or request a quote. We will help you choose the right next step for the door, opener, or installation.</p><?php endif; ?>
     <div class="twins-brand-final-actions">
-      <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call <?= $isArticle ? htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') : 'Twins' ?></a>
-      <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
+      <?php if ($isLocation): ?>
+        <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Get a Free Quote</a>
+        <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call <?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
+      <?php else: ?>
+        <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call <?= $isArticle ? htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') : 'Twins' ?></a>
+        <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
+      <?php endif; ?>
     </div>
   </section>
 </main>

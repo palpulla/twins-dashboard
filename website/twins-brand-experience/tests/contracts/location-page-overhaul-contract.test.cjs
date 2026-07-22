@@ -201,13 +201,11 @@ test('location design preserves the old display font and uses restrained premium
   assert.doesNotMatch(css, /\.twins-location-service-node\s*\{[^}]*box-shadow:/);
   assert.match(css, /\.twins-location-page \.twins-location-twin\s*\{[^}]*pointer-events:\s*none/);
   assert.match(css, /\.twins-location-page \.twins-location-twin--hero\s*\{[^}]*clamp\(72px,\s*7vw,\s*104px\)/);
-  assert.match(css, /\.twins-location-page \.twins-location-twin--guidance\s*\{[^}]*clamp\(92px,\s*8vw,\s*124px\)/);
-  assert.match(css, /\.twins-location-page \.twins-location-twin--final-right\s*\{[^}]*clamp\(96px,\s*9vw,\s*132px\)/);
+  assert.match(css, /\.twins-location-page \.twins-location-twin--guidance\s*\{[^}]*clamp\(88px,\s*7vw,\s*116px\)/);
+  assert.match(css, /\.twins-location-page \.twins-location-twin--final-right\s*\{[^}]*clamp\(92px,\s*8vw,\s*124px\)/);
   assert.match(css, /@media \(max-width: 480px\)\s*\{[\s\S]*?\.twins-location-page \.twins-location-guidance,\s*\.twins-location-page \.twins-location-final-cta\s*\{[^}]*padding-bottom:\s*210px/,
     'small screens must reserve 210px for the right Twin and content clearance');
-  assert.match(css, /\.twins-location-branch aside\s*\{[^}]*color:\s*var\(--twins-navy-950\)[^}]*background:\s*var\(--twins-white\)[^}]*border:\s*1px solid rgba\(255,200,61,\.72\)/);
-  assert.doesNotMatch(css, /\.twins-location-branch aside\s*\{[^}]*background:\s*var\(--twins-gold\)/,
-    'the branch panel must not return to a full gold surface');
+  assert.match(css, /\.twins-location-branch aside\s*\{[^}]*color:\s*var\(--twins-white\)[^}]*background:\s*rgba\(255,255,255,\.08\)[^}]*border:\s*1px solid rgba\(181,209,237,\.28\)/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.twins-location-page \.twins-location-twin\s*\{[^}]*animation:\s*none !important[^}]*transform:\s*none !important/);
   assert.doesNotMatch(css, /twins-location-twin--system|twins-location-twin--final-left/);
   assert.doesNotMatch(css, /(^|\n)\s*\.twins-location-twin/,
@@ -234,4 +232,25 @@ test('Twin component fails closed unless its character and placement are an appr
   assert.match(twinCharacter, /\['right', 'final-right'\]/);
   assert.match(twinCharacter, /!in_array\(\[\$character, \$placement\], \$allowedPairs, true\)/);
   assert.doesNotMatch(twinCharacter, /\$placements\s*=/);
+});
+
+test('supporting sections alternate cinematic and warm planes without generic card grids', () => {
+  assert.match(template, /class="twins-location-guidance"[^>]*data-location-reveal/);
+  assert.match(template, /class="twins-location-process"[^>]*data-location-reveal/);
+  assert.match(template, /class="twins-location-branch"[^>]*data-location-reveal/);
+  assert.match(template, /class="twins-brand-faq twins-location-faq"[^>]*data-location-reveal/);
+  assert.match(template, /class="twins-brand-final-cta<\?= \$isLocation \? ' twins-location-final-cta' : '' \?>"[^>]*\$isLocation \? ' data-location-reveal' : ''/);
+  assert.match(css, /\.twins-location-guidance\s*\{[^}]*background:\s*#f4ead6/);
+  assert.match(css, /\.twins-location-process-list::before/);
+  assert.match(css, /\.twins-location-branch\s*\{[^}]*background:/);
+  assert.match(css, /\.twins-location-faq\s*\{[^}]*background:\s*var\(--twins-white\)/);
+});
+
+test('quote is primary copy and unverified urgency claims stay absent', () => {
+  assert.match(template, />Get a Free Quote<\/a>/);
+  assert.match(template, /if \(\$isLocation\):[\s\S]*twins-brand-cta--quote[\s\S]*twins-brand-cta--call[\s\S]*else:/,
+    'location final CTA must render quote before call');
+  assert.match(footer, /\$isLocationFooter \? 'Get a Free Quote' : 'Request a Quote'/);
+  assert.match(footer, /\$isLocationFooter \? 'Call Now' : 'Call Twins'/);
+  assert.doesNotMatch(template.toLowerCase(), /same[- ]day|within \d+|guaranteed response|recently opened/);
 });
