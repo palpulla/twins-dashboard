@@ -507,15 +507,17 @@ foreach ($locationRecords as $slug => $record) {
     foreach (['twins-location-hero', 'twins-location-services', 'twins-location-guidance', 'twins-location-process', 'twins-location-branch', 'twins-location-nearby'] as $className) {
         $expect(strpos($renderedLocation, $className) !== false, $slug . ' omitted ' . $className);
     }
-    foreach (['system', 'guidance', 'final-left', 'final-right'] as $placement) {
+    foreach (['hero', 'guidance', 'final-right'] as $placement) {
         $expect(
             substr_count($renderedLocation, 'twins-location-twin--' . $placement) === 1,
             $slug . ' did not render exactly one ' . $placement . ' Twin'
         );
     }
-    $expect(substr_count($renderedLocation, '/brand/twin-left.png') === 2, $slug . ' did not render exactly two left Twins');
+    $expect(strpos($renderedLocation, 'twins-location-twin--system') === false, $slug . ' rendered the retired system Twin');
+    $expect(strpos($renderedLocation, 'twins-location-twin--final-left') === false, $slug . ' rendered the retired final-left Twin');
+    $expect(substr_count($renderedLocation, '/brand/twin-left.png') === 1, $slug . ' did not render exactly one left Twin');
     $expect(substr_count($renderedLocation, '/brand/twin-right.png') === 2, $slug . ' did not render exactly two right Twins');
-    $expect(substr_count($renderedLocation, 'alt="" aria-hidden="true"') === 4, $slug . ' Twin accessibility markup drifted');
+    $expect(substr_count($renderedLocation, 'alt="" aria-hidden="true"') === 3, $slug . ' Twin accessibility markup drifted');
     $expect(substr_count($renderedLocation, '<details>') === 5, $slug . ' did not render five FAQs');
     $recordText = strtolower($record['intro'] . ' ' . $record['localNotes']);
     foreach ($record['faq'] as $faq) {
@@ -576,23 +578,14 @@ $articleEditorial = $stagingExperience->renderEditorial([
 ], '<p>Garage door care guidance.</p>', 'article');
 $expect(strpos($articleEditorial, 'twins-location-twin') === false, 'article editorial rendered location Twin markup');
 
-$systemTwin = $renderComponent($stagingExperience, $root . '/components/twin-character.php', [
+$heroTwin = $renderComponent($stagingExperience, $root . '/components/twin-character.php', [
     'character' => 'left',
-    'placement' => 'system',
+    'placement' => 'hero',
 ]);
-$expect(strpos($systemTwin, 'src="/brand/twin-left.png"') !== false, 'system Twin omitted the fixed left asset');
-$expect(strpos($systemTwin, 'width="196" height="534"') !== false, 'system Twin dimensions drifted');
-$expect(strpos($systemTwin, 'class="twins-location-twin twins-location-twin--system twins-location-twin--left"') !== false, 'system Twin classes drifted');
-$expect(strpos($systemTwin, 'alt="" aria-hidden="true"') !== false, 'system Twin is not decorative');
-$expect(strpos($systemTwin, 'loading="lazy" decoding="async"') !== false, 'system Twin loading behavior drifted');
-
-$guidanceTwin = $renderComponent($stagingExperience, $root . '/components/twin-character.php', [
-    'character' => 'right',
-    'placement' => 'guidance',
-]);
-$expect(strpos($guidanceTwin, 'src="/brand/twin-right.png"') !== false, 'guidance Twin omitted the fixed right asset');
-$expect(strpos($guidanceTwin, 'width="297" height="538"') !== false, 'guidance Twin dimensions drifted');
-$expect(strpos($guidanceTwin, 'class="twins-location-twin twins-location-twin--guidance twins-location-twin--right"') !== false, 'guidance Twin classes drifted');
+$expect(strpos($heroTwin, 'src="/brand/twin-left.png"') !== false, 'hero Twin omitted the fixed left asset');
+$expect(strpos($heroTwin, 'class="twins-location-twin twins-location-twin--hero twins-location-twin--left"') !== false, 'hero Twin classes drifted');
+$expect(strpos($heroTwin, 'alt="" aria-hidden="true"') !== false, 'hero Twin is not decorative');
+$expect(strpos($heroTwin, 'loading="eager" decoding="async"') !== false, 'hero Twin loading behavior drifted');
 
 $invalidTwinCharacter = $renderComponent($stagingExperience, $root . '/components/twin-character.php', [
     'character' => 'center',
@@ -602,9 +595,9 @@ $expect($invalidTwinCharacter === '', 'Twin renderer accepted an unsupported cha
 
 $invalidTwinPlacement = $renderComponent($stagingExperience, $root . '/components/twin-character.php', [
     'character' => 'left',
-    'placement' => 'hero',
+    'placement' => 'system',
 ]);
-$expect($invalidTwinPlacement === '', 'Twin renderer accepted an unsupported placement');
+$expect($invalidTwinPlacement === '', 'Twin renderer accepted a retired placement');
 
 $crewPicture = $renderComponent($stagingExperience, $root . '/components/picture.php', [
     'logicalKey' => 'crew-fleet',
