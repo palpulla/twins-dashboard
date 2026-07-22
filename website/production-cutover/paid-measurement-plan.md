@@ -558,3 +558,23 @@ GHL contact tagged → GA4 cost join.
 - Watch for the first organic lead and verify its attribution end to end.
 - `Review Proof Carousel` campaign still Off; turn on separately if wanted.
 - Clean up the four ZZTEST rows + GHL contacts.
+
+## Test-data cleanup 2026-07-22
+
+Deleted the four ZZTEST rows from `lp_leads` (scoped to their exact IDs;
+RETURNING confirmed all four: Claude Verification / UtmCheck / HiddenProbe /
+EndToEnd). Post-check: 0 ZZTEST rows remain, 20 rows total, no real lead
+touched.
+
+**GHL contact NOT deleted — handed to owner.** All four test submissions used
+`6088888785` (Twins' own LP number), and GHL dedupes by phone, so they all
+collapsed into a single contact `EVX2bxJ3GXOmDSZjmG92` in the Dunzo location
+(iRUlbIBg7PzSfLrPiR2j). That same contact is also linked to two older `TEST`
+rows from 2026-07-10 (the form-swap test) — so it is a pure test artifact, no
+real customer. Not deleted here because (a) GHL required a login this browser
+did not have and entering credentials is off-limits, and (b) it is a hard
+delete in the live CRM the team uses, which is the owner's to make.
+
+Owner action: in GHL (Dunzo) → Contacts, open contact
+`EVX2bxJ3GXOmDSZjmG92` (phone (608) 888-8785, name "ZZTEST …" / "TEST …") and
+delete it. One contact, ~5 seconds.
