@@ -47,11 +47,12 @@ test('location hero is one cinematic composition with integrated proof', () => {
 });
 
 test('cinematic hero becomes a contained copy-media-proof sequence on narrow screens', () => {
-  assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.twins-location-hero-stage\s*\{[^}]*display:\s*grid[^}]*grid-template-columns:\s*1fr/);
-  assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.twins-location-hero-media\s*\{[^}]*position:\s*relative[^}]*inset:\s*auto[^}]*width:\s*auto/);
-  assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.twins-location-hero-proof\s*\{[^}]*position:\s*relative[^}]*grid-template-columns:\s*1fr/);
-  assert.match(css, /@media \(max-width: 768px\)[\s\S]*?\.twins-location-hero-copy\s*\{[^}]*width:\s*100%/);
-  assert.match(css, /@media \(max-width: 480px\)[\s\S]*?\.twins-location-hero-media\s*\{[^}]*min-height:\s*clamp\(220px,\s*70vw,\s*300px\)/);
+  assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.twins-location-hero-stage\s*\{[^}]*display:\s*grid[^}]*min-height:\s*0/);
+  assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.twins-location-hero-media\s*\{[^}]*position:\s*relative[^}]*inset:\s*auto[^}]*height:\s*clamp\(330px,\s*50vw,\s*520px\)[^}]*grid-row:\s*2/);
+  assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.twins-location-hero-proof\s*\{[^}]*position:\s*relative[^}]*inset:\s*auto[^}]*grid-row:\s*3[^}]*margin:\s*-48px 20px 20px/);
+  assert.match(css, /@media \(max-width: 768px\)[\s\S]*?\.twins-location-hero-copy\s*\{[^}]*padding:\s*44px 22px 28px/);
+  assert.match(css, /@media \(max-width: 768px\)[\s\S]*?\.twins-location-hero-proof\s*\{[^}]*grid-template-columns:\s*1fr[^}]*margin:\s*-26px 12px 12px/);
+  assert.match(css, /@media \(max-width: 480px\)[\s\S]*?\.twins-location-hero-media\s*\{[^}]*height:\s*260px/);
   assert.match(css, /@media \(max-width: 480px\)[\s\S]*?\.twins-location-page \.twins-location-twin--hero\s*\{[^}]*display:\s*none/);
 });
 
@@ -112,7 +113,7 @@ test('location pages move the animated door up and give every service a fixed vi
   assert.match(css, /\.twins-location-service-art/);
 });
 
-test('full location fixture retains exact generated door curtain classes and the WI footer catalog', () => {
+test('Rockford location fixture retains exact generated door curtain classes and the shared footer catalog', () => {
   const arts = fixture.match(/<svg\b[^>]*twins-brand-door-art--(?:door-open|door)\b[\s\S]*?<\/svg>/g) || [];
   assert.equal(arts.length, 3, 'fixture must include system, final-CTA, and footer door art');
   assert.match(arts[0], /^<svg viewBox="0 0 220 190" class="twins-brand-door-art twins-brand-door-art--door-open twins-location-system-art" aria-hidden="true" focusable="false">/);
@@ -157,6 +158,10 @@ test('full location fixture retains exact generated door curtain classes and the
   assert.match(markets, /'wi'/);
   assert.match(markets, /'ky'/);
   assert.match(markets, /'il-preview'/);
+  assert.match(fixture, /Rockford/);
+  assert.match(fixture, /tel:\+18158002025/);
+  assert.match(fixture, /5758 Elaine Dr Ste 110, Rockford, IL 61108/);
+  assert.doesNotMatch(fixture, /Madison, Wisconsin|tel:\+16084202377/);
 });
 
 test('location sections use accessible CSS-only garage door panel framing', () => {
@@ -211,9 +216,9 @@ test('location design preserves the old display font and uses restrained premium
   assert.doesNotMatch(css, /twins-location-twin--system|twins-location-twin--final-left/);
   assert.doesNotMatch(css, /(^|\n)\s*\.twins-location-twin/,
     'location Twin selectors must never escape the location-page scope');
-  assert.match(css, /@media \(max-width: 480px\)[\s\S]*?\.twins-location-hero\s*\{[^}]*gap:\s*24px[^}]*padding:\s*30px 20px/,
+  assert.match(css, /@media \(max-width: 768px\)[\s\S]*?\.twins-location-hero\s*\{[^}]*padding:\s*16px 14px 34px/,
     'small screens must bring the real hero photo into the first viewport');
-  assert.match(css, /@media \(max-width: 480px\)[\s\S]*?\.twins-location-hero h1\s*\{[^}]*font-size:\s*clamp\(2\.35rem,\s*11vw,\s*2\.75rem\)/,
+  assert.match(css, /@media \(max-width: 480px\)[\s\S]*?\.twins-location-hero h1\s*\{[^}]*font-size:\s*clamp\(2\.55rem,\s*13vw,\s*3\.45rem\)[^}]*line-height:\s*\.88/,
     'small screens must use the compact readable hero heading scale');
 });
 
@@ -250,9 +255,9 @@ test('supporting sections alternate cinematic and warm planes without generic ca
 });
 
 test('stacked location process keeps its connector vertical and clears the step copy', () => {
-  assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.twins-location-process-list::before\s*\{[^}]*top:\s*28px[^}]*right:\s*auto[^}]*bottom:\s*28px[^}]*left:\s*28px[^}]*width:\s*1px[^}]*height:\s*auto/);
-  assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.twins-location-process-list li\s*\{[^}]*padding:\s*0 0 0 82px/);
-  assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.twins-location-process-list span\s*\{[^}]*position:\s*absolute[^}]*top:\s*0[^}]*left:\s*0/);
+  assert.match(css, /@media \(max-width: 768px\)[\s\S]*?\.twins-location-process-list::before\s*\{[^}]*top:\s*28px[^}]*right:\s*auto[^}]*bottom:\s*28px[^}]*left:\s*27px[^}]*width:\s*1px[^}]*height:\s*auto/);
+  assert.match(css, /@media \(max-width: 768px\)[\s\S]*?\.twins-location-process-list li\s*\{[^}]*padding:\s*0 0 0 82px/);
+  assert.match(css, /@media \(max-width: 768px\)[\s\S]*?\.twins-location-process-list span\s*\{[^}]*position:\s*absolute[^}]*top:\s*0[^}]*left:\s*0/);
 });
 
 test('quote is primary copy and unverified urgency claims stay absent', () => {

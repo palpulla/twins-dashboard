@@ -22,7 +22,7 @@ function luminance(color) {
 
 function visibleTargetAudit(page) {
   return page.locator([
-    '.twins-location-service-card a',
+    '.twins-location-service-link',
     '.twins-brand-header--location .twins-brand-location-nav a',
     '.twins-brand-header--location .twins-brand-drawer-location-nav a',
     '.twins-brand-header--location .twins-brand-location-phone',
@@ -54,6 +54,14 @@ for (const viewport of viewports) {
     await expect(page.locator('.twins-brand-header--location .twins-brand-cta--book')).toHaveCount(0);
     await expect(page.locator('body')).not.toContainText('Book Online');
     await expect(page.locator('.twins-brand-drawer--location')).toHaveCount(1);
+    await expect(page.locator('.twins-location-hero-stage')).toHaveCount(1);
+    await expect(page.locator('.twins-location-title-accent')).toContainText('in Rockford');
+    await expect(page.locator('.twins-location-hero-proof [role="listitem"]')).toHaveCount(3);
+    await expect(page.locator('.twins-location-service-node')).toHaveCount(3);
+    await expect(page.locator('.twins-location-service-card')).toHaveCount(0);
+    await expect(page.locator('.twins-location-hero .twins-brand-cta--quote')).toHaveText('Get a Free Quote');
+    await expect(page.locator('.twins-location-final-cta .twins-brand-final-actions > a').first()).toHaveClass(/twins-brand-cta--quote/);
+    await expect(page.locator('.twins-location-final-cta .twins-brand-final-actions > a').last()).toHaveClass(/twins-brand-cta--call/);
     await expect(page.locator('.twins-location-system .twins-brand-door-art--door-open')).toHaveCount(1);
     await expect(page.locator('.twins-location-process')).toHaveCount(1);
     await expect(page.locator('.twins-location-branch')).toHaveCount(1);
@@ -64,20 +72,17 @@ for (const viewport of viewports) {
     expect(await page.locator('.twins-brand-footer-group').evaluateAll(groups => groups.map(group => group.querySelectorAll('a').length)))
       .toEqual([9, 3, 3, 6, 4]);
     await expect(page.locator('.twins-brand-mobile-actions > a')).toHaveCount(2);
-    await expect(page.locator('.twins-location-service-card .twins-brand-door-art')).toHaveCount(3);
+    await expect(page.locator('.twins-location-service-node .twins-brand-door-art')).toHaveCount(3);
     await expect(page.locator('.twins-location-twin')).toHaveCount(3);
     await expect(page.locator('.twins-location-hero .twins-brand-cta--quote')).toHaveCount(1);
     await expect(page.locator('.twins-location-hero .twins-brand-cta--call')).toHaveCount(1);
-    await expect(page.locator('.twins-location-hero-stage')).toHaveCount(1);
     await expect(page.locator('.twins-location-hero-proof[role="list"]')).toHaveCount(1);
     await expect(page.locator('.twins-location-hero-proof > [role="listitem"]')).toHaveCount(3);
     await expect(page.locator('.twins-location-final-cta > .twins-brand-cta-art')).toHaveCount(1);
     await expect(page.locator('.twins-location-final-cta')).toHaveAttribute('aria-labelledby', 'twins-brand-editorial-final-title');
-    await expect(page.locator('.twins-location-final-cta .twins-brand-kicker')).toHaveText('Madison');
+    await expect(page.locator('.twins-location-final-cta .twins-brand-kicker')).toHaveText('Rockford');
     await expect(page.locator('.twins-location-final-cta h2')).toHaveAttribute('id', 'twins-brand-editorial-final-title');
     await expect(page.locator('.twins-location-final-cta > p')).toHaveText('Call Twins or request a quote. We will help you choose the right next step for the door, opener, or installation.');
-    await expect(page.locator('.twins-location-final-cta .twins-brand-final-actions > a').first()).toHaveClass(/twins-brand-cta--call/);
-    await expect(page.locator('.twins-location-final-cta .twins-brand-final-actions > a').last()).toHaveClass(/twins-brand-cta--quote/);
     for (const selector of [
       '.twins-location-system .twins-brand-door-art--door-open',
       '.twins-location-final-cta .twins-brand-door-art--door',
@@ -114,6 +119,22 @@ for (const viewport of viewports) {
     expect(luminance(hierarchy.quoteBackground), `${viewport.width}px quote action remains the brighter primary target`)
       .toBeGreaterThan(luminance(hierarchy.callBackground));
 
+    const visualSystem = await page.evaluate(() => {
+      const hero = getComputedStyle(document.querySelector('.twins-location-hero-stage'));
+      const proof = getComputedStyle(document.querySelector('.twins-location-hero-proof'));
+      const warm = getComputedStyle(document.querySelector('.twins-location-guidance'));
+      const dark = getComputedStyle(document.querySelector('.twins-location-process'));
+      return {
+        heroRadius: Number.parseFloat(hero.borderRadius),
+        proofBackdrop: proof.backdropFilter || proof.webkitBackdropFilter,
+        warmBackground: warm.backgroundColor,
+        darkBackground: dark.backgroundColor,
+      };
+    });
+    expect(visualSystem.heroRadius).toBeGreaterThanOrEqual(18);
+    expect(visualSystem.proofBackdrop).toContain('blur');
+    expect(luminance(visualSystem.warmBackground)).toBeGreaterThan(luminance(visualSystem.darkBackground));
+
     const cinematicHero = await page.locator('.twins-location-hero-stage').evaluate(stage => {
       const rect = node => node.getBoundingClientRect();
       const copy = stage.querySelector('.twins-location-hero-copy');
@@ -135,8 +156,10 @@ for (const viewport of viewports) {
       expect(cinematicHero.mediaPosition, `${viewport.width}px hero media enters normal document flow`).toBe('relative');
       expect(cinematicHero.proofPosition, `${viewport.width}px proof remains integrated in normal document flow`).toBe('relative');
       expect(cinematicHero.copy.bottom, `${viewport.width}px copy precedes media`).toBeLessThanOrEqual(cinematicHero.media.top + 1);
-      expect(cinematicHero.media.bottom, `${viewport.width}px media precedes proof`).toBeLessThanOrEqual(cinematicHero.proof.top + 1);
-      expect(cinematicHero.proofColumns, `${viewport.width}px proof stacks into one column`).toBe(1);
+      expect(cinematicHero.proof.top, `${viewport.width}px proof follows the photo while retaining its cinematic overlap`)
+        .toBeGreaterThan(cinematicHero.media.top);
+      expect(cinematicHero.proofColumns, `${viewport.width}px proof follows the responsive column contract`)
+        .toBe(viewport.width <= 768 ? 1 : 3);
     }
 
     const processConnector = await page.locator('.twins-location-process-list').evaluate(list => {
@@ -153,7 +176,7 @@ for (const viewport of viewports) {
         heading: rect(heading),
       };
     });
-    if (viewport.width <= 1024) {
+    if (viewport.width <= 768) {
       expect(processConnector.columns, `${viewport.width}px process steps stack`).toBe(1);
       expect(processConnector.connectorHeight, `${viewport.width}px process connector is vertical`).toBeGreaterThan(processConnector.connectorWidth);
       expect(processConnector.heading.left - processConnector.marker.left, `${viewport.width}px process copy clears its step marker`).toBeGreaterThanOrEqual(75);
@@ -198,7 +221,9 @@ for (const viewport of viewports) {
         '.twins-location-system-visual',
         '.twins-location-system > div:last-child',
         '.twins-location-services',
-        '.twins-location-service-card',
+        '.twins-location-service-pathway',
+        '.twins-location-service-node',
+        '.twins-location-service-link',
         '.twins-location-guidance',
         '.twins-location-guidance-copy',
         '.twins-location-warning-card',
@@ -287,12 +312,15 @@ for (const viewport of viewports) {
       .toBeLessThanOrEqual(layout.documentClientWidth);
 
     if (viewport.width === 390) {
-      const mobileHero = await page.locator('.twins-location-hero').evaluate(hero => {
-        const photo = hero.querySelector('.twins-location-hero-image').getBoundingClientRect();
-        const actions = document.querySelector('.twins-brand-mobile-actions').getBoundingClientRect();
-        return { visiblePhotoHeight: actions.top - photo.top, photoTop: photo.top, actionTop: actions.top };
+      const mobileHero = await page.locator('.twins-location-hero-stage').evaluate(stage => {
+        const copy = stage.querySelector('.twins-location-hero-copy').getBoundingClientRect();
+        const photo = stage.querySelector('.twins-location-hero-media').getBoundingClientRect();
+        const proof = stage.querySelector('.twins-location-hero-proof').getBoundingClientRect();
+        return { copyBottom: copy.bottom, photoTop: photo.top, photoHeight: photo.height, proofTop: proof.top };
       });
-      expect(mobileHero.visiblePhotoHeight, '390px hero exposes a substantive technician-photo area above fixed actions').toBeGreaterThanOrEqual(180);
+      expect(mobileHero.photoTop).toBeGreaterThanOrEqual(mobileHero.copyBottom - 1);
+      expect(mobileHero.photoHeight).toBeGreaterThanOrEqual(240);
+      expect(mobileHero.proofTop).toBeGreaterThan(mobileHero.photoTop);
     }
 
     const targets = await visibleTargetAudit(page);
