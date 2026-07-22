@@ -531,3 +531,30 @@ utm_id. A financing lead is now traceable end to end.
 - `Review Proof Carousel – 7 cards` still points at `/wi/` — repoint it too if
   that campaign is turned on.
 - Clean up the four ZZTEST rows + their GHL contacts.
+
+## Budget turned ON 2026-07-22 — Install Financing campaign live at $8/day
+
+Owner authorized turning on the traffic budget at $8/day. Flipped the campaign
+`Twins – Challenger – Install Financing (Madison) – CAP 2026-07`
+(campaign 120255240287560399) from Off to On.
+
+Confirmed before flipping:
+- ad set `Madison +25mi – Traffic – Install Financing` budget = **$8.00/day**,
+  ad set toggle already On.
+- ad 120255240336000399 toggle already On, destination /madison-financing-lp/,
+  URL params + Website events intact.
+
+So the campaign switch was the single gate. After the flip, delivery status =
+**"Preparing"** (Meta beginning delivery). No confirmation dialog — expected for
+a plain on/off toggle when the ad set and ad are already on.
+
+~$8/day ≈ $240/mo, the low end of the owner-approved $300–500/mo test. Runs
+ALONGSIDE the existing call/lead-form campaigns (untouched). First real click
+should exercise the full loop: Meta UTMs → LP form → lp_leads with campaign →
+GHL contact tagged → GA4 cost join.
+
+**Watch items:**
+- Confirm delivery moves from "Preparing" to "Active" within a few hours.
+- Watch for the first organic lead and verify its attribution end to end.
+- `Review Proof Carousel` campaign still Off; turn on separately if wanted.
+- Clean up the four ZZTEST rows + GHL contacts.
