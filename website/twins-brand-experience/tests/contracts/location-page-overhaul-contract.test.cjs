@@ -81,6 +81,10 @@ test('location review safeguards keep hero copy readable and mobile quick action
     'fixed mobile quick actions must yield while the location hero is in view');
   assert.match(script, /function initLocationMobileActions\(root\)/,
     'location pages need hero-aware mobile quick-action behavior');
+  assert.match(css, /\.twins-location-page \.twins-location-hero-media > picture:not\(\.twins-location-twin\)\s*\{[^}]*z-index:\s*0/,
+    'hero photo must remain below its navy feather');
+  assert.match(css, /\.twins-location-page \.twins-location-hero-media::after\s*\{[^}]*z-index:\s*1/,
+    'hero feather must paint above the photo');
 });
 
 test('location copy never positions a branch as new or unproven', () => {

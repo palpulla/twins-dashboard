@@ -188,6 +188,19 @@ for (const viewport of viewports) {
       });
       expect(heroReadability.paragraphRight, 'desktop hero paragraph stops before the bright media zone')
         .toBeLessThanOrEqual(heroReadability.brightMediaStart);
+
+      const heroLayering = await page.locator('.twins-location-hero-stage').evaluate(stage => {
+        const media = stage.querySelector('.twins-location-hero-media');
+        return {
+          picture: Number.parseInt(getComputedStyle(media.querySelector('picture')).zIndex, 10),
+          feather: Number.parseInt(getComputedStyle(media, '::after').zIndex, 10),
+          mascot: Number.parseInt(getComputedStyle(media.querySelector('.twins-location-twin--hero')).zIndex, 10),
+          orbit: Number.parseInt(getComputedStyle(stage.querySelector('.twins-location-orbit')).zIndex, 10),
+          copy: Number.parseInt(getComputedStyle(stage.querySelector('.twins-location-hero-copy')).zIndex, 10),
+          proof: Number.parseInt(getComputedStyle(stage.querySelector('.twins-location-hero-proof')).zIndex, 10),
+        };
+      });
+      expect(heroLayering).toEqual({ picture: 0, feather: 1, mascot: 2, orbit: 3, copy: 4, proof: 5 });
     }
 
     const processConnector = await page.locator('.twins-location-process-list').evaluate(list => {

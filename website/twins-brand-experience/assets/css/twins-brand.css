@@ -1218,6 +1218,8 @@ body.twins-brand-experience .twins-location-system .twins-brand-kicker { color: 
   position: relative;
   z-index: 2;
 }
+.twins-location-page .twins-location-hero-media > picture:not(.twins-location-twin) { z-index: 0; }
+.twins-location-page .twins-location-hero-media::after { z-index: 1; }
 .twins-location-page .twins-location-twin--hero {
   right: -34px;
   bottom: -14px;
