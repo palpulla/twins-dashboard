@@ -18,7 +18,10 @@ $footerAddress = isset($context['metroAddress']) && is_string($context['metroAdd
     ? trim($context['metroAddress'])
     : (isset($market['address']) && is_string($market['address']) ? $market['address'] : '');
 $footerPath = isset($context['path']) && is_string($context['path']) ? $context['path'] : '';
-$isLocationFooter = preg_match('~^/(?:wi|il)/location/[a-z][a-z0-9-]{0,39}/$~D', $footerPath) === 1;
+$isLocationFooter = isset($context['classification']) && $context['classification'] === 'location';
+if (!isset($context['classification'])) {
+    $isLocationFooter = preg_match('~^/(?:wi|il|ky)/location/[a-z][a-z0-9-]{0,39}/$~D', $footerPath) === 1;
+}
 $footerQuoteLabel = $isLocationFooter ? 'Get a Free Quote' : 'Request a Quote';
 $mobileCallLabel = $isLocationFooter ? 'Call Now' : 'Call Twins';
 ?>

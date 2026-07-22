@@ -7,7 +7,13 @@ const root = path.resolve(__dirname, '../..');
 const template = fs.readFileSync(path.join(root, 'templates/editorial.php'), 'utf8');
 const locationContent = fs.readFileSync(path.join(root, 'config/location-content.php'), 'utf8');
 const footer = fs.readFileSync(path.join(root, 'components/footer.php'), 'utf8');
+const picture = fs.readFileSync(path.join(root, 'components/picture.php'), 'utf8');
 const experience = fs.readFileSync(path.join(root, 'src/Experience.php'), 'utf8');
+const reviewSummary = fs.readFileSync(path.join(root, 'config/review-summary.php'), 'utf8');
+const stagingRoutes = fs.readFileSync(path.join(
+  root,
+  '../staging-safety/mu-plugins/twins-staging-overhaul/adapters/BrandStagingAdapters.php',
+), 'utf8');
 const css = fs.readFileSync(path.join(root, 'assets/css/twins-brand.css'), 'utf8');
 const script = fs.readFileSync(path.join(root, 'assets/js/twins-brand.js'), 'utf8');
 const navData = fs.readFileSync(path.join(root, 'components/nav-data.php'), 'utf8');
@@ -65,7 +71,16 @@ test('location services form one connected complete-system pathway', () => {
   assert.equal((template.match(/\['Garage Door Repair', 'repair'\]/g) || []).length, 1);
   assert.match(template, /Garage door opener service/);
   assert.match(template, /Garage door installation/);
+  assert.match(template, /Preventive maintenance/);
+  assert.match(template, /'title' => 'Preventive maintenance',[\s\S]*?'route' => 'services'/);
+  for (const marketKey of ['wi', 'il-preview']) {
+    const routeBlock = stagingRoutes.match(new RegExp(`'${marketKey}'\\s*=>\\s*\\[([\\s\\S]*?)\\n\\s*\\],`));
+    assert.ok(routeBlock, `${marketKey} route block is missing`);
+    assert.match(routeBlock[1], /'services'\s*=>/,
+      `${marketKey} must support the shared complete-services destination`);
+  }
   assert.match(css, /\.twins-location-service-pathway::before/);
+  assert.match(css, /\.twins-location-service-pathway\s*\{[^}]*grid-template-columns:\s*repeat\(4,\s*minmax\(0,\s*1fr\)\)/);
   assert.doesNotMatch(template, /twins-location-service-card/,
     'services must not return to three generic detached cards');
 });
@@ -124,14 +139,23 @@ test('location pages move the animated door up and give every service a fixed vi
   assert.match(template, /'art' => 'spring'/);
   assert.match(template, /'art' => 'keypad'/);
   assert.match(template, /'art' => 'door'/);
+  assert.match(template, /'art' => 'roller'/);
   assert.match(template, /twins-location-service-art/);
   assert.match(template, /\$finalCtaArtKind = \$isLocation \? 'door' : 'door-open'/);
   assert.match(css, /\.twins-location-system/);
   assert.match(css, /\.twins-location-service-art/);
+  assert.match(template, /class="twins-location-guidance"[\s\S]*?\$logicalKey = 'door-builder-before-after'/);
+  assert.match(template, /\$class = 'twins-location-guidance-image'/);
+  assert.match(template, /components\/picture\.php/);
+  assert.match(picture, /'door-builder-before-after'[\s\S]*?'alt' => 'Before and after view of a real Twins garage door installation'/);
+  assert.match(css, /\.twins-location-guidance-media\s*\{/);
+  assert.match(css, /\.twins-location-guidance-image\s*\{[^}]*object-fit:\s*cover/);
+  assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.twins-location-guidance-copy,\s*\.twins-location-guidance-media,\s*\.twins-location-warning-card\s*\{[^}]*grid-column:\s*auto[^}]*grid-row:\s*auto/);
 });
 
 test('Rockford location fixture retains exact generated door curtain classes and the shared footer catalog', () => {
-  const arts = fixture.match(/<svg\b[^>]*twins-brand-door-art--(?:door-open|door)\b[\s\S]*?<\/svg>/g) || [];
+  const arts = (fixture.match(/<svg\b[^>]*twins-brand-door-art--(?:door-open|door)\b[\s\S]*?<\/svg>/g) || [])
+    .filter(art => /twins-location-system-art|twins-brand-cta-art|twins-brand-footer-door/.test(art));
   assert.equal(arts.length, 3, 'fixture must include system, final-CTA, and footer door art');
   assert.match(arts[0], /^<svg viewBox="0 0 220 190" class="twins-brand-door-art twins-brand-door-art--door-open twins-location-system-art" aria-hidden="true" focusable="false">/);
   assert.match(arts[0], /<defs><clipPath id="twins-door-clip-location-system"><rect x="20" y="20" width="180" height="150" rx="4"\/><\/clipPath><\/defs><rect x="2" y="2" width="216" height="186" rx="10" class="twins-da-gold"\/><rect x="11" y="11" width="198" height="168" rx="6" class="twins-da-navy"\/><rect x="20" y="20" width="180" height="150" rx="4" class="twins-da-interior"\/><ellipse cx="110" cy="168" rx="74" ry="26" class="twins-da-glow"\/><rect x="34" y="150" width="152" height="6" rx="3" class="twins-da-floor"\/><g clip-path="url\(#twins-door-clip-location-system\)"><g class="twins-da-curtain"><rect x="20" y="20" width="180" height="150" rx="4" class="twins-da-face"\/>/);
@@ -154,10 +178,10 @@ test('Rockford location fixture retains exact generated door curtain classes and
   assert.match(arts[0], /class="twins-da-curtain"/);
 
   const expectedGroups = [
-    ['Services', 9, 'Garage Door Installation'],
+    ['Services', 5, 'Garage Door Installation'],
     ['Garage Doors', 3, 'Garage Door Collections'],
     ['Service Areas', 3, 'Illinois'],
-    ['Resources', 6, 'Wisconsin Garage Door Cost Guide'],
+    ['Resources', 5, 'Frequently Asked Questions'],
     ['About', 4, 'Contact Us'],
   ];
   const footerGroups = fixture.match(/<div class="twins-brand-footer-group">[\s\S]*?<\/div>/g) || [];
@@ -179,6 +203,17 @@ test('Rockford location fixture retains exact generated door curtain classes and
   assert.match(fixture, /tel:\+18158002025/);
   assert.match(fixture, /5758 Elaine Dr Ste 110, Rockford, IL 61108/);
   assert.doesNotMatch(fixture, /Madison, Wisconsin|tel:\+16084202377/);
+  assert.match(reviewSummary, /'displayCount'\s*=>\s*'699'/);
+  assert.match(fixture, /699 customer reviews/);
+  assert.equal((fixture.match(/>Get a Free Quote<\/a>/g) || []).length, 7);
+  assert.equal((fixture.match(/>Call Now<\/a>/g) || []).length, 1);
+  assert.doesNotMatch(fixture, />Request a Quote<\/a>|>Call Twins<\/a>/);
+  assert.equal((fixture.match(/class="twins-location-service-node"/g) || []).length, 4);
+  assert.match(fixture, /id="installation"[\s\S]*?twins-brand-door-art--door twins-location-service-art/);
+  assert.match(fixture, /id="maintenance"[\s\S]*?twins-brand-door-art--roller twins-location-service-art/);
+  assert.match(fixture, /id="maintenance"[\s\S]*?href="#all-services">Explore Preventive maintenance<\/a>/);
+  assert.match(fixture, /class="twins-location-guidance-media"[\s\S]*?alt="Before and after view of a real Twins garage door installation"/);
+  assert.doesNotMatch(fixture, />Spring Repair<\/a>|>Wisconsin Garage Door Cost Guide<\/a>/);
 });
 
 test('location sections use accessible CSS-only garage door panel framing', () => {

@@ -28,6 +28,7 @@ function contrastRatio(first, second) {
 function visibleTargetAudit(page) {
   return page.locator([
     '.twins-location-service-link',
+    '.twins-location-section-heading > a',
     '.twins-brand-header--location .twins-brand-location-nav a',
     '.twins-brand-header--location .twins-brand-drawer-location-nav a',
     '.twins-brand-header--location .twins-brand-location-phone',
@@ -56,15 +57,20 @@ for (const viewport of viewports) {
     await expect(page.locator('.twins-brand-header--location .twins-brand-location-nav > a')).toHaveCount(3);
     await expect(page.locator('.twins-brand-header--location .twins-brand-fascia--location > .twins-brand-location-phone')).toHaveCount(1);
     await expect(page.locator('.twins-brand-header--location .twins-brand-fascia--location > .twins-brand-cta--quote')).toHaveCount(1);
+    await expect(page.locator('.twins-brand-header--location .twins-brand-cta--quote')).toHaveText([
+      'Get a Free Quote',
+      'Get a Free Quote',
+    ]);
     await expect(page.locator('.twins-brand-header--location .twins-brand-cta--book')).toHaveCount(0);
     await expect(page.locator('body')).not.toContainText('Book Online');
     await expect(page.locator('.twins-brand-drawer--location')).toHaveCount(1);
     await expect(page.locator('.twins-location-hero-stage')).toHaveCount(1);
     await expect(page.locator('.twins-location-title-accent')).toContainText('in Rockford');
     await expect(page.locator('.twins-location-hero-proof [role="listitem"]')).toHaveCount(3);
-    await expect(page.locator('.twins-location-service-node')).toHaveCount(3);
+    await expect(page.locator('.twins-location-service-node')).toHaveCount(4);
     await expect(page.locator('.twins-location-service-card')).toHaveCount(0);
     await expect(page.locator('.twins-location-hero .twins-brand-cta--quote')).toHaveText('Get a Free Quote');
+    await expect(page.locator('.twins-location-hero-proof [role="listitem"]').first()).toContainText('699 customer reviews');
     await expect(page.locator('.twins-location-final-cta .twins-brand-final-actions > a').first()).toHaveClass(/twins-brand-cta--quote/);
     await expect(page.locator('.twins-location-final-cta .twins-brand-final-actions > a').last()).toHaveClass(/twins-brand-cta--call/);
     await expect(page.locator('.twins-location-system .twins-brand-door-art--door-open')).toHaveCount(1);
@@ -75,9 +81,25 @@ for (const viewport of viewports) {
     await expect(page.locator('.twins-brand-footer')).toHaveCount(1);
     await expect(page.locator('.twins-brand-footer-group h2')).toHaveText(['Services', 'Garage Doors', 'Service Areas', 'Resources', 'About']);
     expect(await page.locator('.twins-brand-footer-group').evaluateAll(groups => groups.map(group => group.querySelectorAll('a').length)))
-      .toEqual([9, 3, 3, 6, 4]);
+      .toEqual([5, 3, 3, 5, 4]);
+    await expect(page.locator('.twins-brand-footer-group').first()).not.toContainText('Spring Repair');
+    await expect(page.locator('.twins-brand-footer-group').nth(3)).not.toContainText('Wisconsin Garage Door Cost Guide');
     await expect(page.locator('.twins-brand-mobile-actions > a')).toHaveCount(2);
-    await expect(page.locator('.twins-location-service-node .twins-brand-door-art')).toHaveCount(3);
+    await expect(page.locator('.twins-brand-mobile-actions > a')).toHaveText(['Call Now', 'Get a Free Quote']);
+    await expect(page.locator('.twins-location-service-node .twins-brand-door-art')).toHaveCount(4);
+    await expect(page.locator('.twins-location-service-node h3')).toHaveText([
+      'Garage door repair',
+      'Garage door opener service',
+      'Garage door installation',
+      'Preventive maintenance',
+    ]);
+    await expect(page.locator('#installation .twins-location-service-art')).toHaveClass(/twins-brand-door-art--door/);
+    await expect(page.locator('#maintenance .twins-location-service-art')).toHaveClass(/twins-brand-door-art--roller/);
+    await expect(page.locator('.twins-location-guidance-media picture')).toHaveCount(1);
+    await expect(page.locator('.twins-location-guidance-image')).toHaveAttribute(
+      'alt',
+      'Before and after view of a real Twins garage door installation',
+    );
     await expect(page.locator('.twins-location-twin')).toHaveCount(3);
     await expect(page.locator('.twins-location-hero .twins-brand-cta--quote')).toHaveCount(1);
     await expect(page.locator('.twins-location-hero .twins-brand-cta--call')).toHaveCount(1);
@@ -267,6 +289,8 @@ for (const viewport of viewports) {
         '.twins-location-service-link',
         '.twins-location-guidance',
         '.twins-location-guidance-copy',
+        '.twins-location-guidance-media',
+        '.twins-location-guidance-image',
         '.twins-location-warning-card',
         '.twins-location-process',
         '.twins-location-process > .twins-location-section-heading',
@@ -434,7 +458,7 @@ for (const viewport of viewports) {
   });
 }
 
-test('reduced motion keeps mascots static', async ({ page }) => {
+test('reduced motion keeps every reveal visible, static, and readable', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(fixture);
 
@@ -446,5 +470,32 @@ test('reduced motion keeps mascots static', async ({ page }) => {
   for (const mascot of motion) {
     expect(mascot.animationName).toBe('none');
     expect(mascot.transform).toBe('none');
+  }
+
+  const reveals = await page.locator('[data-location-reveal]').evaluateAll(nodes => nodes.map(node => {
+    const style = getComputedStyle(node);
+    const rect = node.getBoundingClientRect();
+    return {
+      opacity: style.opacity,
+      transform: style.transform,
+      display: style.display,
+      visibility: style.visibility,
+      width: rect.width,
+      height: rect.height,
+      text: node.innerText.trim(),
+      visibleState: node.dataset.locationVisible,
+    };
+  }));
+
+  expect(reveals.length).toBeGreaterThan(0);
+  for (const reveal of reveals) {
+    expect(reveal.opacity).toBe('1');
+    expect(reveal.transform).toBe('none');
+    expect(reveal.display).not.toBe('none');
+    expect(reveal.visibility).toBe('visible');
+    expect(reveal.width).toBeGreaterThan(0);
+    expect(reveal.height).toBeGreaterThan(0);
+    expect(reveal.text.length).toBeGreaterThan(0);
+    expect(reveal.visibleState).toBe('true');
   }
 });

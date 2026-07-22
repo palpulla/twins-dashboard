@@ -49,6 +49,12 @@ test('location classification selects a compact direct-service header with no bo
   assert.match(header, /if \(\$isLocationHeader\)[\s\S]*?twins-brand-drawer--location/);
   assert.match(header, /if \(!\$isLocationHeader && \$bookingMode === 'dialog'\)/);
   assert.match(header, /if \(!\$isLocationHeader && \$bookingMode === 'external'\)/);
+  assert.match(
+    header,
+    /\$headerQuoteLabel\s*=\s*\$isLocationHeader\s*\?\s*'Get a Free Quote'\s*:\s*'Request a Quote'/,
+  );
+  assert.equal((header.match(/htmlspecialchars\(\$headerQuoteLabel,/g) || []).length, 4);
+  assert.doesNotMatch(header, />Request a Quote<\/a>/);
 });
 
 test('conversion controls retain the display font and location service links are touch-sized text actions', () => {
@@ -56,6 +62,7 @@ test('conversion controls retain the display font and location service links are
 
   assert.match(css, /\.twins-brand-cta\s*\{[^}]*font-family:\s*'Lilita One', Impact, sans-serif/);
   assert.match(css, /\.twins-location-service-link\s*\{[^}]*display:\s*(?:inline-)?flex[^}]*align-items:\s*center[^}]*min-height:\s*44px/);
+  assert.match(css, /\.twins-location-section-heading > a\s*\{[^}]*display:\s*inline-flex[^}]*align-items:\s*center[^}]*min-height:\s*44px/);
 });
 
 test('header carries a cache-independent guard against duplicate legacy chrome', () => {
@@ -169,6 +176,10 @@ test('footer has only the approved mobile quick actions and no fixed host', () =
   assert.match(html, /Call Twins/);
   assert.match(html, /Request a Quote/);
   assert.doesNotMatch(html, /Get an Estimate|Request Exact Quote|https?:\/\//);
+  assert.match(html, /\$context\['classification'\][\s\S]*?===\s*'location'/);
+  assert.match(html, /\(\?:wi\|il\|ky\)\/location/);
+  assert.match(html, /\$isLocationFooter \? 'Get a Free Quote' : 'Request a Quote'/);
+  assert.match(html, /\$isLocationFooter \? 'Call Now' : 'Call Twins'/);
 });
 
 test('components never default a missing market or environment', () => {

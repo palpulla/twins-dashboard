@@ -11,6 +11,7 @@ $nav = [
     'About' => $aboutItems,
 ];
 $isLocationHeader = isset($context['classification']) && $context['classification'] === 'location';
+$headerQuoteLabel = $isLocationHeader ? 'Get a Free Quote' : 'Request a Quote';
 $locationHeaderNav = [
     ['Garage Door Repair', 'repair'],
     ['New Garage Doors', 'installation'],
@@ -67,7 +68,7 @@ body:has(.twins-brand-header) :where(
       <?php endforeach; ?>
     </nav>
     <a class="twins-brand-location-phone" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
-    <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
+    <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($headerQuoteLabel, ENT_QUOTES, 'UTF-8') ?></a>
     <button type="button" class="twins-brand-menu-trigger" aria-expanded="false" aria-controls="twins-brand-drawer">Menu</button>
   </div>
   <div id="twins-brand-drawer" class="twins-brand-drawer twins-brand-drawer--location" hidden aria-hidden="true">
@@ -79,7 +80,7 @@ body:has(.twins-brand-header) :where(
         <?php endforeach; ?>
       </nav>
       <a class="twins-brand-location-phone" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
-      <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
+      <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($headerQuoteLabel, ENT_QUOTES, 'UTF-8') ?></a>
     </div>
   </div>
   <?php else: ?>
@@ -129,7 +130,7 @@ body:has(.twins-brand-header) :where(
     <?php elseif (!$isLocationHeader && $bookingMode === 'external'): ?>
       <a class="twins-brand-cta twins-brand-cta--book" href="<?= htmlspecialchars($booking['href'], ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener noreferrer">Book Online</a>
     <?php endif; ?>
-    <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
+    <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($headerQuoteLabel, ENT_QUOTES, 'UTF-8') ?></a>
     <button type="button" class="twins-brand-menu-trigger" aria-expanded="false" aria-controls="twins-brand-drawer">Menu</button>
   </div>
   <div id="twins-brand-drawer" class="twins-brand-drawer" hidden aria-hidden="true">
@@ -150,7 +151,7 @@ body:has(.twins-brand-header) :where(
       <?php elseif (!$isLocationHeader && $bookingMode === 'external'): ?>
         <a class="twins-brand-cta twins-brand-cta--book" href="<?= htmlspecialchars($booking['href'], ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener noreferrer">Book Online</a>
       <?php endif; ?>
-      <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
+      <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($headerQuoteLabel, ENT_QUOTES, 'UTF-8') ?></a>
     </div>
   </div>
   <?php if (!$isLocationHeader && $bookingMode === 'dialog') echo $booking['experienceHtml']; ?>

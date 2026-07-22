@@ -94,6 +94,13 @@ $locationServiceCards = $isLocation
             'description' => 'When a door is extensively damaged or no longer fits the home, we measure the opening and explain construction, insulation, window, and finish choices.',
             'items' => ['Opening measured before quoting', 'Door and track options explained', 'Complete operating-system setup'],
         ],
+        [
+            'title' => 'Preventive maintenance',
+            'route' => 'services',
+            'art' => 'roller',
+            'description' => 'Regular inspection and adjustment can catch wear in rollers, hinges, tracks, cables, springs, and opener controls before small changes become disruptive failures.',
+            'items' => ['Moving hardware inspected', 'Balance and travel checked', 'Maintenance needs explained'],
+        ],
     ]
     : [];
 
@@ -272,6 +279,15 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
         <h3>Repair or replace?</h3>
         <p>A repair often makes sense when the main door structure is sound and the problem is limited to springs, cables, rollers, tracks, seals, controls, or the opener. Replacement deserves consideration when sections are badly damaged, the door repeatedly falls out of alignment, or you want a meaningful change in insulation, appearance, or operation.</p>
       </div>
+      <figure class="twins-location-guidance-media">
+        <?php
+        $logicalKey = 'door-builder-before-after';
+        $sizes = '(max-width: 1024px) 100vw, 42vw';
+        $class = 'twins-location-guidance-image';
+        $loading = 'lazy';
+        require dirname(__DIR__) . '/components/picture.php';
+        ?>
+      </figure>
       <aside class="twins-location-warning-card">
         <span class="twins-brand-kicker">Stop and call when</span>
         <h3>The door is no longer safely supported</h3>

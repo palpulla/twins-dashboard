@@ -392,7 +392,8 @@ foreach ([
     $expect(substr_count($locationHeader, $label) === 2, 'location header did not render ' . $label . ' in both desktop and drawer navigation');
     $expect(substr_count($locationHeader, 'href="' . $route . '"') === 2, 'location header did not use the normalized ' . $label . ' route');
 }
-$expect(substr_count($locationHeader, 'Request a Quote') === 2, 'location header did not render the quote action in both desktop and drawer navigation');
+$expect(substr_count($locationHeader, 'Get a Free Quote') === 2, 'location header did not render the location quote action in both desktop and drawer navigation');
+$expect(strpos($locationHeader, 'Request a Quote') === false, 'location header retained the non-location quote label');
 $expect(substr_count($locationHeader, 'href="tel:+16084202377"') === 2, 'location header did not render the normalized market phone in both desktop and drawer navigation');
 
 [$productionExperience] = $makeExperience($verifiedCollection, $externalBookingAction);
@@ -412,6 +413,7 @@ $productionLocationHeader = $productionExperience->renderHeader([
 ]);
 $expect(strpos($productionLocationHeader, RendererHarnessBookingAdapter::EXTERNAL_URL) === false, 'location header rendered the production booking URL');
 $expect(strpos($productionLocationHeader, 'Book Online') === false, 'production location header rendered a booking CTA');
+$expect(substr_count($productionLocationHeader, 'Get a Free Quote') === 2, 'production location header did not preserve the exact location quote label');
 
 $invalidBookingCases = [
     'staging-missing-mode' => ['environment' => 'staging', 'action' => []],
@@ -453,6 +455,7 @@ $rockfordFooter = $stagingExperience->renderFooter([
     'environment' => 'staging',
     'market' => 'il-preview',
     'path' => '/il/location/rockford/',
+    'classification' => 'location',
 ]);
 $expect(
     strpos($rockfordFooter, '5758 Elaine Dr Ste 110, Rockford, IL 61108') !== false,
@@ -460,6 +463,27 @@ $expect(
 );
 $expect(strpos($rockfordFooter, 'Call Now') !== false, 'location footer is missing Call Now');
 $expect(substr_count($rockfordFooter, 'Get a Free Quote') >= 2, 'location footer must repeat Get a Free Quote');
+$rockfordFooterGroups = [];
+preg_match_all('~<div class="twins-brand-footer-group">([\s\S]*?)</div>~', $rockfordFooter, $rockfordFooterGroups);
+$expect(count($rockfordFooterGroups[1] ?? []) === 5, 'Rockford footer must render five il-preview groups');
+foreach ([5, 3, 3, 5, 4] as $index => $expectedLinkCount) {
+    $expect(
+        substr_count($rockfordFooterGroups[1][$index] ?? '', '<a ') === $expectedLinkCount,
+        'Rockford footer group ' . $index . ' did not match the il-preview link count'
+    );
+}
+$expect(strpos($rockfordFooter, '>Spring Repair</a>') === false, 'Rockford footer exposed an unsupported service link');
+$expect(strpos($rockfordFooter, '>Wisconsin Garage Door Cost Guide</a>') === false, 'Rockford footer exposed the Wisconsin-only cost guide');
+
+$lexingtonFooter = $stagingExperience->renderFooter([
+    'environment' => 'staging',
+    'market' => 'ky',
+    'path' => '/ky/location/lexington/',
+    'classification' => 'location',
+]);
+$expect(strpos($lexingtonFooter, 'Call Now') !== false, 'Lexington location footer is missing Call Now');
+$expect(substr_count($lexingtonFooter, 'Get a Free Quote') >= 2, 'Lexington location footer must repeat Get a Free Quote');
+$expect(strpos($lexingtonFooter, 'Call Twins') === false, 'Lexington location footer retained the non-location call label');
 
 $illinoisService = $stagingExperience->renderService([
     'environment' => 'staging',
@@ -540,6 +564,11 @@ foreach ($locationRecords as $slug => $record) {
     foreach (['twins-location-hero', 'twins-location-services', 'twins-location-guidance', 'twins-location-process', 'twins-location-branch', 'twins-location-nearby'] as $className) {
         $expect(strpos($renderedLocation, $className) !== false, $slug . ' omitted ' . $className);
     }
+    $expect(substr_count($renderedLocation, 'class="twins-location-service-node"') === 4, $slug . ' did not render four complete-service nodes');
+    $expect(strpos($renderedLocation, 'Explore Preventive maintenance</a>') !== false, $slug . ' omitted the maintenance pathway');
+    $expect(strpos($renderedLocation, 'href="/garage-door-services/"') !== false, $slug . ' did not use the cross-market complete-services route for maintenance');
+    $expect(substr_count($renderedLocation, '/door-builder/twins-before-after-install.webp') === 1, $slug . ' did not render the owned homeowner guidance photo exactly once');
+    $expect(strpos($renderedLocation, 'alt="Before and after view of a real Twins garage door installation"') !== false, $slug . ' changed the owned guidance-photo alt text');
     foreach (['hero', 'guidance', 'final-right'] as $placement) {
         $expect(
             substr_count($renderedLocation, 'twins-location-twin--' . $placement) === 1,
@@ -594,6 +623,12 @@ foreach (['spring', 'keypad', 'door'] as $artKind) {
         'Rockford omitted service art: ' . $artKind
     );
 }
+$expect(
+    strpos($rockfordLocation, 'twins-brand-door-art twins-brand-door-art--roller twins-location-service-art') !== false,
+    'Rockford omitted maintenance roller art'
+);
+$expect(substr_count($rockfordLocation, 'class="twins-location-service-node"') === 4, 'Rockford must render four complete-service nodes');
+$expect(strpos($rockfordLocation, 'href="/garage-door-services/"') !== false, 'Rockford maintenance node did not use the cross-market complete-services route');
 
 $trustEditorial = $stagingExperience->renderEditorial([
     'environment' => 'staging',
