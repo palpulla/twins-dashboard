@@ -783,7 +783,7 @@ return [
     ],
     '/protection-plans/' => [
         'h1' => 'TwinShield Protection Plans',
-        'directAnswer' => 'TwinShield is our 12-month garage-door membership in three tiers: Core, Priority, and Premier. Every tier includes 10% off the qualifying repair when you enroll, tune-up visits, savings on future qualifying repairs, and equipment credit toward qualifying new door or opener equipment. Pay once for the year or in 12 automatic monthly payments.',
+        'directAnswer' => 'TwinShield is our 12-month garage-door membership in three tiers. Core is $12.99 a month or $149 once, Priority is $18.99 a month or $199 once, and Premier is $24.99 a month or $279 once. Every tier includes 10% off the qualifying repair you enroll on, a tune-up, repair savings, and equipment credit.',
         'needs' => [
             'You want ongoing care for the door and opener plus savings on repairs instead of booking visits one at a time.',
             'You want to build equipment credit toward a future door or opener purchase.',
@@ -798,16 +798,16 @@ return [
         ],
         'options' => [
             [
-                'option' => 'TwinShield Core - Essential Care',
-                'tradeoff' => 'The basic tier. 1 tune-up and safety inspection during the term, 5% off future qualifying repairs, 50% off future standard service-call fees, and equipment credit of 25 cents per dollar in eligible membership payments, up to the Core maximum.',
+                'option' => 'TwinShield Core - Essential Care: $12.99 a month for 12 months, or $149 once',
+                'tradeoff' => 'The entry tier. 1 tune-up and safety inspection during the term, 5% off future qualifying repairs, 50% off future standard service-call fees, and equipment credit of 25 cents per dollar in eligible membership payments, up to $150.',
             ],
             [
-                'option' => 'TwinShield Priority (recommended)',
-                'tradeoff' => '1 tune-up and safety inspection, priority scheduling subject to availability, 7.5% off future qualifying repairs, 1 standard service-call fee waived then 50% off additional, and equipment credit of 35 cents per dollar, up to the Priority maximum.',
+                'option' => 'TwinShield Priority - Best Value: $18.99 a month for 12 months, or $199 once',
+                'tradeoff' => 'The recommended tier. 1 tune-up and safety inspection, priority scheduling subject to availability, 7.5% off future qualifying repairs, 1 standard service-call fee waived then 50% off additional, and equipment credit of 35 cents per dollar, up to $300.',
             ],
             [
-                'option' => 'TwinShield Premier - Maximum Care',
-                'tradeoff' => '2 tune-ups and safety inspections, highest scheduling priority subject to availability, 10% off future qualifying repairs, 1 standard service-call fee waived then 50% off additional, an opener surge-protection device benefit, and equipment credit of 50 cents per dollar, up to the Premier maximum.',
+                'option' => 'TwinShield Premier - Maximum Care: $24.99 a month for 12 months, or $279 once',
+                'tradeoff' => '2 tune-ups and safety inspections, highest scheduling priority subject to availability, 10% off future qualifying repairs, 1 service-call fee waived then 50% off additional, an opener surge-protection benefit, and equipment credit of 50 cents per dollar, up to $500.',
             ],
         ],
         'prepare' => [
@@ -822,11 +822,11 @@ return [
             ],
             [
                 'question' => 'How much does TwinShield cost?',
-                'answer' => 'Pricing is set per tier, with one annual payment or 12 automatic monthly payments. Our office quotes the exact numbers when you call, so nobody enrolls around a stale figure posted online.',
+                'answer' => 'Core is $12.99 a month or $149 once. Priority is $18.99 a month or $199 once. Premier is $24.99 a month or $279 once. Monthly billing means 12 payments across the fixed term: $155.88 for Core, $227.88 for Priority, and $299.88 for Premier. The annual option totals less than twelve monthly payments.',
             ],
             [
                 'question' => 'How does equipment credit work?',
-                'answer' => 'Core earns 25 cents, Priority 35 cents, and Premier 50 cents for every dollar in eligible membership payments received, up to a fixed maximum for each tier. Failed, refunded, or charged-back payments do not earn credit. Our office verifies the exact balance before it is quoted or applied toward qualifying new door or opener equipment.',
+                'answer' => 'Core earns 25 cents, Priority 35 cents, and Premier 50 cents for every dollar in eligible membership payments received, up to $150, $300, and $500. Twelve monthly Core payments earn $38.97, or $37.25 on the annual option. Priority earns $79.76 or $69.65. Premier earns $149.94 or $139.50. Failed, refunded, or charged-back payments earn nothing, and our office verifies the exact balance before it is quoted or applied.',
             ],
             [
                 'question' => 'Can a technician tell me my exact credit balance?',

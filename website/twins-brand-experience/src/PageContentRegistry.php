@@ -58,6 +58,31 @@ final class PageContentRegistry
 
     private const MARKET_PREFIXES = ['wi', 'ky', 'il'];
 
+    /**
+     * The membership page is the one page that publishes rates. Service prices
+     * stay quote-only because they depend on the door; membership rates are
+     * fixed program figures that are the same for every customer.
+     */
+    private const MEMBERSHIP_PATH = '/protection-plans/';
+
+    /** Exact plan names, permitted as proper nouns rather than claims. */
+    private const MEMBERSHIP_PLAN_NAMES = [
+        'TwinShield Core - Essential Care',
+        'TwinShield Priority - Best Value',
+        'TwinShield Premier - Maximum Care',
+    ];
+
+    /**
+     * Every currency amount the membership page may publish, pinned to the
+     * approved program so a stale or mistyped rate fails closed here instead
+     * of reaching a customer. Tier order: Core, Priority, Premier.
+     */
+    private const MEMBERSHIP_RATES = [
+        '12.99', '149', '155.88', '38.97', '37.25', '150',
+        '18.99', '199', '227.88', '79.76', '69.65', '300',
+        '24.99', '279', '299.88', '149.94', '139.50', '500',
+    ];
+
     private array $records;
 
     public function __construct(array $records)
@@ -180,20 +205,42 @@ final class PageContentRegistry
 
         $values = $this->flattenValues($record);
         $customerText = implode("\n", $values);
+        $publishesRates = $path === self::MEMBERSHIP_PATH;
+        $claimText = $publishesRates
+            ? str_replace(self::MEMBERSHIP_PLAN_NAMES, '', $customerText)
+            : $customerText;
         if (
             preg_match('/\(\d{3}\)\s*\d{3}-\d{4}/', $customerText)
             || preg_match('/\b(?:Wisconsin|Kentucky|Illinois|Madison|Milwaukee|Rockford|Lexington)\b/i', $customerText)
-            || preg_match('/(?:\$|USD)\s*\d|\d+\s*[-–]\s*\d+\s*(?:dollars?|USD)/i', $customerText)
-            || preg_match('/#1|number one|No\.\s*1|top-rated|\bbest\b/i', $customerText)
+            || (!$publishesRates && preg_match('/(?:\$|USD)\s*\d|\d+\s*[-–]\s*\d+\s*(?:dollars?|USD)/i', $customerText))
+            || preg_match('/#1|number one|No\.\s*1|top-rated|\bbest\b/i', $claimText)
             || preg_match('/\b(?:warranty|guarantee|certified|certification|years in business|cycle rating)\b/i', $customerText)
             || preg_match('/\b(?:24\/7|365|same-day|same-visit|in-one-visit|fastest|most|often|usually|likely|quieter)\b|lower cost|higher cost|fewer return visits/i', $customerText)
             || preg_match('/replace (?:the )?spring yourself|DIY spring|with the proper tools/i', $customerText)
         ) {
             throw new \InvalidArgumentException('A fixed page-content record contains prohibited copy.');
         }
+        if ($publishesRates) {
+            $this->assertPublishedRates($customerText);
+        }
         if ($path === '/garage-door-spring-repair/') {
             if (stripos($record['safety'], 'dangerous tension') === false || stripos($record['safety'], 'trained professionals') === false) {
                 throw new \InvalidArgumentException('The fixed spring safety boundary is incomplete.');
+            }
+        }
+    }
+
+    private function assertPublishedRates(string $customerText): void
+    {
+        if (preg_match('/\bUSD\b|\d+\s*[-–]\s*\d+\s*dollars?/i', $customerText) === 1) {
+            throw new \InvalidArgumentException('A published rate uses an unapproved currency form.');
+        }
+        if (preg_match_all('/\$(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/', $customerText, $amounts) === false) {
+            throw new \InvalidArgumentException('A published rate could not be read.');
+        }
+        foreach ($amounts[1] as $amount) {
+            if (!in_array(str_replace(',', '', $amount), self::MEMBERSHIP_RATES, true)) {
+                throw new \InvalidArgumentException('A published rate is not an approved program figure.');
             }
         }
     }

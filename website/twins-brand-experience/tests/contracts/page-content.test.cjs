@@ -21,6 +21,19 @@ const routes = [
   '/protection-plans/',
 ];
 const requiredKeys = ['h1', 'directAnswer', 'needs', 'safety', 'process', 'options', 'prepare', 'faqs', 'links'];
+// The membership page publishes fixed program rates; every other page stays
+// quote-only. Both sets are pinned so a stale figure fails here, not live.
+const membershipRoute = '/protection-plans/';
+const membershipRates = new Set([
+  '12.99', '149', '155.88', '38.97', '37.25', '150',
+  '18.99', '199', '227.88', '79.76', '69.65', '300',
+  '24.99', '279', '299.88', '149.94', '139.50', '500',
+]);
+const planNames = [
+  'TwinShield Core - Essential Care',
+  'TwinShield Priority - Best Value',
+  'TwinShield Premier - Maximum Care',
+];
 
 const read = relative => fs.readFileSync(path.join(root, relative), 'utf8');
 const wordCount = value => value.trim().split(/\s+/).length;
@@ -66,6 +79,28 @@ test('fixed page-content config contains exactly thirteen conservative bespoke r
   assert.doesNotMatch(values, /\(\d{3}\)\s*\d{3}-\d{4}|(?:Wisconsin|Kentucky|Illinois|Madison|Milwaukee|Rockford|Lexington)/i);
   assert.doesNotMatch(values, /#1|number one|No\.\s*1|top-rated|replace (?:the )?spring yourself|DIY spring|with the proper tools/i);
   assert.doesNotMatch(values, /\b(?:24\/7|365|same-day|same-visit|in-one-visit|fastest|most|often|usually|likely|quieter|fewer return visits)\b/i);
+
+  const blocks = recordBlocks(source);
+  const quoteOnly = [...blocks]
+    .filter(([route]) => route !== membershipRoute)
+    .flatMap(([, block]) => customerValues(block))
+    .join('\n');
+  assert.doesNotMatch(quoteOnly, /(?:\$|USD)\s*\d/i, 'service pages stay quote-only');
+  assert.doesNotMatch(quoteOnly, /\bbest\b/i, 'service pages carry no superlative');
+
+  const membership = customerValues(blocks.get(membershipRoute)).join('\n');
+  for (const amount of membership.matchAll(/\$(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/g)) {
+    assert.ok(membershipRates.has(amount[1].replace(/,/g, '')), `unapproved published rate $${amount[1]}`);
+  }
+  assert.doesNotMatch(membership, /\bUSD\b/i, 'published rates use one currency form');
+  assert.doesNotMatch(
+    planNames.reduce((text, name) => text.split(name).join(''), membership),
+    /\bbest\b/i,
+    'best appears only inside the exact plan name',
+  );
+  for (const rate of ['12.99', '149', '18.99', '199', '24.99', '279']) {
+    assert.ok(membership.includes(`$${rate}`), `membership page omits the $${rate} rate`);
+  }
 
   const spring = recordBlocks(source).get('/garage-door-spring-repair/');
   assert.match(scalar(spring, 'safety'), /dangerous tension/i);
