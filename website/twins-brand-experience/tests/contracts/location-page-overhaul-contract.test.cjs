@@ -75,3 +75,35 @@ test('location pages move the animated door up and give every service a fixed vi
   assert.match(css, /\.twins-location-system/);
   assert.match(css, /\.twins-location-service-art/);
 });
+
+test('location sections use accessible CSS-only garage door panel framing', () => {
+  for (const section of [
+    'system',
+    'services',
+    'guidance',
+    'process',
+    'branch',
+    'nearby',
+    'faq',
+  ]) {
+    assert.match(css, new RegExp(`\\.twins-location-${section}`),
+      `location texture CSS omits ${section}`);
+  }
+
+  for (const token of [
+    '--twins-location-panel-width',
+    '--twins-location-panel-opacity',
+    '--twins-location-panel-line',
+    '--twins-location-panel-track',
+  ]) {
+    assert.match(css, new RegExp(token), `location texture CSS omits ${token}`);
+  }
+
+  assert.match(css, /pointer-events:\s*none/);
+  assert.match(css, /isolation:\s*isolate/);
+  assert.match(css, /\.twins-location-system[\s\S]*\.twins-location-faq[\s\S]*::before/);
+  assert.match(css, /@media \(max-width: 768px\)[\s\S]*--twins-location-panel-width:\s*150px/);
+  assert.match(css, /@media \(max-width: 480px\)[\s\S]*--twins-location-panel-width:\s*120px/);
+  assert.doesNotMatch(template, /twins-location-panel/,
+    'decorative location textures must not add template markup');
+});
