@@ -82,6 +82,17 @@ test('location pages move the animated door up and give every service a fixed vi
 test('full location fixture retains exact generated door curtain classes and the WI footer catalog', () => {
   const arts = fixture.match(/<svg\b[^>]*twins-brand-door-art--(?:door-open|door)\b[\s\S]*?<\/svg>/g) || [];
   assert.equal(arts.length, 3, 'fixture must include system, final-CTA, and footer door art');
+  assert.match(arts[0], /^<svg viewBox="0 0 220 190" class="twins-brand-door-art twins-brand-door-art--door-open twins-location-system-art" aria-hidden="true" focusable="false">/);
+  assert.match(arts[0], /<defs><clipPath id="twins-door-clip-location-system"><rect x="20" y="20" width="180" height="150" rx="4"\/><\/clipPath><\/defs><rect x="2" y="2" width="216" height="186" rx="10" class="twins-da-gold"\/><rect x="11" y="11" width="198" height="168" rx="6" class="twins-da-navy"\/><rect x="20" y="20" width="180" height="150" rx="4" class="twins-da-interior"\/><ellipse cx="110" cy="168" rx="74" ry="26" class="twins-da-glow"\/><rect x="34" y="150" width="152" height="6" rx="3" class="twins-da-floor"\/><g clip-path="url\(#twins-door-clip-location-system\)"><g class="twins-da-curtain"><rect x="20" y="20" width="180" height="150" rx="4" class="twins-da-face"\/>/);
+  const expectedPlainClasses = [
+    'twins-brand-cta-art',
+    'twins-brand-footer-door',
+  ];
+  for (const [index, extraClass] of expectedPlainClasses.entries()) {
+    const art = arts[index + 1];
+    assert.match(art, new RegExp(`^<svg viewBox="0 0 220 190" class="twins-brand-door-art twins-brand-door-art--door ${extraClass}" aria-hidden="true" focusable="false"><rect x="2" y="2" width="216" height="186" rx="10" class="twins-da-gold"\\/><rect x="11" y="11" width="198" height="168" rx="6" class="twins-da-navy"\\/><rect x="20" y="20" width="180" height="150" rx="4" class="twins-da-face"\\/><rect x="26.0" y="26.0"`));
+  }
+  assert.doesNotMatch(fixture, /twins-da-gold-outer|viewBox="0 0 240 220"/);
   for (const art of arts) {
     assert.equal((art.match(/class="twins-da-window-frame"/g) || []).length, 4);
     assert.equal((art.match(/class="twins-da-glass"/g) || []).length, 4);

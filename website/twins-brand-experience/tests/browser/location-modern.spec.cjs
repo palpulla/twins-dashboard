@@ -81,6 +81,11 @@ for (const viewport of viewports) {
       '.twins-brand-footer-door.twins-brand-door-art--door',
     ]) {
       const art = page.locator(selector);
+      await expect(art).toHaveAttribute('viewBox', '0 0 220 190');
+      await expect(art.locator('.twins-da-gold')).toHaveCount(1);
+      await expect(art.locator('.twins-da-gold-outer')).toHaveCount(0);
+      await expect(art.locator('rect.twins-da-navy[x="11"][y="11"][width="198"][height="168"]')).toHaveCount(1);
+      await expect(art.locator('rect.twins-da-face[x="20"][y="20"][width="180"][height="150"]')).toHaveCount(1);
       await expect(art.locator('.twins-da-window-frame')).toHaveCount(4);
       await expect(art.locator('.twins-da-glass')).toHaveCount(4);
       await expect(art.locator('.twins-da-glass-hi')).toHaveCount(4);
@@ -88,6 +93,8 @@ for (const viewport of viewports) {
       await expect(art.locator('.twins-da-panel-inner')).toHaveCount(12);
     }
     await expect(page.locator('.twins-location-system .twins-da-curtain')).toHaveCount(1);
+    await expect(page.locator('.twins-location-system clipPath rect')).toHaveAttribute('width', '180');
+    await expect(page.locator('.twins-location-system clipPath rect')).toHaveAttribute('height', '150');
 
     const hierarchy = await page.locator('.twins-location-hero').evaluate(hero => {
       const quote = hero.querySelector('.twins-brand-cta--quote');
