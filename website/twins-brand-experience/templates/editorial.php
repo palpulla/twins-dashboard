@@ -124,6 +124,7 @@ $napRating = null;
 $napCount = '';
 $napAddress = '';
 $locationNearbyLinks = [];
+$locationPath = isset($context['path']) && is_string($context['path']) ? $context['path'] : '';
 $locationNavMarketKey = $marketKey;
 if ($isLocation) {
     $napSummaryFile = dirname(__DIR__) . '/config/review-summary.php';
@@ -141,7 +142,20 @@ if ($isLocation) {
         ? $context['metroAddress']
         : ($metroAddresses[$locationMetro] ?? (isset($market['address']) && is_string($market['address']) ? $market['address'] : ''));
 
-    $locationNavMarketKey = $locationMetro === 'rockford' ? 'il-preview' : 'wi';
+    if (
+        $locationMetro === 'rockford'
+        || $marketKey === 'il-preview'
+        || preg_match('~^/il/location/[a-z][a-z0-9-]{0,39}/$~D', $locationPath) === 1
+    ) {
+        $locationNavMarketKey = 'il-preview';
+    } elseif (
+        $marketKey === 'ky'
+        || preg_match('~^/ky/location/[a-z][a-z0-9-]{0,39}/$~D', $locationPath) === 1
+    ) {
+        $locationNavMarketKey = 'ky';
+    } else {
+        $locationNavMarketKey = 'wi';
+    }
     $nearbyByMetro = [
         'madison' => [
             ['Madison', 'city-madison'],
@@ -176,6 +190,12 @@ if ($isLocation) {
         static fn(array $item): bool => strpos($item[1], 'city-') === 0 && strcasecmp($item[0], $locationLabel) !== 0
     )), 0, 6);
 }
+$locationNearbyKicker = $locationNavMarketKey === 'ky' ? 'Kentucky garage door services' : 'Nearby service areas';
+$locationNearbyTitle = $locationNavMarketKey === 'ky'
+    ? 'Explore repair, installation, and opener service'
+    : 'Garage door help beyond ' . $locationLabel;
+$locationNearbyActionRoute = $locationNavMarketKey === 'ky' ? 'services' : 'service-area';
+$locationNearbyActionLabel = $locationNavMarketKey === 'ky' ? 'View all garage door services' : 'View all service areas';
 require_once dirname(__DIR__) . '/components/door-art.php';
 $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
 ?>
@@ -341,10 +361,10 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
     <section class="twins-location-nearby" aria-labelledby="twins-location-nearby-title" data-location-reveal>
       <div class="twins-location-section-heading">
         <div>
-          <span class="twins-brand-kicker">Nearby service areas</span>
-          <h2 id="twins-location-nearby-title">Garage door help beyond <?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?></h2>
+          <span class="twins-brand-kicker"><?= htmlspecialchars($locationNearbyKicker, ENT_QUOTES, 'UTF-8') ?></span>
+          <h2 id="twins-location-nearby-title"><?= htmlspecialchars($locationNearbyTitle, ENT_QUOTES, 'UTF-8') ?></h2>
         </div>
-        <a href="<?= htmlspecialchars($experience->route('service-area', $locationNavMarketKey), ENT_QUOTES, 'UTF-8') ?>">View all service areas</a>
+        <a href="<?= htmlspecialchars($experience->route($locationNearbyActionRoute, $locationNavMarketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($locationNearbyActionLabel, ENT_QUOTES, 'UTF-8') ?></a>
       </div>
       <?php if ($locationNearbyLinks !== []): ?>
         <nav class="twins-location-nearby-grid" aria-label="Nearby garage door service areas">

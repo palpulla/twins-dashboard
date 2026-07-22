@@ -60,6 +60,13 @@ final class RendererHarnessAssetResolver implements Twins\BrandExperience\AssetR
 
 final class RendererHarnessRouteAdapter implements Twins\BrandExperience\RouteAdapter
 {
+    private const KY_ROUTE_OVERRIDES = [
+        'services' => '/ky/garage-door-services/',
+        'repair' => '/ky/garage-door-repair/',
+        'installation' => '/ky/garage-door-installation/',
+        'opener-repair' => '/ky/garage-door-opener-repair/',
+    ];
+
     private const ROUTES = [
         'home' => '/',
         'services' => '/garage-door-services/',
@@ -138,6 +145,12 @@ final class RendererHarnessRouteAdapter implements Twins\BrandExperience\RouteAd
 
     public function route(string $routeKey, string $marketKey): string
     {
+        if ($marketKey === 'ky' && $routeKey === 'service-area') {
+            throw new DomainException('Kentucky does not expose a service-area route.');
+        }
+        if ($marketKey === 'ky' && isset(self::KY_ROUTE_OVERRIDES[$routeKey])) {
+            return self::KY_ROUTE_OVERRIDES[$routeKey];
+        }
         if (!isset(self::ROUTES[$routeKey])) throw new DomainException('Unknown renderer route key.');
         return self::ROUTES[$routeKey];
     }
@@ -484,6 +497,31 @@ $lexingtonFooter = $stagingExperience->renderFooter([
 $expect(strpos($lexingtonFooter, 'Call Now') !== false, 'Lexington location footer is missing Call Now');
 $expect(substr_count($lexingtonFooter, 'Get a Free Quote') >= 2, 'Lexington location footer must repeat Get a Free Quote');
 $expect(strpos($lexingtonFooter, 'Call Twins') === false, 'Lexington location footer retained the non-location call label');
+
+$lexingtonLocation = $stagingExperience->renderEditorial([
+    'environment' => 'staging',
+    'market' => 'ky',
+    'path' => '/ky/location/lexington/',
+    'title' => 'Lexington',
+    'classification' => 'location',
+], '<p>LEGACY LEXINGTON LOCATION BODY</p>', 'location');
+$lexingtonServiceLinks = [];
+preg_match_all('~<a class="twins-location-service-link" href="([^"]+)">~', $lexingtonLocation, $lexingtonServiceLinks);
+$expect(
+    ($lexingtonServiceLinks[1] ?? []) === [
+        '/ky/garage-door-repair/',
+        '/ky/garage-door-opener-repair/',
+        '/ky/garage-door-installation/',
+        '/ky/garage-door-services/',
+    ],
+    'Lexington pathway did not retain Kentucky service destinations'
+);
+$expect(strpos($lexingtonLocation, 'href="/wi/') === false, 'Lexington body emitted a Wisconsin destination');
+$expect(strpos($lexingtonLocation, 'Kentucky garage door services') !== false, 'Lexington omitted the truthful Kentucky services fallback');
+$expect(strpos($lexingtonLocation, '>View all garage door services</a>') !== false, 'Lexington omitted the valid Kentucky services action');
+$expect(substr_count($lexingtonLocation, 'href="/ky/garage-door-services/"') === 2, 'Lexington did not reuse the supported Kentucky services route for maintenance and the services fallback');
+$expect(strpos($lexingtonLocation, 'twins-location-nearby-grid') === false, 'Lexington invented nearby Kentucky towns');
+$expect(strpos($lexingtonLocation, 'LEGACY LEXINGTON LOCATION BODY') === false, 'Lexington rendered the preserved legacy body');
 
 $illinoisService = $stagingExperience->renderService([
     'environment' => 'staging',

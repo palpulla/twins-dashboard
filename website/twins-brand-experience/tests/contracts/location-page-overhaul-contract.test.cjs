@@ -73,12 +73,35 @@ test('location services form one connected complete-system pathway', () => {
   assert.match(template, /Garage door installation/);
   assert.match(template, /Preventive maintenance/);
   assert.match(template, /'title' => 'Preventive maintenance',[\s\S]*?'route' => 'services'/);
-  for (const marketKey of ['wi', 'il-preview']) {
+  for (const marketKey of ['wi', 'ky', 'il-preview']) {
     const routeBlock = stagingRoutes.match(new RegExp(`'${marketKey}'\\s*=>\\s*\\[([\\s\\S]*?)\\n\\s*\\],`));
     assert.ok(routeBlock, `${marketKey} route block is missing`);
     assert.match(routeBlock[1], /'services'\s*=>/,
       `${marketKey} must support the shared complete-services destination`);
   }
+  const kyRouteBlock = stagingRoutes.match(/'ky'\s*=>\s*\[([\s\S]*?)\n\s*\],/);
+  assert.ok(kyRouteBlock, 'ky route block is missing');
+  for (const [routeKey, routePath] of [
+    ['services', '/ky/garage-door-services/'],
+    ['repair', '/ky/garage-door-repair/'],
+    ['opener-repair', '/ky/garage-door-opener-repair/'],
+    ['installation', '/ky/garage-door-installation/'],
+  ]) {
+    assert.match(kyRouteBlock[1], new RegExp(`'${routeKey}'\\s*=>\\s*'${routePath.replaceAll('/', '\\/')}'`),
+      `Kentucky route ${routeKey} must stay market-local`);
+  }
+  assert.doesNotMatch(kyRouteBlock[1], /'service-area'\s*=>/,
+    'Kentucky must not invent an unsupported service-area route');
+  assert.doesNotMatch(locationContent, /'lexington'\s*=>/,
+    'Kentucky routing must not invent a Lexington location-content record');
+  assert.match(template, /\$locationPath\s*=\s*isset\(\$context\['path'\]\)/);
+  assert.match(template, /\$locationNavMarketKey\s*=\s*'ky'/,
+    'Kentucky locations must retain the normalized Kentucky route market');
+  assert.match(template, /\$locationNearbyActionRoute\s*=\s*\$locationNavMarketKey === 'ky'\s*\?\s*'services'\s*:\s*'service-area'/);
+  assert.match(template, /\$locationNearbyActionLabel\s*=\s*\$locationNavMarketKey === 'ky'\s*\?\s*'View all garage door services'\s*:\s*'View all service areas'/);
+  assert.match(template, /\$experience->route\(\$locationNearbyActionRoute,\s*\$locationNavMarketKey\)/);
+  assert.match(experience, /\(\?:wi\|il\|ky\)\/location/,
+    'normalized Kentucky location paths must participate in location-content lookup');
   assert.match(css, /\.twins-location-service-pathway::before/);
   assert.match(css, /\.twins-location-service-pathway\s*\{[^}]*grid-template-columns:\s*repeat\(4,\s*minmax\(0,\s*1fr\)\)/);
   assert.doesNotMatch(template, /twins-location-service-card/,

@@ -337,7 +337,7 @@ final class Experience
         $slug = null;
         if ($path === '/wi/garage-door-repair-in-milwaukee-wi/') {
             $slug = 'milwaukee';
-        } elseif (preg_match('~^/(?:wi|il)/location/([a-z][a-z0-9-]{0,39})/$~D', $path, $match) === 1) {
+        } elseif (preg_match('~^/(?:wi|il|ky)/location/([a-z][a-z0-9-]{0,39})/$~D', $path, $match) === 1) {
             $slug = $match[1];
         } elseif (preg_match('~^/location/([a-z][a-z0-9-]{0,39})/$~D', $path, $match) === 1) {
             $slug = $match[1];
