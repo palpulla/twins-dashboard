@@ -139,6 +139,28 @@ for (const viewport of viewports) {
       expect(cinematicHero.proofColumns, `${viewport.width}px proof stacks into one column`).toBe(1);
     }
 
+    const processConnector = await page.locator('.twins-location-process-list').evaluate(list => {
+      const connector = getComputedStyle(list, '::before');
+      const first = list.querySelector('li');
+      const marker = first.querySelector('span');
+      const heading = first.querySelector('h3');
+      const rect = node => node.getBoundingClientRect();
+      return {
+        connectorWidth: Number.parseFloat(connector.width),
+        connectorHeight: Number.parseFloat(connector.height),
+        columns: getComputedStyle(list).gridTemplateColumns.split(' ').filter(Boolean).length,
+        marker: rect(marker),
+        heading: rect(heading),
+      };
+    });
+    if (viewport.width <= 1024) {
+      expect(processConnector.columns, `${viewport.width}px process steps stack`).toBe(1);
+      expect(processConnector.connectorHeight, `${viewport.width}px process connector is vertical`).toBeGreaterThan(processConnector.connectorWidth);
+      expect(processConnector.heading.left - processConnector.marker.left, `${viewport.width}px process copy clears its step marker`).toBeGreaterThanOrEqual(75);
+    } else {
+      expect(processConnector.connectorWidth, `${viewport.width}px process connector remains horizontal`).toBeGreaterThan(processConnector.connectorHeight);
+    }
+
     const mascotVisibility = await page.locator('.twins-location-twin').evaluateAll(nodes => nodes.map(node => {
       const style = getComputedStyle(node);
       const rect = node.getBoundingClientRect();

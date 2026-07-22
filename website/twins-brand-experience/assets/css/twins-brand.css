@@ -1478,7 +1478,17 @@ body.twins-brand-experience .twins-location-nearby-grid a:is(:hover, :focus-visi
   .twins-location-hero-proof > div:first-child { border-top: 0; }
   .twins-location-service-pathway,
   .twins-location-process-list { grid-template-columns: 1fr; }
-  .twins-location-process-list li { min-height: 0; }
+  .twins-location-process-list { gap: 36px; }
+  .twins-location-process-list::before {
+    top: 28px;
+    right: auto;
+    bottom: 28px;
+    left: 28px;
+    width: 1px;
+    height: auto;
+  }
+  .twins-location-process-list li { min-height: 0; padding: 0 0 0 82px; }
+  .twins-location-process-list span { position: absolute; top: 0; left: 0; }
   .twins-location-system::before,
   .twins-location-system::after,
   .twins-location-services::before,

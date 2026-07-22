@@ -235,9 +235,11 @@ test('Twin component fails closed unless its character and placement are an appr
 });
 
 test('supporting sections alternate cinematic and warm planes without generic card grids', () => {
+  assert.match(template, /class="twins-location-system"[^>]*data-location-reveal/);
   assert.match(template, /class="twins-location-guidance"[^>]*data-location-reveal/);
   assert.match(template, /class="twins-location-process"[^>]*data-location-reveal/);
   assert.match(template, /class="twins-location-branch"[^>]*data-location-reveal/);
+  assert.match(template, /class="twins-location-nearby"[^>]*data-location-reveal/);
   assert.match(template, /class="twins-brand-faq twins-location-faq"[^>]*data-location-reveal/);
   assert.match(template, /class="twins-brand-final-cta<\?= \$isLocation \? ' twins-location-final-cta' : '' \?>"[^>]*\$isLocation \? ' data-location-reveal' : ''/);
   assert.match(css, /\.twins-location-guidance\s*\{[^}]*background:\s*#f4ead6/);
@@ -246,9 +248,15 @@ test('supporting sections alternate cinematic and warm planes without generic ca
   assert.match(css, /\.twins-location-faq\s*\{[^}]*background:\s*var\(--twins-white\)/);
 });
 
+test('stacked location process keeps its connector vertical and clears the step copy', () => {
+  assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.twins-location-process-list::before\s*\{[^}]*top:\s*28px[^}]*right:\s*auto[^}]*bottom:\s*28px[^}]*left:\s*28px[^}]*width:\s*1px[^}]*height:\s*auto/);
+  assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.twins-location-process-list li\s*\{[^}]*padding:\s*0 0 0 82px/);
+  assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.twins-location-process-list span\s*\{[^}]*position:\s*absolute[^}]*top:\s*0[^}]*left:\s*0/);
+});
+
 test('quote is primary copy and unverified urgency claims stay absent', () => {
   assert.match(template, />Get a Free Quote<\/a>/);
-  assert.match(template, /if \(\$isLocation\):[\s\S]*twins-brand-cta--quote[\s\S]*twins-brand-cta--call[\s\S]*else:/,
+  assert.match(template, /<div class="twins-brand-final-actions">\s*<\?php if \(\$isLocation\): \?>\s*<a class="twins-brand-cta twins-brand-cta--quote"[\s\S]*?>Get a Free Quote<\/a>\s*<a class="twins-brand-cta twins-brand-cta--call"[\s\S]*?>Call[\s\S]*?<\/a>\s*<\?php else: \?>/,
     'location final CTA must render quote before call');
   assert.match(footer, /\$isLocationFooter \? 'Get a Free Quote' : 'Request a Quote'/);
   assert.match(footer, /\$isLocationFooter \? 'Call Now' : 'Call Twins'/);
