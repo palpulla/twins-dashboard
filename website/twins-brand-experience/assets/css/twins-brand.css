@@ -1130,6 +1130,51 @@ body.twins-brand-experience .twins-location-system .twins-brand-kicker { color: 
   position: relative;
   z-index: 1;
 }
+.twins-location-page .twins-location-twin {
+  position: absolute;
+  z-index: 1;
+  display: block;
+  height: auto;
+  pointer-events: none;
+  filter: drop-shadow(10px 16px 7px rgba(0, 0, 0, .34));
+  transform-origin: 50% 100%;
+}
+.twins-location-page :is(.twins-location-system, .twins-location-guidance, .twins-location-final-cta) > :not(.twins-location-twin) {
+  position: relative;
+  z-index: 2;
+}
+.twins-location-page .twins-location-twin--system {
+  left: max(12px, calc((100vw - 1420px) / 2));
+  bottom: -12px;
+  width: clamp(132px, 12vw, 176px);
+}
+.twins-location-page .twins-location-twin--guidance {
+  right: max(8px, calc((100vw - 1480px) / 2));
+  bottom: -20px;
+  width: clamp(180px, 16vw, 218px);
+}
+.twins-location-page .twins-location-twin--final-left {
+  left: max(12px, calc((100vw - 1420px) / 2));
+  bottom: -14px;
+  width: clamp(128px, 11vw, 166px);
+}
+.twins-location-page .twins-location-twin--final-right {
+  right: max(8px, calc((100vw - 1480px) / 2));
+  bottom: -20px;
+  width: clamp(180px, 16vw, 224px);
+}
+.twins-location-page .twins-location-system {
+  padding-left: max(210px, calc((100vw - 1320px) / 2 + 176px));
+}
+.twins-location-page .twins-location-guidance {
+  padding-right: max(220px, calc((100vw - 1320px) / 2 + 190px));
+}
+.twins-location-page .twins-location-final-cta {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-inline: clamp(190px, 18vw, 260px);
+}
 .twins-location-system::before,
 .twins-location-system::after,
 .twins-location-services::before,
@@ -1427,6 +1472,37 @@ body.twins-brand-experience .twins-location-nearby-grid a:is(:hover, :focus-visi
     transform: translateX(70%);
     border-left-color: transparent;
   }
+  .twins-location-page .twins-location-system {
+    padding-right: 20px;
+    padding-bottom: 142px;
+    padding-left: 20px;
+  }
+  .twins-location-page .twins-location-guidance {
+    padding-right: 20px;
+    padding-bottom: 174px;
+    padding-left: 20px;
+  }
+  .twins-location-page .twins-location-final-cta {
+    padding-right: 20px;
+    padding-bottom: 174px;
+    padding-left: 20px;
+  }
+  .twins-location-page .twins-location-twin--system {
+    left: 12px;
+    bottom: 0;
+    width: min(112px, 29vw);
+  }
+  .twins-location-page .twins-location-twin--guidance {
+    right: 8px;
+    bottom: 0;
+    width: min(142px, 37vw);
+  }
+  .twins-location-page .twins-location-twin--final-left { display: none; }
+  .twins-location-page .twins-location-twin--final-right {
+    right: 8px;
+    bottom: 0;
+    width: min(148px, 38vw);
+  }
 }
 
 @media (max-width: 480px) {
@@ -1624,6 +1700,16 @@ body.twins-brand-experience .twins-brand-blog-page-link:is(:hover, :focus-visibl
 
 @keyframes twins-brand-float-left { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
 @keyframes twins-brand-float-right { 0%, 100% { transform: translateY(0) rotate(-.75deg); } 50% { transform: translateY(-18px) rotate(.75deg); } }
+@keyframes twins-location-float-left {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-6px) rotate(-1.25deg); }
+}
+@keyframes twins-location-float-right {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-6px) rotate(1.25deg); }
+}
+.twins-location-page .twins-location-twin--left { animation: twins-location-float-left 4.8s ease-in-out infinite; }
+.twins-location-page .twins-location-twin--right { animation: twins-location-float-right 6.2s ease-in-out .7s infinite; }
 .twins-brand-hero-door {
   position: absolute;
   inset: -2px;
@@ -1836,6 +1922,10 @@ body.twins-brand-experience .twins-brand-blog-page-link:is(:hover, :focus-visibl
   .twins-brand-experience *::before,
   .twins-brand-experience *::after { animation: none !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
   .twins-brand-twin { transform: none !important; }
+  .twins-location-page .twins-location-twin {
+    animation: none !important;
+    transform: none !important;
+  }
 }
 
 .twins-brand-catalog-compare-scroll { overflow-x: auto; }
