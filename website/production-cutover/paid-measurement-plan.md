@@ -358,3 +358,48 @@ does call tracking.
 - No changes were made to the Meta ad account during this investigation. Two
   pre-existing unpublished drafts ("Review and publish (2)") plus a `$49 Tune-Up
   – Hook Fixed (burnout)` draft ad were present before and after.
+
+## DEFECT FOUND 2026-07-22: LP forms do not capture UTMs
+
+End-to-end test of the new production financing LP (page 7367) proved the
+funnel works but **loses attribution**.
+
+**What works.** Submitted through the live form; two POSTs to
+`lp-lead-intake` returned HTTP 200; the lead landed in `lp_leads` with the
+correct `page` (`https://twinsgaragedoors.com/madison-financing-lp/`), the
+correct `service`, `status = synced`, and a populated `ghl_contact_id`. So
+page → edge function → Supabase → GHL is healthy.
+
+**What does not.** A second submission was made from a URL carrying the exact
+parameters the Meta ad emits:
+
+```
+/madison-financing-lp/?utm_source=facebook&utm_medium=paid_social
+                      &utm_campaign=attribution_test&utm_id=120254900000000000
+```
+
+The stored `utm` jsonb contained only `consent`, `service`, `form_variant`,
+`chooser_token`. **None of `utm_source`, `utm_medium`, `utm_campaign` or
+`utm_id` were persisted.**
+
+**Impact.** This is not specific to the new page — the handler is a single
+sitewide script (verified byte-identical on `/madison-tune-up-lp/`: same
+wrapper, same form, same two scripts of 10,459 and 3,350 chars). So
+`/madison-tune-up-lp/` and `/madison-garage-door-repair-lp/` have the same
+gap. Every LP lead reaches GHL with no campaign attribution, which is the
+"Unknown lead source" problem from the other direction: the Meta side now
+carries `utm_id`, GA4 will join cost to sessions — but the *lead record*
+still cannot be traced back to the ad that produced it.
+
+Turning on traffic budget before this is fixed buys leads you cannot
+attribute.
+
+**Fix:** the intake handler (or the LP markup) must read `location.search` on
+page load, persist the UTM set (ideally first-touch, in sessionStorage or a
+cookie so it survives navigation), and include it in the `lp-lead-intake`
+payload so it lands in the `utm` jsonb alongside the existing keys.
+
+**Test rows to clean up:** two `lp_leads` rows named `ZZTEST` (2026-07-22
+22:01:36Z and 22:03:16Z), phone `6088888785` (Twins' own LP number, chosen so
+any automation looped back in-house). Both synced, so the matching GHL
+contacts need deleting too.
