@@ -108,7 +108,9 @@ $articleServiceLinks = $isArticle
     : [];
 $articleHeroImage = $isArticle && isset($articleHero) && is_string($articleHero) ? $articleHero : '';
 $editorialTitleId = $isLocation ? 'twins-location-title' : 'twins-brand-editorial-title';
-$editorialTitleMarkup = '<h1 id="' . $editorialTitleId . '">' . htmlspecialchars($title, ENT_QUOTES, 'UTF-8') . '</h1>';
+$editorialTitleMarkup = '<h1 id="' . $editorialTitleId . '">' . ($isLocation
+    ? '<span>Garage door service</span><span class="twins-location-title-accent">in ' . htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') . '</span>'
+    : htmlspecialchars($title, ENT_QUOTES, 'UTF-8')) . '</h1>';
 
 $napSummary = [];
 $napRating = null;
@@ -173,46 +175,46 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
 <main id="twins-overhaul-main" class="twins-brand-page twins-brand-editorial-page<?= $isArticle ? ' twins-brand-article-page' : '' ?><?= $isLocation ? ' twins-location-page' : '' ?>">
   <?php if ($isLocation): ?>
     <header class="twins-location-hero" aria-labelledby="twins-location-title">
-      <div class="twins-location-hero-copy">
-        <span class="twins-brand-kicker">Garage door help in <?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?></span>
-        <?= $editorialTitleMarkup ?>
-        <p><?= htmlspecialchars($editorial['answer'], ENT_QUOTES, 'UTF-8') ?></p>
-        <div class="twins-location-actions">
-          <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
-          <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call <?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
+      <div class="twins-location-hero-stage" data-location-reveal>
+        <span class="twins-location-orbit twins-location-orbit--one" aria-hidden="true"></span>
+        <span class="twins-location-orbit twins-location-orbit--two" aria-hidden="true"></span>
+        <div class="twins-location-hero-copy">
+          <span class="twins-brand-kicker">Garage door help in <?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?></span>
+          <?= $editorialTitleMarkup ?>
+          <p><?= htmlspecialchars($editorial['answer'], ENT_QUOTES, 'UTF-8') ?></p>
+          <div class="twins-location-actions">
+            <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Get a Free Quote</a>
+            <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call <?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
+          </div>
         </div>
-        <p class="twins-location-hero-note">Family owned <span aria-hidden="true">&middot;</span> Licensed and insured <span aria-hidden="true">&middot;</span> Repair and installation</p>
+        <figure class="twins-location-hero-media">
+          <?php
+          $logicalKey = 'technician-at-work';
+          $sizes = '(max-width: 1024px) 100vw, 58vw';
+          $class = 'twins-location-hero-image';
+          $loading = 'eager';
+          require dirname(__DIR__) . '/components/picture.php';
+          ?>
+          <?php
+          $character = 'left';
+          $placement = 'hero';
+          require $twinCharacterComponent;
+          ?>
+        </figure>
+        <div class="twins-location-hero-proof" role="list" aria-label="Why homeowners call Twins Garage Doors">
+          <div role="listitem">
+            <?php if ($napRating !== null): ?>
+              <strong><span class="twins-brand-stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <?= htmlspecialchars((string) $napRating, ENT_QUOTES, 'UTF-8') ?> on Google</strong>
+              <span><?= $napCount !== '' ? htmlspecialchars($napCount, ENT_QUOTES, 'UTF-8') . ' customer reviews' : 'Verified customer reviews' ?></span>
+            <?php else: ?>
+              <strong>Customer-reviewed service</strong><span>Real feedback from Twins customers</span>
+            <?php endif; ?>
+          </div>
+          <div role="listitem"><strong>Family owned</strong><span>Run by twin brothers, not a franchise</span></div>
+          <div role="listitem"><strong>Licensed and insured</strong><span>Professional service for your home</span></div>
+        </div>
       </div>
-      <figure class="twins-location-hero-media">
-        <?php
-        $logicalKey = 'technician-at-work';
-        $sizes = '(max-width: 1024px) 100vw, 44vw';
-        $class = 'twins-location-hero-image';
-        $loading = 'eager';
-        require dirname(__DIR__) . '/components/picture.php';
-        ?>
-        <?php
-        $character = 'left';
-        $placement = 'hero';
-        require $twinCharacterComponent;
-        ?>
-        <figcaption>Careful diagnosis. Clear options. Work built around the complete door system.</figcaption>
-      </figure>
     </header>
-
-    <section class="twins-location-proof" aria-label="Why homeowners call Twins Garage Doors">
-      <div>
-        <?php if ($napRating !== null): ?>
-          <strong><span class="twins-brand-stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <?= htmlspecialchars((string) $napRating, ENT_QUOTES, 'UTF-8') ?> on Google</strong>
-          <span><?= $napCount !== '' ? htmlspecialchars($napCount, ENT_QUOTES, 'UTF-8') . ' customer reviews' : 'Verified customer reviews' ?></span>
-        <?php else: ?>
-          <strong>Customer-reviewed service</strong>
-          <span>Real feedback from Twins customers</span>
-        <?php endif; ?>
-      </div>
-      <div><strong>Family owned</strong><span>Run by twin brothers, not a franchise</span></div>
-      <div><strong>Licensed and insured</strong><span>Professional service for your home</span></div>
-    </section>
 
     <section class="twins-location-system" aria-labelledby="twins-location-system-title">
       <div class="twins-location-system-visual">

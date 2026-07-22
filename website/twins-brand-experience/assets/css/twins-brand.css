@@ -1043,70 +1043,108 @@ body.twins-brand-experience .twins-brand-service-phone { color: var(--twins-whit
 .twins-location-page { background: var(--twins-cream); }
 .twins-location-hero {
   position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, .88fr) minmax(420px, 1.12fr);
-  align-items: center;
-  gap: clamp(52px, 7vw, 112px);
-  padding: clamp(72px, 8vw, 124px) var(--twins-content-shell);
+  min-height: min(860px, calc(100svh - 84px));
+  padding: clamp(22px, 3vw, 46px) var(--twins-content-shell) clamp(34px, 5vw, 70px);
   color: var(--twins-white);
-  background-color: var(--twins-navy-950);
-  background-image: repeating-linear-gradient(0deg, transparent 0 92px, rgba(255,255,255,.035) 93px 95px);
+  background:
+    radial-gradient(circle at 76% 42%, rgba(44,105,174,.3), transparent 29%),
+    radial-gradient(circle at 42% 18%, rgba(255,200,61,.11), transparent 20%),
+    linear-gradient(132deg, #020d20 0%, var(--twins-navy-950) 48%, #092853 100%);
   overflow: hidden;
 }
-.twins-location-hero::after { content: ''; position: absolute; inset: auto var(--twins-content-shell) 0; height: 1px; background: rgba(255,200,61,.68); }
-.twins-location-hero-copy { align-self: center; max-width: 700px; }
+.twins-location-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .28;
+  background-image:
+    linear-gradient(rgba(164,195,226,.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(164,195,226,.1) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(90deg, #000, transparent 76%);
+}
+.twins-location-hero-stage {
+  position: relative;
+  max-width: 1480px;
+  min-height: 720px;
+  margin-inline: auto;
+  border: 1px solid rgba(167,198,231,.22);
+  border-radius: clamp(18px, 2vw, 30px);
+  overflow: hidden;
+  isolation: isolate;
+}
+.twins-location-hero-copy {
+  position: relative;
+  z-index: 4;
+  width: min(670px, 55%);
+  padding: clamp(74px, 8vw, 124px) 0 190px clamp(26px, 5vw, 78px);
+}
 body.twins-brand-experience .twins-location-hero .twins-brand-kicker { color: var(--twins-gold); }
 .twins-location-hero h1 {
+  display: grid;
   max-width: 760px;
   margin: 18px 0 24px;
   color: var(--twins-white);
   font-family: 'Lilita One', Impact, sans-serif;
-  font-size: clamp(3.2rem, 5.15vw, 5.45rem);
-  line-height: .95;
+  font-size: clamp(3.6rem, 6.15vw, 6.6rem);
+  line-height: .84;
   letter-spacing: .005em;
   text-transform: uppercase;
 }
-.twins-location-hero-copy > p:not(.twins-location-hero-note) {
-  max-width: 710px;
+.twins-location-title-accent { color: var(--twins-gold); }
+.twins-location-hero-copy > p {
+  max-width: 640px;
   margin: 0;
-  color: #eef5ff;
-  font-size: clamp(1.06rem, 1.4vw, 1.24rem);
+  color: #eaf2fb;
+  font-size: clamp(1.05rem, 1.35vw, 1.22rem);
   font-weight: 700;
-  line-height: 1.65;
+  line-height: 1.62;
 }
 .twins-location-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
-.twins-location-hero-note { margin: 24px 0 0; color: #dce8f6; font-size: .93rem; font-weight: 900; }
-.twins-location-hero-note span { margin-inline: 8px; color: var(--twins-gold); }
 .twins-location-hero-media {
-  position: relative;
+  position: absolute;
+  z-index: 1;
+  inset: 0 0 0 36%;
   margin: 0;
-  padding-left: 26px;
-  border-left: 2px solid var(--twins-gold);
-  overflow: visible;
+  overflow: hidden;
 }
-.twins-location-hero-media picture { display: block; overflow: hidden; }
-.twins-location-hero-image {
-  display: block;
-  width: 100%;
-  min-height: 430px;
-  aspect-ratio: 1.32 / 1;
-  object-fit: cover;
+.twins-location-hero-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, #05152e 0%, rgba(5,21,46,.76) 14%, transparent 48%), linear-gradient(0deg, rgba(2,13,32,.9), transparent 48%);
 }
-.twins-location-hero-media figcaption { padding: 15px 0 0; color: #d7e3f0; background: transparent; font-size: .85rem; font-weight: 800; }
-
-.twins-location-proof {
+.twins-location-hero-media picture { display: block; width: 100%; height: 100%; }
+.twins-location-hero-image { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.twins-location-orbit {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+  border: 1px solid rgba(255,200,61,.3);
+  border-radius: 50%;
+}
+.twins-location-orbit--one { width: 620px; aspect-ratio: 1; right: -110px; top: -180px; }
+.twins-location-orbit--two { width: 390px; aspect-ratio: 1; right: 118px; top: 58px; border-color: rgba(167,198,231,.25); }
+.twins-location-hero-proof {
+  position: absolute;
+  z-index: 5;
+  right: clamp(18px, 3vw, 44px);
+  bottom: clamp(18px, 3vw, 38px);
+  left: clamp(18px, 3vw, 44px);
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  padding: 0 var(--twins-content-shell);
-  color: var(--twins-navy-950);
-  background: var(--twins-white);
-  border-bottom: 1px solid rgba(7,29,59,.16);
+  background: rgba(3,18,43,.68);
+  border: 1px solid rgba(184,210,237,.28);
+  border-radius: 14px;
+  backdrop-filter: blur(18px);
 }
-.twins-location-proof > div { display: grid; align-content: center; gap: 2px; min-height: 92px; padding: 18px clamp(20px,3vw,40px); border-left: 1px solid rgba(7,29,59,.14); }
-.twins-location-proof > div:first-child { border-left: 0; }
-.twins-location-proof strong { color: var(--twins-navy-950); font-size: 1.08rem; font-weight: 1000; }
-.twins-location-proof span { color: #24364e; font-size: .89rem; font-weight: 800; }
-.twins-location-proof .twins-brand-stars { color: var(--twins-navy-950); letter-spacing: .02em; }
+.twins-location-hero-proof > div { display: grid; align-content: center; gap: 3px; min-height: 96px; padding: 18px 24px; border-left: 1px solid rgba(184,210,237,.2); }
+.twins-location-hero-proof > div:first-child { border-left: 0; }
+.twins-location-hero-proof strong { color: var(--twins-white); font-size: 1.02rem; font-weight: 1000; }
+.twins-location-hero-proof span { color: #cbd9e8; font-size: .86rem; font-weight: 800; }
+.twins-location-hero-proof .twins-brand-stars { color: var(--twins-gold); }
 
 .twins-location-system {
   display: grid;

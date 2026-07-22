@@ -16,7 +16,6 @@ const fixture = fs.readFileSync(path.join(root, 'tests/browser/fixtures/location
 test('location template contains the approved high-density landing page sections', () => {
   for (const className of [
     'twins-location-hero',
-    'twins-location-proof',
     'twins-location-services',
     'twins-location-guidance',
     'twins-location-process',
@@ -27,6 +26,23 @@ test('location template contains the approved high-density landing page sections
   }
   assert.doesNotMatch(template, /service-areas-panel\.php/,
     'location pages must not render the oversized all-city door panel');
+});
+
+test('location hero is one cinematic composition with integrated proof', () => {
+  for (const className of [
+    'twins-location-hero-stage',
+    'twins-location-title-accent',
+    'twins-location-hero-media',
+    'twins-location-orbit',
+    'twins-location-hero-proof',
+  ]) {
+    assert.match(template, new RegExp(className), `${className} is missing from the cinematic hero`);
+  }
+  assert.match(template, /Get a Free Quote/);
+  assert.match(template, /role="list"/);
+  assert.match(template, /role="listitem"/);
+  assert.doesNotMatch(template, /<\/header>\s*<section class="twins-location-proof"/,
+    'proof must remain inside the unified hero stage');
 });
 
 test('location service navigation has one repair destination and three explained cards', () => {
@@ -160,7 +176,11 @@ test('location sections use accessible CSS-only garage door panel framing', () =
 
 test('location design preserves the old display font and uses restrained premium geometry', () => {
   assert.match(css, /\.twins-location-hero h1\s*\{[^}]*font-family:\s*'Lilita One'/);
-  assert.match(css, /\.twins-location-hero-media\s*\{[^}]*border-left:\s*2px solid var\(--twins-gold\)/);
+  assert.match(css, /\.twins-location-title-accent\s*\{[^}]*color:\s*var\(--twins-gold\)/);
+  assert.match(css, /\.twins-location-hero-media\s*\{[^}]*position:\s*absolute/);
+  assert.match(css, /\.twins-location-hero-proof\s*\{[^}]*backdrop-filter:\s*blur/);
+  assert.doesNotMatch(css, /\.twins-location-hero-media\s*\{[^}]*border-left:/,
+    'the hero photo must not return to a boxed split-column treatment');
   assert.match(css, /\.twins-location-service-card\s*\{[^}]*border:\s*1px solid/);
   assert.doesNotMatch(css, /\.twins-location-service-card\s*\{[^}]*box-shadow:\s*8px 9px 0/);
   assert.match(css, /\.twins-location-page \.twins-location-twin\s*\{[^}]*pointer-events:\s*none/);
