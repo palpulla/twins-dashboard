@@ -116,6 +116,13 @@ Two blockers:
    Either way the property is unreliable for measuring paid traffic until this is
    resolved, and the cutover is the natural moment to resolve it.
 
+   **MITIGATED 2026-07-22:** added an unwanted-referral condition on the web
+   stream's Google tag — *Referral domain contains* `trafficheap.cc` — and
+   verified it persisted. This stops the spam being attributed as a referral
+   traffic source. It does **not** remove the hits if they are Measurement
+   Protocol ghosts, so it is a mitigation, not a cure; the property replacement
+   at cutover remains the real fix.
+
 2. **Key events: 10 in 28 days** (and 0 in the most recent 7). An earlier draft
    of this document said "0"; that was the 7-day figure read as if it were the
    whole picture. Key-event tracking is close to non-existent rather than
@@ -248,10 +255,29 @@ Each step is blocked by the one above it.
    messaging conversations and 27 form leads a month and are not the problem.
    Turn on only after a test lead is verified end-to-end into `lp_leads`.
 
-6. **GA4 Campaign data import** (Admin → Data import → *Campaign data*, Meta
-   BETA connector). This is the correct and only applicable data type — `Item
-   data`, `User data by User ID`, and `Custom event data` never apply here.
-   Declare the same constant `utm_source` / `utm_medium` as step 4.
+6. **GA4 Campaign data import** — **CONNECTED 2026-07-22.** Data source
+   `Meta_Ads_Campaign_Cost`, type *Campaign data*, Meta (BETA) connector, in
+   property 344700899. OAuth granted to Google Analytics Data Manager with
+   scopes `ads_read` + `business_management`; Business Center and Ad Account both
+   resolved to **Twins Garage Doors**. Runs **daily between 13:00–14:00
+   GMT-04:00**, importing all `paid_social` records. Status after creation:
+   *Processing* (first import; GA4 states imports take up to 30 min to land and
+   up to 24 h to appear in reports).
+
+   **Platform-to-source mapping — deliberate.** The connector pre-fills Meta's
+   defaults (`fb` for Facebook, `ig` for Instagram). Both were **overridden to
+   `facebook`**, and Audience Network, Messenger and Threads were **also set to
+   `facebook`**, with medium `paid_social`. Reason: the UTMs are literal strings
+   in the destination URL, not placement macros — every placement emits
+   `utm_source=facebook`, so all platform cost must map to that one source or it
+   will not join. Leaving Meta's `fb`/`ig` defaults in place would have produced
+   zero matches.
+
+   `Item data`, `User data by User ID` and `Custom event data` never apply here.
+
+   **Caveat:** these source/medium values **cannot be changed after creation**
+   (GA4 states this explicitly). If the UTM scheme ever changes, the data source
+   must be deleted and rebuilt.
 
 ## Deferred: closing the loop
 
