@@ -55,7 +55,7 @@ test('conversion controls retain the display font and location service links are
   const css = fs.readFileSync(path.join(root, 'assets/css/twins-brand.css'), 'utf8');
 
   assert.match(css, /\.twins-brand-cta\s*\{[^}]*font-family:\s*'Lilita One', Impact, sans-serif/);
-  assert.match(css, /\.twins-location-service-card a\s*\{[^}]*display:\s*(?:inline-)?flex[^}]*align-items:\s*center[^}]*min-height:\s*44px/);
+  assert.match(css, /\.twins-location-service-link\s*\{[^}]*display:\s*(?:inline-)?flex[^}]*align-items:\s*center[^}]*min-height:\s*44px/);
 });
 
 test('header carries a cache-independent guard against duplicate legacy chrome', () => {

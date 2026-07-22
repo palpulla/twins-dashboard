@@ -54,11 +54,17 @@ test('cinematic hero becomes a contained copy-media-proof sequence on narrow scr
   assert.match(css, /@media \(max-width: 480px\)[\s\S]*?\.twins-location-page \.twins-location-twin--hero\s*\{[^}]*display:\s*none/);
 });
 
-test('location service navigation has one repair destination and three explained cards', () => {
-  assert.match(template, /twins-location-service-card/);
+test('location services form one connected complete-system pathway', () => {
+  assert.match(template, /twins-location-service-pathway/);
+  assert.match(template, /twins-location-service-node/);
+  assert.match(template, /twins-location-service-index/);
+  assert.match(template, /twins-location-service-link/);
   assert.equal((template.match(/\['Garage Door Repair', 'repair'\]/g) || []).length, 1);
   assert.match(template, /Garage door opener service/);
   assert.match(template, /Garage door installation/);
+  assert.match(css, /\.twins-location-service-pathway::before/);
+  assert.doesNotMatch(template, /twins-location-service-card/,
+    'services must not return to three generic detached cards');
 });
 
 test('location copy never positions a branch as new or unproven', () => {
@@ -190,8 +196,8 @@ test('location design preserves the old display font and uses restrained premium
   assert.match(css, /\.twins-location-hero-proof\s*\{[^}]*backdrop-filter:\s*blur/);
   assert.doesNotMatch(css, /\.twins-location-hero-media\s*\{[^}]*border-left:/,
     'the hero photo must not return to a boxed split-column treatment');
-  assert.match(css, /\.twins-location-service-card\s*\{[^}]*border:\s*1px solid/);
-  assert.doesNotMatch(css, /\.twins-location-service-card\s*\{[^}]*box-shadow:\s*8px 9px 0/);
+  assert.match(css, /\.twins-location-service-node\s*\{[^}]*border-top:\s*1px solid/);
+  assert.doesNotMatch(css, /\.twins-location-service-node\s*\{[^}]*box-shadow:/);
   assert.match(css, /\.twins-location-page \.twins-location-twin\s*\{[^}]*pointer-events:\s*none/);
   assert.match(css, /\.twins-location-page \.twins-location-twin--hero\s*\{[^}]*clamp\(72px,\s*7vw,\s*104px\)/);
   assert.match(css, /\.twins-location-page \.twins-location-twin--guidance\s*\{[^}]*clamp\(92px,\s*8vw,\s*124px\)/);

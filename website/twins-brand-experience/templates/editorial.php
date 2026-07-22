@@ -230,14 +230,15 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
     <section class="twins-location-services" aria-labelledby="twins-location-services-title">
       <div class="twins-location-section-heading">
         <div>
-          <span class="twins-brand-kicker">How we can help</span>
-          <h2 id="twins-location-services-title">Repair the problem. Restore safe, smooth operation.</h2>
+          <span class="twins-brand-kicker">Complete garage door service</span>
+          <h2 id="twins-location-services-title">Find the failure. Restore the whole system.</h2>
         </div>
-        <p>A garage door is a connected system. Twins checks the door, counterbalance hardware, opener, controls, and safety equipment so the recommendation addresses the real cause.</p>
+        <p>Twins checks how the door, counterbalance hardware, opener, controls, and safety equipment work together before recommending the next step.</p>
       </div>
-      <div class="twins-location-service-grid">
-        <?php foreach ($locationServiceCards as $serviceCard): ?>
-          <article class="twins-location-service-card">
+      <div class="twins-location-service-pathway">
+        <?php foreach ($locationServiceCards as $index => $serviceCard): ?>
+          <article class="twins-location-service-node">
+            <span class="twins-location-service-index" aria-hidden="true">0<?= $index + 1 ?></span>
             <?= twins_brand_door_art(
                 $serviceCard['art'],
                 'twins-location-service-art',
@@ -250,7 +251,7 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
                 <li><?= htmlspecialchars($serviceItem, ENT_QUOTES, 'UTF-8') ?></li>
               <?php endforeach; ?>
             </ul>
-            <a href="<?= htmlspecialchars($experience->route($serviceCard['route'], $locationNavMarketKey), ENT_QUOTES, 'UTF-8') ?>">Explore <?= htmlspecialchars($serviceCard['title'], ENT_QUOTES, 'UTF-8') ?></a>
+            <a class="twins-location-service-link" href="<?= htmlspecialchars($experience->route($serviceCard['route'], $locationNavMarketKey), ENT_QUOTES, 'UTF-8') ?>">Explore <?= htmlspecialchars($serviceCard['title'], ENT_QUOTES, 'UTF-8') ?></a>
           </article>
         <?php endforeach; ?>
       </div>
