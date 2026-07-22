@@ -20,6 +20,7 @@ final class Experience
     private ApplicationAdapter $applications;
     private MarketRegistry $markets;
     private ?PageContentRegistry $pageContent = null;
+    private ?array $locationContentRecords = null;
     private string $root;
 
     public function __construct(
@@ -57,6 +58,7 @@ final class Experience
             $marketKey = $context['market'];
             $environment = $context['environment'];
             $market = $this->markets->resolve($marketKey, $environment);
+            $context['metroAddress'] = $this->metroAddressForContext($context, $market);
             $experience = $this;
             if (in_array($template, ['../components/header', '../components/footer', 'service', 'editorial'], true)) {
                 [$phone, $phoneHref] = $this->contactContext($context, $market);
@@ -82,6 +84,14 @@ final class Experience
                     if ($context['articleHero'] !== '') {
                         $articleHero = $this->rootRelativePath($context['articleHero'], 'Article hero path is invalid.');
                     }
+                }
+                $locationContent = null;
+                if ($kind === 'location') {
+                    $path = $context['path'] ?? null;
+                    if (!is_string($path)) {
+                        throw new \DomainException('Location render path is invalid.');
+                    }
+                    $locationContent = $this->locationContent($path);
                 }
             } elseif ($template === 'blog-index') {
                 $blogIndex = $this->blogIndexView($context);
@@ -320,6 +330,93 @@ final class Experience
         }
         $this->pageContent = new PageContentRegistry($records);
         return $this->pageContent;
+    }
+
+    private function locationContent(string $path): ?array
+    {
+        $slug = null;
+        if ($path === '/wi/garage-door-repair-in-milwaukee-wi/') {
+            $slug = 'milwaukee';
+        } elseif (preg_match('~^/(?:wi|il)/location/([a-z][a-z0-9-]{0,39})/$~D', $path, $match) === 1) {
+            $slug = $match[1];
+        } elseif (preg_match('~^/location/([a-z][a-z0-9-]{0,39})/$~D', $path, $match) === 1) {
+            $slug = $match[1];
+        }
+        if ($slug === null) {
+            return null;
+        }
+
+        if ($this->locationContentRecords === null) {
+            $config = $this->root . '/config/location-content.php';
+            if (!is_file($config) || is_link($config)) {
+                throw new \DomainException('Location content config is unavailable.');
+            }
+            $records = require $config;
+            if (!is_array($records)) {
+                throw new \DomainException('Location content config is invalid.');
+            }
+            $this->locationContentRecords = $records;
+        }
+
+        if (!isset($this->locationContentRecords[$slug])) {
+            return null;
+        }
+        $record = $this->locationContentRecords[$slug];
+        if (
+            !is_array($record)
+            || !isset($record['label'], $record['metro'], $record['intro'], $record['localNotes'], $record['faq'])
+            || !is_string($record['label'])
+            || $record['label'] === ''
+            || !is_string($record['metro'])
+            || !in_array($record['metro'], ['madison', 'milwaukee', 'rockford'], true)
+            || !array_key_exists('completedJobs', $record)
+            || !(is_int($record['completedJobs'] ?? null) || ($record['completedJobs'] ?? null) === null)
+            || !is_string($record['intro'])
+            || !is_string($record['localNotes'])
+            || !is_array($record['faq'])
+        ) {
+            throw new \DomainException('Location content record is invalid.');
+        }
+        foreach ($record['faq'] as $faq) {
+            if (
+                !is_array($faq)
+                || !isset($faq['q'], $faq['a'])
+                || !is_string($faq['q'])
+                || $faq['q'] === ''
+                || !is_string($faq['a'])
+                || $faq['a'] === ''
+            ) {
+                throw new \DomainException('Location FAQ record is invalid.');
+            }
+        }
+        return $record;
+    }
+
+    private function metroAddressForContext(array $context, array $market): string
+    {
+        if (isset($context['metroAddress']) && is_string($context['metroAddress']) && trim($context['metroAddress']) !== '') {
+            return trim($context['metroAddress']);
+        }
+
+        $metroAddresses = [
+            'madison' => '2921 Landmark Pl #206, Madison, WI 53713',
+            'milwaukee' => '11220 W Burleigh St Ste 100, Wauwatosa, WI 53222',
+            'rockford' => '5758 Elaine Dr Ste 110, Rockford, IL 61108',
+        ];
+        $path = $context['path'] ?? null;
+        if (is_string($path)) {
+            $location = $this->locationContent($path);
+            $metro = is_array($location) ? ($location['metro'] ?? null) : null;
+            if (is_string($metro) && isset($metroAddresses[$metro])) {
+                return $metroAddresses[$metro];
+            }
+        }
+
+        if (($context['market'] ?? null) === 'il-preview') {
+            return $metroAddresses['rockford'];
+        }
+
+        return isset($market['address']) && is_string($market['address']) ? trim($market['address']) : '';
     }
 
     public function assetHandles(): array
