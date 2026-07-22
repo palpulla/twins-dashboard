@@ -551,6 +551,36 @@ foreach (['spring', 'keypad', 'door'] as $artKind) {
     );
 }
 
+$systemTwin = $renderComponent($stagingExperience, $root . '/components/twin-character.php', [
+    'character' => 'left',
+    'placement' => 'system',
+]);
+$expect(strpos($systemTwin, 'src="/brand/twin-left.png"') !== false, 'system Twin omitted the fixed left asset');
+$expect(strpos($systemTwin, 'width="196" height="534"') !== false, 'system Twin dimensions drifted');
+$expect(strpos($systemTwin, 'class="twins-location-twin twins-location-twin--system twins-location-twin--left"') !== false, 'system Twin classes drifted');
+$expect(strpos($systemTwin, 'alt="" aria-hidden="true"') !== false, 'system Twin is not decorative');
+$expect(strpos($systemTwin, 'loading="lazy" decoding="async"') !== false, 'system Twin loading behavior drifted');
+
+$guidanceTwin = $renderComponent($stagingExperience, $root . '/components/twin-character.php', [
+    'character' => 'right',
+    'placement' => 'guidance',
+]);
+$expect(strpos($guidanceTwin, 'src="/brand/twin-right.png"') !== false, 'guidance Twin omitted the fixed right asset');
+$expect(strpos($guidanceTwin, 'width="297" height="538"') !== false, 'guidance Twin dimensions drifted');
+$expect(strpos($guidanceTwin, 'class="twins-location-twin twins-location-twin--guidance twins-location-twin--right"') !== false, 'guidance Twin classes drifted');
+
+$invalidTwinCharacter = $renderComponent($stagingExperience, $root . '/components/twin-character.php', [
+    'character' => 'center',
+    'placement' => 'system',
+]);
+$expect($invalidTwinCharacter === '', 'Twin renderer accepted an unsupported character');
+
+$invalidTwinPlacement = $renderComponent($stagingExperience, $root . '/components/twin-character.php', [
+    'character' => 'left',
+    'placement' => 'hero',
+]);
+$expect($invalidTwinPlacement === '', 'Twin renderer accepted an unsupported placement');
+
 $crewPicture = $renderComponent($stagingExperience, $root . '/components/picture.php', [
     'logicalKey' => 'crew-fleet',
     'sizes' => '(max-width: 900px) 100vw, 50vw',
