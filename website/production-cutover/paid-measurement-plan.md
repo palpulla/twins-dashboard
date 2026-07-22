@@ -162,7 +162,22 @@ Each step is blocked by the one above it.
    - Both need to survive the classified-output form scan (Blocker B env gate is
      already drafted).
 
-3. **Financing landing page** — **BUILT on staging 2026-07-22, page ID 7727,
+3. **Financing landing page** — **LIVE ON PRODUCTION 2026-07-22: page ID 7367,
+   `https://twinsgaragedoors.com/madison-financing-lp/`**, published 16:40,
+   template `elementor_canvas`, slug `madison-financing-lp`, content verified
+   15,857 bytes with `<style>` and the form intact. Renders correctly (navy hero,
+   yellow stamp, mascots, ribbon, checklist, form card) — the tune-up LP's design
+   system exactly. Form present with all five fields (`name, phone, service,
+   website` honeypot, `consent`) and `data-page="/madison-financing-lp/"`.
+
+   **OUTSTANDING: robots is still `index`.** Rank Math's Advanced panel would not
+   render its robots checkboxes under automation, so noindex was not applied. The
+   page was auto-submitted to the Instant Indexing API on publish, so this should
+   be set promptly: Rank Math SEO box → Advanced → Robots → No Index → Update.
+
+   Also built on staging as page 7727 (see below).
+
+3b. **Staging copy** — page ID 7727,
    `/madison-financing-lp/`.** Cloned from `/madison-tune-up-lp/` (7093): same
    `.tlp` design system and style block verbatim, `elementor_canvas` template,
    `rank_math_robots = ['noindex']`, LP number (608) 888-8785, identical form
