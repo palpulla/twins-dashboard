@@ -137,10 +137,17 @@ Each step is blocked by the one above it.
    are separable in `lp_leads`.
 
 4. **Meta tagging**, applied with the destination repoint (task 0.7):
-   - Move UTMs out of per-ad inline URLs into the **campaign-level `URL
-     parameters`** field:
+   - Move UTMs out of the inline Website URL into the ad's **`URL parameters`**
+     field (Tracking section), using dynamic macros:
      `utm_source=facebook&utm_medium=paid_social&utm_campaign={{campaign.name}}&utm_id={{campaign.id}}`
-     One place per campaign, inherited by every ad, no drift.
+
+     Note: Ads Manager has **no campaign-level URL-parameter setting** — this
+     field is per-ad. The drift protection comes from the macros, not from a
+     single location: every ad carries the identical literal string and Meta
+     resolves the values, so there is nothing ad-specific left to mistype. Strip
+     the inline query string from the Website URL when applying, or the
+     parameters duplicate. At scale this should be applied via the Marketing API
+     rather than by hand.
    - Enable **Website events** on the traffic ads, pointed at pixel
      `554750209097175`.
    - Keep `utm_medium=paid_social` (do not switch to `cpc` later — changing it
