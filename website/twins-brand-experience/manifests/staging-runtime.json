@@ -15,8 +15,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/assets/css/twins-brand.css",
       "destination": "twins-brand-experience/assets/css/twins-brand.css",
-      "size": 69696,
-      "sha256": "fd322c220fff0d6f10c07c1306877cd6a86237265a0298c6d643ad4814e2413a"
+      "size": 83013,
+      "sha256": "0e8d6e87985520f6d1ab7b58199bd6bd01a988c6a92489166d8ac142bda5ff40"
     },
     {
       "role": "deploy",
@@ -302,8 +302,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/components/footer.php",
       "destination": "twins-brand-experience/components/footer.php",
-      "size": 2571,
-      "sha256": "210ef062081b3808d0a5b6169a09e66f8afa2368fdd569228bb66d5fe77ad19f"
+      "size": 2902,
+      "sha256": "ee1f47250ddde0b0b60c96e929ebe05509e069835bc1b5f4d0e83f3af205b79a"
     },
     {
       "role": "deploy",
@@ -344,8 +344,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/config/location-content.php",
       "destination": "twins-brand-experience/config/location-content.php",
-      "size": 12459,
-      "sha256": "6b6deb61139c391e22cf1eddda59af021b7efd69eb2f174feb917ce1daad8701"
+      "size": 66740,
+      "sha256": "1edd156858acd7c5eb71bad1f1b0d8cb744f27ffeff80d288fceeaa7c227463d"
     },
     {
       "role": "deploy",
@@ -386,8 +386,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/src/Experience.php",
       "destination": "twins-brand-experience/src/Experience.php",
-      "size": 15561,
-      "sha256": "bc5904ddf63129a805925295067f46db3d6f4fec42fa9c2e7f6a84bdd3c62fe8"
+      "size": 19621,
+      "sha256": "0ad723bcb84bac10a672c8ffe68b566560b4a61fdee929aa530b6094a46573f9"
     },
     {
       "role": "deploy",
@@ -442,8 +442,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/templates/editorial.php",
       "destination": "twins-brand-experience/templates/editorial.php",
-      "size": 10038,
-      "sha256": "3d40392bb1bff6bbb616d6d57c57170f3775cd4238e42f8d39ded297df0bbd36"
+      "size": 23456,
+      "sha256": "50fe8392a1b0acb0382da56b0a2665609326bc8b6ebbb72f9c09a5fb9fe75dbe"
     },
     {
       "role": "deploy",
