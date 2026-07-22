@@ -90,13 +90,37 @@ Two blockers:
      collection-side hostname filter**.
    - Bot filtering is already on and does not catch them.
 
-   **There is no configuration fix.** `G-XW0RGPTGSN` is a burned ID. The durable
-   remedy is a **new property with a fresh measurement ID**, which the cutover
-   provides for free. Until then, any trustworthy report must be hostname-filtered
-   in an exploration.
+   **Confidence: strong, not proven.** Attempted to confirm via the Hostname
+   dimension on 2026-07-22; it would not load in either Traffic acquisition or
+   Pages and screens, so the decisive test was not run. What *is* established:
 
-2. **Key events: 0.** Nothing is counted as a conversion, consistent with the
-   site-side finding.
+   - Page title `trafficheap.cc` on the affected views — a real visitor to
+     twinsgaragedoors.com would carry a Twins page title.
+   - GA4's own generated insight: *"On July 16, 2026, homepage views surged to
+     962… driven almost entirely by a sudden influx of visitors from
+     'Seychelles', which accounted for 956 of the new views."*
+   - One-day spike (Jul 16), not sustained traffic.
+
+   Counter-evidence worth noting: the referral rows show a 97% engagement rate,
+   39s average engagement time and 5.82 events/session. Pure Measurement Protocol
+   ghost hits usually carry no engagement at all, so this may instead be a bot
+   farm genuinely loading the site.
+
+   **The distinction changes the fix**, so run the Hostname check before acting:
+   - *Ghost / Measurement Protocol* → no collection-side fix exists; a new
+     property is the remedy (and only until the new ID is scraped again).
+   - *Real traffic hitting the site* → adding `trafficheap.cc` to
+     **List unwanted referrals** does help, and Google's bot list may catch it
+     over time. Much cheaper.
+
+   Either way the property is unreliable for measuring paid traffic until this is
+   resolved, and the cutover is the natural moment to resolve it.
+
+2. **Key events: 10 in 28 days** (and 0 in the most recent 7). An earlier draft
+   of this document said "0"; that was the 7-day figure read as if it were the
+   whole picture. Key-event tracking is close to non-existent rather than
+   literally absent — consistent with the site-side finding that only
+   `page_view` fires, but state it accurately.
 
 A second tag, **`G-FX908KGRHH`**, also loads on the site (plus `G-VM8CYMCWS5`).
 Given the Legit5 separation, this is most likely the agency's property. Confirm
