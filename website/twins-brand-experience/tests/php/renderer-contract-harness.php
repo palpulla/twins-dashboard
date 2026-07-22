@@ -94,6 +94,12 @@ final class RendererHarnessRouteAdapter implements Twins\BrandExperience\RouteAd
         'service-area' => '/locations/',
         'city-madison' => '/wi/location/madison/',
         'city-milwaukee' => '/wi/garage-door-repair-in-milwaukee-wi/',
+        'city-wauwatosa' => '/wi/location/wauwatosa/',
+        'city-waukesha' => '/wi/location/waukesha/',
+        'city-brookfield' => '/wi/location/brookfield/',
+        'city-new-berlin' => '/wi/location/new-berlin/',
+        'city-greenfield' => '/wi/location/greenfield/',
+        'city-oak-creek' => '/wi/location/oak-creek/',
         'city-belleville' => '/wi/location/belleville/',
         'city-cottage-grove' => '/wi/location/cottage-grove/',
         'city-cross-plains' => '/wi/location/cross-plains/',
@@ -412,6 +418,15 @@ $expect(strpos($footer, 'danielj140.sg-host.com') === false, 'footer hard-coded 
 foreach (['/garage-door-services/', '/clopay-garage-doors/', '/wi/', '/ky/', '/il/', '/about-us/', '/our-team/', '/careers/', '/contact-us/'] as $route) {
     $expect(strpos($footer, $route) !== false, 'footer omitted internal route ' . $route);
 }
+$rockfordFooter = $stagingExperience->renderFooter([
+    'environment' => 'staging',
+    'market' => 'il-preview',
+    'path' => '/il/location/rockford/',
+]);
+$expect(
+    strpos($rockfordFooter, '5758 Elaine Dr Ste 110, Rockford, IL 61108') !== false,
+    'Rockford footer omitted the local branch address'
+);
 
 $illinoisService = $stagingExperience->renderService([
     'environment' => 'staging',
@@ -421,6 +436,120 @@ $illinoisService = $stagingExperience->renderService([
 ]);
 $expect(strpos($illinoisService, '>Garage Door Spring Repair</a>') === false, 'Illinois service links retained the misleading Spring Repair label');
 $expect(strpos($illinoisService, '>Garage Door Openers</a>') !== false, 'Illinois service links omitted the Garage Door Openers destination label');
+
+$madisonLocation = $stagingExperience->renderEditorial([
+    'environment' => 'staging',
+    'market' => 'main',
+    'path' => '/wi/location/madison/',
+    'title' => 'Madison',
+], '<p>LEGACY MADISON LOCATION BODY</p>', 'location');
+$expect(
+    strpos($madisonLocation, 'Twins Garage Doors repairs broken springs, cables, rollers, tracks, and openers across Madison.') !== false,
+    'Madison location intro did not replace the shared default'
+);
+$expect(
+    strpos($madisonLocation, 'Madison puts garage doors through deep freezes, wet spring weather, summer humidity, and road salt.') !== false,
+    'Madison location notes were not rendered'
+);
+$expect(
+    strpos($madisonLocation, 'What garage door problems do you repair in Madison?') !== false
+        && strpos($madisonLocation, 'Should I replace my Madison garage door or repair it?') !== false,
+    'Madison location FAQs were not rendered'
+);
+$expect(strpos($madisonLocation, 'LEGACY MADISON LOCATION BODY') === false, 'Madison location rendered the preserved legacy body');
+
+$milwaukeeLocation = $stagingExperience->renderEditorial([
+    'environment' => 'staging',
+    'market' => 'main',
+    'path' => '/wi/garage-door-repair-in-milwaukee-wi/',
+    'title' => 'Garage Door Repair in Milwaukee',
+], '<p>LEGACY MILWAUKEE LOCATION BODY</p>', 'location');
+$expect(
+    strpos($milwaukeeLocation, 'Twins Garage Doors provides garage door repair, opener service, and replacement installation in Milwaukee.') !== false,
+    'Milwaukee special route did not resolve its location content'
+);
+$expect(strpos($milwaukeeLocation, 'LEGACY MILWAUKEE LOCATION BODY') === false, 'Milwaukee location rendered the preserved legacy body');
+
+$locationRecords = require $root . '/config/location-content.php';
+$prohibitedLocationPhrases = [
+    'recently opened',
+    'newly opened',
+    'new to this market',
+    'new market',
+    'recent addition',
+    'recent expansion',
+    'still building',
+    'earn the local record',
+];
+foreach ($locationRecords as $slug => $record) {
+    $path = $slug === 'milwaukee'
+        ? '/wi/garage-door-repair-in-milwaukee-wi/'
+        : '/' . ($record['metro'] === 'rockford' ? 'il' : 'wi') . '/location/' . $slug . '/';
+    $renderedLocation = $stagingExperience->renderEditorial([
+        'environment' => 'staging',
+        'market' => 'main',
+        'path' => $path,
+        'title' => $record['label'],
+    ], '<p>LEGACY LOCATION BODY FOR ' . $slug . '</p>', 'location');
+    foreach ([$record['intro'], $record['localNotes']] as $expectedCopy) {
+        $expect(
+            strpos($renderedLocation, htmlspecialchars($expectedCopy, ENT_QUOTES, 'UTF-8')) !== false,
+            $slug . ' did not render its city copy'
+        );
+    }
+    foreach ($record['faq'] as $faq) {
+        $expect(
+            strpos($renderedLocation, htmlspecialchars($faq['q'], ENT_QUOTES, 'UTF-8')) !== false
+                && strpos($renderedLocation, htmlspecialchars($faq['a'], ENT_QUOTES, 'UTF-8')) !== false,
+            $slug . ' did not render its FAQ copy'
+        );
+    }
+    foreach (['twins-location-hero', 'twins-location-services', 'twins-location-guidance', 'twins-location-process', 'twins-location-branch', 'twins-location-nearby'] as $className) {
+        $expect(strpos($renderedLocation, $className) !== false, $slug . ' omitted ' . $className);
+    }
+    $expect(substr_count($renderedLocation, '<details>') === 5, $slug . ' did not render five FAQs');
+    $recordText = strtolower($record['intro'] . ' ' . $record['localNotes']);
+    foreach ($record['faq'] as $faq) {
+        $recordText .= ' ' . strtolower($faq['q'] . ' ' . $faq['a']);
+    }
+    foreach ($prohibitedLocationPhrases as $phrase) {
+        $expect(strpos($recordText, $phrase) === false, $slug . ' contains prohibited positioning: ' . $phrase);
+    }
+    $expect(strpos($renderedLocation, 'LEGACY LOCATION BODY FOR ' . $slug) === false, $slug . ' rendered its legacy body');
+}
+
+$rockfordLocation = $stagingExperience->renderEditorial([
+    'environment' => 'staging',
+    'market' => 'main',
+    'path' => '/il/location/rockford/',
+    'title' => 'Rockford',
+], '<p>LEGACY ROCKFORD LOCATION BODY</p>', 'location');
+foreach (['twins-location-hero', 'twins-location-proof', 'twins-location-services', 'twins-location-guidance', 'twins-location-process', 'twins-location-branch', 'twins-location-nearby'] as $className) {
+    $expect(strpos($rockfordLocation, $className) !== false, 'Rockford omitted ' . $className);
+}
+$expect(substr_count($rockfordLocation, '<details>') === 5, 'Rockford must render five FAQs');
+$expect(substr_count($rockfordLocation, 'Explore Garage Door Repair</a>') === 1, 'Rockford duplicated the repair destination');
+$expect(strpos($rockfordLocation, '5758 Elaine Dr Ste 110, Rockford, IL 61108') !== false, 'Rockford omitted its branch address');
+foreach (['recently opened', 'new to this market', 'earn the local record'] as $prohibitedCopy) {
+    $expect(stripos($rockfordLocation, $prohibitedCopy) === false, 'Rockford rendered prohibited copy: ' . $prohibitedCopy);
+}
+$expect(strpos($rockfordLocation, 'LEGACY ROCKFORD LOCATION BODY') === false, 'Rockford location rendered the preserved legacy body');
+$systemPosition = strpos($rockfordLocation, 'class="twins-location-system"');
+$servicesPosition = strpos($rockfordLocation, 'class="twins-location-services"');
+$expect(
+    is_int($systemPosition) && is_int($servicesPosition) && $systemPosition < $servicesPosition,
+    'Rockford must render the animated door system band before services'
+);
+$expect(
+    substr_count($rockfordLocation, 'twins-brand-door-art--door-open') === 1,
+    'Rockford must render exactly one animated door'
+);
+foreach (['spring', 'keypad', 'door'] as $artKind) {
+    $expect(
+        strpos($rockfordLocation, 'twins-brand-door-art twins-brand-door-art--' . $artKind . ' twins-location-service-art') !== false,
+        'Rockford omitted service art: ' . $artKind
+    );
+}
 
 $crewPicture = $renderComponent($stagingExperience, $root . '/components/picture.php', [
     'logicalKey' => 'crew-fleet',
