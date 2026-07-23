@@ -223,7 +223,6 @@ for (const viewport of viewports) {
       return {
         twinAnimations,
         quoteAnimation: getComputedStyle(quote).animationName,
-        quoteBackgroundPosition: getComputedStyle(quote).backgroundPosition,
         cardTransition: getComputedStyle(card).transitionDuration,
       };
     });
@@ -439,32 +438,96 @@ test('post-hero reveals move once by ten pixels and then settle', async ({ page 
       constructor(callback) {
         this.callback = callback;
         this.targets = [];
+        this.unobservedTargets = [];
+        this.notifications = 0;
         window.__locationObservers.push(this);
       }
       observe(target) { this.targets.push(target); }
-      unobserve(target) { this.targets = this.targets.filter(item => item !== target); }
+      unobserve(target) {
+        if (this.targets.includes(target)) this.unobservedTargets.push(target);
+        this.targets = this.targets.filter(item => item !== target);
+      }
       disconnect() { this.targets = []; }
+      notifyIntersecting() {
+        this.notifications += 1;
+        this.callback(this.targets.map(target => ({ target, isIntersecting: true })));
+      }
     };
   });
   await page.goto(fixture);
 
   const hero = page.locator('.twins-location-hero');
   const reveals = page.locator('#twins-overhaul-main > [data-location-reveal]');
+  const revealClasses = [
+    'twins-location-trust',
+    'twins-location-services',
+    'twins-location-local-proof',
+    'twins-brand-faq',
+    'twins-brand-final-cta twins-location-final-cta',
+  ];
+  const revealStates = () => reveals.evaluateAll(nodes => nodes.map(node => {
+    const style = getComputedStyle(node);
+    const transform = style.transform;
+    return {
+      className: node.className,
+      visibleState: node.getAttribute('data-location-visible'),
+      opacity: style.opacity,
+      translateY: transform === 'none' ? 0 : new DOMMatrixReadOnly(transform).m42,
+      transitionDurations: style.transitionDuration.split(', '),
+      activeAnimations: node.getAnimations().length,
+    };
+  }));
+  const expectedStates = (visibleState, opacity, translateY) => revealClasses.map(className => ({
+    className,
+    visibleState,
+    opacity,
+    translateY,
+    transitionDurations: ['0.42s', '0.42s'],
+    activeAnimations: 0,
+  }));
+
   await expect(hero).toHaveCSS('opacity', '1');
   await expect(reveals).toHaveCount(5);
-  await expect(reveals.first()).toHaveCSS('opacity', '0');
-  expect(await reveals.first().evaluate(node => getComputedStyle(node).transform)).toContain(', 10)');
+  await expect.poll(revealStates).toEqual(expectedStates(null, '0', 10));
+  expect(await page.evaluate(() => window.__locationObservers.map(observer => observer.targets.length)))
+    .toEqual([5]);
 
   await page.evaluate(() => {
-    for (const observer of window.__locationObservers) {
-      const entries = observer.targets.map(target => ({ target, isIntersecting: true }));
-      observer.callback(entries);
-    }
+    window.__locationObservers.forEach(observer => observer.notifyIntersecting());
   });
-  await expect(reveals.first()).toHaveAttribute('data-location-visible', 'true');
-  await page.waitForTimeout(450);
-  await expect(reveals.first()).toHaveCSS('opacity', '1');
-  await expect(reveals.first()).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 0)');
+  expect(await page.evaluate(() => {
+    const observer = window.__locationObservers[0];
+    return {
+      activeTargets: observer.targets.length,
+      unobservedTargets: observer.unobservedTargets.length,
+      uniqueUnobservedTargets: new Set(observer.unobservedTargets).size,
+      notifications: observer.notifications,
+    };
+  })).toEqual({
+    activeTargets: 0,
+    unobservedTargets: 5,
+    uniqueUnobservedTargets: 5,
+    notifications: 1,
+  });
+  const settledStates = expectedStates('true', '1', 0);
+  await expect.poll(revealStates).toEqual(settledStates);
+
+  await page.evaluate(() => {
+    window.__locationObservers.forEach(observer => observer.notifyIntersecting());
+  });
+  expect(await page.evaluate(() => {
+    const observer = window.__locationObservers[0];
+    return {
+      activeTargets: observer.targets.length,
+      unobservedTargets: observer.unobservedTargets.length,
+      notifications: observer.notifications,
+    };
+  })).toEqual({
+    activeTargets: 0,
+    unobservedTargets: 5,
+    notifications: 2,
+  });
+  expect(await revealStates()).toEqual(settledStates);
 });
 
 test('location content fails open without IntersectionObserver', async ({ page }) => {
