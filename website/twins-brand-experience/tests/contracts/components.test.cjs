@@ -63,10 +63,15 @@ test('location characters are limited to one service cameo and the final CTA edg
 
 test('conversion controls retain the display font and location service links are touch-sized text actions', () => {
   const css = fs.readFileSync(path.join(root, 'assets/css/twins-brand.css'), 'utf8');
+  const utilityPhone = css.match(/\.twins-brand-utility \.twins-brand-phone\s*\{([^}]*)\}/);
 
   assert.match(css, /\.twins-brand-cta\s*\{[^}]*font-family:\s*'Lilita One', Impact, sans-serif/);
   assert.match(css, /\.twins-location-service-link\s*\{[^}]*display:\s*(?:inline-)?flex[^}]*align-items:\s*center[^}]*min-height:\s*44px/);
   assert.match(css, /\.twins-location-section-heading > a\s*\{[^}]*display:\s*inline-flex[^}]*align-items:\s*center[^}]*min-height:\s*44px/);
+  assert.ok(utilityPhone, 'shared utility phone selector is missing');
+  assert.match(utilityPhone[1], /display:\s*inline-flex/);
+  assert.match(utilityPhone[1], /align-items:\s*center/);
+  assert.match(utilityPhone[1], /min-height:\s*44px/);
 });
 
 test('header carries a cache-independent guard against duplicate legacy chrome', () => {

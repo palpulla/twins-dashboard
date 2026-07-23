@@ -198,7 +198,9 @@ body.twins-brand-experience .twins-brand-market-menu-panel small {
   letter-spacing: .015em;
 }
 .twins-brand-utility .twins-brand-phone {
-  min-height: 30px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
   padding-block: 3px;
   border-width: 0;
   background: transparent;
