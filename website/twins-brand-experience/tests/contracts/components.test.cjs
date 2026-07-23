@@ -67,7 +67,10 @@ test('conversion controls retain the display font and location service links are
 
   assert.match(css, /\.twins-brand-cta\s*\{[^}]*font-family:\s*'Lilita One', Impact, sans-serif/);
   assert.match(css, /\.twins-location-service-link\s*\{[^}]*display:\s*(?:inline-)?flex[^}]*align-items:\s*center[^}]*min-height:\s*44px/);
-  assert.match(css, /\.twins-location-section-heading > a\s*\{[^}]*display:\s*inline-flex[^}]*align-items:\s*center[^}]*min-height:\s*44px/);
+  // The r30 "dark showroom" redesign made .twins-location-section-heading a plain
+  // heading block (span + h2 + p, no child <a>), so the former heading-anchor
+  // touch-target assertion no longer applies. Card-level links are still guarded
+  // by the .twins-location-service-link assertion above.
   assert.ok(utilityPhone, 'shared utility phone selector is missing');
   assert.match(utilityPhone[1], /display:\s*inline-flex/);
   assert.match(utilityPhone[1], /align-items:\s*center/);

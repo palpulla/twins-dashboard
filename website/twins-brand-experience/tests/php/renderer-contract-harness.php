@@ -624,7 +624,7 @@ foreach ($locationRecords as $slug => $record) {
     foreach (['twins-location-system', 'twins-location-process', 'twins-location-branch', 'twins-location-nearby', 'twins-location-faq'] as $retiredClass) {
         $expect(strpos($renderedLocation, $retiredClass) === false, $slug . ' retained ' . $retiredClass);
     }
-    $expect(substr_count($renderedLocation, 'class="twins-location-service-card"') === 3, $slug . ' did not render three service choices');
+    $expect(substr_count($renderedLocation, 'class="twins-location-service-card') === 3, $slug . ' did not render three service choices');
     $expect(strpos($renderedLocation, 'Preventive maintenance') === false, $slug . ' retained the fourth service module');
     $expect(substr_count($renderedLocation, '/door-builder/twins-before-after-install.webp') === 1, $slug . ' did not render the owned local-proof photo exactly once');
     foreach (['services', 'final-left', 'final-right'] as $placement) {
@@ -672,7 +672,7 @@ foreach (['spring', 'keypad', 'door'] as $artKind) {
         'Rockford omitted service art: ' . $artKind
     );
 }
-$expect(substr_count($rockfordLocation, 'class="twins-location-service-card"') === 3, 'Rockford must render three service choices');
+$expect(substr_count($rockfordLocation, 'class="twins-location-service-card') === 3, 'Rockford must render three service choices');
 $expect(strpos($rockfordLocation, 'Preventive maintenance') === false, 'Rockford retained the fourth service module');
 $expect(substr_count($rockfordLocation, '/door-builder/twins-before-after-install.webp') === 1, 'Rockford must render the owned local-proof photo exactly once');
 

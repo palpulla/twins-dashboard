@@ -1256,9 +1256,9 @@ body.twins-brand-experience .twins-location-hero .twins-brand-kicker { color: va
 .twins-location-service-card--spotlight .twins-location-service-items li::before { color: var(--twins-navy-950); }
 body.twins-brand-experience .twins-location-service-link {
   position: static;
-  min-height: 44px;
   display: inline-flex;
   align-items: center;
+  min-height: 44px;
   margin-top: auto;
   color: var(--twins-gold);
   font-weight: 1000;
