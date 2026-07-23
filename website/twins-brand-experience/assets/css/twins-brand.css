@@ -1174,8 +1174,13 @@ body.twins-brand-experience .twins-location-service-link { display: inline-flex;
 
 @media (max-width: 1024px) {
   .twins-location-hero { grid-template-columns: minmax(0, 1.05fr) minmax(300px, .95fr); gap: 34px; min-height: 560px; }
+  .twins-location-services { padding-bottom: 144px; }
   .twins-location-service-card { min-height: 330px; padding: 26px; }
   .twins-location-local-proof { grid-template-columns: minmax(280px, .9fr) minmax(0, 1.1fr); gap: 38px; }
+  .twins-location-twin--services { right: var(--twins-location-gutter); bottom: 16px; width: 64px; }
+  .twins-location-final-cta { padding-bottom: 190px; }
+  .twins-location-twin--final-left { bottom: 0; width: 64px; }
+  .twins-location-twin--final-right { bottom: 0; width: 68px; }
 }
 @media (max-width: 768px) {
   .twins-location-page { --twins-location-gutter: 20px; }
@@ -1188,6 +1193,7 @@ body.twins-brand-experience .twins-location-service-link { display: inline-flex;
   .twins-location-trust > div:first-child { border-top: 0; }
   .twins-location-services,
   .twins-location-local-proof { padding-block: 56px; }
+  .twins-location-services { padding-bottom: 128px; }
   .twins-location-section-heading { grid-template-columns: 1fr; gap: 14px; margin-bottom: 28px; }
   .twins-location-section-heading > p { grid-column: 1; grid-row: auto; }
   .twins-location-service-grid { grid-template-columns: 1fr; }
@@ -1196,15 +1202,19 @@ body.twins-brand-experience .twins-location-service-link { display: inline-flex;
   .twins-location-local-proof { grid-template-columns: 1fr; }
   .twins-location-local-proof-media { width: min(100%, 408px); max-height: 310px; }
   .twins-location-proof-list li { grid-template-columns: 1fr; gap: 5px; }
-  .twins-location-final-cta { min-height: 340px; padding: 60px 116px 100px; }
+  .twins-location-twin--services { bottom: 14px; width: 56px; }
+  .twins-location-final-cta { min-height: 340px; padding: 60px 96px 170px; }
+  .twins-location-twin--final-left { bottom: 0; width: 56px; }
+  .twins-location-twin--final-right { bottom: 0; width: 60px; }
 }
 @media (max-width: 480px) {
   .twins-location-page { --twins-location-gutter: 20px; }
   .twins-location-actions .twins-brand-cta { flex: 1 1 100%; justify-content: center; }
-  .twins-location-twin--services { display: none; }
-  .twins-location-final-cta { padding: 54px 20px 142px; }
-  .twins-location-twin--final-left { left: 16px; width: 76px; }
-  .twins-location-twin--final-right { right: 16px; width: 82px; }
+  .twins-location-services { padding-bottom: 56px; }
+  .twins-location-page .twins-location-twin--services { display: none; }
+  .twins-location-final-cta { padding: 54px 20px 150px; }
+  .twins-location-twin--final-left { left: 16px; bottom: 0; width: 48px; }
+  .twins-location-twin--final-right { right: 16px; bottom: 0; width: 54px; }
 }
 @media (max-width: 320px) {
   .twins-location-page { --twins-location-gutter: 16px; }

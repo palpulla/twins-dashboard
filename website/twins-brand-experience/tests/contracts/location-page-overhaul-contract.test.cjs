@@ -240,3 +240,32 @@ test('location characters stay subordinate to services and final conversion', ()
   assert.match(css, /\.twins-location-twin--final-right\s*\{[^}]*width:\s*clamp\(92px,\s*8vw,\s*124px\)/);
   assert.match(css, /@media \(max-width:\s*480px\)[\s\S]*?\.twins-location-twin--services\s*\{[^}]*display:\s*none/);
 });
+
+test('responsive character zones clear service links and final CTA controls', () => {
+  const mediaRules = (width) => {
+    const match = css.match(new RegExp(`@media \\(max-width:\\s*${width}px\\)\\s*\\{([\\s\\S]*?)\\n\\}`));
+    assert.ok(match, `${width}px location rules are missing`);
+    return match[1];
+  };
+
+  const tablet = mediaRules(1024);
+  assert.match(tablet, /\.twins-location-services\s*\{[^}]*padding-bottom:\s*144px/);
+  assert.match(tablet, /\.twins-location-twin--services\s*\{[^}]*bottom:\s*16px[^}]*width:\s*64px/);
+  assert.match(tablet, /\.twins-location-final-cta\s*\{[^}]*padding-bottom:\s*190px/);
+  assert.match(tablet, /\.twins-location-twin--final-left\s*\{[^}]*bottom:\s*0[^}]*width:\s*64px/);
+  assert.match(tablet, /\.twins-location-twin--final-right\s*\{[^}]*bottom:\s*0[^}]*width:\s*68px/);
+
+  const mobile = mediaRules(768);
+  assert.match(mobile, /\.twins-location-services\s*\{[^}]*padding-bottom:\s*128px/);
+  assert.match(mobile, /\.twins-location-twin--services\s*\{[^}]*bottom:\s*14px[^}]*width:\s*56px/);
+  assert.match(mobile, /\.twins-location-final-cta\s*\{[^}]*padding:\s*60px 96px 170px/);
+  assert.match(mobile, /\.twins-location-twin--final-left\s*\{[^}]*bottom:\s*0[^}]*width:\s*56px/);
+  assert.match(mobile, /\.twins-location-twin--final-right\s*\{[^}]*bottom:\s*0[^}]*width:\s*60px/);
+
+  const compact = mediaRules(480);
+  assert.match(compact, /\.twins-location-services\s*\{[^}]*padding-bottom:\s*56px/);
+  assert.match(compact, /\.twins-location-page \.twins-location-twin--services\s*\{[^}]*display:\s*none/);
+  assert.match(compact, /\.twins-location-final-cta\s*\{[^}]*padding:\s*54px 20px 150px/);
+  assert.match(compact, /\.twins-location-twin--final-left\s*\{[^}]*bottom:\s*0[^}]*width:\s*48px/);
+  assert.match(compact, /\.twins-location-twin--final-right\s*\{[^}]*bottom:\s*0[^}]*width:\s*54px/);
+});
