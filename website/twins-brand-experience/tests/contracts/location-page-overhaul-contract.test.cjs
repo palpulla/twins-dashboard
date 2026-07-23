@@ -176,9 +176,14 @@ test('Rockford location fixture retains route-local contact data and the shared 
   assert.match(fixture, /Rockford/);
   assert.match(fixture, /tel:\+18158002025/);
   assert.match(fixture, /5758 Elaine Dr Ste 110, Rockford, IL 61108/);
-  assert.equal((fixture.match(/class="twins-location-service-card"/g) || []).length, 3);
+  assert.equal((fixture.match(/class="twins-location-service-card(?: twins-location-service-card--spotlight)?"/g) || []).length, 3);
+  assert.equal((fixture.match(/data-location-reveal/g) || []).length, 5);
+  assert.doesNotMatch(fixture, /<header class="twins-location-hero"[^>]*data-location-reveal/);
+  assert.equal((fixture.match(/class="twins-location-service-items"/g) || []).length, 3);
+  assert.equal((fixture.match(/class="twins-location-service-card twins-location-service-card--spotlight"/g) || []).length, 1);
   assert.doesNotMatch(fixture, /twins-location-hero-stage|twins-location-orbit|Preventive maintenance/);
-  assert.doesNotMatch(fixture, /recently opened|newly opened|new to this market/i);
+  assert.doesNotMatch(fixture, /done today|same-day|\$0 service call|most repairs in one visit|recently opened/i);
+  assert.doesNotMatch(fixture, /newly opened|new to this market/i);
   assert.doesNotMatch(fixture, /Madison, Wisconsin|tel:\+16084202377/);
   assert.match(reviewSummary, /'displayCount'\s*=>\s*'699'/);
   assert.match(fixture, /699 customer reviews/);
