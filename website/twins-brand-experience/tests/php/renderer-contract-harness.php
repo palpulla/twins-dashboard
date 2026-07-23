@@ -412,14 +412,17 @@ $locationHeader = $stagingExperience->renderHeader([
     'path' => '/wi/location/madison/',
     'classification' => 'location',
 ]);
-$expect(strpos($locationHeader, 'twins-brand-header--location') !== false, 'location header did not select the compact variant');
-$expect(strpos($locationHeader, 'twins-brand-utility') === false, 'location header retained the market utility bar');
-$expect(strpos($locationHeader, 'Book Online') === false, 'location header rendered a booking CTA');
-$expect(strpos($locationHeader, 'data-twins-booking-open') === false, 'location header rendered a booking trigger');
-$expect(strpos($locationHeader, 'booking-dialog-fixture') === false, 'location header rendered booking dialog markup');
+// Owner call 2026-07-23: location pages keep the familiar full chrome
+// (48196a4c); only the quote CTA label changes. The compact
+// twins-brand-header--location variant from 8ca0f4ec was walked back.
+$expect(strpos($locationHeader, 'class="twins-brand-header"') !== false, 'location header did not use the familiar header chrome');
+$expect(strpos($locationHeader, 'twins-brand-header--location') === false, 'location header selected the retired compact variant');
+$expect(strpos($locationHeader, 'twins-brand-utility') !== false, 'location header lost the market utility bar');
+$expect(strpos($locationHeader, 'Book Online') !== false, 'location header lost the booking CTA');
+$expect(substr_count($locationHeader, 'id="booking-dialog-fixture"') === 1, 'location header must render the dialog experience exactly once');
 foreach ([
     'Garage Door Repair' => '/garage-door-repair/',
-    'New Garage Doors' => '/garage-door-installation/',
+    'Garage Door Installation' => '/garage-door-installation/',
     'Garage Door Openers' => '/garage-door-openers/',
 ] as $label => $route) {
     $expect(substr_count($locationHeader, $label) === 2, 'location header did not render ' . $label . ' in both desktop and drawer navigation');
@@ -427,7 +430,7 @@ foreach ([
 }
 $expect(substr_count($locationHeader, 'Get a Free Quote') === 2, 'location header did not render the location quote action in both desktop and drawer navigation');
 $expect(strpos($locationHeader, 'Request a Quote') === false, 'location header retained the non-location quote label');
-$expect(substr_count($locationHeader, 'href="tel:+16084202377"') === 2, 'location header did not render the normalized market phone in both desktop and drawer navigation');
+$expect(substr_count($locationHeader, 'href="tel:+16084202377"') === 1, 'location header must render the normalized market phone exactly once');
 
 [$productionExperience] = $makeExperience($verifiedCollection, $externalBookingAction);
 $productionHeader = $productionExperience->renderHeader(['environment' => 'production', 'market' => 'main']);
@@ -444,8 +447,11 @@ $productionLocationHeader = $productionExperience->renderHeader([
     'path' => '/wi/location/madison/',
     'classification' => 'location',
 ]);
-$expect(strpos($productionLocationHeader, RendererHarnessBookingAdapter::EXTERNAL_URL) === false, 'location header rendered the production booking URL');
-$expect(strpos($productionLocationHeader, 'Book Online') === false, 'production location header rendered a booking CTA');
+// Familiar chrome on production location pages too: external booking renders
+// exactly like the main production header (owner call 2026-07-23).
+$expect(substr_count($productionLocationHeader, RendererHarnessBookingAdapter::EXTERNAL_URL) === 2, 'production location header must render the external booking URL in both approved actions');
+$expect(strpos($productionLocationHeader, 'Book Online') !== false, 'production location header lost the booking CTA');
+$expect(strpos($productionLocationHeader, 'twins-brand-header--location') === false, 'production location header selected the retired compact variant');
 $expect(substr_count($productionLocationHeader, 'Get a Free Quote') === 2, 'production location header did not preserve the exact location quote label');
 
 $invalidBookingCases = [
@@ -527,19 +533,19 @@ $lexingtonLocation = $stagingExperience->renderEditorial([
 ], '<p>LEGACY LEXINGTON LOCATION BODY</p>', 'location');
 $lexingtonServiceLinks = [];
 preg_match_all('~<a class="twins-location-service-link" href="([^"]+)">~', $lexingtonLocation, $lexingtonServiceLinks);
+// r29 location body ships three market-local service cards; the fourth
+// all-services card and its fallback copy were removed in the rebuild.
 $expect(
     ($lexingtonServiceLinks[1] ?? []) === [
         '/ky/garage-door-repair/',
         '/ky/garage-door-opener-repair/',
         '/ky/garage-door-installation/',
-        '/ky/garage-door-services/',
     ],
     'Lexington pathway did not retain Kentucky service destinations'
 );
 $expect(strpos($lexingtonLocation, 'href="/wi/') === false, 'Lexington body emitted a Wisconsin destination');
-$expect(strpos($lexingtonLocation, 'Kentucky garage door services') !== false, 'Lexington omitted the truthful Kentucky services fallback');
-$expect(strpos($lexingtonLocation, '>View all garage door services</a>') !== false, 'Lexington omitted the valid Kentucky services action');
-$expect(substr_count($lexingtonLocation, 'href="/ky/garage-door-services/"') === 2, 'Lexington did not reuse the supported Kentucky services route for maintenance and the services fallback');
+$expect(strpos($lexingtonLocation, 'The right service for the door you have.') !== false, 'Lexington omitted the location services section');
+$expect(strpos($lexingtonLocation, 'href="/ky/maintenance-plans/"') === false, 'Lexington linked the unsupported Kentucky maintenance route');
 $expect(strpos($lexingtonLocation, 'twins-location-nearby-grid') === false, 'Lexington invented nearby Kentucky towns');
 $expect(strpos($lexingtonLocation, 'LEGACY LEXINGTON LOCATION BODY') === false, 'Lexington rendered the preserved legacy body');
 

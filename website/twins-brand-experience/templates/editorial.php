@@ -276,6 +276,19 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
         </ul>
       </div>
     </section>
+    <?php if ($editorialFaqs !== []): ?>
+      <section class="twins-brand-faq" aria-labelledby="twins-location-questions-title" data-location-reveal>
+        <div class="twins-brand-section-heading">
+          <span class="twins-brand-kicker">Frequently asked questions</span>
+          <h2 id="twins-location-questions-title">Garage door questions, answered straight</h2>
+        </div>
+        <div class="twins-brand-faq-list">
+          <?php foreach ($editorialFaqs as $faq): ?>
+            <details><summary><?= htmlspecialchars((string) $faq['question'], ENT_QUOTES, 'UTF-8') ?></summary><p><?= htmlspecialchars((string) $faq['answer'], ENT_QUOTES, 'UTF-8') ?></p></details>
+          <?php endforeach; ?>
+        </div>
+      </section>
+    <?php endif; ?>
   <?php else: ?>
     <?php if ($articleHeroImage !== ''): ?>
       <figure class="twins-brand-article-hero-media">
@@ -352,7 +365,7 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
     <div class="twins-brand-final-actions">
       <?php if ($isLocation): ?>
         <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Get a Free Quote</a>
-        <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call <?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
+        <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call Twins</a>
       <?php else: ?>
         <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call <?= $isArticle ? htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') : 'Twins' ?></a>
         <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
