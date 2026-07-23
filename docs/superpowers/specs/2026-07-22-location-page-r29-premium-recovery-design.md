@@ -1,7 +1,7 @@
 # Twins Garage Doors Location Page r29 Premium Recovery
 
 **Date:** 2026-07-22  
-**Status:** Approved direction; pending written-spec review  
+**Status:** Approved for implementation planning
 **Scope:** Location-page experience only; Rockford is the reference implementation  
 **Direction:** r29 structure and brand character with a restrained premium finish
 
