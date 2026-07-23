@@ -268,4 +268,7 @@ test('responsive character zones clear service links and final CTA controls', ()
   assert.match(compact, /\.twins-location-final-cta\s*\{[^}]*padding:\s*54px 20px 150px/);
   assert.match(compact, /\.twins-location-twin--final-left\s*\{[^}]*bottom:\s*0[^}]*width:\s*48px/);
   assert.match(compact, /\.twins-location-twin--final-right\s*\{[^}]*bottom:\s*0[^}]*width:\s*54px/);
+
+  const narrow = mediaRules(320);
+  assert.match(narrow, /\.twins-location-twin--final-right\s*\{[^}]*right:\s*12px[^}]*width:\s*40px/);
 });
