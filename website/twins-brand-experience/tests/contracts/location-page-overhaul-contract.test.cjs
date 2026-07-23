@@ -59,6 +59,41 @@ test('services are limited to three concise choices and one character cameo', ()
   assert.match(template, /twins-location-service-card/);
 });
 
+test('only the five post-hero sections participate in location reveals', () => {
+  assert.match(template, /<header class="twins-location-hero" aria-labelledby="twins-location-title">/);
+  assert.doesNotMatch(template, /<header class="twins-location-hero"[^>]*data-location-reveal/);
+  assert.equal((template.match(/data-location-reveal/g) || []).length, 5);
+  for (const className of [
+    'twins-location-trust',
+    'twins-location-services',
+    'twins-location-local-proof',
+    'twins-location-final-cta',
+  ]) {
+    assert.match(template, new RegExp(`class="[^"]*${className}[^"]*"[^>]*data-location-reveal`));
+  }
+  assert.match(template, /<section class="twins-brand-faq"[^>]*aria-labelledby="twins-location-questions-title"[^>]*data-location-reveal/);
+});
+
+test('service cards render approved scan-friendly issue lists and one visual spotlight', () => {
+  for (const item of [
+    'Broken springs',
+    'Cables and rollers',
+    'Off-track or noisy movement',
+    'Safety sensors',
+    'Remotes and wall controls',
+    'Motors and drive systems',
+    'Damaged door replacement',
+    'Style and window choices',
+    'Insulation options',
+  ]) {
+    assert.match(template, new RegExp(item));
+  }
+  assert.match(template, /foreach \(\$locationServiceCards as \$serviceIndex => \$serviceCard\)/);
+  assert.match(template, /\$serviceIndex === 1 \? ' twins-location-service-card--spotlight' : ''/);
+  assert.match(template, /<ul class="twins-location-service-items">[\s\S]*?foreach \(\$serviceCard\['items'\] as \$serviceItem\)/);
+  assert.doesNotMatch(template, /recommended|preferred|featured/i);
+});
+
 test('local proof has one owned image and three concise proof statements', () => {
   assert.match(template, /twins-location-local-proof/);
   assert.match(template, /\$logicalKey = 'door-builder-before-after'/);
@@ -182,6 +217,16 @@ test('quote is primary copy and unverified urgency claims stay absent', () => {
   assert.match(footer, /\$isLocationFooter \? 'Get a Free Quote' : 'Request a Quote'/);
   assert.match(footer, /\$isLocationFooter \? 'Call Now' : 'Call Twins'/);
   assert.doesNotMatch(template.toLowerCase(), /same[- ]day|within \d+|guaranteed response|recently opened/);
+  for (const claim of [
+    'done today',
+    'same-day',
+    '$0 service call',
+    'most repairs in one visit',
+    'guaranteed arrival',
+    'recently opened',
+  ]) {
+    assert.doesNotMatch(template.toLowerCase(), new RegExp(claim.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  }
 });
 
 test('location reveals are progressive enhancement and reduced motion is static', () => {

@@ -78,21 +78,21 @@ $locationServiceCards = $isLocation
             'route' => 'repair',
             'art' => 'spring',
             'description' => 'We diagnose broken springs, damaged cables, worn rollers, track problems, noisy movement, uneven travel, and doors that will not open or close correctly.',
-            'items' => ['Full door-system inspection', 'Repair options explained first', 'Balance and safety check'],
+            'items' => ['Broken springs', 'Cables and rollers', 'Off-track or noisy movement'],
         ],
         [
             'title' => 'Garage door opener service',
             'route' => 'opener-repair',
             'art' => 'keypad',
             'description' => 'We troubleshoot motors, remotes, wall controls, safety sensors, travel settings, drive systems, and the connection between the opener and the door.',
-            'items' => ['Sensor and control diagnosis', 'Drive and travel inspection', 'Opener replacement options'],
+            'items' => ['Safety sensors', 'Remotes and wall controls', 'Motors and drive systems'],
         ],
         [
             'title' => 'Garage door installation',
             'route' => 'installation',
             'art' => 'door',
             'description' => 'When a door is extensively damaged or no longer fits the home, we measure the opening and explain construction, insulation, window, and finish choices.',
-            'items' => ['Opening measured before quoting', 'Door and track options explained', 'Complete operating-system setup'],
+            'items' => ['Damaged door replacement', 'Style and window choices', 'Insulation options'],
         ],
     ]
     : [];
@@ -194,7 +194,7 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
 ?>
 <main id="twins-overhaul-main" class="twins-brand-page twins-brand-editorial-page<?= $isArticle ? ' twins-brand-article-page' : '' ?><?= $isLocation ? ' twins-location-page' : '' ?>">
   <?php if ($isLocation): ?>
-    <header class="twins-location-hero" aria-labelledby="twins-location-title" data-location-reveal>
+    <header class="twins-location-hero" aria-labelledby="twins-location-title">
       <div class="twins-location-hero-copy">
         <span class="twins-brand-kicker">Garage door help in <?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?></span>
         <?= $editorialTitleMarkup ?>
@@ -241,11 +241,16 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
         <p>Twins checks the complete system before recommending repair, opener work, or replacement.</p>
       </div>
       <div class="twins-location-service-grid">
-        <?php foreach ($locationServiceCards as $serviceCard): ?>
-          <article class="twins-location-service-card">
+        <?php foreach ($locationServiceCards as $serviceIndex => $serviceCard): ?>
+          <article class="twins-location-service-card<?= $serviceIndex === 1 ? ' twins-location-service-card--spotlight' : '' ?>">
             <?= twins_brand_door_art($serviceCard['art'], 'twins-location-service-art', 'location-service-' . $serviceCard['art']) ?>
             <h3><?= htmlspecialchars($serviceCard['title'], ENT_QUOTES, 'UTF-8') ?></h3>
             <p><?= htmlspecialchars($serviceCard['description'], ENT_QUOTES, 'UTF-8') ?></p>
+            <ul class="twins-location-service-items">
+              <?php foreach ($serviceCard['items'] as $serviceItem): ?>
+                <li><?= htmlspecialchars($serviceItem, ENT_QUOTES, 'UTF-8') ?></li>
+              <?php endforeach; ?>
+            </ul>
             <a class="twins-location-service-link" href="<?= htmlspecialchars($experience->route($serviceCard['route'], $locationNavMarketKey), ENT_QUOTES, 'UTF-8') ?>">Explore <?= htmlspecialchars($serviceCard['title'], ENT_QUOTES, 'UTF-8') ?></a>
           </article>
         <?php endforeach; ?>
