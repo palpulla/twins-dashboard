@@ -201,9 +201,31 @@ test('recovery CSS locks alignment and contained image proportions', () => {
 test('mobile recovery media fits complete 4:3 photos and the hero caption inside its cap', () => {
   assert.match(css, /\.twins-location-hero-media picture\s*\{[^}]*width:\s*100%[^}]*height:\s*auto[^}]*aspect-ratio:\s*4\s*\/\s*3/);
   assert.match(css, /\.twins-location-local-proof-media picture\s*\{[^}]*width:\s*100%[^}]*height:\s*auto[^}]*aspect-ratio:\s*4\s*\/\s*3/);
-  assert.match(css, /@media \(max-width:\s*768px\)[\s\S]*?\.twins-location-hero-media\s*\{[^}]*width:\s*min\(100%,\s*350px\)[^}]*max-height:\s*310px/);
-  assert.match(css, /@media \(max-width:\s*768px\)[\s\S]*?\.twins-location-local-proof-media\s*\{[^}]*width:\s*min\(100%,\s*408px\)[^}]*max-height:\s*310px/);
   assert.doesNotMatch(css, /\.twins-location-(?:hero|local-proof)-media picture\s*\{[^}]*height:\s*calc\(/);
+
+  const mobileRules = css.match(/@media \(max-width:\s*768px\)\s*\{([\s\S]*?)\n\}/);
+  assert.ok(mobileRules, 'mobile location rules are missing');
+  const heroFrame = css.match(/\.twins-location-hero-media\s*\{[^}]*padding:\s*(\d+)px[^}]*border:\s*(\d+)px/);
+  const heroGeometry = mobileRules[1].match(/\.twins-location-hero-media\s*\{[^}]*width:\s*min\(100%,\s*(\d+)px\)[^}]*max-height:\s*(\d+)px/);
+  const captionGeometry = mobileRules[1].match(/\.twins-location-hero-media figcaption\s*\{[^}]*height:\s*(\d+)px[^}]*line-height:\s*([\d.]+)/);
+  assert.ok(heroFrame && heroGeometry && captionGeometry, 'mobile hero frame geometry is incomplete');
+  const [, heroPadding, heroBorder] = heroFrame.map(Number);
+  const [, heroWidth, heroCap] = heroGeometry.map(Number);
+  const [, captionHeight, captionLineHeight] = captionGeometry.map(Number);
+  assert.deepEqual([heroWidth, heroCap, captionHeight, captionLineHeight], [320, 310, 64, 1.25]);
+  const heroTotalHeight = ((heroWidth - (2 * heroPadding) - (2 * heroBorder)) * .75)
+    + captionHeight + (2 * heroPadding) + (2 * heroBorder);
+  assert.ok(heroTotalHeight <= heroCap, `mobile hero media is ${heroTotalHeight}px tall for a ${heroCap}px cap`);
+
+  const localFrame = css.match(/\.twins-location-local-proof-media\s*\{[^}]*padding:\s*(\d+)px/);
+  const localGeometry = mobileRules[1].match(/\.twins-location-local-proof-media\s*\{[^}]*width:\s*min\(100%,\s*(\d+)px\)[^}]*max-height:\s*(\d+)px/);
+  assert.ok(localFrame && localGeometry, 'mobile local-proof frame geometry is incomplete');
+  const localPadding = Number(localFrame[1]);
+  const localWidth = Number(localGeometry[1]);
+  const localCap = Number(localGeometry[2]);
+  assert.deepEqual([localWidth, localCap], [408, 310]);
+  const localTotalHeight = ((localWidth - (2 * localPadding)) * .75) + (2 * localPadding);
+  assert.ok(localTotalHeight <= localCap, `mobile local-proof media is ${localTotalHeight}px tall for a ${localCap}px cap`);
 });
 
 test('recovery CSS contains no cinematic or location-only header treatment', () => {

@@ -1181,7 +1181,8 @@ body.twins-brand-experience .twins-location-service-link { display: inline-flex;
   .twins-location-page { --twins-location-gutter: 20px; }
   .twins-location-hero { grid-template-columns: 1fr; gap: 30px; min-height: 0; padding-block: 52px; }
   .twins-location-hero h1 { font-size: clamp(2.7rem, 11vw, 3.9rem); }
-  .twins-location-hero-media { width: min(100%, 350px); max-height: 310px; }
+  .twins-location-hero-media { width: min(100%, 320px); max-height: 310px; }
+  .twins-location-hero-media figcaption { height: 64px; min-height: 64px; line-height: 1.25; text-wrap: balance; }
   .twins-location-trust { grid-template-columns: 1fr; }
   .twins-location-trust > div { min-height: 74px; padding: 14px 20px; border-top: 1px solid rgba(7,29,59,.14); border-left: 0; }
   .twins-location-trust > div:first-child { border-top: 0; }
