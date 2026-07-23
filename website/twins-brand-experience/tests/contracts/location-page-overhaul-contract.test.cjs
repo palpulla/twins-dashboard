@@ -241,6 +241,27 @@ test('location reveals are progressive enhancement and reduced motion is static'
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*\[data-location-reveal\][^{]*\{[^}]*opacity:\s*1 !important/);
 });
 
+test('post-hero sections use the dark showroom palette and static panel texture', () => {
+  assert.match(css, /\.twins-location-trust\s*\{[^}]*background:\s*var\(--twins-gold\)/);
+  assert.match(css, /\.twins-location-services\s*\{[^}]*color:\s*var\(--twins-white\)[^}]*background-color:\s*var\(--twins-navy-950\)/);
+  assert.match(css, /\.twins-location-local-proof\s*\{[^}]*color:\s*var\(--twins-white\)[^}]*background-color:\s*#081f40/);
+  assert.match(css, /\.twins-location-page \.twins-brand-faq\s*\{[^}]*color:\s*var\(--twins-white\)[^}]*background-color:\s*#0b2c58/);
+  assert.match(css, /\.twins-location-final-cta\s*\{[^}]*background-color:\s*var\(--twins-navy-950\)/);
+  assert.match(css, /\.twins-location-services::before,\s*\.twins-location-local-proof::before,\s*\.twins-location-page \.twins-brand-faq::before,\s*\.twins-location-final-cta::before\s*\{[^}]*repeating-linear-gradient/);
+  assert.match(css, /\.twins-location-service-card\s*\{[^}]*border:\s*2px solid rgba\(255,\s*200,\s*61,\s*\.5\)/);
+  assert.match(css, /\.twins-location-service-card--spotlight\s*\{[^}]*background:\s*var\(--twins-gold\)/);
+  assert.match(css, /\.twins-location-proof-list li\s*\{[^}]*border:\s*1px solid rgba\(255,\s*200,\s*61,\s*\.5\)/);
+  assert.match(css, /\.twins-location-page \.twins-brand-faq details\s*\{[^}]*background:\s*#081f40[^}]*border:\s*1px solid rgba\(255,\s*200,\s*61,\s*\.5\)/);
+  assert.match(css, /\.twins-location-local-proof-media\s*\{[^}]*max-height:\s*440px[^}]*background:\s*var\(--twins-gold\)/);
+});
+
+test('service cards expose one stretched link without nested controls', () => {
+  assert.match(css, /\.twins-location-service-card\s*\{[^}]*position:\s*relative/);
+  assert.match(css, /\.twins-location-service-link::after\s*\{[^}]*position:\s*absolute[^}]*inset:\s*0/);
+  assert.match(css, /\.twins-location-service-card:focus-within\s*\{[^}]*outline:/);
+  assert.doesNotMatch(template, /<article[^>]*>\s*<a[^>]*>[\s\S]*?<a/);
+});
+
 test('recovery CSS locks alignment and contained image proportions', () => {
   assert.match(css, /--twins-location-max:\s*1180px/);
   assert.match(css, /padding-inline:\s*max\(var\(--twins-location-gutter\),\s*calc\(\(100vw - var\(--twins-location-max\)\)\s*\/\s*2\)\)/);
@@ -250,6 +271,8 @@ test('recovery CSS locks alignment and contained image proportions', () => {
   assert.match(css, /\.twins-location-local-proof\s*\{[^}]*grid-template-columns:\s*minmax\(320px,\s*\.85fr\) minmax\(0,\s*1\.15fr\)/);
   assert.match(css, /@media \(max-width:\s*1024px\)[\s\S]*?\.twins-location-hero\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1\.15fr\) minmax\(300px,\s*\.85fr\)/);
   assert.match(css, /@media \(max-width:\s*768px\)[\s\S]*?\.twins-location-hero-media\s*\{[^}]*max-height:\s*310px/);
+  assert.match(css, /@media \(max-width:\s*768px\)[\s\S]*?\.twins-location-service-grid\s*\{[^}]*grid-template-columns:\s*1fr/);
+  assert.match(css, /@media \(max-width:\s*480px\)[\s\S]*?\.twins-location-page \.twins-location-twin--services\s*\{[^}]*display:\s*none/);
 });
 
 test('mobile recovery media fits complete 4:3 photos and the hero caption inside its cap', () => {
