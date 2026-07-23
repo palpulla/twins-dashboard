@@ -229,16 +229,24 @@ test('quote is primary copy and unverified urgency claims stay absent', () => {
   }
 });
 
-test('location reveals are progressive enhancement and reduced motion is static', () => {
+test('location motion is finite, bounded, fail-open, and reduced-motion safe', () => {
   assert.match(script, /function initLocationReveals\(root, reducedMotion\)/);
-  assert.match(script, /IntersectionObserver/);
-  assert.match(script, /twins-location-motion-ready/);
-  assert.match(script, /data-location-visible/);
-  assert.match(script, /if \(reducedMotion\.matches\)/);
-  assert.match(css, /\.twins-location-motion-ready \[data-location-reveal\]/);
-  assert.doesNotMatch(css, /(^|\n)\[data-location-reveal\]\s*\{[^}]*opacity:\s*0/,
-    'content must not disappear when JavaScript is unavailable');
-  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*\[data-location-reveal\][^{]*\{[^}]*opacity:\s*1 !important/);
+  assert.match(script, /if \(reducedMotion\.matches\)\s*\{[\s\S]*?items\.forEach\(reveal\)/);
+  assert.match(script, /if \(!\('IntersectionObserver' in window\)\)\s*\{[\s\S]*?items\.forEach\(reveal\)/);
+  assert.match(script, /observer\.unobserve\(entry\.target\)/);
+
+  assert.match(css, /\.twins-location-motion-ready \[data-location-reveal\]\s*\{[^}]*translateY\(10px\)[^}]*420ms ease-out/);
+  assert.match(css, /\.twins-location-service-card\s*\{[^}]*transition:\s*transform 160ms ease-out/);
+  assert.match(css, /\.twins-location-service-card:is\(:hover,\s*:focus-within\)\s*\{[^}]*translateY\(-3px\)/);
+  assert.match(css, /\.twins-location-page \.twins-brand-cta--quote\s*\{[^}]*animation:\s*none[^}]*background-position:\s*100% 0[^}]*160ms ease-out/);
+  assert.match(css, /\.twins-location-page \.twins-brand-cta--quote:is\(:hover,\s*:focus-visible\)\s*\{[^}]*background-position:\s*0 0/);
+  assert.match(css, /\.twins-location-page \.twins-location-twin\s*\{[^}]*animation:\s*none/);
+
+  assert.doesNotMatch(css, /\.twins-location[^,{]*\{[^}]*animation:[^;}]*infinite/);
+  assert.doesNotMatch(css, /\.twins-location[^,{]*\{[^}]*animation:[^;}]*twins-brand-cta-pulse/);
+  assert.doesNotMatch(css, /(^|\n)\[data-location-reveal\]\s*\{[^}]*opacity:\s*0/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.twins-location-page \[data-location-reveal\][^{]*\{[^}]*opacity:\s*1 !important[^}]*transition:\s*none !important/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.twins-location-page \.twins-location-service-card[^{]*\{[^}]*transform:\s*none !important[^}]*transition:\s*none !important/);
 });
 
 test('post-hero sections use the dark showroom palette and static panel texture', () => {
