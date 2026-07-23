@@ -20,65 +20,55 @@ const navData = fs.readFileSync(path.join(root, 'components/nav-data.php'), 'utf
 const markets = fs.readFileSync(path.join(root, 'config/markets.php'), 'utf8');
 const fixture = fs.readFileSync(path.join(root, 'tests/browser/fixtures/location-modern.html'), 'utf8');
 
-test('location template contains the approved high-density landing page sections', () => {
+test('location template contains exactly the five approved recovery sections', () => {
   for (const className of [
     'twins-location-hero',
+    'twins-location-trust',
     'twins-location-services',
+    'twins-location-local-proof',
+    'twins-location-final-cta',
+  ]) {
+    assert.match(template, new RegExp(className), `${className} is missing`);
+  }
+  for (const retired of [
+    'twins-location-hero-stage',
+    'twins-location-orbit',
+    'twins-location-system',
     'twins-location-guidance',
     'twins-location-process',
     'twins-location-branch',
     'twins-location-nearby',
+    'twins-location-faq',
   ]) {
-    assert.match(template, new RegExp(className), `${className} is missing`);
+    assert.doesNotMatch(template, new RegExp(retired), `${retired} must be removed`);
   }
-  assert.doesNotMatch(template, /service-areas-panel\.php/,
-    'location pages must not render the oversized all-city door panel');
 });
 
-test('location hero is one cinematic composition with integrated proof', () => {
-  for (const className of [
-    'twins-location-hero-stage',
-    'twins-location-title-accent',
-    'twins-location-hero-media',
-    'twins-location-orbit',
-    'twins-location-hero-proof',
-  ]) {
-    assert.match(template, new RegExp(className), `${className} is missing from the cinematic hero`);
-  }
+test('recovery hero is a contained copy and media split with separate trust', () => {
+  assert.match(template, /<header class="twins-location-hero"[\s\S]*?twins-location-hero-copy[\s\S]*?twins-location-hero-media[\s\S]*?<\/header>/);
+  assert.match(template, /<section class="twins-location-trust"[^>]*role="list"/);
   assert.match(template, /Get a Free Quote/);
-  assert.match(template, /role="list"/);
-  assert.match(template, /role="listitem"/);
-  assert.doesNotMatch(template, /<\/header>\s*<section class="twins-location-proof"/,
-    'proof must remain inside the unified hero stage');
+  assert.doesNotMatch(template, /\$placement = 'hero'/);
 });
 
-test('cinematic hero becomes a contained copy-media-proof sequence on narrow screens', () => {
-  assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.twins-location-hero-stage\s*\{[^}]*display:\s*grid[^}]*min-height:\s*0/);
-  assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.twins-location-hero-media\s*\{[^}]*position:\s*relative[^}]*inset:\s*auto[^}]*height:\s*clamp\(330px,\s*50vw,\s*520px\)[^}]*grid-row:\s*2/);
-  assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.twins-location-hero-proof\s*\{[^}]*position:\s*relative[^}]*inset:\s*auto[^}]*grid-row:\s*3[^}]*margin:\s*-48px 20px 20px/);
-  assert.match(css, /@media \(max-width: 768px\)[\s\S]*?\.twins-location-hero-copy\s*\{[^}]*padding:\s*44px 22px 28px/);
-  assert.match(css, /@media \(max-width: 768px\)[\s\S]*?\.twins-location-hero-proof\s*\{[^}]*grid-template-columns:\s*1fr[^}]*margin:\s*-26px 12px 12px/);
-  assert.match(css, /@media \(max-width: 480px\)[\s\S]*?\.twins-location-hero-media\s*\{[^}]*height:\s*260px/);
-  assert.match(css, /@media \(max-width: 480px\)[\s\S]*?\.twins-location-page \.twins-location-twin--hero\s*\{[^}]*display:\s*none/);
+test('services are limited to three concise choices and one character cameo', () => {
+  assert.equal((template.match(/'title' =>/g) || []).length >= 3, true);
+  assert.doesNotMatch(template, /'title' => 'Preventive maintenance'/);
+  assert.match(template, /\$placement = 'services'/);
+  assert.match(template, /twins-location-service-grid/);
+  assert.match(template, /twins-location-service-card/);
 });
 
-test('location services form one connected complete-system pathway', () => {
-  assert.match(template, /<section class="twins-location-services" aria-labelledby="twins-location-services-title" data-location-reveal>/);
-  assert.match(template, /twins-location-service-pathway/);
-  assert.match(template, /twins-location-service-node/);
-  assert.match(template, /twins-location-service-index/);
-  assert.match(template, /twins-location-service-link/);
-  assert.equal((template.match(/\['Garage Door Repair', 'repair'\]/g) || []).length, 1);
-  assert.match(template, /Garage door opener service/);
-  assert.match(template, /Garage door installation/);
-  assert.match(template, /Preventive maintenance/);
-  assert.match(template, /'title' => 'Preventive maintenance',[\s\S]*?'route' => 'services'/);
-  for (const marketKey of ['wi', 'ky', 'il-preview']) {
-    const routeBlock = stagingRoutes.match(new RegExp(`'${marketKey}'\\s*=>\\s*\\[([\\s\\S]*?)\\n\\s*\\],`));
-    assert.ok(routeBlock, `${marketKey} route block is missing`);
-    assert.match(routeBlock[1], /'services'\s*=>/,
-      `${marketKey} must support the shared complete-services destination`);
-  }
+test('local proof has one owned image and three concise proof statements', () => {
+  assert.match(template, /twins-location-local-proof/);
+  assert.match(template, /\$logicalKey = 'door-builder-before-after'/);
+  assert.match(template, /twins-location-proof-list/);
+  assert.match(template, /Complete system inspection/);
+  assert.match(template, /Plain-language options/);
+  assert.match(template, /Respect for your home/);
+});
+
+test('Kentucky location service routes remain market-local', () => {
   const kyRouteBlock = stagingRoutes.match(/'ky'\s*=>\s*\[([\s\S]*?)\n\s*\],/);
   assert.ok(kyRouteBlock, 'ky route block is missing');
   for (const [routeKey, routePath] of [
@@ -97,32 +87,8 @@ test('location services form one connected complete-system pathway', () => {
   assert.match(template, /\$locationPath\s*=\s*isset\(\$context\['path'\]\)/);
   assert.match(template, /\$locationNavMarketKey\s*=\s*'ky'/,
     'Kentucky locations must retain the normalized Kentucky route market');
-  assert.match(template, /\$locationNearbyActionRoute\s*=\s*\$locationNavMarketKey === 'ky'\s*\?\s*'services'\s*:\s*'service-area'/);
-  assert.match(template, /\$locationNearbyActionLabel\s*=\s*\$locationNavMarketKey === 'ky'\s*\?\s*'View all garage door services'\s*:\s*'View all service areas'/);
-  assert.match(template, /\$experience->route\(\$locationNearbyActionRoute,\s*\$locationNavMarketKey\)/);
   assert.match(experience, /\(\?:wi\|il\|ky\)\/location/,
     'normalized Kentucky location paths must participate in location-content lookup');
-  assert.match(css, /\.twins-location-service-pathway::before/);
-  assert.match(css, /\.twins-location-service-pathway\s*\{[^}]*grid-template-columns:\s*repeat\(4,\s*minmax\(0,\s*1fr\)\)/);
-  assert.doesNotMatch(template, /twins-location-service-card/,
-    'services must not return to three generic detached cards');
-});
-
-test('location review safeguards keep hero copy readable and mobile quick actions clear', () => {
-  assert.match(css, /\.twins-location-hero-copy > p\s*\{[^}]*max-width:\s*510px/,
-    'desktop hero copy must end before the bright photo zone');
-  assert.match(css, /\.twins-location-hero-media::after\s*\{[^}]*linear-gradient\(90deg,\s*#05152e 0%,\s*#05152e 34%,\s*rgba\(5,21,46,\.82\) 48%,\s*rgba\(5,21,46,\.3\) 60%,\s*transparent 68%\)/,
-    'desktop hero media needs a long navy feather instead of a hard seam');
-  assert.match(css, /body\.twins-brand-experience \.twins-location-services \.twins-brand-kicker\s*\{[^}]*color:\s*#ffeeb8/,
-    'complete-service kicker needs an explicit readable color on navy');
-  assert.match(css, /body\[data-twins-location-hero-active="true"\] \.twins-brand-mobile-actions\s*\{[^}]*display:\s*none/,
-    'fixed mobile quick actions must yield while the location hero is in view');
-  assert.match(script, /function initLocationMobileActions\(root\)/,
-    'location pages need hero-aware mobile quick-action behavior');
-  assert.match(css, /\.twins-location-page \.twins-location-hero-media > picture:not\(\.twins-location-twin\)\s*\{[^}]*z-index:\s*0/,
-    'hero photo must remain below its navy feather');
-  assert.match(css, /\.twins-location-page \.twins-location-hero-media::after\s*\{[^}]*z-index:\s*1/,
-    'hero feather must paint above the photo');
 });
 
 test('location copy never positions a branch as new or unproven', () => {
@@ -141,13 +107,6 @@ test('location copy never positions a branch as new or unproven', () => {
   }
 });
 
-test('location template expands city FAQs with three practical shared answers', () => {
-  assert.match(template, /Can you repair my garage door, or will it need to be replaced\?/);
-  assert.match(template, /Do you service garage door openers\?/);
-  assert.match(template, /What should I do if a spring or cable breaks\?/);
-  assert.match(template, /array_slice\(array_merge\(\$editorialFaqs, \$locationSharedFaqs\), 0, 5\)/);
-});
-
 test('footer uses route context instead of a hard-coded Madison address', () => {
   assert.doesNotMatch(footer, /<span>2921 Landmark Pl #206, Madison, WI 53713<\/span>/);
   assert.match(footer, /\$context\['metroAddress'\]/);
@@ -156,50 +115,7 @@ test('footer uses route context instead of a hard-coded Madison address', () => 
   assert.match(experience, /5758 Elaine Dr Ste 110, Rockford, IL 61108/);
 });
 
-test('location pages move the animated door up and give every service a fixed visual', () => {
-  assert.match(template, /twins-location-system/);
-  assert.match(template, /twins_brand_door_art\('door-open', 'twins-location-system-art', 'location-system'\)/);
-  assert.match(template, /'art' => 'spring'/);
-  assert.match(template, /'art' => 'keypad'/);
-  assert.match(template, /'art' => 'door'/);
-  assert.match(template, /'art' => 'roller'/);
-  assert.match(template, /twins-location-service-art/);
-  assert.match(template, /\$finalCtaArtKind = \$isLocation \? 'door' : 'door-open'/);
-  assert.match(css, /\.twins-location-system/);
-  assert.match(css, /\.twins-location-service-art/);
-  assert.match(template, /class="twins-location-guidance"[\s\S]*?\$logicalKey = 'door-builder-before-after'/);
-  assert.match(template, /\$class = 'twins-location-guidance-image'/);
-  assert.match(template, /components\/picture\.php/);
-  assert.match(picture, /'door-builder-before-after'[\s\S]*?'alt' => 'Before and after view of a real Twins garage door installation'/);
-  assert.match(css, /\.twins-location-guidance-media\s*\{/);
-  assert.match(css, /\.twins-location-guidance-image\s*\{[^}]*object-fit:\s*cover/);
-  assert.match(css, /@media \(max-width: 1024px\)[\s\S]*?\.twins-location-guidance-copy,\s*\.twins-location-guidance-media,\s*\.twins-location-warning-card\s*\{[^}]*grid-column:\s*auto[^}]*grid-row:\s*auto/);
-});
-
-test('Rockford location fixture retains exact generated door curtain classes and the shared footer catalog', () => {
-  const arts = (fixture.match(/<svg\b[^>]*twins-brand-door-art--(?:door-open|door)\b[\s\S]*?<\/svg>/g) || [])
-    .filter(art => /twins-location-system-art|twins-brand-cta-art|twins-brand-footer-door/.test(art));
-  assert.equal(arts.length, 3, 'fixture must include system, final-CTA, and footer door art');
-  assert.match(arts[0], /^<svg viewBox="0 0 220 190" class="twins-brand-door-art twins-brand-door-art--door-open twins-location-system-art" aria-hidden="true" focusable="false">/);
-  assert.match(arts[0], /<defs><clipPath id="twins-door-clip-location-system"><rect x="20" y="20" width="180" height="150" rx="4"\/><\/clipPath><\/defs><rect x="2" y="2" width="216" height="186" rx="10" class="twins-da-gold"\/><rect x="11" y="11" width="198" height="168" rx="6" class="twins-da-navy"\/><rect x="20" y="20" width="180" height="150" rx="4" class="twins-da-interior"\/><ellipse cx="110" cy="168" rx="74" ry="26" class="twins-da-glow"\/><rect x="34" y="150" width="152" height="6" rx="3" class="twins-da-floor"\/><g clip-path="url\(#twins-door-clip-location-system\)"><g class="twins-da-curtain"><rect x="20" y="20" width="180" height="150" rx="4" class="twins-da-face"\/>/);
-  const expectedPlainClasses = [
-    'twins-brand-cta-art',
-    'twins-brand-footer-door',
-  ];
-  for (const [index, extraClass] of expectedPlainClasses.entries()) {
-    const art = arts[index + 1];
-    assert.match(art, new RegExp(`^<svg viewBox="0 0 220 190" class="twins-brand-door-art twins-brand-door-art--door ${extraClass}" aria-hidden="true" focusable="false"><rect x="2" y="2" width="216" height="186" rx="10" class="twins-da-gold"\\/><rect x="11" y="11" width="198" height="168" rx="6" class="twins-da-navy"\\/><rect x="20" y="20" width="180" height="150" rx="4" class="twins-da-face"\\/><rect x="26.0" y="26.0"`));
-  }
-  assert.doesNotMatch(fixture, /twins-da-gold-outer|viewBox="0 0 240 220"/);
-  for (const art of arts) {
-    assert.equal((art.match(/class="twins-da-window-frame"/g) || []).length, 4);
-    assert.equal((art.match(/class="twins-da-glass"/g) || []).length, 4);
-    assert.equal((art.match(/class="twins-da-glass-hi"/g) || []).length, 4);
-    assert.equal((art.match(/class="twins-da-panel"/g) || []).length, 12);
-    assert.equal((art.match(/class="twins-da-panel-inner"/g) || []).length, 12);
-  }
-  assert.match(arts[0], /class="twins-da-curtain"/);
-
+test('Rockford location fixture retains route-local contact data and the shared footer catalog', () => {
   const expectedGroups = [
     ['Services', 5, 'Garage Door Installation'],
     ['Garage Doors', 3, 'Garage Door Collections'],
@@ -231,108 +147,24 @@ test('Rockford location fixture retains exact generated door curtain classes and
   assert.equal((fixture.match(/>Get a Free Quote<\/a>/g) || []).length, 7);
   assert.equal((fixture.match(/>Call Now<\/a>/g) || []).length, 1);
   assert.doesNotMatch(fixture, />Request a Quote<\/a>|>Call Twins<\/a>/);
-  assert.equal((fixture.match(/class="twins-location-service-node"/g) || []).length, 4);
-  assert.match(fixture, /id="installation"[\s\S]*?twins-brand-door-art--door twins-location-service-art/);
-  assert.match(fixture, /id="maintenance"[\s\S]*?twins-brand-door-art--roller twins-location-service-art/);
-  assert.match(fixture, /id="maintenance"[\s\S]*?href="#all-services">Explore Preventive maintenance<\/a>/);
-  assert.match(fixture, /class="twins-location-guidance-media"[\s\S]*?alt="Before and after view of a real Twins garage door installation"/);
-  assert.doesNotMatch(fixture, />Spring Repair<\/a>|>Wisconsin Garage Door Cost Guide<\/a>/);
 });
 
-test('location sections use accessible CSS-only garage door panel framing', () => {
-  for (const section of [
-    'system',
-    'services',
-    'guidance',
-    'process',
-    'branch',
-    'nearby',
-    'faq',
-  ]) {
-    assert.match(css, new RegExp(`\\.twins-location-${section}`),
-      `location texture CSS omits ${section}`);
-  }
-
-  for (const token of [
-    '--twins-location-panel-width',
-    '--twins-location-panel-opacity',
-    '--twins-location-panel-line',
-    '--twins-location-panel-track',
-  ]) {
-    assert.match(css, new RegExp(token), `location texture CSS omits ${token}`);
-  }
-
-  assert.match(css, /pointer-events:\s*none/);
-  assert.match(css, /isolation:\s*isolate/);
-  assert.match(css, /\.twins-location-system[\s\S]*\.twins-location-faq[\s\S]*::before/);
-  assert.match(css, /@media \(max-width: 768px\)[\s\S]*--twins-location-panel-width:\s*150px/);
-  assert.match(css, /@media \(max-width: 480px\)[\s\S]*--twins-location-panel-width:\s*120px/);
-  assert.doesNotMatch(template, /twins-location-panel/,
-    'decorative location textures must not add template markup');
-});
-
-test('location design preserves the old display font and uses restrained premium geometry', () => {
-  assert.match(css, /\.twins-location-hero h1\s*\{[^}]*font-family:\s*'Lilita One'/);
-  assert.match(css, /\.twins-location-title-accent\s*\{[^}]*color:\s*var\(--twins-gold\)/);
-  assert.match(css, /\.twins-location-hero-media\s*\{[^}]*position:\s*absolute/);
-  assert.match(css, /\.twins-location-hero-proof\s*\{[^}]*backdrop-filter:\s*blur/);
-  assert.doesNotMatch(css, /\.twins-location-hero-media\s*\{[^}]*border-left:/,
-    'the hero photo must not return to a boxed split-column treatment');
-  assert.match(css, /\.twins-location-service-node\s*\{[^}]*border-top:\s*1px solid/);
-  assert.doesNotMatch(css, /\.twins-location-service-node\s*\{[^}]*box-shadow:/);
-  assert.match(css, /\.twins-location-page \.twins-location-twin\s*\{[^}]*pointer-events:\s*none/);
-  assert.match(css, /\.twins-location-page \.twins-location-twin--hero\s*\{[^}]*clamp\(72px,\s*7vw,\s*104px\)/);
-  assert.match(css, /\.twins-location-page \.twins-location-twin--guidance\s*\{[^}]*clamp\(88px,\s*7vw,\s*116px\)/);
-  assert.match(css, /\.twins-location-page \.twins-location-twin--final-right\s*\{[^}]*clamp\(92px,\s*8vw,\s*124px\)/);
-  assert.match(css, /@media \(max-width: 480px\)\s*\{[\s\S]*?\.twins-location-page \.twins-location-guidance,\s*\.twins-location-page \.twins-location-final-cta\s*\{[^}]*padding-bottom:\s*210px/,
-    'small screens must reserve 210px for the right Twin and content clearance');
-  assert.match(css, /\.twins-location-branch aside\s*\{[^}]*color:\s*var\(--twins-white\)[^}]*background:\s*rgba\(255,255,255,\.08\)[^}]*border:\s*1px solid rgba\(181,209,237,\.28\)/);
-  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.twins-location-page \.twins-location-twin\s*\{[^}]*animation:\s*none !important[^}]*transform:\s*none !important/);
-  assert.doesNotMatch(css, /twins-location-twin--system|twins-location-twin--final-left/);
-  assert.doesNotMatch(css, /(^|\n)\s*\.twins-location-twin/,
-    'location Twin selectors must never escape the location-page scope');
-  assert.match(css, /@media \(max-width: 768px\)[\s\S]*?\.twins-location-hero\s*\{[^}]*padding:\s*16px 14px 34px/,
-    'small screens must bring the real hero photo into the first viewport');
-  assert.match(css, /@media \(max-width: 480px\)[\s\S]*?\.twins-location-hero h1\s*\{[^}]*font-size:\s*clamp\(2\.55rem,\s*13vw,\s*3\.45rem\)[^}]*line-height:\s*\.88/,
-    'small screens must use the compact readable hero heading scale');
-});
-
-test('location mascots are restrained to hero, guidance, and one final CTA cameo', () => {
-  assert.match(template, /twins-location-hero-media[\s\S]*?\$placement = 'hero'/);
-  assert.match(template, /twins-location-guidance[\s\S]*?\$placement = 'guidance'/);
+test('location mascots are restrained to services and both final CTA edges', () => {
+  assert.match(template, /twins-location-services[\s\S]*?\$placement = 'services'/);
+  assert.match(template, /twins-location-final-cta[\s\S]*?\$placement = 'final-left'/);
   assert.match(template, /twins-location-final-cta[\s\S]*?\$placement = 'final-right'/);
-  assert.doesNotMatch(template, /\$placement = 'system'/);
-  assert.doesNotMatch(template, /\$placement = 'final-left'/);
+  assert.doesNotMatch(template, /\$placement = 'hero'/);
+  assert.doesNotMatch(template, /\$placement = 'guidance'/);
 });
 
 test('Twin component fails closed unless its character and placement are an approved exact pair', () => {
   const twinCharacter = fs.readFileSync(path.join(root, 'components/twin-character.php'), 'utf8');
 
-  assert.match(twinCharacter, /\['left', 'hero'\]/);
-  assert.match(twinCharacter, /\['right', 'guidance'\]/);
+  assert.match(twinCharacter, /\['right', 'services'\]/);
+  assert.match(twinCharacter, /\['left', 'final-left'\]/);
   assert.match(twinCharacter, /\['right', 'final-right'\]/);
   assert.match(twinCharacter, /!in_array\(\[\$character, \$placement\], \$allowedPairs, true\)/);
   assert.doesNotMatch(twinCharacter, /\$placements\s*=/);
-});
-
-test('supporting sections alternate cinematic and warm planes without generic card grids', () => {
-  assert.match(template, /class="twins-location-system"[^>]*data-location-reveal/);
-  assert.match(template, /class="twins-location-guidance"[^>]*data-location-reveal/);
-  assert.match(template, /class="twins-location-process"[^>]*data-location-reveal/);
-  assert.match(template, /class="twins-location-branch"[^>]*data-location-reveal/);
-  assert.match(template, /class="twins-location-nearby"[^>]*data-location-reveal/);
-  assert.match(template, /class="twins-brand-faq twins-location-faq"[^>]*data-location-reveal/);
-  assert.match(template, /class="twins-brand-final-cta<\?= \$isLocation \? ' twins-location-final-cta' : '' \?>"[^>]*\$isLocation \? ' data-location-reveal' : ''/);
-  assert.match(css, /\.twins-location-guidance\s*\{[^}]*background:\s*#f4ead6/);
-  assert.match(css, /\.twins-location-process-list::before/);
-  assert.match(css, /\.twins-location-branch\s*\{[^}]*background:/);
-  assert.match(css, /\.twins-location-faq\s*\{[^}]*background:\s*var\(--twins-white\)/);
-});
-
-test('stacked location process keeps its connector vertical and clears the step copy', () => {
-  assert.match(css, /@media \(max-width: 768px\)[\s\S]*?\.twins-location-process-list::before\s*\{[^}]*top:\s*28px[^}]*right:\s*auto[^}]*bottom:\s*28px[^}]*left:\s*27px[^}]*width:\s*1px[^}]*height:\s*auto/);
-  assert.match(css, /@media \(max-width: 768px\)[\s\S]*?\.twins-location-process-list li\s*\{[^}]*padding:\s*0 0 0 82px/);
-  assert.match(css, /@media \(max-width: 768px\)[\s\S]*?\.twins-location-process-list span\s*\{[^}]*position:\s*absolute[^}]*top:\s*0[^}]*left:\s*0/);
 });
 
 test('quote is primary copy and unverified urgency claims stay absent', () => {

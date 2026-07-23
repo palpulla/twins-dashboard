@@ -592,21 +592,15 @@ foreach ($locationRecords as $slug => $record) {
             $slug . ' did not render its city copy'
         );
     }
-    foreach ($record['faq'] as $faq) {
-        $expect(
-            strpos($renderedLocation, htmlspecialchars($faq['q'], ENT_QUOTES, 'UTF-8')) !== false
-                && strpos($renderedLocation, htmlspecialchars($faq['a'], ENT_QUOTES, 'UTF-8')) !== false,
-            $slug . ' did not render its FAQ copy'
-        );
-    }
-    foreach (['twins-location-hero', 'twins-location-services', 'twins-location-guidance', 'twins-location-process', 'twins-location-branch', 'twins-location-nearby'] as $className) {
+    foreach (['twins-location-hero', 'twins-location-trust', 'twins-location-services', 'twins-location-local-proof', 'twins-location-final-cta'] as $className) {
         $expect(strpos($renderedLocation, $className) !== false, $slug . ' omitted ' . $className);
     }
-    $expect(substr_count($renderedLocation, 'class="twins-location-service-node"') === 4, $slug . ' did not render four complete-service nodes');
-    $expect(strpos($renderedLocation, 'Explore Preventive maintenance</a>') !== false, $slug . ' omitted the maintenance pathway');
-    $expect(strpos($renderedLocation, 'href="/garage-door-services/"') !== false, $slug . ' did not use the cross-market complete-services route for maintenance');
-    $expect(substr_count($renderedLocation, '/door-builder/twins-before-after-install.webp') === 1, $slug . ' did not render the owned homeowner guidance photo exactly once');
-    $expect(strpos($renderedLocation, 'alt="Before and after view of a real Twins garage door installation"') !== false, $slug . ' changed the owned guidance-photo alt text');
+    foreach (['twins-location-system', 'twins-location-process', 'twins-location-branch', 'twins-location-nearby', 'twins-location-faq'] as $retiredClass) {
+        $expect(strpos($renderedLocation, $retiredClass) === false, $slug . ' retained ' . $retiredClass);
+    }
+    $expect(substr_count($renderedLocation, 'class="twins-location-service-card"') === 3, $slug . ' did not render three service choices');
+    $expect(strpos($renderedLocation, 'Preventive maintenance') === false, $slug . ' retained the fourth service module');
+    $expect(substr_count($renderedLocation, '/door-builder/twins-before-after-install.webp') === 1, $slug . ' did not render the owned local-proof photo exactly once');
     foreach (['services', 'final-left', 'final-right'] as $placement) {
         $expect(
             substr_count($renderedLocation, 'twins-location-twin--' . $placement) === 1,
@@ -618,7 +612,6 @@ foreach ($locationRecords as $slug => $record) {
     $expect(substr_count($renderedLocation, '/brand/twin-left.png') === 1, $slug . ' did not render one left Twin');
     $expect(substr_count($renderedLocation, '/brand/twin-right.png') === 2, $slug . ' did not render two right Twins');
     $expect(substr_count($renderedLocation, 'alt="" aria-hidden="true"') === 3, $slug . ' Twin accessibility markup drifted');
-    $expect(substr_count($renderedLocation, '<details>') === 5, $slug . ' did not render five FAQs');
     $recordText = strtolower($record['intro'] . ' ' . $record['localNotes']);
     foreach ($record['faq'] as $faq) {
         $recordText .= ' ' . strtolower($faq['q'] . ' ' . $faq['a']);
@@ -635,38 +628,27 @@ $rockfordLocation = $stagingExperience->renderEditorial([
     'path' => '/il/location/rockford/',
     'title' => 'Rockford',
 ], '<p>LEGACY ROCKFORD LOCATION BODY</p>', 'location');
-foreach (['twins-location-hero', 'twins-location-proof', 'twins-location-services', 'twins-location-guidance', 'twins-location-process', 'twins-location-branch', 'twins-location-nearby'] as $className) {
+foreach (['twins-location-hero', 'twins-location-trust', 'twins-location-services', 'twins-location-local-proof', 'twins-location-final-cta'] as $className) {
     $expect(strpos($rockfordLocation, $className) !== false, 'Rockford omitted ' . $className);
 }
-$expect(substr_count($rockfordLocation, '<details>') === 5, 'Rockford must render five FAQs');
+foreach (['twins-location-system', 'twins-location-process', 'twins-location-branch', 'twins-location-nearby', 'twins-location-faq'] as $retiredClass) {
+    $expect(strpos($rockfordLocation, $retiredClass) === false, 'Rockford retained ' . $retiredClass);
+}
 $expect(substr_count($rockfordLocation, 'Explore Garage Door Repair</a>') === 1, 'Rockford duplicated the repair destination');
 $expect(strpos($rockfordLocation, '5758 Elaine Dr Ste 110, Rockford, IL 61108') !== false, 'Rockford omitted its branch address');
 foreach (['recently opened', 'new to this market', 'earn the local record'] as $prohibitedCopy) {
     $expect(stripos($rockfordLocation, $prohibitedCopy) === false, 'Rockford rendered prohibited copy: ' . $prohibitedCopy);
 }
 $expect(strpos($rockfordLocation, 'LEGACY ROCKFORD LOCATION BODY') === false, 'Rockford location rendered the preserved legacy body');
-$systemPosition = strpos($rockfordLocation, 'class="twins-location-system"');
-$servicesPosition = strpos($rockfordLocation, 'class="twins-location-services"');
-$expect(
-    is_int($systemPosition) && is_int($servicesPosition) && $systemPosition < $servicesPosition,
-    'Rockford must render the animated door system band before services'
-);
-$expect(
-    substr_count($rockfordLocation, 'twins-brand-door-art--door-open') === 1,
-    'Rockford must render exactly one animated door'
-);
 foreach (['spring', 'keypad', 'door'] as $artKind) {
     $expect(
         strpos($rockfordLocation, 'twins-brand-door-art twins-brand-door-art--' . $artKind . ' twins-location-service-art') !== false,
         'Rockford omitted service art: ' . $artKind
     );
 }
-$expect(
-    strpos($rockfordLocation, 'twins-brand-door-art twins-brand-door-art--roller twins-location-service-art') !== false,
-    'Rockford omitted maintenance roller art'
-);
-$expect(substr_count($rockfordLocation, 'class="twins-location-service-node"') === 4, 'Rockford must render four complete-service nodes');
-$expect(strpos($rockfordLocation, 'href="/garage-door-services/"') !== false, 'Rockford maintenance node did not use the cross-market complete-services route');
+$expect(substr_count($rockfordLocation, 'class="twins-location-service-card"') === 3, 'Rockford must render three service choices');
+$expect(strpos($rockfordLocation, 'Preventive maintenance') === false, 'Rockford retained the fourth service module');
+$expect(substr_count($rockfordLocation, '/door-builder/twins-before-after-install.webp') === 1, 'Rockford must render the owned local-proof photo exactly once');
 
 $trustEditorial = $stagingExperience->renderEditorial([
     'environment' => 'staging',

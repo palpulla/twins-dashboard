@@ -94,13 +94,6 @@ $locationServiceCards = $isLocation
             'description' => 'When a door is extensively damaged or no longer fits the home, we measure the opening and explain construction, insulation, window, and finish choices.',
             'items' => ['Opening measured before quoting', 'Door and track options explained', 'Complete operating-system setup'],
         ],
-        [
-            'title' => 'Preventive maintenance',
-            'route' => 'services',
-            'art' => 'roller',
-            'description' => 'Regular inspection and adjustment can catch wear in rollers, hinges, tracks, cables, springs, and opener controls before small changes become disruptive failures.',
-            'items' => ['Moving hardware inspected', 'Balance and travel checked', 'Maintenance needs explained'],
-        ],
     ]
     : [];
 
@@ -201,195 +194,86 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
 ?>
 <main id="twins-overhaul-main" class="twins-brand-page twins-brand-editorial-page<?= $isArticle ? ' twins-brand-article-page' : '' ?><?= $isLocation ? ' twins-location-page' : '' ?>">
   <?php if ($isLocation): ?>
-    <header class="twins-location-hero" aria-labelledby="twins-location-title">
-      <div class="twins-location-hero-stage" data-location-reveal>
-        <span class="twins-location-orbit twins-location-orbit--one" aria-hidden="true"></span>
-        <span class="twins-location-orbit twins-location-orbit--two" aria-hidden="true"></span>
-        <div class="twins-location-hero-copy">
-          <span class="twins-brand-kicker">Garage door help in <?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?></span>
-          <?= $editorialTitleMarkup ?>
-          <p><?= htmlspecialchars($editorial['answer'], ENT_QUOTES, 'UTF-8') ?></p>
-          <div class="twins-location-actions">
-            <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Get a Free Quote</a>
-            <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call <?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
-          </div>
-        </div>
-        <figure class="twins-location-hero-media">
-          <?php
-          $logicalKey = 'technician-at-work';
-          $sizes = '(max-width: 1024px) 100vw, 58vw';
-          $class = 'twins-location-hero-image';
-          $loading = 'eager';
-          require dirname(__DIR__) . '/components/picture.php';
-          ?>
-          <?php
-          $character = 'left';
-          $placement = 'hero';
-          require $twinCharacterComponent;
-          ?>
-        </figure>
-        <div class="twins-location-hero-proof" role="list" aria-label="Why homeowners call Twins Garage Doors">
-          <div role="listitem">
-            <?php if ($napRating !== null): ?>
-              <strong><span class="twins-brand-stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <?= htmlspecialchars((string) $napRating, ENT_QUOTES, 'UTF-8') ?> on Google</strong>
-              <span><?= $napCount !== '' ? htmlspecialchars($napCount, ENT_QUOTES, 'UTF-8') . ' customer reviews' : 'Verified customer reviews' ?></span>
-            <?php else: ?>
-              <strong>Customer-reviewed service</strong><span>Real feedback from Twins customers</span>
-            <?php endif; ?>
-          </div>
-          <div role="listitem"><strong>Family owned</strong><span>Run by twin brothers, not a franchise</span></div>
-          <div role="listitem"><strong>Licensed and insured</strong><span>Professional service for your home</span></div>
+    <header class="twins-location-hero" aria-labelledby="twins-location-title" data-location-reveal>
+      <div class="twins-location-hero-copy">
+        <span class="twins-brand-kicker">Garage door help in <?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?></span>
+        <?= $editorialTitleMarkup ?>
+        <p><?= htmlspecialchars($editorial['answer'], ENT_QUOTES, 'UTF-8') ?></p>
+        <div class="twins-location-actions">
+          <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Get a Free Quote</a>
+          <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call <?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
         </div>
       </div>
+      <figure class="twins-location-hero-media">
+        <?php
+        $logicalKey = 'technician-at-work';
+        $sizes = '(max-width: 768px) 100vw, 42vw';
+        $class = 'twins-location-hero-image';
+        $loading = 'eager';
+        require dirname(__DIR__) . '/components/picture.php';
+        ?>
+        <figcaption>Careful diagnosis. Clear options. Work centered on the complete door system.</figcaption>
+      </figure>
     </header>
 
-    <section class="twins-location-system" aria-labelledby="twins-location-system-title" data-location-reveal>
-      <div class="twins-location-system-visual">
-        <?= twins_brand_door_art('door-open', 'twins-location-system-art', 'location-system') ?>
+    <section class="twins-location-trust" role="list" aria-label="Why homeowners call Twins Garage Doors" data-location-reveal>
+      <div role="listitem">
+        <?php if ($napRating !== null): ?>
+          <strong><span class="twins-brand-stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <?= htmlspecialchars((string) $napRating, ENT_QUOTES, 'UTF-8') ?> on Google</strong>
+          <span><?= $napCount !== '' ? htmlspecialchars($napCount, ENT_QUOTES, 'UTF-8') . ' customer reviews' : 'Verified customer reviews' ?></span>
+        <?php else: ?>
+          <strong>Customer-reviewed service</strong><span>Real feedback from Twins customers</span>
+        <?php endif; ?>
       </div>
-      <div>
-        <span class="twins-brand-kicker">Built as one complete system</span>
-        <h2 id="twins-location-system-title">Every part affects how the door moves.</h2>
-        <p>The door, springs, cables, rollers, tracks, opener, controls, and safety equipment must work together for smooth, secure operation.</p>
-      </div>
+      <div role="listitem"><strong>Family owned</strong><span>Run by twin brothers, not a franchise</span></div>
+      <div role="listitem"><strong>Licensed and insured</strong><span>Professional service for your home</span></div>
     </section>
 
     <section class="twins-location-services" aria-labelledby="twins-location-services-title" data-location-reveal>
+      <?php
+      $character = 'right';
+      $placement = 'services';
+      require $twinCharacterComponent;
+      ?>
       <div class="twins-location-section-heading">
-        <div>
-          <span class="twins-brand-kicker">Complete garage door service</span>
-          <h2 id="twins-location-services-title">Find the failure. Restore the whole system.</h2>
-        </div>
-        <p>Twins checks how the door, counterbalance hardware, opener, controls, and safety equipment work together before recommending the next step.</p>
+        <span class="twins-brand-kicker">How we can help</span>
+        <h2 id="twins-location-services-title">The right service for the door you have.</h2>
+        <p>Twins checks the complete system before recommending repair, opener work, or replacement.</p>
       </div>
-      <div class="twins-location-service-pathway">
-        <?php foreach ($locationServiceCards as $index => $serviceCard): ?>
-          <article class="twins-location-service-node">
-            <span class="twins-location-service-index" aria-hidden="true">0<?= $index + 1 ?></span>
-            <?= twins_brand_door_art(
-                $serviceCard['art'],
-                'twins-location-service-art',
-                'location-service-' . $serviceCard['art']
-            ) ?>
+      <div class="twins-location-service-grid">
+        <?php foreach ($locationServiceCards as $serviceCard): ?>
+          <article class="twins-location-service-card">
+            <?= twins_brand_door_art($serviceCard['art'], 'twins-location-service-art', 'location-service-' . $serviceCard['art']) ?>
             <h3><?= htmlspecialchars($serviceCard['title'], ENT_QUOTES, 'UTF-8') ?></h3>
             <p><?= htmlspecialchars($serviceCard['description'], ENT_QUOTES, 'UTF-8') ?></p>
-            <ul>
-              <?php foreach ($serviceCard['items'] as $serviceItem): ?>
-                <li><?= htmlspecialchars($serviceItem, ENT_QUOTES, 'UTF-8') ?></li>
-              <?php endforeach; ?>
-            </ul>
             <a class="twins-location-service-link" href="<?= htmlspecialchars($experience->route($serviceCard['route'], $locationNavMarketKey), ENT_QUOTES, 'UTF-8') ?>">Explore <?= htmlspecialchars($serviceCard['title'], ENT_QUOTES, 'UTF-8') ?></a>
           </article>
         <?php endforeach; ?>
       </div>
     </section>
 
-    <section class="twins-location-guidance" aria-labelledby="twins-location-guidance-title" data-location-reveal>
-      <?php
-      $character = 'right';
-      $placement = 'guidance';
-      require $twinCharacterComponent;
-      ?>
-      <div class="twins-location-guidance-copy">
-        <span class="twins-brand-kicker">Local garage door guidance</span>
-        <h2 id="twins-location-guidance-title">What affects garage doors in <?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?></h2>
-        <?php if ($locationRecord !== null && $locationRecord['localNotes'] !== ''): ?>
-          <p><?= htmlspecialchars($locationRecord['localNotes'], ENT_QUOTES, 'UTF-8') ?></p>
-        <?php endif; ?>
-        <h3>Repair or replace?</h3>
-        <p>A repair often makes sense when the main door structure is sound and the problem is limited to springs, cables, rollers, tracks, seals, controls, or the opener. Replacement deserves consideration when sections are badly damaged, the door repeatedly falls out of alignment, or you want a meaningful change in insulation, appearance, or operation.</p>
-      </div>
-      <figure class="twins-location-guidance-media">
+    <section class="twins-location-local-proof" aria-labelledby="twins-location-local-proof-title" data-location-reveal>
+      <figure class="twins-location-local-proof-media">
         <?php
         $logicalKey = 'door-builder-before-after';
-        $sizes = '(max-width: 1024px) 100vw, 42vw';
-        $class = 'twins-location-guidance-image';
+        $sizes = '(max-width: 768px) 100vw, 42vw';
+        $class = 'twins-location-local-proof-image';
         $loading = 'lazy';
         require dirname(__DIR__) . '/components/picture.php';
         ?>
       </figure>
-      <aside class="twins-location-warning-card">
-        <span class="twins-brand-kicker">Stop and call when</span>
-        <h3>The door is no longer safely supported</h3>
-        <ul>
-          <li>A spring is broken or a cable is loose</li>
-          <li>The door hangs crooked or leaves the tracks</li>
-          <li>The opener runs but the door feels unusually heavy</li>
-          <li>A panel, bracket, or track is visibly damaged</li>
-          <li>The door reverses or will not close securely</li>
-        </ul>
-        <p>Do not pull, cut, or adjust springs and cables. Keep the opening clear until the system can be inspected.</p>
-      </aside>
-    </section>
-
-    <section class="twins-location-process" aria-labelledby="twins-location-process-title" data-location-reveal>
-      <div class="twins-location-section-heading">
-        <div>
-          <span class="twins-brand-kicker">A straightforward service visit</span>
-          <h2 id="twins-location-process-title">From the first call to a working door</h2>
-        </div>
-        <p>Clear communication matters as much as the repair. We keep the process simple and explain the work before moving forward.</p>
-      </div>
-      <ol class="twins-location-process-list">
-        <li><span>01</span><h3>Tell us what changed</h3><p>Share what the door is doing, whether it is open or closed, and whether a vehicle is trapped.</p></li>
-        <li><span>02</span><h3>We inspect the system</h3><p>The technician checks the door, balance, moving hardware, opener, controls, and safety equipment.</p></li>
-        <li><span>03</span><h3>Choose the right path</h3><p>We explain the diagnosis and practical options so you can approve the work that fits the situation.</p></li>
-      </ol>
-    </section>
-
-    <section class="twins-location-branch" aria-labelledby="twins-location-branch-title" data-location-reveal>
-      <div>
-        <span class="twins-brand-kicker">Your Twins Garage Doors team</span>
-        <h2 id="twins-location-branch-title">Garage door service for <?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?></h2>
+      <div class="twins-location-local-proof-copy">
+        <span class="twins-brand-kicker">Local garage door service</span>
+        <h2 id="twins-location-local-proof-title">Practical help for <?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?> homeowners.</h2>
+        <?php if ($locationRecord !== null && $locationRecord['localNotes'] !== ''): ?>
+          <p><?= htmlspecialchars($locationRecord['localNotes'], ENT_QUOTES, 'UTF-8') ?></p>
+        <?php endif; ?>
         <?php if ($napAddress !== ''): ?><p class="twins-location-address"><?= htmlspecialchars($napAddress, ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?>
-        <p>Call to describe the problem or request a quote online. We will help you identify the right next step for repair, opener service, or replacement planning.</p>
-        <div class="twins-location-actions">
-          <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Get a Free Quote</a>
-        </div>
-      </div>
-      <aside>
-        <strong>What you can expect</strong>
-        <ul>
-          <li>A complete system inspection</li>
-          <li>Plain-language repair options</li>
-          <li>Respect for your home and property</li>
-          <li>Licensed and insured service</li>
+        <ul class="twins-location-proof-list">
+          <li><strong>Complete system inspection</strong><span>Door, hardware, opener, controls, and safety equipment checked together.</span></li>
+          <li><strong>Plain-language options</strong><span>Repair and replacement paths explained before work moves forward.</span></li>
+          <li><strong>Respect for your home</strong><span>Licensed and insured service centered on safe, reliable operation.</span></li>
         </ul>
-      </aside>
-    </section>
-
-    <section class="twins-location-nearby" aria-labelledby="twins-location-nearby-title" data-location-reveal>
-      <div class="twins-location-section-heading">
-        <div>
-          <span class="twins-brand-kicker"><?= htmlspecialchars($locationNearbyKicker, ENT_QUOTES, 'UTF-8') ?></span>
-          <h2 id="twins-location-nearby-title"><?= htmlspecialchars($locationNearbyTitle, ENT_QUOTES, 'UTF-8') ?></h2>
-        </div>
-        <a href="<?= htmlspecialchars($experience->route($locationNearbyActionRoute, $locationNavMarketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($locationNearbyActionLabel, ENT_QUOTES, 'UTF-8') ?></a>
-      </div>
-      <?php if ($locationNearbyLinks !== []): ?>
-        <nav class="twins-location-nearby-grid" aria-label="Nearby garage door service areas">
-          <?php foreach ($locationNearbyLinks as [$nearbyLabel, $nearbyRoute]): ?>
-            <a href="<?= htmlspecialchars($experience->route($nearbyRoute, $locationNavMarketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($nearbyLabel, ENT_QUOTES, 'UTF-8') ?></a>
-          <?php endforeach; ?>
-        </nav>
-      <?php endif; ?>
-    </section>
-
-    <section class="twins-brand-faq twins-location-faq" aria-labelledby="twins-location-faq-title" data-location-reveal>
-      <div class="twins-location-section-heading">
-        <div>
-          <span class="twins-brand-kicker">Common questions</span>
-          <h2 id="twins-location-faq-title">Garage door questions from <?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?> homeowners</h2>
-        </div>
-        <p>These answers cover the first decisions. A technician can give you a specific recommendation after inspecting your door.</p>
-      </div>
-      <div class="twins-brand-faq-list">
-        <?php foreach ($editorialFaqs as $faq): ?>
-          <details>
-            <summary><?= htmlspecialchars((string) $faq['question'], ENT_QUOTES, 'UTF-8') ?></summary>
-            <p><?= htmlspecialchars((string) $faq['answer'], ENT_QUOTES, 'UTF-8') ?></p>
-          </details>
-        <?php endforeach; ?>
       </div>
     </section>
   <?php else: ?>
@@ -453,6 +337,9 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
   <section class="twins-brand-final-cta<?= $isLocation ? ' twins-location-final-cta' : '' ?>" aria-labelledby="twins-brand-editorial-final-title"<?= $isLocation ? ' data-location-reveal' : '' ?>>
     <?php if ($isLocation): ?>
       <?php
+      $character = 'left';
+      $placement = 'final-left';
+      require $twinCharacterComponent;
       $character = 'right';
       $placement = 'final-right';
       require $twinCharacterComponent;
