@@ -2,21 +2,22 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Turn the four sections below the approved location-page hero into a modern dark showroom with a yellow verified-proof strip, scan-friendly service and local-proof cards, static Twin accents, and subtle finite motion.
+**Goal:** Turn the five sections below the approved location-page hero into a modern dark showroom with a yellow verified-proof strip, scan-friendly service, local-proof, and FAQ cards, static Twin accents, and subtle finite motion.
 
-**Architecture:** Preserve the shared header, contained hero, canonical location data, route helpers, booking dialog, and five-section page contract. Add the showroom markup only to the location branch of `templates/editorial.php`, scope all new presentation and motion to `.twins-location-page`, reuse the existing fail-open `initLocationReveals()` behavior, and synchronize the deterministic Rockford fixture before package generation.
+**Architecture:** Preserve the shared header, contained hero, canonical location data, route helpers, booking dialog, and six-section page contract. Add the showroom markup only to the location branch of `templates/editorial.php`, scope all new presentation and motion to `.twins-location-page`, reuse the existing fail-open `initLocationReveals()` behavior, and synchronize the deterministic Rockford fixture before package generation.
 
 **Tech Stack:** PHP 8 templates, CSS, vanilla JavaScript, Node.js 20 built-in tests, Playwright 1.61.1, and existing Twins Garage Doors image, inline-SVG, font, and character assets.
 
 ## Global Constraints
 
 - The shared header and approved contained hero remain structurally and visually unchanged; remove only the hero's reveal attribute so motion starts below it.
-- Keep exactly five location-page sections: hero, trust/proof strip, services, local proof, and final CTA.
+- Keep exactly six location-page sections: hero, trust/proof strip, services, local proof, frequently asked questions, and final CTA.
 - The redesign starts immediately after the hero.
 - Use deep navy as the dominant post-hero field, subtle static garage-panel lines, yellow as the focused accent, and the established `Lilita One` display face.
 - The trust strip contains only the canonical Google rating/review count, `Family owned`, and `Licensed and insured`.
 - Do not add same-day promises, `done today`, a zero-dollar service call, `most repairs in one visit`, guaranteed arrival language, `recently opened`, urgency, discounts, waived fees, market-leadership claims, or unverified review quotations.
-- Keep three service cards and put the approved “what we fix” items inside those cards; do not add a sixth section.
+- Keep three service cards and put the approved “what we fix” items inside those cards; do not add another service section.
+- Keep and restyle the existing location FAQ content as the fifth post-hero section; do not add new claims or a callback form.
 - A yellow middle service card is compositional only and must not be labeled preferred, recommended, featured, or more important.
 - Keep the genuine before-and-after image and cap it at 440 px desktop and 310 px mobile.
 - Keep one static service Twin cameo and two static final-CTA Twins; hide the service cameo at 480 px and below.
@@ -33,8 +34,8 @@
 
 ## File Structure
 
-- `website/twins-brand-experience/templates/editorial.php`: keeps the approved hero, renders the three service item lists and the compositional middle-card modifier, removes the extra location FAQ block, and limits reveal attributes to the four post-hero sections.
-- `website/twins-brand-experience/assets/css/twins-brand.css`: owns the location-only dark-showroom backgrounds, yellow proof strip, card framing, image bounds, static characters, responsive behavior, finite reveals, hover/focus lift, sheen, and reduced-motion overrides.
+- `website/twins-brand-experience/templates/editorial.php`: keeps the approved hero and FAQ content, renders the three service item lists and the compositional middle-card modifier, and limits reveal attributes to the five post-hero sections.
+- `website/twins-brand-experience/assets/css/twins-brand.css`: owns the location-only dark-showroom backgrounds, yellow proof strip, service/local-proof/FAQ card framing, image bounds, static characters, responsive behavior, finite reveals, hover/focus lift, sheen, and reduced-motion overrides.
 - `website/twins-brand-experience/assets/js/twins-brand.js`: remains the fail-open reveal implementation; it is verified but does not require source changes.
 - `website/twins-brand-experience/tests/contracts/location-page-overhaul-contract.test.cjs`: pins structure, verified copy, service lists, visual hooks, motion bounds, no autonomous location animation, responsive rules, and forbidden claims.
 - `website/twins-brand-experience/tests/browser/fixtures/location-modern.html`: deterministic Rockford output synchronized with the final template markup.
@@ -43,7 +44,7 @@
 
 ---
 
-### Task 1: Lock and Render the Five-Section Showroom Content
+### Task 1: Lock and Render the Six-Section Showroom Content
 
 **Files:**
 - Modify: `website/twins-brand-experience/tests/contracts/location-page-overhaul-contract.test.cjs:23-198`
@@ -52,17 +53,17 @@
 
 **Interfaces:**
 - Consumes: `$locationServiceCards`, `$napRating`, `$napCount`, `$napAddress`, `$locationRecord`, `$locationNavMarketKey`, `$experience->route()`, and the existing Twin and door-art components.
-- Produces: one static hero plus four `[data-location-reveal]` sections; three `.twins-location-service-card` articles; one `.twins-location-service-card--spotlight`; three `.twins-location-service-items` lists; no location FAQ section.
+- Produces: one static hero plus five `[data-location-reveal]` sections; three `.twins-location-service-card` articles; one `.twins-location-service-card--spotlight`; three `.twins-location-service-items` lists; one retained location FAQ section.
 
 - [ ] **Step 1: Add failing contracts for the post-hero reveal boundary and service details**
 
 Add these tests after `services are limited to three concise choices and one character cameo`:
 
 ```js
-test('only the four post-hero sections participate in location reveals', () => {
+test('only the five post-hero sections participate in location reveals', () => {
   assert.match(template, /<header class="twins-location-hero" aria-labelledby="twins-location-title">/);
   assert.doesNotMatch(template, /<header class="twins-location-hero"[^>]*data-location-reveal/);
-  assert.equal((template.match(/data-location-reveal/g) || []).length, 4);
+  assert.equal((template.match(/data-location-reveal/g) || []).length, 5);
   for (const className of [
     'twins-location-trust',
     'twins-location-services',
@@ -71,7 +72,7 @@ test('only the four post-hero sections participate in location reveals', () => {
   ]) {
     assert.match(template, new RegExp(`class="[^"]*${className}[^"]*"[^>]*data-location-reveal`));
   }
-  assert.doesNotMatch(template, /<section class="twins-brand-faq"[^>]*twins-location-questions-title/);
+  assert.match(template, /<section class="twins-brand-faq"[^>]*aria-labelledby="twins-location-questions-title"[^>]*data-location-reveal/);
 });
 
 test('service cards render approved scan-friendly issue lists and one visual spotlight', () => {
@@ -118,7 +119,7 @@ Run from `website/twins-brand-experience`:
 /Users/daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test tests/contracts/location-page-overhaul-contract.test.cjs
 ```
 
-Expected: FAIL because the hero still has `data-location-reveal`, the location FAQ block still exists, the issue lists are not rendered, and no middle-card modifier exists.
+Expected: FAIL because the hero still has `data-location-reveal`, the issue lists are not rendered, and no middle-card modifier exists.
 
 - [ ] **Step 3: Replace the service item arrays with the approved issue labels**
 
@@ -164,9 +165,9 @@ Replace the service loop with:
 
 The middle-card class is visual only. Do not add a badge, accessible label, or copy that assigns it higher priority.
 
-- [ ] **Step 5: Remove the extra location FAQ render block**
+- [ ] **Step 5: Preserve the location FAQ render block**
 
-Delete the location-branch block beginning with:
+Keep the location-branch block beginning with:
 
 ```php
 <?php if ($editorialFaqs !== []): ?>
@@ -179,13 +180,13 @@ and ending at its matching:
 <?php endif; ?>
 ```
 
-immediately after `.twins-location-local-proof`. Keep the later non-location FAQ rendering unchanged.
+immediately after `.twins-location-local-proof`. Do not change its verified questions, answers, native `details`/`summary` behavior, or the later non-location FAQ rendering.
 
 - [ ] **Step 6: Run the focused contract and verify pass**
 
 Run the Step 2 command.
 
-Expected: all location overhaul contracts PASS, and the template contains exactly four reveal attributes below the static hero.
+Expected: all location overhaul contracts PASS, and the template contains exactly five reveal attributes below the static hero.
 
 - [ ] **Step 7: Commit the location markup**
 
@@ -218,11 +219,13 @@ test('post-hero sections use the dark showroom palette and static panel texture'
   assert.match(css, /\.twins-location-trust\s*\{[^}]*background:\s*var\(--twins-gold\)/);
   assert.match(css, /\.twins-location-services\s*\{[^}]*color:\s*var\(--twins-white\)[^}]*background-color:\s*var\(--twins-navy-950\)/);
   assert.match(css, /\.twins-location-local-proof\s*\{[^}]*color:\s*var\(--twins-white\)[^}]*background-color:\s*#081f40/);
+  assert.match(css, /\.twins-location-page \.twins-brand-faq\s*\{[^}]*color:\s*var\(--twins-white\)[^}]*background-color:\s*#0b2c58/);
   assert.match(css, /\.twins-location-final-cta\s*\{[^}]*background-color:\s*var\(--twins-navy-950\)/);
-  assert.match(css, /\.twins-location-services::before,\s*\.twins-location-local-proof::before,\s*\.twins-location-final-cta::before\s*\{[^}]*repeating-linear-gradient/);
+  assert.match(css, /\.twins-location-services::before,\s*\.twins-location-local-proof::before,\s*\.twins-location-page \.twins-brand-faq::before,\s*\.twins-location-final-cta::before\s*\{[^}]*repeating-linear-gradient/);
   assert.match(css, /\.twins-location-service-card\s*\{[^}]*border:\s*2px solid rgba\(255,\s*200,\s*61,\s*\.5\)/);
   assert.match(css, /\.twins-location-service-card--spotlight\s*\{[^}]*background:\s*var\(--twins-gold\)/);
   assert.match(css, /\.twins-location-proof-list li\s*\{[^}]*border:\s*1px solid rgba\(255,\s*200,\s*61,\s*\.5\)/);
+  assert.match(css, /\.twins-location-page \.twins-brand-faq details\s*\{[^}]*background:\s*#081f40[^}]*border:\s*1px solid rgba\(255,\s*200,\s*61,\s*\.5\)/);
   assert.match(css, /\.twins-location-local-proof-media\s*\{[^}]*max-height:\s*440px[^}]*background:\s*var\(--twins-gold\)/);
 });
 
@@ -251,7 +254,16 @@ Expected: FAIL on the yellow strip, dark fields, outlined cards, stretched link,
 
 - [ ] **Step 3: Preserve the hero rules and replace only the post-hero base rules**
 
-Keep `.twins-location-page`, the shared width rule, and every `.twins-location-hero*` declaration unchanged. Replace the rules from `.twins-location-trust` through `.twins-location-final-cta > p` with:
+Keep `.twins-location-page` and every `.twins-location-hero*` declaration unchanged. Extend the shared width rule to include the FAQ:
+
+```css
+.twins-location-page :is(.twins-location-hero, .twins-location-trust, .twins-location-services, .twins-location-local-proof, .twins-brand-faq) {
+  width: 100%;
+  padding-inline: max(var(--twins-location-gutter), calc((100vw - var(--twins-location-max)) / 2));
+}
+```
+
+Then replace the rules from `.twins-location-trust` through `.twins-location-final-cta > p` with:
 
 ```css
 .twins-location-trust {
@@ -277,19 +289,22 @@ Keep `.twins-location-page`, the shared width rule, and every `.twins-location-h
 
 .twins-location-services,
 .twins-location-local-proof,
+.twins-location-page .twins-brand-faq,
 .twins-location-final-cta {
   position: relative;
   isolation: isolate;
   overflow: hidden;
 }
 .twins-location-services,
-.twins-location-local-proof { color: var(--twins-white); }
+.twins-location-local-proof,
+.twins-location-page .twins-brand-faq { color: var(--twins-white); }
 .twins-location-services {
   padding-block: clamp(76px, 7vw, 96px);
   background-color: var(--twins-navy-950);
 }
 .twins-location-services::before,
 .twins-location-local-proof::before,
+.twins-location-page .twins-brand-faq::before,
 .twins-location-final-cta::before {
   content: '';
   position: absolute;
@@ -451,6 +466,22 @@ body.twins-brand-experience .twins-location-service-card--spotlight .twins-locat
 }
 .twins-location-proof-list strong { color: var(--twins-white); }
 .twins-location-proof-list span { color: #dbe8f8; }
+.twins-location-page .twins-brand-faq {
+  padding-block: clamp(76px, 7vw, 96px);
+  background-color: #0b2c58;
+}
+.twins-location-page .twins-brand-faq .twins-brand-kicker { color: var(--twins-gold); }
+.twins-location-page .twins-brand-faq .twins-brand-section-heading h2 { color: var(--twins-white); }
+.twins-location-page .twins-brand-faq details {
+  color: var(--twins-white);
+  background: #081f40;
+  border: 1px solid rgba(255, 200, 61, .5);
+  border-radius: 10px;
+  box-shadow: 5px 6px 0 rgba(255, 200, 61, .22);
+}
+.twins-location-page .twins-brand-faq summary { color: var(--twins-white); }
+.twins-location-page .twins-brand-faq details[open] summary { color: var(--twins-gold); }
+.twins-location-page .twins-brand-faq details p { color: #dbe8f8; }
 .twins-location-page .twins-location-twin {
   position: absolute;
   z-index: 2;
@@ -499,7 +530,8 @@ Keep the hero declarations in each media query unchanged. Use:
   .twins-location-trust > div { min-height: 74px; padding: 14px 20px; border-top: 1px solid rgba(7, 29, 59, .28); border-left: 0; }
   .twins-location-trust > div:first-child { border-top: 0; }
   .twins-location-services,
-  .twins-location-local-proof { padding-block: 58px; }
+  .twins-location-local-proof,
+  .twins-location-page .twins-brand-faq { padding-block: 58px; }
   .twins-location-services { padding-bottom: 128px; }
   .twins-location-section-heading { grid-template-columns: 1fr; gap: 14px; margin-bottom: 28px; }
   .twins-location-section-heading > p { grid-column: 1; grid-row: auto; }
@@ -554,7 +586,7 @@ git commit -m "style: build dark showroom location sections"
 - Verify only: `website/twins-brand-experience/assets/js/twins-brand.js:71-93`
 
 **Interfaces:**
-- Consumes: four post-hero `[data-location-reveal]` elements and the existing `initLocationReveals(root, reducedMotion)` function.
+- Consumes: five post-hero `[data-location-reveal]` elements and the existing `initLocationReveals(root, reducedMotion)` function.
 - Produces: 10 px/420 ms one-time reveals, 3 px/160 ms direct card feedback, 160 ms direct CTA sheen, no autonomous location animation, and complete reduced-motion overrides.
 
 - [ ] **Step 1: Replace the broad reveal contract with exact motion bounds**
@@ -675,13 +707,13 @@ git commit -m "fix: bound location page motion"
 In each viewport case, change the reveal count and add the service-list checks:
 
 ```js
-await expect(page.locator('#twins-overhaul-main > [data-location-reveal]')).toHaveCount(4);
+await expect(page.locator('#twins-overhaul-main > [data-location-reveal]')).toHaveCount(5);
 await expect(page.locator('.twins-location-hero')).not.toHaveAttribute('data-location-reveal', '');
 await expect(page.locator('.twins-location-service-card--spotlight')).toHaveCount(1);
 await expect(page.locator('.twins-location-service-card--spotlight')).toHaveJSProperty('tagName', 'ARTICLE');
 await expect(page.locator('.twins-location-service-items')).toHaveCount(3);
 await expect(page.locator('.twins-location-service-items li')).toHaveCount(9);
-await expect(page.locator('.twins-brand-faq[aria-labelledby="twins-location-questions-title"]')).toHaveCount(0);
+await expect(page.locator('.twins-brand-faq[aria-labelledby="twins-location-questions-title"]')).toHaveCount(1);
 ```
 
 Add the service item text assertion:
@@ -713,6 +745,8 @@ const contrast = await page.evaluate(() => {
   const serviceHeading = services.querySelector('h2');
   const local = document.querySelector('.twins-location-local-proof');
   const localCopy = local.querySelector('.twins-location-local-proof-copy > p');
+  const faq = document.querySelector('.twins-location-page .twins-brand-faq');
+  const faqSummary = faq.querySelector('summary');
   return {
     heroBackground: getComputedStyle(hero).backgroundColor,
     heroKicker: getComputedStyle(heroKicker).color,
@@ -723,6 +757,8 @@ const contrast = await page.evaluate(() => {
     serviceHeading: getComputedStyle(serviceHeading).color,
     localBackground: getComputedStyle(local).backgroundColor,
     localCopy: getComputedStyle(localCopy).color,
+    faqBackground: getComputedStyle(faq).backgroundColor,
+    faqSummary: getComputedStyle(faqSummary).color,
   };
 });
 expect(contrastRatio(contrast.heroKicker, contrast.heroBackground)).toBeGreaterThanOrEqual(4.5);
@@ -730,10 +766,11 @@ expect(contrastRatio(contrast.heroParagraph, contrast.heroBackground)).toBeGreat
 expect(contrastRatio(contrast.trustStrong, contrast.trustBackground)).toBeGreaterThanOrEqual(4.5);
 expect(contrastRatio(contrast.serviceHeading, contrast.servicesBackground)).toBeGreaterThanOrEqual(4.5);
 expect(contrastRatio(contrast.localCopy, contrast.localBackground)).toBeGreaterThanOrEqual(4.5);
+expect(contrastRatio(contrast.faqSummary, contrast.faqBackground)).toBeGreaterThanOrEqual(4.5);
 expect(luminance(contrast.trustBackground)).toBeGreaterThan(luminance(contrast.servicesBackground));
 ```
 
-Add `.twins-location-service-items` and `.twins-location-service-items li` to `layoutSelectors`.
+Add `.twins-location-service-items`, `.twins-location-service-items li`, `.twins-location-page .twins-brand-faq`, and `.twins-location-page .twins-brand-faq details` to `layoutSelectors`.
 
 - [ ] **Step 2: Add browser assertions for static characters, finite lift, and CTA sheen**
 
@@ -798,7 +835,7 @@ test('post-hero reveals move once by ten pixels and then settle', async ({ page 
   const hero = page.locator('.twins-location-hero');
   const reveals = page.locator('#twins-overhaul-main > [data-location-reveal]');
   await expect(hero).toHaveCSS('opacity', '1');
-  await expect(reveals).toHaveCount(4);
+  await expect(reveals).toHaveCount(5);
   await expect(reveals.first()).toHaveCSS('opacity', '0');
   expect(await reveals.first().evaluate(node => getComputedStyle(node).transform)).toContain(', 10)');
 
@@ -822,7 +859,7 @@ test('location content fails open without IntersectionObserver', async ({ page }
 
   await expect(page.locator('html')).not.toHaveClass(/twins-location-motion-ready/);
   const reveals = page.locator('#twins-overhaul-main > [data-location-reveal]');
-  await expect(reveals).toHaveCount(4);
+  await expect(reveals).toHaveCount(5);
   for (const reveal of await reveals.all()) {
     await expect(reveal).toHaveAttribute('data-location-visible', 'true');
     await expect(reveal).toHaveCSS('opacity', '1');
@@ -831,7 +868,7 @@ test('location content fails open without IntersectionObserver', async ({ page }
 });
 ```
 
-In the reduced-motion test, change `expect(reveals).toHaveLength(5)` to `expect(reveals).toHaveLength(4)` and also assert:
+In the reduced-motion test, retain `expect(reveals).toHaveLength(5)` and also assert:
 
 ```js
 const interactions = await page.evaluate(() => {
@@ -866,7 +903,7 @@ In `tests/browser/fixtures/location-modern.html`:
 - keep `data-location-reveal` on trust, services, local proof, and final CTA;
 - add `twins-location-service-card--spotlight` only to the opener-service article;
 - add the three `.twins-location-service-items` lists with the exact nine labels from Task 1;
-- remove the location FAQ section if present;
+- retain the location FAQ section and its exact verified content;
 - preserve the Rockford phone `(815) 800-2025`, `tel:+18158002025`, address `5758 Elaine Dr Ste 110, Rockford, IL 61108`, rating, review count, routes, shared header/footer, booking dialog, and mobile actions;
 - keep the service cameo and both final-CTA characters decorative and static;
 - keep production CSS and `/assets/js/twins-brand.js`; add no fixture-only visual logic.
@@ -874,7 +911,7 @@ In `tests/browser/fixtures/location-modern.html`:
 Extend the fixture contract:
 
 ```js
-assert.equal((fixture.match(/data-location-reveal/g) || []).length, 4);
+assert.equal((fixture.match(/data-location-reveal/g) || []).length, 5);
 assert.doesNotMatch(fixture, /<header class="twins-location-hero"[^>]*data-location-reveal/);
 assert.equal((fixture.match(/class="twins-location-service-items"/g) || []).length, 3);
 assert.equal((fixture.match(/class="twins-location-service-card twins-location-service-card--spotlight"/g) || []).length, 1);
@@ -999,7 +1036,7 @@ Use `browser:control-in-app-browser` to open:
 http://127.0.0.1:41739/tests/browser/fixtures/location-modern.html
 ```
 
-Expected: unchanged shared header and contained hero; yellow verified-proof strip; dark paneled three-card services with a compositional yellow middle card; restrained real before-and-after image; outlined proof rows; compact final CTA; static Twins; subtle one-time reveals and direct hover/focus feedback only.
+Expected: unchanged shared header and contained hero; yellow verified-proof strip; dark paneled three-card services with a compositional yellow middle card; restrained real before-and-after image; outlined proof rows; dark outlined FAQ accordions; compact final CTA; static Twins; subtle one-time reveals and direct hover/focus feedback only.
 
 - [ ] **Step 3: Capture desktop and mobile review images**
 

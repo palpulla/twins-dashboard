@@ -12,7 +12,7 @@ Revise the approved location-page redesign so the area below the hero feels mode
 The approved direction is the **B-only dark showroom concept**:
 
 - retain the current shared header and contained hero;
-- redesign the trust, services, local-proof, and final-CTA sections as one coherent dark showroom system;
+- redesign the trust, services, local-proof, FAQ, and final-CTA sections as one coherent dark showroom system;
 - add garage-door character through static panel textures, framed surfaces, and restrained yellow accents;
 - use subtle, finite motion only where it improves hierarchy or feedback;
 - selectively borrow the strongest visual and conversion patterns from the Madison landing page without copying its bulky form or unverified marketing claims.
@@ -25,22 +25,23 @@ This is a post-hero refinement, not another wholesale redesign.
 - Make the service choices and primary calls to action faster to scan.
 - Keep the brand recognizable through the established display type, navy, yellow, garage-door textures, and Twin characters.
 - Feel current and polished without becoming a generic corporate dashboard.
-- Preserve route-specific content, conversion behavior, accessibility, and the existing five-section page contract.
+- Preserve route-specific content, conversion behavior, accessibility, and the existing six-section page contract.
 - Produce a locally reviewed desktop and mobile result before any staging deployment.
 
 ## 3. Scope and Page Structure
 
-The existing five-section location-page structure remains:
+The existing six-section location-page structure remains:
 
 1. contained hero;
 2. trust/proof strip;
 3. services;
 4. local proof;
-5. final call to action.
+5. frequently asked questions;
+6. final call to action.
 
 The shared header and approved contained hero remain structurally and visually unchanged. No new hero animation is introduced.
 
-The redesign begins immediately after the hero and includes the trust strip, services, local-proof section, and final CTA. Navigation, phone actions, quote actions, booking dialog behavior, route handling, and existing structured data remain intact.
+The redesign begins immediately after the hero and includes the trust strip, services, local-proof section, frequently asked questions, and final CTA. Navigation, phone actions, quote actions, booking dialog behavior, route handling, and existing structured data remain intact.
 
 ## 4. Visual System
 
@@ -106,7 +107,21 @@ The revised composition uses:
 
 No new customer quote is added in this revision. Review quotations may be introduced later only from canonical, verified review data that is approved for public marketing use.
 
-### 4.5 Final CTA
+### 4.5 Frequently asked questions
+
+The existing location FAQ content remains because it provides useful decision-making detail and meaningful text depth.
+
+The FAQ section uses:
+
+- the same dark paneled showroom field as the surrounding lower page;
+- a clear yellow kicker and off-white heading;
+- compact navy accordion rows with restrained yellow outlines;
+- visible keyboard focus and native `details`/`summary` behavior;
+- no new claims, offers, guarantees, or urgency language.
+
+The FAQ is a deliberate fifth post-hero section, not an additional callback form or an expansion of the service-card system.
+
+### 4.6 Final CTA
 
 The final CTA uses:
 
@@ -188,12 +203,12 @@ The layout must be verified at 1440, 1024, 768, 390, 360, and 320 pixels.
 
 Add or update contract tests to verify:
 
-- the four post-hero sections use the dark-showroom styling hooks;
+- the five post-hero sections use the dark-showroom styling hooks;
 - the trust strip renders yellow with verified data;
 - no location-page Twin, CTA, or garage-door element uses an infinite animation;
 - section and card motion stay within the specified distance and timing limits;
 - reduced-motion styles disable all location motion;
-- all five existing sections and conversion controls remain present.
+- all six existing sections and conversion controls remain present.
 
 ### Browser coverage
 
@@ -219,7 +234,7 @@ Asset manifests are rebuilt only in the final implementation task after source a
 ## 10. Out of Scope
 
 - redesigning the shared header or approved hero;
-- changing the five-section architecture;
+- changing the six-section architecture;
 - adding a callback form;
 - adding unsupported Madison landing-page claims or offers;
 - adding unverified review quotations;
