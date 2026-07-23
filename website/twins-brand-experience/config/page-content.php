@@ -796,18 +796,23 @@ return [
             'Enroll on a qualifying repair and that job gets 10% off. You sign the membership acknowledgment at enrollment.',
             'Use your included tune-up visits and member discounts during the term. Our office verifies equipment credit before it is applied.',
         ],
+        // Membership tiers. The service template renders these as pricing cards
+        // (see templates/service.php membership branch). Each tradeoff begins
+        // with a price token, then " — ", then the benefits; the template splits
+        // on that delimiter to build the price line and the benefit copy. The
+        // middle tier is the recommended one and gets the badge by position.
         'options' => [
             [
-                'option' => 'TwinShield Core - Essential Care: $12.99 a month for 12 months, or $149 once',
-                'tradeoff' => 'The entry tier. 1 tune-up and safety inspection during the term, 5% off future qualifying repairs, 50% off future standard service-call fees, and equipment credit of 25 cents per dollar in eligible membership payments, up to $150.',
+                'option' => 'TwinShield Core - Essential Care',
+                'tradeoff' => '$12.99/mo or $149/yr — 1 tune-up and safety inspection, 5% off future qualifying repairs, 50% off future standard service-call fees, and equipment credit of 25 cents per dollar in eligible membership payments, up to $150.',
             ],
             [
-                'option' => 'TwinShield Priority - Best Value: $18.99 a month for 12 months, or $199 once',
-                'tradeoff' => 'The recommended tier. 1 tune-up and safety inspection, priority scheduling subject to availability, 7.5% off future qualifying repairs, 1 standard service-call fee waived then 50% off additional, and equipment credit of 35 cents per dollar, up to $300.',
+                'option' => 'TwinShield Priority - Best Value',
+                'tradeoff' => '$18.99/mo or $199/yr — 1 tune-up and safety inspection, priority scheduling subject to availability, 7.5% off future qualifying repairs, 1 standard service-call fee waived then 50% off additional, and equipment credit of 35 cents per dollar, up to $300.',
             ],
             [
-                'option' => 'TwinShield Premier - Maximum Care: $24.99 a month for 12 months, or $279 once',
-                'tradeoff' => '2 tune-ups and safety inspections, highest scheduling priority subject to availability, 10% off future qualifying repairs, 1 service-call fee waived then 50% off additional, an opener surge-protection benefit, and equipment credit of 50 cents per dollar, up to $500.',
+                'option' => 'TwinShield Premier - Maximum Care',
+                'tradeoff' => '$24.99/mo or $279/yr — 2 tune-ups and safety inspections, highest scheduling priority subject to availability, 10% off future qualifying repairs, 1 service-call fee waived then 50% off additional, an opener surge-protection benefit, and equipment credit of 50 cents per dollar, up to $500.',
             ],
         ],
         'prepare' => [

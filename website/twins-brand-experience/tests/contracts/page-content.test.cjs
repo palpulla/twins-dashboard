@@ -102,6 +102,15 @@ test('fixed page-content config contains exactly thirteen conservative bespoke r
     assert.ok(membership.includes(`$${rate}`), `membership page omits the $${rate} rate`);
   }
 
+  // The service template renders the membership tiers as pricing cards by
+  // splitting each tradeoff into a price line and benefits on " — ". Pin that
+  // structure so the parse in templates/service.php cannot silently break.
+  const membershipTradeoffs = [...blocks.get(membershipRoute).matchAll(/'tradeoff'\s*=>\s*'((?:\\'|[^'])*)'/g)].map(m => unescapePhp(m[1]));
+  assert.equal(membershipTradeoffs.length, 3, 'membership page has three plan tiers');
+  for (const tradeoff of membershipTradeoffs) {
+    assert.match(tradeoff, /^\$\d[\d.]*\/mo or \$\d+\/yr — \S/, 'each tier leads with "$price/mo or $price/yr — " then benefits');
+  }
+
   const spring = recordBlocks(source).get('/garage-door-spring-repair/');
   assert.match(scalar(spring, 'safety'), /dangerous tension/i);
   assert.match(scalar(spring, 'safety'), /trained professionals?/i);

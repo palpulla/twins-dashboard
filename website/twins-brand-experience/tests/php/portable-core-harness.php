@@ -309,6 +309,29 @@ PHP;
     $expect($experience->applicationAdapter() === $applications, 'application adapter facade drifted');
     $expect($experience->markets() === $registry, 'market registry facade drifted');
 
+    // The membership page renders its tiers as pricing cards from the real
+    // service template and page-content config (not the fixture root). The stub
+    // route adapter returns exactly the normalized context it was built with, so
+    // each render gets its own experience seeded with that page's context.
+    $membershipRoot = dirname($argv[1]);
+    $membershipContext = ['environment' => 'staging', 'market' => 'wi', 'path' => '/protection-plans/', 'title' => 'TwinShield Protection Plans'];
+    [$membershipExperience] = $makeExperience($membershipContext, $membershipRoot);
+    $membershipHtml = $membershipExperience->renderService($membershipContext);
+    $expect(strpos($membershipHtml, 'twins-brand-membership-grid') !== false, 'membership page must render the pricing grid');
+    $expect(strpos($membershipHtml, 'twins-brand-service-option-grid') === false, 'membership page must not fall back to the generic option grid');
+    $expect(substr_count($membershipHtml, 'class="twins-brand-membership-card') === 3, 'membership page must render exactly three pricing cards');
+    $expect(substr_count($membershipHtml, 'twins-brand-membership-badge') === 1, 'membership page must show exactly one Recommended badge');
+    $expect(substr_count($membershipHtml, 'twins-brand-membership-cta') === 3, 'each membership tier needs a call-to-action');
+    foreach (['$12.99/mo or $149/yr', '$18.99/mo or $199/yr', '$24.99/mo or $279/yr'] as $membershipPrice) {
+        $expect(strpos($membershipHtml, $membershipPrice) !== false, 'membership pricing lost ' . $membershipPrice);
+    }
+    $expect(strpos($membershipHtml, ' — ') === false, 'membership card leaked the raw price/benefit delimiter');
+    $genericContext = ['environment' => 'staging', 'market' => 'wi', 'path' => '/garage-door-repair/', 'title' => 'Garage Door Repair'];
+    [$genericExperience] = $makeExperience($genericContext, $membershipRoot);
+    $genericService = $genericExperience->renderService($genericContext);
+    $expect(strpos($genericService, 'twins-brand-service-option-grid') !== false, 'non-membership service page must keep the generic option grid');
+    $expect(strpos($genericService, 'twins-brand-membership-grid') === false, 'non-membership service page must not render pricing cards');
+
     $homePath = $fixtureRoot . '/templates/home.php';
     $throwingTemplate = '<?php echo "LEAKED-TEMPLATE-BYTES"; throw new RuntimeException("fixture template failure");';
     $expect(file_put_contents($homePath, $throwingTemplate) === strlen($throwingTemplate), 'could not write throwing fixture');
