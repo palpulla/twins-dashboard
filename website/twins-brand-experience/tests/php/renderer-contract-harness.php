@@ -607,16 +607,16 @@ foreach ($locationRecords as $slug => $record) {
     $expect(strpos($renderedLocation, 'href="/garage-door-services/"') !== false, $slug . ' did not use the cross-market complete-services route for maintenance');
     $expect(substr_count($renderedLocation, '/door-builder/twins-before-after-install.webp') === 1, $slug . ' did not render the owned homeowner guidance photo exactly once');
     $expect(strpos($renderedLocation, 'alt="Before and after view of a real Twins garage door installation"') !== false, $slug . ' changed the owned guidance-photo alt text');
-    foreach (['hero', 'guidance', 'final-right'] as $placement) {
+    foreach (['services', 'final-left', 'final-right'] as $placement) {
         $expect(
             substr_count($renderedLocation, 'twins-location-twin--' . $placement) === 1,
             $slug . ' did not render exactly one ' . $placement . ' Twin'
         );
     }
-    $expect(strpos($renderedLocation, 'twins-location-twin--system') === false, $slug . ' rendered the retired system Twin');
-    $expect(strpos($renderedLocation, 'twins-location-twin--final-left') === false, $slug . ' rendered the retired final-left Twin');
-    $expect(substr_count($renderedLocation, '/brand/twin-left.png') === 1, $slug . ' did not render exactly one left Twin');
-    $expect(substr_count($renderedLocation, '/brand/twin-right.png') === 2, $slug . ' did not render exactly two right Twins');
+    $expect(strpos($renderedLocation, 'twins-location-twin--hero') === false, $slug . ' retained the rejected hero Twin');
+    $expect(strpos($renderedLocation, 'twins-location-twin--guidance') === false, $slug . ' retained the removed guidance Twin');
+    $expect(substr_count($renderedLocation, '/brand/twin-left.png') === 1, $slug . ' did not render one left Twin');
+    $expect(substr_count($renderedLocation, '/brand/twin-right.png') === 2, $slug . ' did not render two right Twins');
     $expect(substr_count($renderedLocation, 'alt="" aria-hidden="true"') === 3, $slug . ' Twin accessibility markup drifted');
     $expect(substr_count($renderedLocation, '<details>') === 5, $slug . ' did not render five FAQs');
     $recordText = strtolower($record['intro'] . ' ' . $record['localNotes']);
@@ -684,14 +684,14 @@ $articleEditorial = $stagingExperience->renderEditorial([
 ], '<p>Garage door care guidance.</p>', 'article');
 $expect(strpos($articleEditorial, 'twins-location-twin') === false, 'article editorial rendered location Twin markup');
 
-$heroTwin = $renderComponent($stagingExperience, $root . '/components/twin-character.php', [
-    'character' => 'left',
-    'placement' => 'hero',
+$servicesTwin = $renderComponent($stagingExperience, $root . '/components/twin-character.php', [
+    'character' => 'right',
+    'placement' => 'services',
 ]);
-$expect(strpos($heroTwin, 'src="/brand/twin-left.png"') !== false, 'hero Twin omitted the fixed left asset');
-$expect(strpos($heroTwin, 'class="twins-location-twin twins-location-twin--hero twins-location-twin--left"') !== false, 'hero Twin classes drifted');
-$expect(strpos($heroTwin, 'alt="" aria-hidden="true"') !== false, 'hero Twin is not decorative');
-$expect(strpos($heroTwin, 'loading="eager" decoding="async"') !== false, 'hero Twin loading behavior drifted');
+$expect(strpos($servicesTwin, 'src="/brand/twin-right.png"') !== false, 'services Twin omitted the fixed right asset');
+$expect(strpos($servicesTwin, 'class="twins-location-twin twins-location-twin--services twins-location-twin--right"') !== false, 'services Twin classes drifted');
+$expect(strpos($servicesTwin, 'alt="" aria-hidden="true"') !== false, 'services Twin is not decorative');
+$expect(strpos($servicesTwin, 'loading="lazy" decoding="async"') !== false, 'services Twin loading behavior drifted');
 
 $invalidTwinCharacter = $renderComponent($stagingExperience, $root . '/components/twin-character.php', [
     'character' => 'center',
@@ -706,17 +706,19 @@ $invalidTwinPlacement = $renderComponent($stagingExperience, $root . '/component
 $expect($invalidTwinPlacement === '', 'Twin renderer accepted a retired placement');
 
 foreach ([
-    ['left', 'hero', '/brand/twin-left.png'],
-    ['right', 'guidance', '/brand/twin-right.png'],
+    ['right', 'services', '/brand/twin-right.png'],
+    ['left', 'final-left', '/brand/twin-left.png'],
     ['right', 'final-right', '/brand/twin-right.png'],
 ] as [$character, $placement, $asset]) {
     $twin = $renderComponent($stagingExperience, $root . '/components/twin-character.php', compact('character', 'placement'));
     $expect(strpos($twin, 'src="' . $asset . '"') !== false, 'Twin renderer rejected approved ' . $character . ' + ' . $placement . ' pair');
 }
 foreach ([
-    ['left', 'guidance'],
+    ['left', 'services'],
     ['left', 'final-right'],
-    ['right', 'hero'],
+    ['right', 'final-left'],
+    ['left', 'hero'],
+    ['right', 'guidance'],
 ] as [$character, $placement]) {
     $twin = $renderComponent($stagingExperience, $root . '/components/twin-character.php', compact('character', 'placement'));
     $expect($twin === '', 'Twin renderer accepted unsupported ' . $character . ' + ' . $placement . ' pair');

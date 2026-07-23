@@ -32,29 +32,33 @@ test('header exposes the approved complete navigation and CTA copy', () => {
   assert.match(html, /===\s*['"]external['"]/);
 });
 
-test('location classification selects a compact direct-service header with no booking CTA', () => {
+test('location classification keeps the familiar shared header and location quote label', () => {
   const header = source('header.php');
 
-  assert.match(header, /\$context\['classification'\]\s*===\s*['"]location['"]/);
-  assert.match(header, /twins-brand-header--location/);
-  assert.match(header, /twins-brand-location-nav/);
-  for (const [label, route] of [
-    ['Garage Door Repair', 'repair'],
-    ['New Garage Doors', 'installation'],
-    ['Garage Door Openers', 'openers'],
-  ]) {
-    assert.match(header, new RegExp(`\\['${label}', '${route}'\\]`));
-  }
-  assert.match(header, /twins-brand-location-phone[\s\S]*?\$phoneHref[\s\S]*?\$phone/);
-  assert.match(header, /if \(\$isLocationHeader\)[\s\S]*?twins-brand-drawer--location/);
-  assert.match(header, /if \(!\$isLocationHeader && \$bookingMode === 'dialog'\)/);
-  assert.match(header, /if \(!\$isLocationHeader && \$bookingMode === 'external'\)/);
+  assert.match(header, /\$isLocationHeader\s*=\s*isset\(\$context\['classification'\]\)/);
   assert.match(
     header,
     /\$headerQuoteLabel\s*=\s*\$isLocationHeader\s*\?\s*'Get a Free Quote'\s*:\s*'Request a Quote'/,
   );
-  assert.equal((header.match(/htmlspecialchars\(\$headerQuoteLabel,/g) || []).length, 4);
-  assert.doesNotMatch(header, />Request a Quote<\/a>/);
+  assert.equal((header.match(/<header class="twins-brand-header"/g) || []).length, 1);
+  assert.equal((header.match(/<div class="twins-brand-fascia">/g) || []).length, 1);
+  assert.match(header, /twins-brand-utility/);
+  assert.match(header, /twins-brand-primary-nav/);
+  assert.match(header, /twins-brand-phone/);
+  assert.doesNotMatch(header, /twins-brand-header--location|twins-brand-fascia--location/);
+  assert.doesNotMatch(header, /twins-brand-location-nav|twins-brand-drawer--location/);
+});
+
+test('location characters are limited to one service cameo and the final CTA edges', () => {
+  const twin = source('twin-character.php');
+  for (const pair of [
+    "['right', 'services']",
+    "['left', 'final-left']",
+    "['right', 'final-right']",
+  ]) {
+    assert.match(twin, new RegExp(pair.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  }
+  assert.doesNotMatch(twin, /\['left', 'hero'\]|\['right', 'guidance'\]/);
 });
 
 test('conversion controls retain the display font and location service links are touch-sized text actions', () => {
