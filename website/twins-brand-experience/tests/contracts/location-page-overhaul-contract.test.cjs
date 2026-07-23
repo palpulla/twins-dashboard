@@ -141,10 +141,14 @@ test('Rockford location fixture retains route-local contact data and the shared 
   assert.match(fixture, /Rockford/);
   assert.match(fixture, /tel:\+18158002025/);
   assert.match(fixture, /5758 Elaine Dr Ste 110, Rockford, IL 61108/);
+  assert.equal((fixture.match(/class="twins-location-service-card"/g) || []).length, 3);
+  assert.doesNotMatch(fixture, /twins-location-hero-stage|twins-location-orbit|Preventive maintenance/);
+  assert.doesNotMatch(fixture, /recently opened|newly opened|new to this market/i);
   assert.doesNotMatch(fixture, /Madison, Wisconsin|tel:\+16084202377/);
   assert.match(reviewSummary, /'displayCount'\s*=>\s*'699'/);
   assert.match(fixture, /699 customer reviews/);
-  assert.equal((fixture.match(/>Get a Free Quote<\/a>/g) || []).length, 7);
+  assert.equal((fixture.match(/>Get a Free Quote<\/a>/g) || []).length, 6);
+  assert.equal((fixture.match(/>Book Online<\/button>/g) || []).length, 2);
   assert.equal((fixture.match(/>Call Now<\/a>/g) || []).length, 1);
   assert.doesNotMatch(fixture, />Request a Quote<\/a>|>Call Twins<\/a>/);
 });

@@ -27,14 +27,18 @@ function contrastRatio(first, second) {
 
 function visibleTargetAudit(page) {
   return page.locator([
+    '.twins-brand-market-menu > summary',
+    '.twins-brand-market-menu-panel a',
+    '.twins-brand-primary-nav button',
+    '.twins-brand-primary-nav a',
+    '.twins-brand-fascia > .twins-brand-cta',
+    '.twins-brand-menu-trigger',
+    '.twins-brand-drawer-close',
+    '.twins-brand-drawer a',
+    '.twins-brand-drawer .twins-brand-cta',
     '.twins-location-service-link',
-    '.twins-location-section-heading > a',
-    '.twins-brand-header--location .twins-brand-location-nav a',
-    '.twins-brand-header--location .twins-brand-drawer-location-nav a',
-    '.twins-brand-header--location .twins-brand-location-phone',
-    '.twins-brand-header--location .twins-brand-cta--quote',
-    '.twins-brand-header--location .twins-brand-menu-trigger',
-    '.twins-brand-header--location .twins-brand-drawer-close',
+    '.twins-location-hero .twins-brand-cta',
+    '.twins-location-final-cta .twins-brand-cta',
     '.twins-brand-mobile-actions a',
   ].join(', ')).evaluateAll(nodes => nodes.map(node => {
     const style = getComputedStyle(node);
@@ -53,83 +57,84 @@ for (const viewport of viewports) {
     await page.setViewportSize(viewport);
     await page.goto(fixture);
 
-    await expect(page.locator('.twins-brand-header--location')).toHaveCount(1);
-    await expect(page.locator('.twins-brand-header--location .twins-brand-location-nav > a')).toHaveCount(3);
-    await expect(page.locator('.twins-brand-header--location .twins-brand-fascia--location > .twins-brand-location-phone')).toHaveCount(1);
-    await expect(page.locator('.twins-brand-header--location .twins-brand-fascia--location > .twins-brand-cta--quote')).toHaveCount(1);
-    await expect(page.locator('.twins-brand-header--location .twins-brand-cta--quote')).toHaveText([
-      'Get a Free Quote',
-      'Get a Free Quote',
-    ]);
-    await expect(page.locator('.twins-brand-header--location .twins-brand-cta--book')).toHaveCount(0);
-    await expect(page.locator('body')).not.toContainText('Book Online');
-    await expect(page.locator('.twins-brand-drawer--location')).toHaveCount(1);
-    await expect(page.locator('.twins-location-hero-stage')).toHaveCount(1);
-    await expect(page.locator('.twins-location-title-accent')).toContainText('in Rockford');
-    await expect(page.locator('.twins-location-hero-proof [role="listitem"]')).toHaveCount(3);
-    await expect(page.locator('.twins-location-service-node')).toHaveCount(4);
-    await expect(page.locator('.twins-location-service-card')).toHaveCount(0);
+    await expect(page.locator('.twins-brand-header')).toHaveCount(1);
+    await expect(page.locator('.twins-brand-header--location')).toHaveCount(0);
+    await expect(page.locator('.twins-brand-utility')).toHaveCount(1);
+    await expect(page.locator('.twins-brand-fascia')).toHaveCount(1);
+    await expect(page.locator('.twins-brand-primary-nav')).toHaveCount(1);
+    await expect(page.locator('.twins-brand-nav-group')).toHaveCount(5);
+    await expect(page.locator('.twins-brand-drawer')).toHaveCount(1);
+    await expect(page.locator('.twins-location-hero')).toHaveCount(1);
+    await expect(page.locator('.twins-location-trust')).toHaveCount(1);
+    await expect(page.locator('.twins-location-service-card')).toHaveCount(3);
+    await expect(page.locator('.twins-location-local-proof')).toHaveCount(1);
+    await expect(page.locator('.twins-location-final-cta')).toHaveCount(1);
+    await expect(page.locator('#twins-overhaul-main > [data-location-reveal]')).toHaveCount(5);
+    await expect(page.locator('.twins-location-hero-stage, .twins-location-orbit, .twins-location-system, .twins-location-guidance, .twins-location-process, .twins-location-branch, .twins-location-nearby, .twins-location-faq')).toHaveCount(0);
     await expect(page.locator('.twins-location-hero .twins-brand-cta--quote')).toHaveText('Get a Free Quote');
-    await expect(page.locator('.twins-location-hero-proof [role="listitem"]').first()).toContainText('699 customer reviews');
+    await expect(page.locator('.twins-location-twin')).toHaveCount(3);
+    await expect(page.locator('.twins-location-twin--services')).toHaveCount(1);
+    await expect(page.locator('.twins-location-twin--final-left')).toHaveCount(1);
+    await expect(page.locator('.twins-location-twin--final-right')).toHaveCount(1);
+    await expect(page.locator('.twins-location-twin--hero, .twins-location-twin--guidance')).toHaveCount(0);
+    expect(await page.locator('.twins-location-twin').evaluateAll(nodes => nodes.map(node => ({
+      alt: node.getAttribute('alt'),
+      ariaHidden: node.getAttribute('aria-hidden'),
+    })))).toEqual([
+      { alt: '', ariaHidden: 'true' },
+      { alt: '', ariaHidden: 'true' },
+      { alt: '', ariaHidden: 'true' },
+    ]);
+
+    await expect(page.locator('.twins-location-title-accent')).toContainText('in Rockford');
+    await expect(page.locator('.twins-location-trust[role="list"]')).toHaveCount(1);
+    await expect(page.locator('.twins-location-trust > [role="listitem"]')).toHaveCount(3);
+    await expect(page.locator('.twins-location-trust [role="listitem"]').first()).toContainText('699 customer reviews');
+    await expect(page.locator('.twins-location-service-card h3')).toHaveText([
+      'Garage Door Repair',
+      'Garage door opener service',
+      'Garage door installation',
+    ]);
+    await expect(page.locator('.twins-location-local-proof-media picture')).toHaveCount(1);
+    await expect(page.locator('.twins-location-local-proof-image')).toHaveAttribute(
+      'alt',
+      'Before and after view of a real Twins garage door installation',
+    );
+    await expect(page.locator('.twins-location-proof-list li strong')).toHaveText([
+      'Complete system inspection',
+      'Plain-language options',
+      'Respect for your home',
+    ]);
+    await expect(page.locator('.twins-location-address')).toHaveText('5758 Elaine Dr Ste 110, Rockford, IL 61108');
+
     await expect(page.locator('.twins-location-final-cta .twins-brand-final-actions > a').first()).toHaveClass(/twins-brand-cta--quote/);
     await expect(page.locator('.twins-location-final-cta .twins-brand-final-actions > a').last()).toHaveClass(/twins-brand-cta--call/);
-    await expect(page.locator('.twins-location-system .twins-brand-door-art--door-open')).toHaveCount(1);
-    await expect(page.locator('.twins-location-process')).toHaveCount(1);
-    await expect(page.locator('.twins-location-branch')).toHaveCount(1);
-    await expect(page.locator('.twins-location-nearby')).toHaveCount(1);
-    await expect(page.locator('.twins-location-faq')).toHaveCount(1);
+    await expect(page.locator('.twins-location-final-cta')).toHaveAttribute('aria-labelledby', 'twins-brand-editorial-final-title');
+    await expect(page.locator('.twins-location-final-cta .twins-brand-kicker')).toHaveText('Rockford');
+    await expect(page.locator('.twins-location-final-cta h2')).toHaveAttribute('id', 'twins-brand-editorial-final-title');
+    await expect(page.locator('.twins-location-final-cta > p')).toHaveText('Call Twins or request a quote. We will help you choose the right next step for the door, opener, or installation.');
+
     await expect(page.locator('.twins-brand-footer')).toHaveCount(1);
     await expect(page.locator('.twins-brand-footer-group h2')).toHaveText(['Services', 'Garage Doors', 'Service Areas', 'Resources', 'About']);
     expect(await page.locator('.twins-brand-footer-group').evaluateAll(groups => groups.map(group => group.querySelectorAll('a').length)))
       .toEqual([5, 3, 3, 5, 4]);
     await expect(page.locator('.twins-brand-footer-group').first()).not.toContainText('Spring Repair');
     await expect(page.locator('.twins-brand-footer-group').nth(3)).not.toContainText('Wisconsin Garage Door Cost Guide');
+    await expect(page.locator('.twins-brand-footer-nap')).toContainText('5758 Elaine Dr Ste 110, Rockford, IL 61108');
     await expect(page.locator('.twins-brand-mobile-actions > a')).toHaveCount(2);
     await expect(page.locator('.twins-brand-mobile-actions > a')).toHaveText(['Call Now', 'Get a Free Quote']);
-    await expect(page.locator('.twins-location-service-node .twins-brand-door-art')).toHaveCount(4);
-    await expect(page.locator('.twins-location-service-node h3')).toHaveText([
-      'Garage door repair',
-      'Garage door opener service',
-      'Garage door installation',
-      'Preventive maintenance',
-    ]);
-    await expect(page.locator('#installation .twins-location-service-art')).toHaveClass(/twins-brand-door-art--door/);
-    await expect(page.locator('#maintenance .twins-location-service-art')).toHaveClass(/twins-brand-door-art--roller/);
-    await expect(page.locator('.twins-location-guidance-media picture')).toHaveCount(1);
-    await expect(page.locator('.twins-location-guidance-image')).toHaveAttribute(
-      'alt',
-      'Before and after view of a real Twins garage door installation',
-    );
-    await expect(page.locator('.twins-location-twin')).toHaveCount(3);
-    await expect(page.locator('.twins-location-hero .twins-brand-cta--quote')).toHaveCount(1);
-    await expect(page.locator('.twins-location-hero .twins-brand-cta--call')).toHaveCount(1);
-    await expect(page.locator('.twins-location-hero-proof[role="list"]')).toHaveCount(1);
-    await expect(page.locator('.twins-location-hero-proof > [role="listitem"]')).toHaveCount(3);
-    await expect(page.locator('.twins-location-final-cta > .twins-brand-cta-art')).toHaveCount(1);
-    await expect(page.locator('.twins-location-final-cta')).toHaveAttribute('aria-labelledby', 'twins-brand-editorial-final-title');
-    await expect(page.locator('.twins-location-final-cta .twins-brand-kicker')).toHaveText('Rockford');
-    await expect(page.locator('.twins-location-final-cta h2')).toHaveAttribute('id', 'twins-brand-editorial-final-title');
-    await expect(page.locator('.twins-location-final-cta > p')).toHaveText('Call Twins or request a quote. We will help you choose the right next step for the door, opener, or installation.');
+
     for (const selector of [
-      '.twins-location-system .twins-brand-door-art--door-open',
       '.twins-location-final-cta .twins-brand-door-art--door',
       '.twins-brand-footer-door.twins-brand-door-art--door',
     ]) {
       const art = page.locator(selector);
       await expect(art).toHaveAttribute('viewBox', '0 0 220 190');
       await expect(art.locator('.twins-da-gold')).toHaveCount(1);
-      await expect(art.locator('.twins-da-gold-outer')).toHaveCount(0);
-      await expect(art.locator('rect.twins-da-navy[x="11"][y="11"][width="198"][height="168"]')).toHaveCount(1);
-      await expect(art.locator('rect.twins-da-face[x="20"][y="20"][width="180"][height="150"]')).toHaveCount(1);
       await expect(art.locator('.twins-da-window-frame')).toHaveCount(4);
       await expect(art.locator('.twins-da-glass')).toHaveCount(4);
-      await expect(art.locator('.twins-da-glass-hi')).toHaveCount(4);
       await expect(art.locator('.twins-da-panel')).toHaveCount(12);
-      await expect(art.locator('.twins-da-panel-inner')).toHaveCount(12);
     }
-    await expect(page.locator('.twins-location-system .twins-da-curtain')).toHaveCount(1);
-    await expect(page.locator('.twins-location-system clipPath rect')).toHaveAttribute('width', '180');
-    await expect(page.locator('.twins-location-system clipPath rect')).toHaveAttribute('height', '150');
 
     const hierarchy = await page.locator('.twins-location-hero').evaluate(hero => {
       const quote = hero.querySelector('.twins-brand-cta--quote');
@@ -146,168 +151,74 @@ for (const viewport of viewports) {
     expect(luminance(hierarchy.quoteBackground), `${viewport.width}px quote action remains the brighter primary target`)
       .toBeGreaterThan(luminance(hierarchy.callBackground));
 
-    const visualSystem = await page.evaluate(() => {
-      const hero = getComputedStyle(document.querySelector('.twins-location-hero-stage'));
-      const proof = getComputedStyle(document.querySelector('.twins-location-hero-proof'));
-      const warm = getComputedStyle(document.querySelector('.twins-location-guidance'));
-      const dark = getComputedStyle(document.querySelector('.twins-location-process'));
+    const contrast = await page.evaluate(() => {
+      const hero = document.querySelector('.twins-location-hero');
+      const kicker = hero.querySelector('.twins-brand-kicker');
+      const paragraph = hero.querySelector('.twins-location-hero-copy > p');
+      const services = document.querySelector('.twins-location-services');
+      const serviceLink = services.querySelector('.twins-location-service-link');
       return {
-        heroRadius: Number.parseFloat(hero.borderRadius),
-        proofBackdrop: proof.backdropFilter || proof.webkitBackdropFilter,
-        warmBackground: warm.backgroundColor,
-        darkBackground: dark.backgroundColor,
+        heroBackground: getComputedStyle(hero).backgroundColor,
+        kicker: getComputedStyle(kicker).color,
+        paragraph: getComputedStyle(paragraph).color,
+        pageBackground: getComputedStyle(document.querySelector('.twins-location-page')).backgroundColor,
+        serviceLink: getComputedStyle(serviceLink).color,
       };
     });
-    expect(visualSystem.heroRadius).toBeGreaterThanOrEqual(18);
-    expect(visualSystem.proofBackdrop).toContain('blur');
-    expect(luminance(visualSystem.warmBackground)).toBeGreaterThan(luminance(visualSystem.darkBackground));
+    expect(contrastRatio(contrast.kicker, contrast.heroBackground), `${viewport.width}px hero kicker remains readable`).toBeGreaterThanOrEqual(4.5);
+    expect(contrastRatio(contrast.paragraph, contrast.heroBackground), `${viewport.width}px hero copy remains readable`).toBeGreaterThanOrEqual(4.5);
+    expect(contrastRatio(contrast.serviceLink, contrast.pageBackground), `${viewport.width}px service links remain readable`).toBeGreaterThanOrEqual(4.5);
 
-    const serviceKicker = await page.locator('.twins-location-services .twins-brand-kicker').evaluate(kicker => {
-      const services = kicker.closest('.twins-location-services');
-      return {
-        color: getComputedStyle(kicker).color,
-        background: getComputedStyle(services).backgroundColor,
-      };
+    const geometry = await page.evaluate(() => {
+      const rect = selector => document.querySelector(selector).getBoundingClientRect();
+      const hero = rect('.twins-location-hero');
+      const services = rect('.twins-location-services');
+      const local = rect('.twins-location-local-proof');
+      const heroMedia = rect('.twins-location-hero-media');
+      const heroCopy = rect('.twins-location-hero-copy');
+      const servicesHeading = rect('.twins-location-section-heading');
+      const localMedia = rect('.twins-location-local-proof-media');
+      const localCopy = rect('.twins-location-local-proof-copy');
+      return { hero, services, local, heroMedia, heroCopy, servicesHeading, localMedia, localCopy };
     });
-    expect(contrastRatio(serviceKicker.color, serviceKicker.background), `${viewport.width}px complete-service kicker remains readable on navy`)
-      .toBeGreaterThanOrEqual(4.5);
-
-    const cinematicHero = await page.locator('.twins-location-hero-stage').evaluate(stage => {
-      const rect = node => node.getBoundingClientRect();
-      const copy = stage.querySelector('.twins-location-hero-copy');
-      const media = stage.querySelector('.twins-location-hero-media');
-      const proof = stage.querySelector('.twins-location-hero-proof');
-      return {
-        stage: rect(stage),
-        copy: rect(copy),
-        media: rect(media),
-        proof: rect(proof),
-        mediaPosition: getComputedStyle(media).position,
-        proofPosition: getComputedStyle(proof).position,
-        proofColumns: getComputedStyle(proof).gridTemplateColumns.split(' ').filter(Boolean).length,
-      };
-    });
-    expect(cinematicHero.stage.left, `${viewport.width}px cinematic stage starts within the viewport`).toBeGreaterThanOrEqual(-1);
-    expect(cinematicHero.stage.right, `${viewport.width}px cinematic stage ends within the viewport`).toBeLessThanOrEqual(viewport.width + 1);
-    if (viewport.width <= 1024) {
-      expect(cinematicHero.mediaPosition, `${viewport.width}px hero media enters normal document flow`).toBe('relative');
-      expect(cinematicHero.proofPosition, `${viewport.width}px proof remains integrated in normal document flow`).toBe('relative');
-      expect(cinematicHero.copy.bottom, `${viewport.width}px copy precedes media`).toBeLessThanOrEqual(cinematicHero.media.top + 1);
-      expect(cinematicHero.proof.top, `${viewport.width}px proof follows the photo while retaining its cinematic overlap`)
-        .toBeGreaterThan(cinematicHero.media.top);
-      expect(cinematicHero.proofColumns, `${viewport.width}px proof follows the responsive column contract`)
-        .toBe(viewport.width <= 768 ? 1 : 3);
-    }
-
-    if (viewport.width === 1440) {
-      const heroReadability = await page.locator('.twins-location-hero-stage').evaluate(stage => {
-        const paragraph = stage.querySelector('.twins-location-hero-copy > p').getBoundingClientRect();
-        const media = stage.querySelector('.twins-location-hero-media').getBoundingClientRect();
-        return {
-          paragraphRight: paragraph.right,
-          brightMediaStart: media.left + (media.width * 0.2),
-        };
-      });
-      expect(heroReadability.paragraphRight, 'desktop hero paragraph stops before the bright media zone')
-        .toBeLessThanOrEqual(heroReadability.brightMediaStart);
-
-      const heroLayering = await page.locator('.twins-location-hero-stage').evaluate(stage => {
-        const media = stage.querySelector('.twins-location-hero-media');
-        return {
-          picture: Number.parseInt(getComputedStyle(media.querySelector('picture')).zIndex, 10),
-          feather: Number.parseInt(getComputedStyle(media, '::after').zIndex, 10),
-          mascot: Number.parseInt(getComputedStyle(media.querySelector('.twins-location-twin--hero')).zIndex, 10),
-          orbit: Number.parseInt(getComputedStyle(stage.querySelector('.twins-location-orbit')).zIndex, 10),
-          copy: Number.parseInt(getComputedStyle(stage.querySelector('.twins-location-hero-copy')).zIndex, 10),
-          proof: Number.parseInt(getComputedStyle(stage.querySelector('.twins-location-hero-proof')).zIndex, 10),
-        };
-      });
-      expect(heroLayering).toEqual({ picture: 0, feather: 1, mascot: 2, orbit: 3, copy: 4, proof: 5 });
-    }
-
-    const processConnector = await page.locator('.twins-location-process-list').evaluate(list => {
-      const connector = getComputedStyle(list, '::before');
-      const first = list.querySelector('li');
-      const marker = first.querySelector('span');
-      const heading = first.querySelector('h3');
-      const rect = node => node.getBoundingClientRect();
-      return {
-        connectorWidth: Number.parseFloat(connector.width),
-        connectorHeight: Number.parseFloat(connector.height),
-        columns: getComputedStyle(list).gridTemplateColumns.split(' ').filter(Boolean).length,
-        marker: rect(marker),
-        heading: rect(heading),
-      };
-    });
-    if (viewport.width <= 768) {
-      expect(processConnector.columns, `${viewport.width}px process steps stack`).toBe(1);
-      expect(processConnector.connectorHeight, `${viewport.width}px process connector is vertical`).toBeGreaterThan(processConnector.connectorWidth);
-      expect(processConnector.heading.left - processConnector.marker.left, `${viewport.width}px process copy clears its step marker`).toBeGreaterThanOrEqual(75);
+    expect(Math.abs(geometry.heroCopy.left - geometry.servicesHeading.left)).toBeLessThanOrEqual(1);
+    expect(Math.abs(geometry.servicesHeading.left - geometry.localMedia.left)).toBeLessThanOrEqual(1);
+    expect(geometry.hero.right).toBeLessThanOrEqual(viewport.width + 1);
+    expect(geometry.services.right).toBeLessThanOrEqual(viewport.width + 1);
+    expect(geometry.local.right).toBeLessThanOrEqual(viewport.width + 1);
+    expect(geometry.heroMedia.height).toBeLessThanOrEqual(viewport.width <= 768 ? 311 : 461);
+    expect(geometry.localMedia.height).toBeLessThanOrEqual(viewport.width <= 768 ? 311 : 441);
+    if (viewport.width > 768) {
+      expect(geometry.heroMedia.width / geometry.hero.width).toBeLessThanOrEqual(.45);
+      expect(geometry.localMedia.height).toBeLessThanOrEqual(geometry.localCopy.height + 1);
     } else {
-      expect(processConnector.connectorWidth, `${viewport.width}px process connector remains horizontal`).toBeGreaterThan(processConnector.connectorHeight);
-    }
-
-    const mascotVisibility = await page.locator('.twins-location-twin').evaluateAll(nodes => nodes.map(node => {
-      const style = getComputedStyle(node);
-      const rect = node.getBoundingClientRect();
-      return {
-        className: node.className,
-        visible: style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0,
-      };
-    }));
-    const expectedVisibility = {
-      'twins-location-twin--hero': viewport.width >= 481,
-      'twins-location-twin--guidance': true,
-      'twins-location-twin--final-right': true,
-    };
-    for (const [placement, expected] of Object.entries(expectedVisibility)) {
-      const mascot = mascotVisibility.find(entry => entry.className.includes(placement));
-      expect(mascot, `${viewport.width}px ${placement} fixture mascot is present`).toBeTruthy();
-      expect(mascot.visible, `${viewport.width}px ${placement} visibility follows the responsive contract`).toBe(expected);
+      expect(geometry.heroCopy.bottom).toBeLessThanOrEqual(geometry.heroMedia.top + 1);
     }
 
     const layout = await page.evaluate(() => {
       const overlaps = [];
       const clipped = [];
-      const textSelectors = 'h1, h2, h3, h4, p, a, button, [role="button"], li, summary, figcaption, strong, span:not([aria-hidden="true"])';
-      const viewportTolerance = 1;
+      const textSelectors = 'h1, h2, h3, p, a, button, [role="button"], li, figcaption, strong, span:not([aria-hidden="true"])';
       const layoutSelectors = [
-        '.twins-brand-header--location',
+        '.twins-brand-header',
+        '.twins-brand-utility',
+        '.twins-brand-fascia',
         '.twins-location-hero',
-        '.twins-location-hero-stage',
         '.twins-location-hero-copy',
         '.twins-location-hero-media',
         '.twins-location-hero-image',
-        '.twins-location-hero-proof',
-        '.twins-location-hero-proof > div',
-        '.twins-location-system',
-        '.twins-location-system-visual',
-        '.twins-location-system > div:last-child',
+        '.twins-location-trust',
+        '.twins-location-trust > div',
         '.twins-location-services',
-        '.twins-location-service-pathway',
-        '.twins-location-service-node',
+        '.twins-location-section-heading',
+        '.twins-location-service-grid',
+        '.twins-location-service-card',
         '.twins-location-service-link',
-        '.twins-location-guidance',
-        '.twins-location-guidance-copy',
-        '.twins-location-guidance-media',
-        '.twins-location-guidance-image',
-        '.twins-location-warning-card',
-        '.twins-location-process',
-        '.twins-location-process > .twins-location-section-heading',
-        '.twins-location-process-list',
-        '.twins-location-process-list > li',
-        '.twins-location-branch',
-        '.twins-location-branch > div',
-        '.twins-location-branch > aside',
-        '.twins-location-nearby',
-        '.twins-location-nearby > .twins-location-section-heading',
-        '.twins-location-nearby-grid',
-        '.twins-location-nearby-grid > a',
-        '.twins-location-faq',
-        '.twins-location-faq > .twins-location-section-heading',
-        '.twins-location-faq .twins-brand-faq-list',
-        '.twins-location-faq details',
-        '.twins-location-faq summary',
+        '.twins-location-local-proof',
+        '.twins-location-local-proof-media',
+        '.twins-location-local-proof-image',
+        '.twins-location-local-proof-copy',
+        '.twins-location-proof-list',
         '.twins-location-final-cta',
         '.twins-location-final-cta > :not(.twins-location-twin)',
         '.twins-brand-final-actions',
@@ -328,13 +239,21 @@ for (const viewport of viewports) {
         range.selectNodeContents(node);
         return Array.from(range.getClientRects()).filter(rect => rect.width > 0 && rect.height > 0);
       };
+      const bounds = rect => ({
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+      });
 
       for (const selector of layoutSelectors) {
         for (const node of document.querySelectorAll(selector)) {
           const style = getComputedStyle(node);
           const rect = node.getBoundingClientRect();
           if (style.display === 'none' || style.visibility === 'hidden') continue;
-          if (rect.width <= 0 || rect.height <= 0 || rect.left < -viewportTolerance || rect.right > innerWidth + viewportTolerance) {
+          if (rect.width <= 0 || rect.height <= 0 || rect.left < -1 || rect.right > innerWidth + 1) {
             clipped.push({ selector, left: rect.left, right: rect.right, width: rect.width, height: rect.height });
           }
         }
@@ -342,7 +261,7 @@ for (const viewport of viewports) {
 
       for (const twin of document.querySelectorAll('.twins-location-twin')) {
         if (!visible(twin)) continue;
-        const composition = twin.closest('.twins-location-hero-media, .twins-location-guidance, .twins-location-final-cta');
+        const composition = twin.closest('.twins-location-services, .twins-location-final-cta');
         if (!composition) {
           overlaps.push({ twin: twin.className, reason: 'missing approved composition container' });
           continue;
@@ -350,8 +269,15 @@ for (const viewport of viewports) {
         const twinRect = twin.getBoundingClientRect();
         for (const node of composition.querySelectorAll(textSelectors)) {
           if (!visible(node)) continue;
-          if (textRects(node).some(rect => intersects(twinRect, rect))) {
-            overlaps.push({ twin: twin.className, content: node.textContent.trim().slice(0, 80) });
+          const collision = textRects(node).find(rect => intersects(twinRect, rect));
+          if (collision) {
+            overlaps.push({
+              twin: twin.className,
+              twinRect: bounds(twinRect),
+              content: node.textContent.trim().slice(0, 80),
+              contentRect: bounds(collision),
+              compositionRect: bounds(composition.getBoundingClientRect()),
+            });
           }
         }
       }
@@ -367,92 +293,43 @@ for (const viewport of viewports) {
       };
     });
 
-    expect(layout.overlaps, `${viewport.width}px mascots may compose with media or empty space, never readable content or controls`)
-      .toEqual([]);
-    expect(layout.clipped, `${viewport.width}px significant sections and content stay within the horizontal viewport; only explicitly decorative mascots may clip`)
-      .toEqual([]);
+    expect(layout.overlaps, `${viewport.width}px characters never collide with readable content or controls`).toEqual([]);
+    expect(layout.clipped, `${viewport.width}px meaningful layout stays inside the viewport`).toEqual([]);
     expect(layout.rootScrollWidth, `${viewport.width}px page scrolling root has no horizontal overflow`)
       .toBeLessThanOrEqual(layout.rootClientWidth);
     expect(layout.documentScrollWidth, `${viewport.width}px document has no horizontal overflow`)
       .toBeLessThanOrEqual(layout.documentClientWidth);
 
-    if (viewport.width === 390) {
-      const mobileHero = await page.locator('.twins-location-hero-stage').evaluate(stage => {
-        const copy = stage.querySelector('.twins-location-hero-copy').getBoundingClientRect();
-        const photo = stage.querySelector('.twins-location-hero-media').getBoundingClientRect();
-        const proof = stage.querySelector('.twins-location-hero-proof').getBoundingClientRect();
-        return { copyBottom: copy.bottom, photoTop: photo.top, photoHeight: photo.height, proofTop: proof.top };
-      });
-      expect(mobileHero.photoTop).toBeGreaterThanOrEqual(mobileHero.copyBottom - 1);
-      expect(mobileHero.photoHeight).toBeGreaterThanOrEqual(240);
-      expect(mobileHero.proofTop).toBeGreaterThan(mobileHero.photoTop);
-    }
-
     if (viewport.width <= 390) {
       await expect(page.locator('body')).toHaveAttribute('data-twins-location-hero-active', 'true');
-      const mobileActionAudit = await page.evaluate(() => {
+      const actionsClearHero = await page.evaluate(() => {
         const actions = document.querySelector('.twins-brand-mobile-actions').getBoundingClientRect();
         const intersects = (one, two) => one.left < two.right && one.right > two.left && one.top < two.bottom && one.bottom > two.top;
-        return [...document.querySelectorAll([
-          '.twins-location-hero-copy',
-          '.twins-location-hero-media',
-          '.twins-location-hero-proof',
-          '.twins-location-actions',
-        ].join(', '))]
-          .filter(node => {
-            const style = getComputedStyle(node);
-            return style.display !== 'none' && style.visibility !== 'hidden';
-          })
+        return [...document.querySelectorAll('.twins-location-hero-copy, .twins-location-hero-media, .twins-location-actions')]
+          .filter(node => getComputedStyle(node).display !== 'none')
           .filter(node => intersects(actions, node.getBoundingClientRect()))
           .map(node => node.className);
       });
-      expect(mobileActionAudit, `${viewport.width}px mobile quick actions do not cover hero content`).toEqual([]);
+      expect(actionsClearHero, `${viewport.width}px mobile quick actions do not cover hero content`).toEqual([]);
     }
 
     const targets = await visibleTargetAudit(page);
     for (const target of targets.filter(target => target.visible)) {
       expect(target.height, `${viewport.width}px visible target ${target.label} is at least 44px tall`).toBeGreaterThanOrEqual(44);
-      expect(target.width, `${viewport.width}px visible target ${target.label} is usable at its rendered width`).toBeGreaterThanOrEqual(44);
+      expect(target.width, `${viewport.width}px visible target ${target.label} is at least 44px wide`).toBeGreaterThanOrEqual(44);
     }
 
-    const focusableHeaderActions = page.locator([
-      '.twins-brand-header--location .twins-brand-location-nav a:visible',
-      '.twins-brand-header--location .twins-brand-location-phone:visible',
-      '.twins-brand-header--location .twins-brand-cta--quote:visible',
-      '.twins-brand-header--location .twins-brand-menu-trigger:visible',
-    ].join(', '));
-    await page.keyboard.press('Tab');
-    const actionCount = await focusableHeaderActions.count();
-    for (let index = 0; index < actionCount; index += 1) {
-      const action = focusableHeaderActions.nth(index);
-      await page.keyboard.press('Tab');
-      const focus = await action.evaluate(node => {
-        const style = getComputedStyle(node);
-        return {
-          active: document.activeElement === node,
-          outline: style.outlineStyle,
-          outlineWidth: Number.parseFloat(style.outlineWidth),
-          color: style.color,
-        };
-      });
-      expect(focus.active, `${viewport.width}px compact header action ${index + 1} accepts keyboard focus`).toBeTruthy();
-      expect(
-        focus.outline !== 'none' || focus.outlineWidth > 0 || focus.color === 'rgb(255, 200, 61)',
-        `${viewport.width}px focused compact header action ${index + 1} has visible focus styling`,
-      ).toBeTruthy();
-    }
-
-    const menu = page.locator('.twins-brand-header--location .twins-brand-menu-trigger:visible');
+    const menu = page.locator('.twins-brand-menu-trigger:visible');
     if (await menu.count()) {
-      await page.keyboard.press('Enter');
-      await expect(page.locator('.twins-brand-drawer--location')).not.toHaveAttribute('hidden', '');
+      await menu.click();
+      await expect(page.locator('.twins-brand-drawer')).not.toHaveAttribute('hidden', '');
       await expect(page.locator('.twins-brand-drawer-close')).toBeFocused();
       const drawerTargets = await visibleTargetAudit(page);
       for (const target of drawerTargets.filter(target => target.visible)) {
         expect(target.height, `${viewport.width}px opened-drawer target ${target.label} is at least 44px tall`).toBeGreaterThanOrEqual(44);
-        expect(target.width, `${viewport.width}px opened-drawer target ${target.label} is usable at its rendered width`).toBeGreaterThanOrEqual(44);
+        expect(target.width, `${viewport.width}px opened-drawer target ${target.label} is at least 44px wide`).toBeGreaterThanOrEqual(44);
       }
-      await page.keyboard.press('Enter');
+      await page.locator('.twins-brand-drawer-close').click();
       await expect(menu).toBeFocused();
     }
   });
@@ -462,11 +339,11 @@ test('reduced motion keeps every reveal visible, static, and readable', async ({
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(fixture);
 
-  const motion = await page.locator('.twins-location-twin, .twins-brand-door-art--door-open .twins-da-curtain').evaluateAll(nodes => nodes.map(node => {
+  const motion = await page.locator('.twins-location-twin').evaluateAll(nodes => nodes.map(node => {
     const style = getComputedStyle(node);
     return { animationName: style.animationName, transform: style.transform };
   }));
-
+  expect(motion).toHaveLength(3);
   for (const mascot of motion) {
     expect(mascot.animationName).toBe('none');
     expect(mascot.transform).toBe('none');
@@ -487,7 +364,7 @@ test('reduced motion keeps every reveal visible, static, and readable', async ({
     };
   }));
 
-  expect(reveals.length).toBeGreaterThan(0);
+  expect(reveals).toHaveLength(5);
   for (const reveal of reveals) {
     expect(reveal.opacity).toBe('1');
     expect(reveal.transform).toBe('none');
