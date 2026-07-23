@@ -149,6 +149,10 @@ test('Rockford location fixture retains route-local contact data and the shared 
   assert.match(fixture, /699 customer reviews/);
   assert.equal((fixture.match(/>Get a Free Quote<\/a>/g) || []).length, 6);
   assert.equal((fixture.match(/>Book Online<\/button>/g) || []).length, 2);
+  assert.equal((fixture.match(/data-twins-booking-dialog/g) || []).length, 1);
+  assert.equal((fixture.match(/data-booking-close/g) || []).length, 1);
+  assert.equal((fixture.match(/data-booking-finalize/g) || []).length, 1);
+  assert.equal((fixture.match(/data-booking-status/g) || []).length, 1);
   assert.equal((fixture.match(/>Call Now<\/a>/g) || []).length, 1);
   assert.doesNotMatch(fixture, />Request a Quote<\/a>|>Call Twins<\/a>/);
 });

@@ -29,6 +29,7 @@ function visibleTargetAudit(page) {
   return page.locator([
     '.twins-brand-market-menu > summary',
     '.twins-brand-market-menu-panel a',
+    '.twins-brand-utility .twins-brand-phone',
     '.twins-brand-primary-nav button',
     '.twins-brand-primary-nav a',
     '.twins-brand-fascia > .twins-brand-cta',
@@ -36,6 +37,8 @@ function visibleTargetAudit(page) {
     '.twins-brand-drawer-close',
     '.twins-brand-drawer a',
     '.twins-brand-drawer .twins-brand-cta',
+    '[data-booking-close]',
+    '[data-booking-finalize]',
     '.twins-location-service-link',
     '.twins-location-hero .twins-brand-cta',
     '.twins-location-final-cta .twins-brand-cta',
@@ -52,6 +55,14 @@ function visibleTargetAudit(page) {
   }));
 }
 
+async function expectVisibleTargetsMeetMinimum(page, viewportWidth, phase) {
+  const targets = await visibleTargetAudit(page);
+  for (const target of targets.filter(target => target.visible)) {
+    expect(target.height, `${viewportWidth}px ${phase} target ${target.label} is at least 44px tall`).toBeGreaterThanOrEqual(44);
+    expect(target.width, `${viewportWidth}px ${phase} target ${target.label} is at least 44px wide`).toBeGreaterThanOrEqual(44);
+  }
+}
+
 for (const viewport of viewports) {
   test(`modern location layout holds at ${viewport.width}px`, async ({ page }) => {
     await page.setViewportSize(viewport);
@@ -64,6 +75,8 @@ for (const viewport of viewports) {
     await expect(page.locator('.twins-brand-primary-nav')).toHaveCount(1);
     await expect(page.locator('.twins-brand-nav-group')).toHaveCount(5);
     await expect(page.locator('.twins-brand-drawer')).toHaveCount(1);
+    await expect(page.locator('[data-twins-booking-open]')).toHaveCount(2);
+    await expect(page.locator('[data-twins-booking-dialog]')).toHaveCount(1);
     await expect(page.locator('.twins-location-hero')).toHaveCount(1);
     await expect(page.locator('.twins-location-trust')).toHaveCount(1);
     await expect(page.locator('.twins-location-service-card')).toHaveCount(3);
@@ -179,7 +192,8 @@ for (const viewport of viewports) {
       const servicesHeading = rect('.twins-location-section-heading');
       const localMedia = rect('.twins-location-local-proof-media');
       const localCopy = rect('.twins-location-local-proof-copy');
-      return { hero, services, local, heroMedia, heroCopy, servicesHeading, localMedia, localCopy };
+      const heroGridContentWidth = heroCopy.width + heroMedia.width;
+      return { hero, services, local, heroMedia, heroCopy, heroGridContentWidth, servicesHeading, localMedia, localCopy };
     });
     expect(Math.abs(geometry.heroCopy.left - geometry.servicesHeading.left)).toBeLessThanOrEqual(1);
     expect(Math.abs(geometry.servicesHeading.left - geometry.localMedia.left)).toBeLessThanOrEqual(1);
@@ -189,7 +203,9 @@ for (const viewport of viewports) {
     expect(geometry.heroMedia.height).toBeLessThanOrEqual(viewport.width <= 768 ? 311 : 461);
     expect(geometry.localMedia.height).toBeLessThanOrEqual(viewport.width <= 768 ? 311 : 441);
     if (viewport.width > 768) {
-      expect(geometry.heroMedia.width / geometry.hero.width).toBeLessThanOrEqual(.45);
+      const heroMediaShare = geometry.heroMedia.width / geometry.heroGridContentWidth;
+      expect(heroMediaShare).toBeGreaterThanOrEqual(.40);
+      expect(heroMediaShare).toBeLessThanOrEqual(.44);
       expect(geometry.localMedia.height).toBeLessThanOrEqual(geometry.localCopy.height + 1);
     } else {
       expect(geometry.heroCopy.bottom).toBeLessThanOrEqual(geometry.heroMedia.top + 1);
@@ -313,10 +329,20 @@ for (const viewport of viewports) {
       expect(actionsClearHero, `${viewport.width}px mobile quick actions do not cover hero content`).toEqual([]);
     }
 
-    const targets = await visibleTargetAudit(page);
-    for (const target of targets.filter(target => target.visible)) {
-      expect(target.height, `${viewport.width}px visible target ${target.label} is at least 44px tall`).toBeGreaterThanOrEqual(44);
-      expect(target.width, `${viewport.width}px visible target ${target.label} is at least 44px wide`).toBeGreaterThanOrEqual(44);
+    await expectVisibleTargetsMeetMinimum(page, viewport.width, 'visible');
+
+    const fasciaBooking = page.locator('.twins-brand-fascia > [data-twins-booking-open]:visible');
+    if (await fasciaBooking.count()) {
+      await fasciaBooking.click();
+      const booking = page.locator('[data-twins-booking-dialog]');
+      await expect(booking).toBeVisible();
+      await expect(page.locator('[data-booking-close]')).toBeFocused();
+      await expectVisibleTargetsMeetMinimum(page, viewport.width, 'open-booking');
+      await page.locator('[data-booking-finalize]').click();
+      await expect(page.locator('[data-booking-status]')).toBeVisible();
+      await page.locator('[data-booking-close]').click();
+      await expect(booking).toBeHidden();
+      await expect(fasciaBooking).toBeFocused();
     }
 
     const menu = page.locator('.twins-brand-menu-trigger:visible');
@@ -324,12 +350,15 @@ for (const viewport of viewports) {
       await menu.click();
       await expect(page.locator('.twins-brand-drawer')).not.toHaveAttribute('hidden', '');
       await expect(page.locator('.twins-brand-drawer-close')).toBeFocused();
-      const drawerTargets = await visibleTargetAudit(page);
-      for (const target of drawerTargets.filter(target => target.visible)) {
-        expect(target.height, `${viewport.width}px opened-drawer target ${target.label} is at least 44px tall`).toBeGreaterThanOrEqual(44);
-        expect(target.width, `${viewport.width}px opened-drawer target ${target.label} is at least 44px wide`).toBeGreaterThanOrEqual(44);
-      }
-      await page.locator('.twins-brand-drawer-close').click();
+      await expectVisibleTargetsMeetMinimum(page, viewport.width, 'opened-drawer');
+      await page.locator('.twins-brand-drawer [data-twins-booking-open]').click();
+      const booking = page.locator('[data-twins-booking-dialog]');
+      await expect(page.locator('.twins-brand-drawer')).toBeHidden();
+      await expect(booking).toBeVisible();
+      await expect(page.locator('[data-booking-close]')).toBeFocused();
+      await expectVisibleTargetsMeetMinimum(page, viewport.width, 'drawer-opened-booking');
+      await page.keyboard.press('Escape');
+      await expect(booking).toBeHidden();
       await expect(menu).toBeFocused();
     }
   });
