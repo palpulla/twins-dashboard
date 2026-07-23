@@ -187,3 +187,26 @@ test('location reveals are progressive enhancement and reduced motion is static'
     'content must not disappear when JavaScript is unavailable');
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*\[data-location-reveal\][^{]*\{[^}]*opacity:\s*1 !important/);
 });
+
+test('recovery CSS locks alignment and contained image proportions', () => {
+  assert.match(css, /--twins-location-max:\s*1180px/);
+  assert.match(css, /padding-inline:\s*max\(var\(--twins-location-gutter\),\s*calc\(\(100vw - var\(--twins-location-max\)\)\s*\/\s*2\)\)/);
+  assert.match(css, /\.twins-location-hero\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1\.15fr\) minmax\(320px,\s*\.85fr\)/);
+  assert.match(css, /\.twins-location-hero-media\s*\{[^}]*max-height:\s*460px/);
+  assert.match(css, /\.twins-location-hero-image\s*\{[^}]*aspect-ratio:\s*4\s*\/\s*3/);
+  assert.match(css, /\.twins-location-local-proof\s*\{[^}]*grid-template-columns:\s*minmax\(320px,\s*\.85fr\) minmax\(0,\s*1\.15fr\)/);
+  assert.match(css, /@media \(max-width:\s*768px\)[\s\S]*?\.twins-location-hero-media\s*\{[^}]*max-height:\s*310px/);
+});
+
+test('recovery CSS contains no cinematic or location-only header treatment', () => {
+  assert.doesNotMatch(css, /\.twins-location-orbit|backdrop-filter:\s*blur\(18px\)/);
+  assert.doesNotMatch(css, /\.twins-brand-header--location|\.twins-brand-fascia--location/);
+  assert.doesNotMatch(css, /\.twins-location-system|\.twins-location-process|\.twins-location-nearby|\.twins-location-faq/);
+});
+
+test('location characters stay subordinate to services and final conversion', () => {
+  assert.match(css, /\.twins-location-twin--services\s*\{[^}]*width:\s*clamp\(72px,\s*7vw,\s*104px\)/);
+  assert.match(css, /\.twins-location-twin--final-left\s*\{[^}]*width:\s*clamp\(86px,\s*8vw,\s*118px\)/);
+  assert.match(css, /\.twins-location-twin--final-right\s*\{[^}]*width:\s*clamp\(92px,\s*8vw,\s*124px\)/);
+  assert.match(css, /@media \(max-width:\s*480px\)[\s\S]*?\.twins-location-twin--services\s*\{[^}]*display:\s*none/);
+});
