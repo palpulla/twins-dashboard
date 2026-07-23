@@ -65,19 +65,41 @@ if (!isset($pageContent) || !is_array($pageContent)) {
     </aside>
   </section>
 
-  <section class="twins-brand-service-options" aria-labelledby="twins-brand-service-options-title">
+  <?php $isMembership = $path === '/protection-plans/'; ?>
+  <section class="twins-brand-service-options<?= $isMembership ? ' twins-brand-membership' : '' ?>" aria-labelledby="twins-brand-service-options-title">
     <div class="twins-brand-section-heading">
-      <span class="twins-brand-kicker">Options and tradeoffs</span>
-      <h2 id="twins-brand-service-options-title">Review the next-step paths</h2>
+      <span class="twins-brand-kicker"><?= $isMembership ? 'Membership tiers' : 'Options and tradeoffs' ?></span>
+      <h2 id="twins-brand-service-options-title"><?= $isMembership ? 'Choose your TwinShield plan' : 'Review the next-step paths' ?></h2>
     </div>
-    <div class="twins-brand-service-option-grid">
-      <?php foreach ($pageContent['options'] as $option): ?>
-        <article>
-          <h3><?= htmlspecialchars($option['option'], ENT_QUOTES, 'UTF-8') ?></h3>
-          <p><?= htmlspecialchars($option['tradeoff'], ENT_QUOTES, 'UTF-8') ?></p>
-        </article>
-      <?php endforeach; ?>
-    </div>
+    <?php if ($isMembership): ?>
+      <div class="twins-brand-membership-grid">
+        <?php foreach ($pageContent['options'] as $planIndex => $plan): ?>
+          <?php
+            $planParts = explode(' — ', $plan['tradeoff'], 2);
+            $planPrice = $planParts[0];
+            $planBenefits = $planParts[1] ?? '';
+            $planRecommended = $planIndex === 1;
+            $planTier = str_replace('TwinShield ', '', explode(' - ', $plan['option'], 2)[0]);
+          ?>
+          <article class="twins-brand-membership-card<?= $planRecommended ? ' twins-brand-membership-card--featured' : '' ?>">
+            <?php if ($planRecommended): ?><span class="twins-brand-membership-badge">Recommended</span><?php endif; ?>
+            <h3><?= htmlspecialchars($plan['option'], ENT_QUOTES, 'UTF-8') ?></h3>
+            <p class="twins-brand-membership-price"><?= htmlspecialchars($planPrice, ENT_QUOTES, 'UTF-8') ?></p>
+            <p class="twins-brand-membership-benefits"><?= htmlspecialchars($planBenefits, ENT_QUOTES, 'UTF-8') ?></p>
+            <a class="twins-brand-cta twins-brand-cta--quote twins-brand-membership-cta" href="<?= htmlspecialchars($experience->route('contact', $marketKey), ENT_QUOTES, 'UTF-8') ?>">Ask about <?= htmlspecialchars($planTier, ENT_QUOTES, 'UTF-8') ?></a>
+          </article>
+        <?php endforeach; ?>
+      </div>
+    <?php else: ?>
+      <div class="twins-brand-service-option-grid">
+        <?php foreach ($pageContent['options'] as $option): ?>
+          <article>
+            <h3><?= htmlspecialchars($option['option'], ENT_QUOTES, 'UTF-8') ?></h3>
+            <p><?= htmlspecialchars($option['tradeoff'], ENT_QUOTES, 'UTF-8') ?></p>
+          </article>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
     <nav class="twins-brand-service-links" aria-label="Related garage door pages">
       <?php foreach ($pageContent['links'] as $link): ?>
         <a href="<?= htmlspecialchars($experience->route($link['route'], $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($experience->contextualRouteLabel($link['route'], $marketKey, $link['label']), ENT_QUOTES, 'UTF-8') ?></a>
