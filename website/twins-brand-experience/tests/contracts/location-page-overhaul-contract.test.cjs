@@ -198,6 +198,14 @@ test('recovery CSS locks alignment and contained image proportions', () => {
   assert.match(css, /@media \(max-width:\s*768px\)[\s\S]*?\.twins-location-hero-media\s*\{[^}]*max-height:\s*310px/);
 });
 
+test('mobile recovery media fits complete 4:3 photos and the hero caption inside its cap', () => {
+  assert.match(css, /\.twins-location-hero-media picture\s*\{[^}]*width:\s*100%[^}]*height:\s*auto[^}]*aspect-ratio:\s*4\s*\/\s*3/);
+  assert.match(css, /\.twins-location-local-proof-media picture\s*\{[^}]*width:\s*100%[^}]*height:\s*auto[^}]*aspect-ratio:\s*4\s*\/\s*3/);
+  assert.match(css, /@media \(max-width:\s*768px\)[\s\S]*?\.twins-location-hero-media\s*\{[^}]*width:\s*min\(100%,\s*350px\)[^}]*max-height:\s*310px/);
+  assert.match(css, /@media \(max-width:\s*768px\)[\s\S]*?\.twins-location-local-proof-media\s*\{[^}]*width:\s*min\(100%,\s*408px\)[^}]*max-height:\s*310px/);
+  assert.doesNotMatch(css, /\.twins-location-(?:hero|local-proof)-media picture\s*\{[^}]*height:\s*calc\(/);
+});
+
 test('recovery CSS contains no cinematic or location-only header treatment', () => {
   assert.doesNotMatch(css, /\.twins-location-orbit|backdrop-filter:\s*blur\(18px\)/);
   assert.doesNotMatch(css, /\.twins-brand-header--location|\.twins-brand-fascia--location/);
