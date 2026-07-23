@@ -222,8 +222,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/assets/css/twins-brand.css",
-      "size": 98882,
-      "sha256": "d26d1f74beb3243e7eb7964b9991bc5a31bd99e45c168afcefa0f1900ddc9bdd"
+      "size": 82864,
+      "sha256": "9229496d83ac2576c971d18d53d1205598c4adac08419f8e879c46b0be3d8eca"
     },
     {
       "role": "verify",
@@ -258,8 +258,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/components/header.php",
-      "size": 9451,
-      "sha256": "feb74311de7c9fb1c2dc64319bcb02baa88e21c20132c632977d2aa9b9289257"
+      "size": 6778,
+      "sha256": "c3b3a8ab765a3fc81f69404cc5f84662be54189e5c4c1013d46e4d2ef02b41c5"
     },
     {
       "role": "verify",
@@ -288,8 +288,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/components/twin-character.php",
-      "size": 1083,
-      "sha256": "0e1e2075f647f985eeecec39e177a36d4fa52f5bc06c042c19c287b7ff348856"
+      "size": 1055,
+      "sha256": "5b880ac3b7b63cc9cdfbec9c24a89c074c6679cf9e5c386550eeebf29ea4e5c1"
     },
     {
       "role": "verify",
@@ -325,7 +325,7 @@
       "role": "verify",
       "source": "twins-brand-experience/manifests/staging-runtime.json",
       "size": 365693,
-      "sha256": "3ff2700ec87aaef3dd08c388650b9588c73d29f2e03288bf191f40f0b7b6d594"
+      "sha256": "13d52622f957c9b007f3d1259b8cfe343c1b81e160c547d415787249d1490729"
     },
     {
       "role": "verify",
@@ -384,8 +384,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/templates/editorial.php",
-      "size": 26803,
-      "sha256": "3f004d6a75a1ac9c9a16502625c880c74347499f8ae20489bb2d15a1fd2d356f"
+      "size": 20215,
+      "sha256": "28be56ec9d32aeee43f0e1910e95624dd538de12d9371df327ee8ec68f1aad80"
     },
     {
       "role": "verify",
@@ -492,8 +492,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/tests/php/renderer-contract-harness.php",
-      "size": 56074,
-      "sha256": "7481d68d2e99539f3c341d3f6d7659a80f69ae6f5fc8dc6d2c0de401f089958d"
+      "size": 55190,
+      "sha256": "3583b8cb294d6589e32b1f2da30df4530b652dcd81f9638119cad165c6fb1432"
     },
     {
       "role": "verify",
