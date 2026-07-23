@@ -235,8 +235,8 @@ for (const viewport of viewports) {
       const firstCard = page.locator('.twins-location-service-card').first();
       await firstCard.hover();
       await expect.poll(() => firstCard.evaluate(node => {
-        const matrix = getComputedStyle(node).transform;
-        return Number(matrix.match(/matrix\([^,]+,[^,]+,[^,]+,[^,]+,[^,]+,\s*([^)]+)\)/)?.[1]);
+        const transform = getComputedStyle(node).transform;
+        return transform === 'none' ? 0 : new DOMMatrixReadOnly(transform).m42;
       })).toBeCloseTo(-3, 1);
 
       const finalQuote = page.locator('.twins-location-final-cta .twins-brand-cta--quote');
