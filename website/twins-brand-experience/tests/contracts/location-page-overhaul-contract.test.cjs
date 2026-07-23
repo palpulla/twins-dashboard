@@ -199,6 +199,7 @@ test('recovery CSS locks alignment and contained image proportions', () => {
   assert.match(css, /\.twins-location-hero-media\s*\{[^}]*max-height:\s*460px/);
   assert.match(css, /\.twins-location-hero-image\s*\{[^}]*aspect-ratio:\s*4\s*\/\s*3/);
   assert.match(css, /\.twins-location-local-proof\s*\{[^}]*grid-template-columns:\s*minmax\(320px,\s*\.85fr\) minmax\(0,\s*1\.15fr\)/);
+  assert.match(css, /@media \(max-width:\s*1024px\)[\s\S]*?\.twins-location-hero\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1\.15fr\) minmax\(300px,\s*\.85fr\)/);
   assert.match(css, /@media \(max-width:\s*768px\)[\s\S]*?\.twins-location-hero-media\s*\{[^}]*max-height:\s*310px/);
 });
 
