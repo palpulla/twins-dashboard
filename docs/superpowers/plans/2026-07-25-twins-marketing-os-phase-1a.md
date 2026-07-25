@@ -277,12 +277,18 @@ create table public.spend (
   id              bigserial primary key,
   spend_date      date not null,
   platform        text not null,
+  -- NULLS NOT DISTINCT (PG15+, and this project is PG17) is load-bearing.
+  -- Postgres treats NULLs as distinct in a unique constraint by default, so a
+  -- single row with a null campaign would bypass the upsert and duplicate on
+  -- every nightly run, silently inflating spend. Upstream is clean today —
+  -- verified 2026-07-25: 0 null campaign_name across all 1,799 marketing_spend
+  -- rows — but the mirror must not depend on that staying true.
   campaign_name   text,
   spend_amount    numeric(12,2) not null default 0,
   clicks          integer,
   leads_generated integer,
   mirrored_at     timestamptz not null default now(),
-  unique (spend_date, platform, campaign_name)
+  unique nulls not distinct (spend_date, platform, campaign_name)
 );
 create index on public.spend (spend_date);
 
@@ -339,6 +345,17 @@ values ('2026-07-25', 'Google Ads', 10);
 ```
 
 Expected: `ERROR: new row ... violates check constraint "spend_platform_allowlist"`.
+
+Then verify the null-campaign dedupe actually holds, since it is the subtler of the two guards:
+
+```sql
+insert into public.spend (spend_date, platform, campaign_name, spend_amount)
+values ('2026-07-25', 'google_lsa', null, 10);
+insert into public.spend (spend_date, platform, campaign_name, spend_amount)
+values ('2026-07-25', 'google_lsa', null, 20);
+```
+
+Expected: the **second** insert fails with a unique violation. If it succeeds, `nulls not distinct` did not take effect and the mirror will duplicate null-campaign rows on every run — stop and fix before going further.
 
 - [ ] **Step 4: Apply to the project and commit**
 
