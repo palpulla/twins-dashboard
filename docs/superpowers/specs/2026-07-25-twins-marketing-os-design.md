@@ -4,6 +4,31 @@
 **Status:** Approved for planning
 **Owner:** Daniel
 
+## Repository layout — read this before touching files
+
+Two **separate** git repositories, one nested inside the other:
+
+| Path | Remote | Holds |
+| --- | --- | --- |
+| `~/twins-dashboard` | `palpulla/twins-dashboard` | This spec, `docs/`, `twins-content-engine/`, marketing audits |
+| `~/twins-dashboard/twins-dash` | `palpulla/twins-dash` | The TwinsDash app — `src/`, `supabase/functions/`, migrations |
+
+Specs live in the outer repo, code in the inner one. Phase 0's UI and function
+changes are all inner-repo; the launchd plists under `twins-content-engine/deploy/`
+are outer-repo.
+
+## Baseline — trailing 90 days (verified 2026-07-25)
+
+| Platform | Spend | Campaigns | Clicks | Leads |
+| --- | --- | --- | --- | --- |
+| Google LSA | $21,261.45 | 1 | 2,335 | 272 |
+| Google Ads | $11,503.30 | 4 | 749 | 63 |
+| Meta Ads | $7,213.98 | 7 | 4,164 | 95 |
+| **Total** | **$39,978.73** | **12** | 7,248 | 430 |
+
+Twelve campaigns carry all paid spend. That is small enough that campaign-level
+analysis is tractable the moment revenue can be attached to it.
+
 ## Problem
 
 All Twins marketing capability currently lives inside `twinsdash.com`, an ops and
@@ -29,6 +54,8 @@ single place to see or control them.
 | Data architecture | **Option B** — new Supabase project as marketing system of record, narrow nightly mirror of revenue and spend from `twins-dash-prod` |
 | Build order | Money dashboard first; content studio at Phase 3 |
 | Campaign attribution | Ship channel-level now; campaign schema built dormant; capture provisioned in parallel |
+| Google Ads campaigns | In scope for Phase 1 — verify matching, read campaign CPA, add conversion values for campaign ROAS |
+| Mirror refresh window | 365 days, not 90 (restatement beyond 90 days could not be ruled out) |
 | Auth | Supabase Auth, invite-only, single shared `admin` role, no data partitioning |
 | Stack | Next.js App Router, TypeScript, Tailwind, shadcn/ui, Framer Motion |
 | Ad spend in Phase 1 | Mirrored from `twins-dash-prod`, not re-integrated (accepted debt) |
@@ -183,12 +210,17 @@ channel, raw lead source, business unit, market, service zip.
 campaign_name, spend_amount, clicks, leads_generated.
 
 **Retention vs refresh — these are different.** The mirror **retains full history**;
-the dashboard's 7/30/90-day selectors read from that. What is bounded is the
-*refresh* window: each nightly run re-pulls only the trailing 90 days, on the basis
-that jobs older than 90 days no longer restate. Initial load backfills all
-available history once.
+the dashboard's period selectors read from that. What is bounded is the *refresh*
+window. Initial load backfills all available history once.
 
-**Volume:** roughly 3,000 rows per nightly refresh.
+**Refresh window: 365 days.** An attempt to justify a 90-day window against live
+data failed to do so. Of 1,094 jobs completed in the last year, **296 (27%) were
+written to more than 90 days after completion**, with a maximum lag of 270 days.
+That signal is `jobs.updated_at`, which is confounded — a bulk sync rewriting a row
+looks identical to a genuine revenue restatement, and `jobs` is not in `audit_log`,
+so the two cannot be separated from the database. Rather than assume, the window is
+set to 365 days: that is ~1,100 rows per night instead of ~3,000 per quarter, so the
+volume is irrelevant at this scale and there is nothing to gain by tightening it.
 
 **Restatement handling — critical.** Jobs grow after completion and invoice sync
 self-heals, so revenue for an already-completed job changes. The nightly run
@@ -210,19 +242,58 @@ Verified 2026-07-25. **Campaign-level ROAS is not computable today.**
 | `marketing_spend` | Per-campaign ✔ (`campaign_name`) |
 | `meta_leads` | 38 rows, carries `meta_campaign_id` and `meta_ad_id` |
 | `lsa_leads` | 309 rows, no campaign identifier |
-| `lp_leads` | 22 rows total; one free-text `utm` field |
+| `lp_leads` | 22 rows total. Its `utm` column is jsonb but holds **no UTM data** — only `consent`, `service`, `form_variant`, `chooser_token`, `zip`. The name is misleading. |
 | Phone calls attributed to campaign | 0 |
+
+The search covered column names *and* the contents of every `jsonb` column in the
+database, including `jobs.hcp_data`, `ghl_contacts.raw_payload`,
+`lsa_leads.raw_payload` and `meta_leads.raw_payload`.
+`ghl_contacts.attribution_source` exists but is NULL on all 1,531 rows.
 
 Spend is per-campaign; revenue is per-channel. Nearly all revenue arrives by phone,
 and a call carries no campaign unless the caller dialled a campaign-specific number.
 This is the same class of problem as the unattributed-revenue bucket: **a source
 that was never recorded cannot be backfilled.**
 
+### Google Ads is the exception — a cheaper path already exists
+
+`offline-conversions-weekly` (cron 86, Fridays 10:07 UTC) has been uploading every
+booked HCP job to Google Ads as an enhanced conversion since 2026-07-04, keyed on
+SHA-256 hashed email and phone, deduped by `transactionId = jobs.id`. It is healthy:
+32 of 32 accepted on 2026-07-24, `status = ok`. Google therefore matches these
+against its own click records and can attribute **booked jobs per campaign**.
+
+Two gaps sit between that and usable numbers:
+
+1. **The read side.** `google-ads-sync` requests
+   `campaign.name, segments.date, metrics.cost_micros, metrics.clicks,
+   metrics.conversions` with no `segments.conversion_action`. The uploaded action
+   ("Booked Job (HCP)", id 7672808531) is **SECONDARY**, so it is expected to be
+   excluded from the `metrics.conversions` figure currently stored as
+   `leads_generated`. Segmenting by conversion action should surface campaign-level
+   booked jobs, and therefore **campaign CPA for Google Ads**.
+2. **The write side.** The upload payload carries `transactionId`, `eventTimestamp`
+   and `userIdentifiers` — and **no `conversionValue` or `currency`**. Google can
+   count the jobs but does not know what any of them is worth, so campaign ROAS is
+   unavailable until values are sent. Jobs upload at *booking*, when final revenue
+   is unknown, so this requires value-adjustment uploads after completion rather
+   than simply adding a field.
+
+**Limits, stated plainly.** This is Google's modelled attribution, not ground truth:
+it will not reconcile to the jobs table, the match rate is not observable from our
+side, and it covers Google Ads only — $11,503 of $39,979 in trailing-90-day spend.
+It does **not** replace call tracking, which remains the only path to campaign
+attribution for LSA ($21,261) and Meta ($7,214). It has also **not** been verified
+against the live Google Ads account that matches are actually landing; that
+verification is the first task of this workstream, before anything is built on it.
+
 **Design response.** Phase 1 ships channel-level truth, which is solid. A
 `campaigns` table and a job→campaign link table carrying `method` and `confidence`
-are built now and left empty. When capture goes live they populate with no
-migration. The Campaigns page renders spend, clicks and leads — real today — and
-renders ROAS and CAC as explicitly not-yet-measurable rather than as zeros.
+are built now and left empty for the call-tracking path. The Campaigns page renders
+spend, clicks and leads — real today — plus Google Ads campaign CPA once verified,
+and renders anything not yet measurable as explicitly unavailable rather than as
+zeros. Where a figure comes from Google's model rather than our own attribution, the
+UI must say so.
 
 ## Surfaces
 
@@ -296,6 +367,27 @@ None of this is code; all of it is wall-clock, and all of it gates later phases.
 Deliberately **not** recommended: making Lead Source a required field in HCP. It
 works, but it inserts a human step in front of every job and decays. Call tracking
 captures the same information automatically.
+
+## Known risk discovered during this design: untracked production functions
+
+An audit of all 97 deployed edge functions against the `twins-dash` repo found
+**ten running in production with no source in any repo**. Their only copy was on
+Supabase's servers.
+
+`offline-conversions-weekly` has been recovered and committed (branch
+`chore/recover-untracked-edge-functions`), extracted from the deployed bundle's
+source map so it is the original TypeScript rather than transpiled output.
+
+**Still unrecovered:** `ads-audit`, `ghl-env-probe`, `hcp-twinshield-api-probe`,
+`hcp-twinshield-price-forms-setup`, `internal-ops-eod-response`,
+`reconcile-jobs-weekly`, `sync-google-ads`, `voice-agent-call-recap`, `xai-probe`.
+
+Nothing in the repo is undeployed, so the drift is one-directional. Two of these
+are marketing-relevant and should be read before Phase 1 work touches ad data:
+`ads-audit`, and `sync-google-ads` — which appears to be a **second, separate**
+Google Ads function alongside the repo's `google-ads-sync`, and may be a duplicate
+or a superseded version. Recovering the remaining nine is outside this project's
+scope but is recorded here as an owner decision.
 
 ## Out of scope for this document
 
