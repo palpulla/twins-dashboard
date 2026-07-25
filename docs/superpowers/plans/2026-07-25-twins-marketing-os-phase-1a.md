@@ -21,6 +21,31 @@ Phase 1 as specced included a Campaigns surface. **It is not in this plan**, for
 
 Phase 1a therefore delivers **channel-level truth**, which is solid today, on a foundation the campaign layer can land on later without rework.
 
+## Verified-claims ledger
+
+Every factual claim this plan depends on, checked against live `twins-dash-prod` on
+2026-07-25. Nothing below is assumed.
+
+| Claim | Verified value |
+| --- | --- |
+| `_canonical_channel` signature | `(p_source text) → text` — one argument |
+| `market_of` signature | `(p_business_unit text, p_zip text) → text` |
+| `_marketing_job_channels` signature | `(p_days integer) → TABLE(id uuid, job_id text, revenue_amount numeric, completed_at timestamptz, job_type text, lead_source text, channel text, market text)` |
+| `get_channel_rollup` signature | `(p_days integer, p_market text) → TABLE(channel text, spend numeric, completed_jobs bigint, revenue numeric)` — no unknown share |
+| `jobs` columns used | `id uuid`, `job_id text`, `hcp_customer_id text`, `business_unit`, `service_zip`, `revenue_amount`, `completed_at timestamptz`, `lead_source`, `job_type`. **No `hcp_job_id`.** |
+| `marketing_spend` columns | `id, date, platform, campaign_name, spend_amount, clicks, leads_generated, created_at, updated_at` — date column is **`date`**, not `spend_date` |
+| Slice volume | 946 rows / 365 days; 309 rows / 90 days |
+| Null channels in slice | 0 |
+| Null campaign names upstream | 0 of 1,799 rows; 0 duplicates under `(date, platform, campaign_name)` |
+| Postgres version | **17.6** — so `UNIQUE NULLS NOT DISTINCT` (PG15+) is available |
+| 8-job confidence floor | `MIN_SAMPLE_JOBS = 8` in `spend-recommendations/logic.ts:45` |
+| Platform labels in use | `google_ads`, `google_lsa`, `meta_ads` only |
+
+Four defects were found and fixed by producing this ledger: a three-argument call to a
+one-argument function, a non-existent column, a wrong claim about the rollup's return shape,
+and a unique constraint that would not have deduped null campaigns. The lesson is recorded
+rather than just the fixes — **SQL written from memory is a hypothesis until queried.**
+
 ## Owner-gated prerequisites — nothing in this plan can start until these exist
 
 These are account-level and billable, so they are deliberately not automated:
@@ -430,7 +455,7 @@ select count(*), min(completed_at), max(completed_at),
 from public.export_marketing_slice(365);
 ```
 
-Expected: roughly 1,100 rows for a year (about 300 per 90 days), and **`null_channels = 0`**. A non-zero count means `_marketing_job_channels` is emitting rows the mirror will reject in Task 5 — investigate before continuing rather than loosening the mirror.
+Expected (measured against live data 2026-07-25): **946 rows for 365 days**, 309 for 90 days, and **`null_channels = 0`**. A non-zero null count means `_marketing_job_channels` is emitting rows the mirror will reject in Task 5 — investigate before continuing rather than loosening the mirror.
 
 - [ ] **Step 3: Verify the grant is tight**
 
@@ -553,7 +578,9 @@ Expected: `ok | 3 passed | 0 failed`.
 
 - [ ] **Step 5: Implement `index.ts`**
 
-The handler must: open a `mirror_runs` row; call `export_marketing_slice` on `twins-dash-prod` with the window start; map every row through `toJobRow` **before writing anything**; upsert `jobs_slice` on `job_id` and `spend` on `(spend_date, platform, campaign_name)`; then close the run row with counts. If any row fails to map, write nothing and record `status='failed'` with the error — a partial mirror that looks complete is worse than a stale one that admits it.
+The handler must: open a `mirror_runs` row; call `export_marketing_slice(365)` on `twins-dash-prod`; map every row through `toJobRow` **before writing anything**; upsert `jobs_slice` on `job_id` and `spend` on `(spend_date, platform, campaign_name)`; then close the run row with counts. If any row fails to map, write nothing and record `status='failed'` with the error — a partial mirror that looks complete is worse than a stale one that admits it.
+
+**Column-name mismatch to handle explicitly:** the source table `twins-dash-prod.marketing_spend` names its date column **`date`**, while the mirrored table here names it **`spend_date`** (`date` is a reserved-ish word and a poor column name). Its full source shape is `id, date, platform, campaign_name, spend_amount, clicks, leads_generated, created_at, updated_at`. Map `date → spend_date` in the pull; do not assume the names match.
 
 - [ ] **Step 6: Run it and verify reconciliation to the dollar**
 
