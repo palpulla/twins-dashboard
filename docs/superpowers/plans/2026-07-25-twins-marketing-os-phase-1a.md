@@ -356,13 +356,28 @@ The mirror pulls; TwinsDash gains no knowledge of marketing and no new write pat
 
 **Files:** a migration in `twins-dash` (inner repo)
 
+**Signatures below were read from the live schema on 2026-07-25, not assumed:**
+
+| Object | Real signature |
+| --- | --- |
+| `_canonical_channel` | `(p_source text) → text` — **one argument** |
+| `market_of` | `(p_business_unit text, p_zip text) → text` |
+| `_marketing_job_channels` | `(p_days integer) → TABLE(id uuid, job_id text, revenue_amount numeric, completed_at timestamptz, job_type text, lead_source text, channel text, market text)` |
+| `get_channel_rollup` | `(p_days integer, p_market text) → TABLE(channel text, spend numeric, completed_jobs bigint, revenue numeric)` |
+| `jobs` columns | `id uuid`, `job_id text`, `hcp_customer_id text`, `business_unit`, `service_zip`, `revenue_amount`, `completed_at timestamptz`, `lead_source`, `job_type` — there is **no** `hcp_job_id` |
+
 - [ ] **Step 1: Write the function**
+
+Build it on `_marketing_job_channels`, **not** on `_canonical_channel` directly. That function already performs the full governed channel resolution — including the existing-customer fallback that moved 24 jobs and $38,845 out of the Unknown bucket — and it returns `market` already resolved. Reusing it means the mirror's channels are identical to TwinsDash's *by construction*, which is what makes the reconcile-to-the-cent test in Task 6 a near-certainty rather than a hope.
 
 ```sql
 -- Read-only export for the twins-marketing-os mirror. SECURITY DEFINER so the
--- dedicated mirror role needs no direct table grants; it returns a narrow,
--- fixed column set and nothing else.
-create or replace function public.export_marketing_slice(p_since date)
+-- dedicated mirror role needs no direct table grants; returns a narrow, fixed
+-- column set and nothing else.
+--
+-- Delegates channel and market resolution to _marketing_job_channels so the
+-- mirror can never drift from TwinsDash's own definition of a channel.
+create or replace function public.export_marketing_slice(p_days integer)
 returns table (
   job_id text, customer_id text, completed_at date, revenue_amount numeric,
   canonical_channel text, raw_lead_source text, business_unit text,
@@ -373,51 +388,40 @@ stable
 security definer
 set search_path = public
 as $$
-  select j.hcp_job_id::text,
-         j.hcp_customer_id::text,
-         j.completed_at::date,
-         coalesce(j.revenue_amount, 0),
-         _canonical_channel(j.lead_source, j.hcp_customer_id, j.completed_at),
-         j.lead_source,
+  select c.job_id,
+         j.hcp_customer_id,
+         c.completed_at::date,
+         coalesce(c.revenue_amount, 0),
+         c.channel,
+         c.lead_source,
          j.business_unit,
-         market_of(j.business_unit, j.service_zip),
+         c.market,
          j.service_zip
-  from jobs j
-  where j.completed_at is not null
-    and j.completed_at::date >= p_since;
+  from _marketing_job_channels(p_days) c
+  join jobs j on j.id = c.id;
 $$;
 
-revoke all on function public.export_marketing_slice(date) from public, anon, authenticated;
-grant execute on function public.export_marketing_slice(date) to marketing_mirror;
-```
-
-**Before writing this, confirm the real column and function names** — `hcp_job_id`, `hcp_customer_id`, `_canonical_channel`'s exact signature and `market_of`'s arguments. Read them from the live schema; do not trust the names above without checking:
-
-```sql
-select column_name from information_schema.columns
-where table_schema='public' and table_name='jobs' order by ordinal_position;
-
-select p.proname, pg_get_function_identity_arguments(p.oid)
-from pg_proc p join pg_namespace n on n.oid=p.pronamespace
-where n.nspname='public' and p.proname in ('_canonical_channel','market_of');
+revoke all on function public.export_marketing_slice(integer) from public, anon, authenticated;
+grant execute on function public.export_marketing_slice(integer) to marketing_mirror;
 ```
 
 - [ ] **Step 2: Verify it returns the expected shape and row count**
 
 ```sql
-select count(*), min(completed_at), max(completed_at)
-from public.export_marketing_slice(current_date - 365);
+select count(*), min(completed_at), max(completed_at),
+       count(*) filter (where canonical_channel is null) as null_channels
+from public.export_marketing_slice(365);
 ```
 
-Expected: roughly 1,100 rows for a year (about 300 per 90 days).
+Expected: roughly 1,100 rows for a year (about 300 per 90 days), and **`null_channels = 0`**. A non-zero count means `_marketing_job_channels` is emitting rows the mirror will reject in Task 5 — investigate before continuing rather than loosening the mirror.
 
 - [ ] **Step 3: Verify the grant is tight**
 
 Confirm `anon` and `authenticated` cannot execute it:
 
 ```sql
-select has_function_privilege('anon', 'public.export_marketing_slice(date)', 'execute'),
-       has_function_privilege('authenticated', 'public.export_marketing_slice(date)', 'execute');
+select has_function_privilege('anon', 'public.export_marketing_slice(integer)', 'execute'),
+       has_function_privilege('authenticated', 'public.export_marketing_slice(integer)', 'execute');
 ```
 
 Expected: `false, false`.
@@ -562,7 +566,11 @@ Run the mirror twice. Expected: identical counts, no duplicate `jobs_slice` rows
 
 ### Task 6: The rollup and the three pages
 
-- [ ] **Step 1: Write the rollup SQL** as `supabase/migrations/0002_rollup.sql`, a `SECURITY INVOKER` function `get_channel_rollup(p_days int, p_market text)` returning channel, spend, completed_jobs, revenue, and the unknown share. Keep ratio arithmetic OUT of SQL — return the raw numerators and denominators and let `lib/metrics.ts` compute ROAS and CAC, so there is exactly one implementation of the undefined-vs-infinite rule.
+- [ ] **Step 1: Write the rollup SQL** as `supabase/migrations/0002_rollup.sql`: a `SECURITY INVOKER` function `get_channel_rollup(p_days integer, p_market text)` returning `TABLE(channel text, spend numeric, completed_jobs bigint, revenue numeric)` — matching TwinsDash's existing signature exactly, so the two are directly comparable in Step 2.
+
+  Keep ratio arithmetic OUT of SQL. Return only these raw numerators and denominators and let `lib/metrics.ts` compute ROAS and CAC, so there is exactly one implementation of the undefined-vs-infinite rule.
+
+  **Unknown share is derived, not returned** — TwinsDash's version does not emit it either. Compute it in the client as `revenue where channel = 'unknown'` ÷ `total revenue`, from the same rows.
 
 - [ ] **Step 2: Reconcile the rollup against TwinsDash**
 
