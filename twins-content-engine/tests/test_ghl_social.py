@@ -76,7 +76,8 @@ def test_get_social_accounts_raises_without_leaking_token(tmp_path, mocker):
     assert "pit-supersecret" not in str(exc.value)
 
 
-def test_create_social_post_success(tmp_path, mocker):
+def test_create_social_post_success(tmp_path, mocker, monkeypatch):
+    monkeypatch.setenv("GHL_SOCIAL_WRITES_ENABLED", "true")
     env_file = _write_env(tmp_path, location="loc-xyz")
     resp_payload = {"success": True, "statusCode": 201, "results": {"post": {"_id": "abc123"}}}
     mock_post = mocker.patch("engine.ghl_social.requests.post", return_value=_FakeResponse(201, resp_payload))
@@ -95,7 +96,8 @@ def test_create_social_post_success(tmp_path, mocker):
     assert body["type"] == "post"
 
 
-def test_create_social_post_default_status_is_published(tmp_path, mocker):
+def test_create_social_post_default_status_is_published(tmp_path, mocker, monkeypatch):
+    monkeypatch.setenv("GHL_SOCIAL_WRITES_ENABLED", "true")
     env_file = _write_env(tmp_path)
     mock_post = mocker.patch(
         "engine.ghl_social.requests.post",
@@ -105,7 +107,8 @@ def test_create_social_post_default_status_is_published(tmp_path, mocker):
     assert mock_post.call_args.kwargs["json"]["status"] == "published"
 
 
-def test_create_social_post_honors_status_override(tmp_path, mocker):
+def test_create_social_post_honors_status_override(tmp_path, mocker, monkeypatch):
+    monkeypatch.setenv("GHL_SOCIAL_WRITES_ENABLED", "true")
     env_file = _write_env(tmp_path)
     mock_post = mocker.patch(
         "engine.ghl_social.requests.post",
@@ -115,7 +118,8 @@ def test_create_social_post_honors_status_override(tmp_path, mocker):
     assert mock_post.call_args.kwargs["json"]["status"] == "draft"
 
 
-def test_create_social_post_raises_on_non_2xx_without_leaking_token(tmp_path, mocker):
+def test_create_social_post_raises_on_non_2xx_without_leaking_token(tmp_path, mocker, monkeypatch):
+    monkeypatch.setenv("GHL_SOCIAL_WRITES_ENABLED", "true")
     env_file = _write_env(tmp_path, token="pit-supersecret")
     mocker.patch("engine.ghl_social.requests.post", return_value=_FakeResponse(500, text="server error"))
     with pytest.raises(RuntimeError) as exc:
@@ -124,7 +128,8 @@ def test_create_social_post_raises_on_non_2xx_without_leaking_token(tmp_path, mo
     assert "pit-supersecret" not in str(exc.value)
 
 
-def test_create_social_post_raises_when_success_not_true(tmp_path, mocker):
+def test_create_social_post_raises_when_success_not_true(tmp_path, mocker, monkeypatch):
+    monkeypatch.setenv("GHL_SOCIAL_WRITES_ENABLED", "true")
     env_file = _write_env(tmp_path, token="pit-supersecret")
     mocker.patch(
         "engine.ghl_social.requests.post",
@@ -135,14 +140,16 @@ def test_create_social_post_raises_when_success_not_true(tmp_path, mocker):
     assert "pit-supersecret" not in str(exc.value)
 
 
-def test_create_social_post_missing_env_vars_raises_value_error(tmp_path):
+def test_create_social_post_missing_env_vars_raises_value_error(tmp_path, monkeypatch):
+    monkeypatch.setenv("GHL_SOCIAL_WRITES_ENABLED", "true")
     env_file = tmp_path / ".env"
     env_file.write_text("# empty\n")
     with pytest.raises(ValueError):
         create_social_post(env_file, ["acct-fb"], "Another new garage door installed for a local homeowner in the Madison and Milwaukee areas.", "https://example.com/x.jpg")
 
 
-def test_publish_rejects_probe_content(tmp_path, mocker):
+def test_publish_rejects_probe_content(tmp_path, mocker, monkeypatch):
+    monkeypatch.setenv("GHL_SOCIAL_WRITES_ENABLED", "true")
     env_file = _write_env(tmp_path)
     mock_post = mocker.patch("engine.ghl_social.requests.post")
     import pytest
@@ -152,7 +159,8 @@ def test_publish_rejects_probe_content(tmp_path, mocker):
     mock_post.assert_not_called()  # never even hit the network
 
 
-def test_publish_rejects_too_short_caption(tmp_path, mocker):
+def test_publish_rejects_too_short_caption(tmp_path, mocker, monkeypatch):
+    monkeypatch.setenv("GHL_SOCIAL_WRITES_ENABLED", "true")
     env_file = _write_env(tmp_path)
     mock_post = mocker.patch("engine.ghl_social.requests.post")
     import pytest
@@ -161,10 +169,40 @@ def test_publish_rejects_too_short_caption(tmp_path, mocker):
     mock_post.assert_not_called()
 
 
-def test_draft_probe_content_is_allowed(tmp_path, mocker):
+def test_draft_probe_content_is_allowed(tmp_path, mocker, monkeypatch):
     # drafts never go live, so probing with a draft must still work
+    monkeypatch.setenv("GHL_SOCIAL_WRITES_ENABLED", "true")
     env_file = _write_env(tmp_path)
     mocker.patch("engine.ghl_social.requests.post",
                  return_value=_FakeResponse(201, {"success": True, "results": {"post": {"_id": "d1"}}}))
     out = create_social_post(env_file, ["acct"], "PROBE X", "https://x.com/y.png", status="draft")
     assert out["success"] is True
+
+
+def test_create_social_post_is_retired_by_default(tmp_path, monkeypatch):
+    """Phase 0 retired GHL publishing from the content engine."""
+    monkeypatch.delenv("GHL_SOCIAL_WRITES_ENABLED", raising=False)
+    env_file = _write_env(tmp_path)
+    with pytest.raises(RuntimeError, match="retired"):
+        create_social_post(
+            env_file=env_file,
+            account_ids=["acct-1"],
+            caption="A perfectly ordinary caption that is well over twenty characters long.",
+            image_url="https://example.com/a.jpg",
+            status="draft",
+        )
+
+
+def test_create_social_post_retirement_cannot_be_bypassed_by_truthy_values(tmp_path, monkeypatch):
+    """Fails closed — only the exact string "true" re-enables writes."""
+    env_file = _write_env(tmp_path)
+    for value in ("1", "yes", "TRUE", "True", "", " true"):
+        monkeypatch.setenv("GHL_SOCIAL_WRITES_ENABLED", value)
+        with pytest.raises(RuntimeError, match="retired"):
+            create_social_post(
+                env_file=env_file,
+                account_ids=["acct-1"],
+                caption="A perfectly ordinary caption that is well over twenty characters long.",
+                image_url="https://example.com/a.jpg",
+                status="draft",
+            )

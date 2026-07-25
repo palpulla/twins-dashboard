@@ -19,6 +19,7 @@ over the public docs:
 """
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import requests
@@ -135,6 +136,21 @@ def _reject_if_test_content(caption: str, status: str) -> None:
         )
 
 
+def _reject_if_retired() -> None:
+    """Phase 0 (2026-07-25) retired GHL social publishing from the content engine.
+
+    Scheduling moved to the twins-marketing-os app. The GHL Social Planner UI
+    stays usable by hand; this only stops code from writing posts. Fails closed:
+    only the exact string "true" re-enables writes.
+    """
+    if os.environ.get("GHL_SOCIAL_WRITES_ENABLED") != "true":
+        raise RuntimeError(
+            "GHL social writes are retired (Phase 0, 2026-07-25). Scheduling now "
+            "lives in twins-marketing-os; use the GHL Social Planner UI by hand. "
+            "Set GHL_SOCIAL_WRITES_ENABLED=true to override."
+        )
+
+
 def create_social_post(
     env_file: Path,
     account_ids: list[str],
@@ -144,11 +160,14 @@ def create_social_post(
 ) -> dict:
     """POST a post to the given GHL social accounts.
 
-    Raises ValueError if env vars are missing. Raises RuntimeError on a
-    non-2xx response, a response where success is not True, or when a
+    Raises RuntimeError immediately when GHL writes are retired (the default
+    since Phase 0, 2026-07-25) — set GHL_SOCIAL_WRITES_ENABLED=true to
+    override. Raises ValueError if env vars are missing. Raises RuntimeError
+    on a non-2xx response, a response where success is not True, or when a
     non-draft (live) post looks like test/probe content. The message includes
     the status code and first 300 chars of the response body, never the token.
     """
+    _reject_if_retired()
     _reject_if_test_content(caption, status)
     token, location = _load_ghl_env(env_file)
     url = f"{_API_BASE}/social-media-posting/{location}/posts"
