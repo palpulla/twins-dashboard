@@ -850,6 +850,67 @@ Spec: docs/superpowers/specs/2026-07-25-twins-marketing-os-design.md
 - `tsc` clean, `vitest run` green, `npm run build` succeeds, `pytest` green
 - Row counts for `content_items`, `content_performance`, `video_jobs`, `spend_recommendations` unchanged
 
+## Execution findings — two gaps this plan originally missed
+
+Both were found during execution, not planning. Recorded so the plan is not read
+later as if it had been complete.
+
+### 1. `generate-video` was an ungated spend path
+
+The plan gated `poll-video-jobs`, which *harvests* finished AI reel videos, but
+left `generate-video`, which *submits* them, running. That is the worst possible
+split: jobs would be submitted and **billed by the provider**, then never
+collected, leaving `video_jobs` rows pending forever.
+
+Found by the code-quality reviewer. Fixed by applying the same gate to
+`generate-video` (commit `c39dc6c`). The gate sits before the `video_jobs`
+insert, verified live — invoking the deployed function left the row count
+unchanged at 0.
+
+**Lesson for later phases: gate the paying half of a pipeline before, or at the
+same time as, the consuming half.** Turning off the consumer alone converts a
+working system into a silent money leak.
+
+### 2. The GHL guard did not cover its main caller
+
+The plan asserted that guarding `engine/ghl_social.py::create_social_post` would
+cover every caller, and used that to justify deviating from the spec's
+"make `publish_to_ghl.py` dry-run-only".
+
+**That assertion was wrong.** `scripts/publish_to_ghl.py` never imports
+`create_social_post`. It has its own `ghl_post()` → `session.post()` write path,
+reached via `schedule_draft()`, and remained fully able to stage draft posts.
+
+Found by the implementing agent, verified directly, fixed in a follow-up commit:
+`_reject_if_retired` was made public as `reject_if_retired` and is now called
+from `publish_to_ghl.main()` immediately after arg parsing, before any token read
+or network call. `--dry-run` still works. Four new tests in
+`tests/test_publish_to_ghl.py` pin the behaviour, including that the guard fires
+*before* the pre-existing missing-token `sys.exit` — otherwise an operator with
+no token would see "token not set" and conclude the script still worked once
+configured.
+
+**Lesson: "guarding the writer covers every caller" is a claim to verify, not
+assume.** A grep for importers would have caught this at planning time.
+
+### Production verification performed
+
+- Crons 103 and 106 disabled, then confirmed silent for 33 minutes — 6 missed
+  5-minute intervals and 16 missed 2-minute intervals respectively.
+- Cron 63 `call-intake-process-5min` confirmed still firing on schedule, proving
+  the change did not touch inbound call lead capture.
+- `MARKETING_PUBLISHING_ENABLED` confirmed unset before deploy, so the gate
+  deployed closed rather than accidentally open.
+- All three gated functions deployed and invoked with the exact headers the real
+  cron sends; each returned `200 {ok:false, disabled:true}` with its own correct
+  `fn` name.
+- Table row counts unchanged before and after: `content_items` 0,
+  `content_performance` 0, `video_jobs` 0, `spend_recommendations` 6.
+
+Note: the three content tables were **already empty** before teardown. The
+scheduler shipped in July 2026 and never held a single item, independently
+corroborating that it never published anything.
+
 ## Not in this plan
 
 The GHL Social Planner UI stays usable by hand — that is the deliberate stopgap until Phase 3. Tombstoning `sync-google-ads` (the `marketing_spend` double-write hazard) is recorded in the spec as an owner decision and is not Phase 0 work.
