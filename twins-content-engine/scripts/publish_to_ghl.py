@@ -36,6 +36,10 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 load_dotenv(ROOT / ".env", override=True)
 
+# Imported after the sys.path insert above, which is what makes `engine`
+# importable when this file is run as a script.
+from engine.ghl_social import reject_if_retired  # noqa: E402
+
 
 DEFAULT_APPROVED = ROOT / "approved"
 DEFAULT_API_BASE = "https://services.leadconnectorhq.com"
@@ -252,6 +256,14 @@ def main() -> None:
     ap.add_argument("--user-id", type=str, default=None,
                     help="GHL userId to attribute posts to. Auto-discovered from recent posts if omitted.")
     args = ap.parse_args()
+
+    # Phase 0 (2026-07-25): GHL writes are retired. This script has its own
+    # ghl_post write path, so it must call the guard directly — the one inside
+    # engine.ghl_social.create_social_post does not cover it. Checked here, the
+    # earliest point where intent is known, so it fails before any token is
+    # read and before any network call. --dry-run stays fully usable.
+    if not args.dry_run:
+        reject_if_retired()
 
     token = os.environ.get("GHL_API_TOKEN")
     location_id = os.environ.get("GHL_LOCATION_ID")

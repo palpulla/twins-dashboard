@@ -136,12 +136,16 @@ def _reject_if_test_content(caption: str, status: str) -> None:
         )
 
 
-def _reject_if_retired() -> None:
+def reject_if_retired() -> None:
     """Phase 0 (2026-07-25) retired GHL social publishing from the content engine.
 
     Scheduling moved to the twins-marketing-os app. The GHL Social Planner UI
     stays usable by hand; this only stops code from writing posts. Fails closed:
     only the exact string "true" re-enables writes.
+
+    Public because scripts/publish_to_ghl.py has its own independent write path
+    (its own ghl_post helper) and must call this directly — guarding
+    create_social_post alone does not cover it.
     """
     if os.environ.get("GHL_SOCIAL_WRITES_ENABLED") != "true":
         raise RuntimeError(
@@ -167,7 +171,7 @@ def create_social_post(
     non-draft (live) post looks like test/probe content. The message includes
     the status code and first 300 chars of the response body, never the token.
     """
-    _reject_if_retired()
+    reject_if_retired()
     _reject_if_test_content(caption, status)
     token, location = _load_ghl_env(env_file)
     url = f"{_API_BASE}/social-media-posting/{location}/posts"
