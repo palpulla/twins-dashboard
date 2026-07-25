@@ -374,20 +374,48 @@ An audit of all 97 deployed edge functions against the `twins-dash` repo found
 **ten running in production with no source in any repo**. Their only copy was on
 Supabase's servers.
 
-`offline-conversions-weekly` has been recovered and committed (branch
-`chore/recover-untracked-edge-functions`), extracted from the deployed bundle's
-source map so it is the original TypeScript rather than transpiled output.
+**Recovered and committed** to branch `chore/recover-untracked-edge-functions` in
+the `twins-dash` repo, all extracted from the deployed bundles' source maps so they
+are original TypeScript rather than transpiled output:
+`offline-conversions-weekly`, `ads-audit`, `sync-google-ads`.
 
-**Still unrecovered:** `ads-audit`, `ghl-env-probe`, `hcp-twinshield-api-probe`,
-`hcp-twinshield-price-forms-setup`, `internal-ops-eod-response`,
-`reconcile-jobs-weekly`, `sync-google-ads`, `voice-agent-call-recap`, `xai-probe`.
+**Still unrecovered** (owner decision, non-marketing): `ghl-env-probe`,
+`hcp-twinshield-api-probe`, `hcp-twinshield-price-forms-setup`,
+`internal-ops-eod-response`, `reconcile-jobs-weekly`, `voice-agent-call-recap`,
+`xai-probe`. Nothing in the repo is undeployed, so the drift is one-directional.
 
-Nothing in the repo is undeployed, so the drift is one-directional. Two of these
-are marketing-relevant and should be read before Phase 1 work touches ad data:
-`ads-audit`, and `sync-google-ads` — which appears to be a **second, separate**
-Google Ads function alongside the repo's `google-ads-sync`, and may be a duplicate
-or a superseded version. Recovering the remaining nine is outside this project's
-scope but is recorded here as an owner decision.
+### `sync-google-ads` is a live hazard to Phase 1
+
+Recovering it revealed a **second writer to `marketing_spend`**, duplicating the
+cron-driven `google-ads-sync`. The two disagree on the platform label:
+
+| | Platform written | Trigger | Dedupe |
+| --- | --- | --- | --- |
+| `google-ads-sync` (in repo) | `google_ads` | cron 34, nightly | `upsertAdSpendRows` |
+| `sync-google-ads` (was untracked) | `Google Ads` | admin auth, manual only | deletes only `platform = 'Google Ads'` |
+
+Because its delete-before-insert matches only its own label, it cannot remove the
+cron's rows and the cron cannot remove its. An admin invoking it would add a
+parallel set of rows that **no dedupe on either side clears**, silently inflating
+Google Ads spend for any query summing `marketing_spend` without a platform filter —
+including the mirror this project depends on.
+
+**Verified not yet triggered (2026-07-25):** `marketing_spend` contains only
+`google_ads`, `google_lsa` and `meta_ads` across all 1,799 rows since 2025-01-01.
+No `'Google Ads'` rows exist and no cron calls the function. Current spend figures
+are sound.
+
+**Owner decision required.** Recommended: tombstone `sync-google-ads` the way
+`xai-probe` was retired, so the trap cannot be sprung. Phase 1's mirror should
+additionally filter `marketing_spend` to the known platform allow-list rather than
+trusting the table, so a stray writer can never silently move a ROAS number.
+
+### `ads-audit` is useful here, not just debt
+
+It is a read-only GAQL executor against the Google Ads account, gated by
+`ADS_AUDIT_SECRET`, self-described as temporary. It is the natural instrument for
+Phase 1's first task — verifying that the offline-conversion matches are actually
+landing per campaign — and should not be deleted until that verification is done.
 
 ## Out of scope for this document
 
