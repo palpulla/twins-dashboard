@@ -72,9 +72,9 @@ later phase gets its own brainstorm, spec and plan when it is reached.
 | --- | --- | --- |
 | **0** | Disable schedulers; strip TwinsDash to stats | Removal |
 | **1** | New app + money dashboard (spend, ROAS, CAC, attribution) | Move + extend |
-| 2 | GA4, Google Search Console, Bing Webmaster ingestion | New |
+| 2 | ~~GA4, Search Console, Bing ingestion~~ **→ CONSUME what P1 of the GA4 track builds** | Revised — see §Collision |
 | 3 | Content studio — social scheduling, AI posts and reels | Mostly port |
-| 4 | WordPress publishing, technical SEO, AEO/GEO | New |
+| 4 | WordPress publishing, technical SEO, AEO/GEO | **Premise invalid** — see §Collision |
 | 5 | Backlinks and off-page | New |
 
 Rough sizing with focused build time: Phase 0 ~½ day, Phase 1 ~6–8 days, Phase 2
@@ -416,6 +416,61 @@ It is a read-only GAQL executor against the Google Ads account, gated by
 `ADS_AUDIT_SECRET`, self-described as temporary. It is the natural instrument for
 Phase 1's first task — verifying that the offline-conversion matches are actually
 landing per campaign — and should not be deleted until that verification is done.
+
+## Collision with parallel work — READ BEFORE PLANNING PHASE 1
+
+Discovered 2026-07-25 after Phase 0 shipped, by reading
+`twins-google-ads/docs/superpowers/specs/2026-07-25-p0-sever-and-baseline-design.md`
+(branch `feat/attr1-pipelines`) and the code beside it. **Three findings invalidate parts of
+this document.** Phase 0 is unaffected and stands; Phases 1, 2 and 4 are not safe to plan
+until these are resolved.
+
+### 1. A better attribution ledger already exists, and it is homeless
+
+`twins-google-ads/google_ads_ops/attribution/` is a **Postgres event ledger** (`ledger.py`,
+`psycopg` against a DSN) with 12 test files. It models far more than this spec's proposed
+`campaigns` table plus job→campaign link:
+
+- `LeadEvent` with **`gclid` / `gbraid` / `wbraid`**, `caller_e164`, `call_start_at`,
+  `value_micros`, `click_at` (documented "None => windows fail closed"), and
+  `consent_ad_user_data`
+- `FunnelStage` initial → qualified → booked → completed; `Origin` form / booking / call,
+  where booking means a confirmed HCP book-now webhook and **never** a button click
+- `Route` data_manager / call_import, plus `routing`, `windows`, `consent`, `acceptance`,
+  `health`, `datamanager`, `call_upload`, `feeds`
+- Idempotent insert-once claims where the uniqueness constraint IS the route lock
+
+It is **not deployed and has no database** — it needs a Postgres DSN.
+
+**Consequence:** building this spec's campaign layer as written would create a second, weaker
+attribution system beside a better unshipped one. Three systems would then claim attribution:
+`twins-dash-prod` (channel-level, live), this ledger (click-level, designed, homeless), and
+the new project.
+
+**Likely synthesis, but an owner decision:** the new Supabase project becomes the Postgres
+home for the existing ledger, rather than growing a parallel model. **Do not plan Phase 1's
+campaign layer until this is decided.**
+
+### 2. Phase 4's premise is invalid
+
+This document assumed blog posts and pages could be scheduled into WordPress. In fact
+`twinsgaragedoors.com` is a **WordPress multisite currently being relaunched**
+(`danielj140.sg-host.com` → production, carrying `/wi`, `/ky`, later `/il`), and the new site
+is **contract-gated**: changes are hash-pinned code shipped through a release pipeline
+(`renderers.php` `wp_head`, dual manifests, release-id rotation), not plugin toggles or REST
+API writes. Automated publishing into that is a different problem from the one specced here.
+
+### 3. Phase 2 should consume, not build
+
+The parallel track's P1 creates one new GA4 property with market as a dimension, and its P2
+adds `ga_client_id`/`ga_session_id` to the attribution ledger. Phase 2 here should **ingest
+from that property**, not stand up its own GA4/GSC work.
+
+### Scheduling conflict
+
+That track's **P0 has a hard deadline of 2026-08-08**, tied to the Legit5 manager-link
+revocation. It competes directly with Phase 1 for attention, and it is deadline-driven where
+Phase 1 is not.
 
 ## Out of scope for this document
 
