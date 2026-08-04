@@ -751,6 +751,28 @@ git commit -m "feat(marketing): remove scheduler UI, leave read-only stats and a
 
 ### Task 10: Verify the end state
 
+> **How this was actually verified (2026-07-25).** Steps 1–2 below require logging in, and
+> credentials were not available. A stronger, auth-free check was substituted: rebuild and
+> grep the shipped bundle for precise markers. Results from a fresh `npm run build`:
+>
+> | Marker | Expected | Result |
+> | --- | --- | --- |
+> | `/marketing/calendar`, `/marketing/spend` | gone | absent ✓ |
+> | `MarketingQueue`, `MarketingCalendar`, `MarketingSpend` | gone | absent ✓ |
+> | `Content Queue` (nav label) | gone | absent ✓ |
+> | `claim_due_content_items`, `spend_recommendations` (RPCs) | gone | absent ✓ |
+> | `/marketing/channels`, `/marketing-source-roi` | kept | present ✓ |
+> | `Fix unknown sources` (assign-source worklist) | kept | present ✓ |
+>
+> This proves the removal at the artifact level — what actually ships — rather than at the
+> source level. Note `dist/` was stale when first checked (built by concurrent work), so the
+> rebuild was necessary; grepping a stale bundle would have been meaningless. Also note that
+> grepping for bare words like `Queue`, `Calendar` or `Spend` produces false positives from
+> unrelated features — use route paths and symbol names.
+>
+> Step 2's assign-source write path remains unverified end-to-end, since that genuinely needs
+> an authenticated session. The RPC and UI are present and untouched.
+
 - [ ] **Step 1: Confirm the surviving marketing surface**
 
 ```bash
