@@ -246,3 +246,24 @@ Design: `docs/superpowers/specs/2026-07-10-phase5-C-cost-pages-design.md`. Build
 | P5C-3 | Zip finder component | Inline HTML+JS widget on both cost pages (no snippet edit, no white-screen risk): 5-digit ZIP → 537xx routes to `/wi/garage-door-installation/`, 531/532xx to `/wi/garage-door-repair-in-milwaukee-wi/`, else to `/wi/contact-us/` ("we may still cover you"). Deterministic prefix routing. Function + routes verified live. | Remove the zip-finder section from each page in Elementor |
 
 **AEO intent:** targets the "how much does a garage door cost in [city]" head query (project_ai_search_aeo cost gap) with answer-first passages + FAQPage schema. Internal links: each cost page links to its metro hub. Follow-up (optional): link the hubs' "how much" FAQ answers to these cost pages; add the zip finder to the hubs.
+
+### Meta campaign changes during the Aug 2026 booking-collapse investigation (2026-08-05)
+
+Context: appointments fell from 8-11/day (week of Jul 27) to 4 / 3 / 1 on Aug 3-5. Investigation found every call-driving channel had gone dark between Jul 14 and Jul 27. Meta ad account **383398022876424** (Twins Garage Doors business portfolio; note Daniel's personal account 309730040 is the Ads Manager default and is NOT Twins).
+
+**Measurement caveat that drove an initial wrong call:** `marketing_spend.leads_generated` counts FORM leads only. Call- and messaging-objective campaigns read as 0 in the DB despite performing. Results below are read from Ads Manager, window Jul 5 - Aug 3.
+
+| # | Change | Detail | Revert |
+|---|---|---|---|
+| M-1 | Twins – Challenger – Install Financing (Madison) – CAP 2026-07 → **OFF** | Pure traffic objective: 291 link clicks at $0.37, $107.70 spent, no lead or call objective. Daniel approved cutting non-performing Meta spend. | Toggle campaign On in Ads Manager |
+| M-2 | Twins – Challenger – Review Carousel (Madison) – CAP 2026-07 → **OFF** | Same: 302 link clicks at $0.39, $117.36 spent. | Toggle campaign On |
+| M-3 | Madison WI – Messenger Leads – 01_Master Video → **LEFT ON** (correction) | Initially proposed for cutting on the strength of the DB's 0-leads reading. Ads Manager shows 24 messaging conversations at $12.72. Not cut. | n/a |
+| M-4 | Madison WI – Call Leads – 01_Master Video → **RE-ENABLED** at $45/day | Was paused Jul 27. 37 calls placed at $14.92 over the window, the cheapest cost per phone contact in the business (LSA runs roughly $70-100/lead). Prime suspect for the collapse. Daniel approved re-enabling. Verified: campaign Active, ad set "Madison Metro – 25mi – Quality Calls" on, ad "01_Master Video – Madison Calls" on. **Kill criterion: off again if cost per call exceeds $40 after 10 days (review 2026-08-15).** | Toggle campaign Off |
+
+Left untouched: Legit5 | $49 Garage Door Tuneup (29 form leads at $68.63; also off-limits per standing instruction), Twins – Reel – Calls (Madison) (off; 8 calls at $54.96, poor efficiency).
+
+Active Meta daily budget after these changes: $121.00/day ($45 Call Leads + $10 Messenger Leads + $66 Legit5 Tune-Up).
+
+**Google Ads was NOT touched by this session.** Change history (pulled by the parallel "Google Ads integration" session) shows Garage Door Repair | Search ($80/day) was paused **2026-07-14 by collins@legit5.com**; Install Search and PMax were paused by Daniel on Jul 22 and Jul 23. Division of labour agreed: that session owns Madison Services + Google Ads structure; this one owns LSA, Meta and measurement.
+
+**LSA correction:** the two INSURANCE verification artifacts in FAILED state are 2022 relics (both EXPIRED, superseded). Current artifact PASSED 2025-07-30. LSA verification is not failing. Open question: no 2026 certificate on file, so if that was a 12-month policy it lapsed around Jul 30. Daniel to confirm with the insurer.
