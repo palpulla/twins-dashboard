@@ -249,7 +249,7 @@ Design: `docs/superpowers/specs/2026-07-10-phase5-C-cost-pages-design.md`. Build
 
 ### Meta campaign changes during the Aug 2026 booking-collapse investigation (2026-08-05)
 
-Context: appointments fell from 8-11/day (week of Jul 27) to 4 / 3 / 1 on Aug 3-5. Investigation found every call-driving channel had gone dark between Jul 14 and Jul 27. Meta ad account **383398022876424** (Twins Garage Doors business portfolio; note Daniel's personal account 309730040 is the Ads Manager default and is NOT Twins).
+Context: appointments fell from 8-11/day (week of Jul 27) to 4 / 3 / 1 on Aug 3-5. Investigation found every call-driving channel had gone dark between Jul 14 and Jul 27. Meta ad account **388398022876424** (Twins Garage Doors business portfolio; note Daniel's personal account 309730040 is the Ads Manager default and is NOT Twins).
 
 **Measurement caveat that drove an initial wrong call:** `marketing_spend.leads_generated` counts FORM leads only. Call- and messaging-objective campaigns read as 0 in the DB despite performing. Results below are read from Ads Manager, window Jul 5 - Aug 3.
 

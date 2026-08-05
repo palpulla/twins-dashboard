@@ -4,7 +4,21 @@ All queries run read-only against the live Supabase project `jwrpjuqaynownxaoeay
 
 ## 1. Spend by channel
 
-**Table:** `marketing_spend(platform, date, spend_amount, clicks, leads_generated)`
+**Table:** `marketing_spend(platform, date, spend_amount, clicks, leads_generated, calls_generated, conversations_generated)`
+
+> **Result types are split (added 2026-08-05).** `leads_generated` counts **form leads only**. It always did, which is why call-objective Meta campaigns silently read as 0 and every brief before this date understated Meta. Two columns now carry the rest:
+>
+> | Column | Meta `action_type` | What it is |
+> |---|---|---|
+> | `leads_generated` | `lead` | Form submissions |
+> | `calls_generated` | `click_to_call_native_call_placed` | **Tap-to-call events.** Not connected calls, not booked jobs. |
+> | `conversations_generated` | `onsite_conversion.messaging_conversation_started_7d` | Messaging conversations started |
+>
+> `NULL` means the platform does not report that result type. A real reported zero is stored as `0`. Keep the distinction: Google Ads and LSA rows are NULL for calls and conversations, not zero.
+>
+> **Never sum the three columns into one "leads" figure.** Meta reports the same underlying event under multiple action types. The Legit5 `$49 Tune-Up` campaign reports 30 form leads *and* 30 messaging conversations for Jul 5 to Aug 3, which is almost certainly the same 30 people. Report each result type on its own line with its own cost per result.
+>
+> **Always call `calls_generated` "tap-to-calls", never "leads."** The connect rate is unknown until `calls_inbound` is populated, so cost per booked job cannot be derived from it. Quoting $14.92 per *lead* rather than per *tap* overstates the channel.
 **Canonical logic:** `twins-dash/src/hooks/use-marketing-source-roi.ts` (`fetchAdSpend` + `PLATFORM_TO_CANONICAL`)
 
 Platform values are mixed-era; map to canonical sources exactly as the hook does:
