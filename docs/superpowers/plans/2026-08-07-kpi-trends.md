@@ -695,6 +695,8 @@ Every `compute` here delegates to `src/lib/kpi-calculations.ts`. If you find you
 ```ts
 // src/lib/trends/__tests__/kpi-registry.test.ts
 import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { TREND_KPIS, getTrendKpi, trendKpisForTech } from '../kpi-registry';
 
 describe('kpi-registry', () => {
@@ -742,14 +744,22 @@ describe('kpi-registry', () => {
     expect(perTechKeys).not.toContain('marketing_spend');
   });
 
-  it('only claims a goalKey that exists in company_goals', () => {
-    const known = new Set([
-      'revenue_annual', 'revenue', 'opportunity_average', 'conversion_rate',
-      'closing_rate', 'membership_rate', 'call_booking_rate', 'avg_repair_ticket',
-      'avg_install_ticket', 'callback_rate', 'cancellation_rate', 'options_per_ticket',
-    ]);
+  it('only claims goal keys that the seed migration creates or the admin page can create', () => {
+    const sql = readFileSync(
+      resolve(__dirname, '../../../../supabase/migrations/20260406000001_company_goals.sql'),
+      'utf8',
+    );
+    const seeded = new Set([...sql.matchAll(/\('([a-z_]+)',\s*\d/g)].map((m) => m[1]));
+    // Keys an admin can create via /admin/goals that the seed omits. Every
+    // entry here yields no goal line until someone saves a target.
+    const adminCreatable = new Set(['revenue_annual', 'callback_rate', 'options_per_ticket']);
     for (const k of TREND_KPIS) {
-      if (k.goalKey) expect(known, `${k.key} claims unknown goal ${k.goalKey}`).toContain(k.goalKey);
+      for (const key of k.goalKeys ?? []) {
+        expect(
+          seeded.has(key) || adminCreatable.has(key),
+          `${k.key} claims unreachable goal ${key}`,
+        ).toBe(true);
+      }
     }
   });
 });
@@ -814,7 +824,8 @@ export interface TrendKpiDef {
   compute: (rows: TrendInputs) => number | null;
   /** Powers the tooltip's sample size. */
   denominator?: (rows: TrendInputs) => number;
-  goalKey?: string;
+  /** company_goals keys to try IN ORDER, mirroring the tiles' fallback chains. */
+  goalKeys?: string[];
   perTech: boolean;
   higherIsBetter: boolean;
 }
@@ -837,7 +848,7 @@ export const TREND_KPIS: TrendKpiDef[] = [
     // which sums unique opportunity rows and produces a different number.
     compute: (r) => sum(r.jobs.filter((j) => j.completed_at && (j.revenue_amount || 0) > 0), 'revenue_amount'),
     denominator: (r) => r.jobs.filter((j) => j.completed_at && (j.revenue_amount || 0) > 0).length,
-    goalKey: 'revenue_annual',
+    goalKeys: ['revenue_annual'],
     perTech: true,
     higherIsBetter: true,
   },
@@ -851,7 +862,7 @@ export const TREND_KPIS: TrendKpiDef[] = [
     aggregate: 'rate',
     compute: (r) => (getUniqueOpportunities(r.jobs).length === 0 ? null : calculateOpportunityJobAverage(r.jobs)),
     denominator: (r) => getUniqueOpportunities(r.jobs).length,
-    goalKey: 'opportunity_average',
+    goalKeys: ['opportunity_average'],
     perTech: true,
     higherIsBetter: true,
   },
@@ -881,7 +892,7 @@ export const TREND_KPIS: TrendKpiDef[] = [
       return s.count === 0 ? null : s.average;
     },
     denominator: (r) => calculateAvgSoldRepair(r.jobs).count,
-    goalKey: 'avg_repair_ticket',
+    goalKeys: ['avg_repair_ticket'],
     perTech: true,
     higherIsBetter: true,
   },
@@ -898,7 +909,7 @@ export const TREND_KPIS: TrendKpiDef[] = [
       return s.count === 0 ? null : s.average;
     },
     denominator: (r) => calculateAvgSoldInstall(r.jobs).count,
-    goalKey: 'avg_install_ticket',
+    goalKeys: ['avg_install_ticket'],
     perTech: true,
     higherIsBetter: true,
   },
@@ -915,7 +926,7 @@ export const TREND_KPIS: TrendKpiDef[] = [
       return s.total === 0 ? null : s.rate;
     },
     denominator: (r) => calculateConversionRate(r.jobs).total,
-    goalKey: 'conversion_rate',
+    goalKeys: ['conversion_rate'],
     perTech: true,
     higherIsBetter: true,
   },
@@ -932,7 +943,7 @@ export const TREND_KPIS: TrendKpiDef[] = [
       return s.total === 0 ? null : s.rate;
     },
     denominator: (r) => calculateClosingStats(r.jobs).total,
-    goalKey: 'closing_rate',
+    goalKeys: ['closing_rate', 'conversion_rate'],
     perTech: true,
     higherIsBetter: true,
   },
@@ -962,7 +973,7 @@ export const TREND_KPIS: TrendKpiDef[] = [
     aggregate: 'rate',
     compute: (r) => (getUniqueOpportunities(r.jobs).length === 0 ? null : calculateMembershipConversionRate(r.jobs)),
     denominator: (r) => getUniqueOpportunities(r.jobs).length,
-    goalKey: 'membership_rate',
+    goalKeys: ['membership_rate'],
     perTech: true,
     higherIsBetter: true,
   },
@@ -976,7 +987,7 @@ export const TREND_KPIS: TrendKpiDef[] = [
     aggregate: 'rate',
     compute: (r) => (getUniqueOpportunities(r.jobs).length === 0 ? null : calculateCallbackRate(r.jobs)),
     denominator: (r) => getUniqueOpportunities(r.jobs).length,
-    goalKey: 'callback_rate',
+    goalKeys: ['callback_rate'],
     perTech: true,
     higherIsBetter: false,
   },
@@ -993,7 +1004,7 @@ export const TREND_KPIS: TrendKpiDef[] = [
       return b.total === 0 ? null : calculateCancellationRate(r.jobs);
     },
     denominator: (r) => getOpportunitiesIncludingCanceled(r.jobs).total,
-    goalKey: 'cancellation_rate',
+    goalKeys: ['cancellation_rate'],
     perTech: true,
     higherIsBetter: false,
   },
@@ -1019,7 +1030,7 @@ export const TREND_KPIS: TrendKpiDef[] = [
         ? calculateAvgOptionsPerTicketForTech(r.jobs, r.allJobs)
         : calculateAvgOptionsPerTicket(r.jobs)
       ).tickets,
-    goalKey: 'options_per_ticket',
+    goalKeys: ['options_per_ticket'],
     perTech: true,
     higherIsBetter: true,
   },
@@ -1081,7 +1092,7 @@ export const TREND_KPIS: TrendKpiDef[] = [
     aggregate: 'rate',
     compute: (r) => (r.calls.length === 0 ? null : calculateCallBookingRate(r.calls)),
     denominator: (r) => r.calls.length,
-    goalKey: 'call_booking_rate',
+    goalKeys: ['call_booking_rate'],
     perTech: false,
     higherIsBetter: true,
   },
@@ -1894,12 +1905,24 @@ export function TrendTab({ kpiKey, techId, techName }: TrendTabProps) {
 
   if (!kpi) return <div className="p-6 text-sm text-muted-foreground">No trend available for this metric.</div>;
 
-  const goalValue =
-    compare.includes('goal') && kpi.goalKey
-      ? kpi.goalKey === 'revenue_annual'
-        ? periodGoal(getGoal('revenue_annual') ?? 0, granularity)
-        : (getGoal(kpi.goalKey) ?? null)
-      : null;
+  // goalKeys is a fallback chain mirroring the tiles: Closing % looks for
+  // closing_rate then conversion_rate, because only eight goal keys are
+  // seeded and closing_rate is not one of them. Resolving a single key
+  // would draw no goal line under a gauge that shows a target of 80.
+  //
+  // Scaling: a 'sum' KPI accumulates over the bucket, so an annual target
+  // must be divided down. A 'rate' KPI is a level and its target applies
+  // to every bucket as-is. No goal found means no goal line, never an
+  // invented default.
+  const goalValue = useMemo(() => {
+    if (!compare.includes('goal') || !kpi.goalKeys?.length) return null;
+    for (const key of kpi.goalKeys) {
+      const raw = getGoal(key);
+      if (raw == null) continue;
+      return kpi.aggregate === 'sum' ? periodGoal(raw, granularity) : raw;
+    }
+    return null;
+  }, [compare, kpi, getGoal, granularity]);
 
   const toggle = (key: CompareKey) =>
     setCompare((c) => (c.includes(key) ? c.filter((x) => x !== key) : [...c, key].slice(-MAX_OVERLAYS - 1)));
@@ -1939,11 +1962,11 @@ export function TrendTab({ kpiKey, techId, techName }: TrendTabProps) {
 
       <div className="flex flex-wrap items-center gap-2 px-4 sm:px-6 text-xs">
         <span className="text-muted-foreground">Compare:</span>
-        {kpi.goalKey && (
+        {kpi.goalKeys?.length ? (
           <button type="button" className={`chip ${compare.includes('goal') ? 'chip-green' : ''}`} onClick={() => toggle('goal')}>
             Goal
           </button>
-        )}
+        ) : null}
         <button type="button" className={`chip ${compare.includes('last_year') ? 'chip-green' : ''}`} onClick={() => toggle('last_year')}>
           Last year
         </button>
