@@ -236,6 +236,17 @@ Stated plainly rather than half-built:
 
 ## Risks
 
-- **Payload size on a 12-month window with `hcp_data`.** Unverified. Task 1 measures it; the projection-view fallback is described above and keeps the math client-side either way.
+- **Payload size on a 12-month window with `hcp_data`.** ~~Unverified.~~ **Measured 2026-08-07** against `jwrpjuqaynownxaoeayi`, for the union of `scheduled_at` and `completed_at` in the trailing 12 months:
+
+  | Metric | Value |
+  |---|---|
+  | Rows, `scheduled_at` window | 1,346 |
+  | Rows, `completed_at` window | 1,111 |
+  | Rows, union of both | 1,347 |
+  | Full-row JSON incl. `hcp_data` | 6,467 kB |
+  | `hcp_data` alone, as JSON | 5,099 kB |
+  | All other columns | ~1,368 kB |
+
+  Both variants clear the ~8 MB / ~4 s threshold, so the client-side fetch in Task 7 proceeds as designed and the projection-view fallback is not needed. Two further findings: gzip on the wire will cut these numbers several-fold, and the union costs essentially nothing (1,347 rows versus 1,346 for `scheduled_at` alone), because nearly every job completed in the window was also scheduled in it. 1,347 rows is far inside the existing 10k batching cap.
 - **Chart busyness.** Daniel rejects cluttered UI. Mitigated by defaulting to goal-only, capping overlays at three, and adding no new tile chrome.
 - **`Index.tsx` is 998 lines** and gains ~15 tile click handlers. The handlers are one-liners delegating to a single sheet-state hook, so this adds no branching logic, but the file is already too large and this is not the change that fixes that.
