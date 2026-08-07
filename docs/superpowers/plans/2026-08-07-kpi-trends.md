@@ -2316,28 +2316,33 @@ For each `<div className="kpi">` block, add the click affordance. The pattern, a
 Tile-to-key mapping. **VERIFIED against `Index.tsx` on 2026-08-07** — the earlier draft of this table listed tiles that do not exist and missed two that do. Confirm with:
 
 ```bash
-grep -oE '<div className="label">[^<{]*' src/pages/Index.tsx | sed 's/<div className="label">//' | sort -u
+grep -oE '<div className="label">[^<{]*' src/pages/Index.tsx | sed 's/<div className="label">//' | sort | uniq -c
 ```
 
-The ten `.kpi` tiles that get a trend:
+**`uniq -c`, never `sort -u`.** An earlier revision of this table used `sort -u` and it collapsed a duplicate label into one row, which is how "Total Opportunities" got mapped to a single key. **Two tiles can carry the same label and show different numbers.** Any count above 1 in that output is a tile that needs mapping twice, and each copy needs the registry entry matching *its* number — not the one matching its label.
 
-| Tile label | `trendKpiKey` | `kpi` (Jobs tab) |
-|---|---|---|
-| Opp. Job Avg ⭐ | `opportunity_avg` | — |
-| Avg Sold Repair | `repair_avg` | — |
-| Avg Sold Install | `install_avg` | — |
-| Conversion | `conversion` | `closing` |
-| Estimate Close % | `estimate_close_pct` | — |
-| Callback Rate | `callback_rate` | `callback` |
-| Cancellations | `cancellations` | — |
-| Options / Ticket | `options_per_ticket` | — |
-| Total Opportunities | `total_opportunities` | — |
-| Completed Jobs | `completed_jobs` | — |
+The ten tiles that get a trend. Seven are `.kpi` tiles; **Completed Jobs and Total Opportunities (Quick stats) are `.qtile`s in the Quick-stats strip**, and Marketing Leads (below) is too:
+
+| Tile label | markup | `trendKpiKey` | `kpi` (Jobs tab) |
+|---|---|---|---|
+| Opp. Job Avg ⭐ | `.kpi` | `opportunity_avg` | — |
+| Avg Sold Repair | `.kpi` | `repair_avg` | — |
+| Avg Sold Install | `.kpi` | `install_avg` | — |
+| Conversion | `.kpi` | `conversion` | `closing` |
+| Estimate Close % | `.kpi` | `estimate_close_pct` | — |
+| Callback Rate | `.kpi` | `callback_rate` | `callback` |
+| Cancellations | `.kpi` | `cancellations` | — |
+| Options / Ticket | `.kpi` | `options_per_ticket` | — |
+| Total Opportunities (row 3) | `.kpi` | `total_opportunities_incl_canceled` | — |
+| Total Opportunities (Quick stats) | `.qtile gold` | `total_opportunities` | — |
+| Completed Jobs | `.qtile` | `completed_jobs` | — |
+
+**The two Total Opportunities tiles are not the same metric.** `Index.tsx:901` renders `getOpportunitiesIncludingCanceled(jobs).total` — every ticket that consumed a calendar slot, canceled included. `Index.tsx:1012` renders `getUniqueOpportunities(jobs).length` — live opportunities only. The registry has one entry for each: `total_opportunities_incl_canceled` and `total_opportunities`. Pointing both tiles at one key opens a chart that disagrees with the number the user just clicked, which is the failure this whole feature exists to prevent.
 
 Handled separately, because they are not `.kpi` tiles:
 
-- **Total Sales** is the large revenue card near line 635, with its own markup and an existing `onClick`. Map it to `revenue` / Jobs tab `revenue`.
-- **Membership Rate**, **Call Booking Rate** and **Closing %** are `SemiGauge` cards in the gauge row (around line 745), not tiles. Wire the same click handler onto the gauge card wrapper: `membership_conv` (Jobs tab `membership`), `call_booking_rate`, and `closing_pct`.
+- **Total Sales** is the `HeroScoreboard` card near line 628, with its own markup and an existing `onClick` prop. Map it to `revenue` / Jobs tab `revenue`.
+- **Call Booking Rate**, **Membership Conv.** (labelled "Membership Conv.", NOT "Membership Rate") and **Closing %** are `SemiGauge` cards in the gauge row (around line 790), not tiles. Wire the same click handler onto the `.gauge-card` wrapper, in that source order: `call_booking_rate`, `membership_conv` (Jobs tab `membership`), and `closing_pct`.
 
 Deliberately NOT clickable, and no registry entry exists for them:
 
@@ -2370,6 +2375,8 @@ Replace the existing `<DrilldownSheet ... />` at the bottom of `Index.tsx` (line
   />
 )}
 ```
+
+**Testing note — Radix Tabs activate on `mousedown`, not `click`.** `fireEvent.click(screen.getByRole('tab', …))` dispatches no mousedown, so the tab never switches and the assertion fails on content that looks like it should be there. Use `fireEvent.mouseDown`. `@testing-library/user-event` is NOT a dependency of this repo.
 
 - [ ] **Step 5: Verify in the browser**
 
