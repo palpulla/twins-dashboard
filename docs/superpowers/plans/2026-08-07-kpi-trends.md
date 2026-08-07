@@ -1415,6 +1415,8 @@ Expected: PASS, 8 tests.
 
 If the AGREEMENT test fails for a KPI, the registry entry is wrong, not the test. Fix the entry to match what the tile does.
 
+**Know what this test cannot catch.** It runs `buildSeries` and `kpi.compute` over the *same in-memory row set*, so it proves the bucketing is faithful — not that the row set itself matches what the tile was fed. A fetch that pulls the wrong rows passes this test with the trend still disagreeing with the tile. That failure mode is real: `calculateEstimateConversionRate` counts raw estimate rows rather than going through `getUniqueOpportunities`, and 1,102 of 1,305 estimates in a 12-month window have no `scheduled_at`, so a scheduled-only fetch would shrink its denominator about fivefold while every test here still passed. Task 7 fetches estimates the way `useDashboardData` does for that reason, and Task 13 checks fetch parity against a live tile.
+
 - [ ] **Step 5: Commit**
 
 ```bash
@@ -1498,6 +1500,7 @@ export function useTrendData({ window, sources, needsHcpData, enabled = true }: 
   const from = iso(window.from);
   const to = iso(window.to, true);
   const columns = needsHcpData ? `${NARROW_COLUMNS},hcp_data` : NARROW_COLUMNS;
+  const estimateColumns = `${NARROW_COLUMNS},hcp_data`;
 
   return useQuery({
     enabled,
@@ -1508,17 +1511,36 @@ export function useTrendData({ window, sources, needsHcpData, enabled = true }: 
       const wantCalls = sources.includes('calls');
       const wantMarketing = sources.includes('marketing');
 
-      const [scheduled, completed, calls, marketingSpend] = await Promise.all([
+      const [scheduled, completed, estimates, calls, marketingSpend] = await Promise.all([
         wantJobs
           ? fetchAll((offset) =>
-              supabase.from('jobs').select(columns)
+              supabase.from('jobs').select(columns).neq('job_type', 'Estimate')
                 .gte('scheduled_at', from).lte('scheduled_at', to)
                 .range(offset, offset + BATCH - 1))
           : Promise.resolve([]),
         wantJobs
           ? fetchAll((offset) =>
-              supabase.from('jobs').select(columns)
+              supabase.from('jobs').select(columns).neq('job_type', 'Estimate')
                 .gte('completed_at', from).lte('completed_at', to)
+                .range(offset, offset + BATCH - 1))
+          : Promise.resolve([]),
+        // Estimates need their own unfiltered read, exactly as
+        // useDashboardData does. MEASURED 2026-08-07: 1,102 of the 1,305
+        // estimates in a 12-month window carry NO scheduled_at and no
+        // completed_at, so the two reads above would miss ~85% of them.
+        // getUniqueOpportunities drops those rows anyway, so opportunity
+        // KPIs would not notice — but calculateEstimateConversionRate does
+        // NOT go through getUniqueOpportunities. It counts raw estimate
+        // rows, so a scheduled-only fetch would shrink its denominator
+        // about fivefold and the estimate close % trend would silently
+        // disagree with its own tile.
+        // Note the column list: the estimate read ALWAYS pulls hcp_data,
+        // even when the selected KPI does not need it, because the
+        // created_at that decides whether an estimate is in the window
+        // lives inside that blob and nowhere else.
+        wantJobs
+          ? fetchAll((offset) =>
+              supabase.from('jobs').select(estimateColumns).eq('job_type', 'Estimate')
                 .range(offset, offset + BATCH - 1))
           : Promise.resolve([]),
         wantCalls
@@ -1535,10 +1557,23 @@ export function useTrendData({ window, sources, needsHcpData, enabled = true }: 
           : Promise.resolve([]),
       ]);
 
-      // Union the two job reads by id, then drop the CSR duplicate rows that
+      // Keep an estimate when EITHER hcp_data.created_at OR scheduled_at
+      // falls in the window — the same client-side rule useDashboardData
+      // applies, so the trend's row set matches the tile's row set.
+      const inWindow = (v: string | null | undefined) => {
+        if (!v) return false;
+        const t = new Date(v).getTime();
+        return !Number.isNaN(t) && t >= window.from.getTime() && t <= window.to.getTime();
+      };
+      const keptEstimates = (estimates as Array<Record<string, unknown>>).filter((e) => {
+        const created = (e.hcp_data as { created_at?: string } | null)?.created_at;
+        return inWindow(created) || inWindow(e.scheduled_at as string | null);
+      });
+
+      // Union the reads by id, then drop the CSR duplicate rows that
       // inflate opportunity counts, exactly as useDashboardData does.
       const byId = new Map<string, Record<string, unknown>>();
-      for (const row of [...scheduled, ...completed] as Array<Record<string, unknown>>) {
+      for (const row of [...scheduled, ...completed, ...keptEstimates] as Array<Record<string, unknown>>) {
         byId.set(String(row.id), row);
       }
       const jobs = [...byId.values()].filter((j) => !String(j.job_id ?? '').includes('csr_'));
@@ -2458,12 +2493,20 @@ Expected: all green.
 
 Resize the preview to 375px wide. Open a trend sheet. Confirm the sheet fills the width, the control chips wrap instead of overflowing, and the chart does not push the page into horizontal scroll. "It extends to the sides" is a bug, not a nitpick.
 
-- [ ] **Step 3: Confirm no KPI math moved**
+- [ ] **Step 3: Check fetch parity against live tiles**
+
+The unit tests cannot prove the trend fetched the same rows the tile was fed (see the note in Task 6). Verify it by hand, against real data, for the KPI most exposed to it.
+
+Set the Company Scorecard filter to YTD and note the exact value on the **Estimate close %** tile. Open its Trend tab, set the range to YTD and the granularity to Qtr, and read the tooltip sample sizes. The denominators summed across buckets must match the tile's denominator. If the trend's total is dramatically smaller, the estimate read in `use-trend-data.ts` is not mirroring `useDashboardData` and unscheduled estimates are being dropped.
+
+Repeat the same comparison for **Conversion rate** and **Revenue**, which use different date bases and so exercise different reads.
+
+- [ ] **Step 4: Confirm no KPI math moved**
 
 Run: `git diff main --stat -- src/lib/kpi-calculations.ts`
 Expected: **empty output.** If this file appears in the diff, revert those changes before opening the PR.
 
-- [ ] **Step 4: Open the PR**
+- [ ] **Step 5: Open the PR**
 
 ```bash
 git push -u origin feat/kpi-trends
