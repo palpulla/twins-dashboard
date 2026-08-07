@@ -744,24 +744,27 @@ describe('kpi-registry', () => {
     expect(perTechKeys).not.toContain('marketing_spend');
   });
 
-  it('only claims goal keys that the seed migration creates or the admin page can create', () => {
-    const sql = readFileSync(
-      resolve(__dirname, '../../../../supabase/migrations/20260406000001_company_goals.sql'),
-      'utf8',
-    );
-    const seeded = new Set([...sql.matchAll(/\('([a-z_]+)',\s*\d/g)].map((m) => m[1]));
-    // Keys an admin can create via /admin/goals that the seed omits. Every
-    // entry here yields no goal line until someone saves a target.
-    const adminCreatable = new Set(['revenue_annual', 'callback_rate', 'options_per_ticket']);
-    for (const k of TREND_KPIS) {
-      for (const key of k.goalKeys ?? []) {
-        expect(
-          seeded.has(key) || adminCreatable.has(key),
-          `${k.key} claims unreachable goal ${key}`,
-        ).toBe(true);
-      }
-    }
-  });
+  // NOTE: the obvious version of this test — "every key in every chain is
+  // reachable" — is WRONG and will fail. `closing_rate` is unreachable BY
+  // DESIGN; that is the entire reason closing_pct needs a chain. The
+  // invariant that matters is that a chain ENDS in a reachable key.
+  //
+  // Also: scan every migration, not just the 20260406 seed. `revenue_annual`
+  // is created later by 20260502190000_tech_revenue_goals.sql, so reading one
+  // file would wrongly condemn it.
+  //
+  // Implemented as three tests, all mutation-checked:
+  //   1. ends every goal chain in a key that something can actually create
+  //   2. has exactly one known-unreachable goal key, and it is a fallback
+  //      (pins the unreachable set to {closing_rate}, preserving typo
+  //      protection — a typo'd key would otherwise pass test 1 silently)
+  //   3. mirrors the fallback chain the Closing % gauge uses (pins the
+  //      ORDER against Index.tsx:750)
+  //
+  // ADMIN_CREATABLE is {callback_rate, options_per_ticket}, verified against
+  // Goals.tsx's KPI_TO_METRIC_KEY *and* the live scorecard_tier_thresholds
+  // rows, since that page renders a card only when the kpi_key row exists.
+  // See the committed src/lib/trends/__tests__/kpi-registry.test.ts.
 });
 ```
 
