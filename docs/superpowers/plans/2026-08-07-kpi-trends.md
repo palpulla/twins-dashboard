@@ -206,6 +206,30 @@ describe('attribution', () => {
     const jobs = [job([CHARLES_HCP_ID, MAURICE_HCP_ID])];
     expect(creditedJobsFor(jobs, 'not-a-known-uuid')).toHaveLength(1);
   });
+
+  it('keeps a job identified only by tech_id, with no assigned_employees', () => {
+    // ~5% of real rows carry no assigned_employees array; one per year also
+    // has a tech_id. Matching on assignees alone would silently drop it.
+    const jobs = [{ tech_id: MAURICE_TECH_ID, hcp_data: null }];
+    expect(creditedJobsFor(jobs, MAURICE_TECH_ID)).toHaveLength(1);
+    expect(creditedJobsFor(jobs, CHARLES_TECH_ID)).toHaveLength(0);
+  });
+
+  it('still drops a Charles solo ticket from another tech set', () => {
+    const jobs = [{ tech_id: CHARLES_TECH_ID, hcp_data: { assigned_employees: [{ id: CHARLES_HCP_ID }] } }];
+    expect(creditedJobsFor(jobs, MAURICE_TECH_ID)).toHaveLength(0);
+    expect(creditedJobsFor(jobs, CHARLES_TECH_ID)).toHaveLength(1);
+  });
+
+  it('credits the junior on a ticket where Charles is the primary tech_id', () => {
+    // The symmetric case use-technician-data.ts handles with a second query.
+    const jobs = [{
+      tech_id: CHARLES_TECH_ID,
+      hcp_data: { assigned_employees: [{ id: CHARLES_HCP_ID }, { id: MAURICE_HCP_ID }] },
+    }];
+    expect(creditedJobsFor(jobs, MAURICE_TECH_ID)).toHaveLength(1);
+    expect(creditedJobsFor(jobs, CHARLES_TECH_ID)).toHaveLength(0);
+  });
 });
 ```
 
@@ -244,8 +268,9 @@ export const TECH_HCP_BY_UUID: Record<string, string> = {
   [MAURICE_TECH_ID]: MAURICE_HCP_ID,
 };
 
-/** Structural minimum: anything carrying an hcp_data blob. */
+/** Structural minimum: a tech id and an hcp_data blob. */
 export interface AttributableJob {
+  tech_id?: string | null;
   hcp_data?: unknown;
 }
 
@@ -280,11 +305,25 @@ export function shouldCreditTechnician(job: AttributableJob, techHcpId: string):
  * Filter a full row set to the tickets credited to one tech UUID.
  * An unmapped UUID returns the set unchanged, matching the existing
  * `techHcpId ? filter : allJobs` behavior in use-technician-data.ts.
+ *
+ * IMPORTANT: `shouldCreditTechnician` alone is NOT enough here. It assumes
+ * the caller already narrowed the set to one tech with a SQL `tech_id`
+ * filter, which is why its non-shared branch returns true unconditionally.
+ * Over the trend engine's all-techs row set that would credit every
+ * non-shared ticket to whoever you asked about. So ownership is checked
+ * first, both ways, and only then is the Charles rule applied.
  */
 export function creditedJobsFor<T extends AttributableJob>(jobs: T[], techUuid: string): T[] {
   const techHcpId = TECH_HCP_BY_UUID[techUuid] ?? '';
   if (!techHcpId) return jobs;
-  return jobs.filter((j) => shouldCreditTechnician(j, techHcpId));
+  return jobs.filter((j) => {
+    // tech_id alone is sometimes the only signal: ~5% of rows carry no
+    // assigned_employees at all. assigned_employees alone is also not
+    // enough: it carries the symmetric case where Charles is the primary
+    // tech_id but this tech is co-assigned.
+    const isTheirs = j.tech_id === techUuid || getAssignedHcpIds(j).includes(techHcpId);
+    return isTheirs && shouldCreditTechnician(j, techHcpId);
+  });
 }
 ```
 
