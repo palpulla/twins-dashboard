@@ -211,7 +211,13 @@ Note that `calculateAvgOptionsPerTicketForTech` takes a second argument (all job
 | Call booking rate | `calculateCallBookingRate` | `calls_inbound` |
 | Marketing spend | sum of `spend_amount` | `marketing_spend` |
 | Marketing leads | sum of `leads_generated` | `marketing_spend` |
-| CPA | `calculateCPA` | `marketing_spend` + `jobs` |
+
+**CPA is deliberately excluded** (decided 2026-08-07, during implementation). `calculateCPA` divides by jobs whose `lead_source` is exactly `'Marketing'`, and that value has **zero rows all time** — 47 distinct lead sources exist and none of them is `Marketing`. The function has no caller anywhere in the app. The company-wide CPA card was previously removed from the scorecard on purpose, and CPA now appears on `/marketing-roi` as per-channel CAC with different math. A trend entry would have plotted `$0.00` in every bucket that had spend, which on a lower-is-better metric reads as free customers.
+
+**Two KPIs will render empty until their data exists.** That is the correct behavior, not a bug to code around:
+
+- `call_booking_rate` — `calls_inbound` has **zero rows**. The Call Booking Rate gauge on the live scorecard is therefore showing `0%` against an 82% target today. Pre-existing, not introduced by this work, but worth raising separately.
+- `marketing_leads` — populated, but counts form leads only, so call and messaging campaigns read as zero.
 
 Anything with a KPI tile gets a trend. Anything without a canonical function does not get one invented for it. `leads_generated` counts form leads only, so the marketing-leads series reads low for call and messaging campaigns; its tooltip says so rather than pretending otherwise.
 
