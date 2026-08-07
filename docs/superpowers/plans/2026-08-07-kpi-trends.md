@@ -1680,7 +1680,7 @@ function formatTick(v: number, unit: TrendUnit): string {
   return String(Math.round(v));
 }
 
-export function formatFull(v: number, unit: TrendUnit): string {
+function formatFull(v: number, unit: TrendUnit): string {
   if (unit === 'usd') {
     return new Intl.NumberFormat('en-US', {
       style: 'currency', currency: 'USD', maximumFractionDigits: 0,
@@ -1740,11 +1740,16 @@ function KpiTrendChartBase({ kpi, points, overlays = [], goalValue, height = 300
         )}
         <Tooltip
           contentStyle={{ backgroundColor: '#fff', border: '1px solid #E2E8F0', borderRadius: 8 }}
-          formatter={(value: number | null, name: string) => {
+          // Key off dataKey, NOT name. Recharts sets the tooltip item's
+          // `name` to `name || dataKey`, and every series here passes an
+          // explicit `name`, so `name` is always the DISPLAY LABEL and a
+          // comparison against 'primary' can never match — every overlay
+          // would silently format with the primary series' unit.
+          formatter={(value: number | null, name: string, item: { dataKey?: string }) => {
             if (value === null || value === undefined) return ['no data', name];
-            const label = name === 'primary' ? kpi.label : name;
-            const unit = name === 'primary' ? kpi.unit : (overlays.find((o) => o.id === name)?.unit ?? kpi.unit);
-            return [formatFull(value, unit), label];
+            const key = item?.dataKey;
+            const unit = key === 'primary' ? kpi.unit : (overlays.find((o) => o.id === key)?.unit ?? kpi.unit);
+            return [formatFull(value, unit), name];
           }}
           labelFormatter={(label: string, payload) => {
             const n = payload?.[0]?.payload?.n;
@@ -1760,7 +1765,10 @@ function KpiTrendChartBase({ kpi, points, overlays = [], goalValue, height = 300
             stroke={GOLD}
             strokeWidth={2}
             strokeDasharray="6 4"
-            label={{ value: `goal ${formatFull(goalValue, kpi.unit)}`, position: 'right', fontSize: 11, fill: '#B07E00' }}
+            // 'right' clips against margin.right: 8. TechTrendChart only
+            // gets away with it by pairing margin.right: 56 with abbreviated
+            // dollars, and full dollar amounts are required here.
+            label={{ value: `goal ${formatFull(goalValue, kpi.unit)}`, position: 'insideTopRight', fontSize: 11, fill: '#B07E00' }}
           />
         )}
 
@@ -1844,8 +1852,12 @@ const RANGE_LABELS: Record<RangeKey, string> = {
 type CompareKey = 'goal' | 'last_year' | 'prev_period' | 'company';
 const MAX_OVERLAYS = 3;
 
-function windowFor(key: RangeKey): { from: Date; to: Date } {
-  const to = new Date();
+// `to` MUST be midnight-normalized. useTrendData's query key is
+// day-granular while isEstimateInWindow reads the raw Dates and widens
+// `to` by a day itself, so a `to` carrying a time of day selects a
+// different estimate set than the cache key implies. useToday() also
+// gives the referentially-stable value react-query keys require here.
+function windowFor(key: RangeKey, to: Date): { from: Date; to: Date } {
   if (key === '30d') return { from: subDays(to, 29), to };
   if (key === '90d') return { from: subDays(to, 89), to };
   if (key === 'ytd') return { from: startOfYear(to), to };
@@ -1875,8 +1887,11 @@ export function TrendTab({ kpiKey, techId, techName }: TrendTabProps) {
       return { from: subDays(window.from, 364), to: subDays(window.to, 364) };
     }
     if (compare.includes('prev_period')) {
-      const span = window.to.getTime() - window.from.getTime();
-      return { from: new Date(window.from.getTime() - span), to: new Date(window.from.getTime()) };
+      // Must END THE DAY BEFORE window.from. Ending ON window.from makes
+      // the prior series' last bucket this period's FIRST bucket, plotted
+      // as though it were history.
+      const spanDays = differenceInCalendarDays(window.to, window.from);
+      return { from: subDays(window.from, spanDays + 1), to: subDays(window.from, 1) };
     }
     return null;
   }, [compare, window]);
@@ -1929,6 +1944,9 @@ export function TrendTab({ kpiKey, techId, techName }: TrendTabProps) {
     return out.slice(0, MAX_OVERLAYS);
   }, [kpi, main.data, prior.data, priorWindow, compare, granularity, window, techId, points]);
 
+  // NOTE: every hook, including the goalValue useMemo below, MUST sit
+  // ABOVE this early return. A useMemo after it is a conditional hook:
+  // React throws on any unknown kpiKey and rules-of-hooks fails lint.
   if (!kpi) return <div className="p-6 text-sm text-muted-foreground">No trend available for this metric.</div>;
 
   // goalKeys is a fallback chain mirroring the tiles: Closing % looks for
