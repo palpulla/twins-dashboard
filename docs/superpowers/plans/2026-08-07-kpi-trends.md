@@ -1570,10 +1570,21 @@ export function useTrendData({ window, sources, needsHcpData, enabled = true }: 
       // Keep an estimate when EITHER hcp_data.created_at OR scheduled_at
       // falls in the window — the same client-side rule useDashboardData
       // applies, so the trend's row set matches the tile's row set.
+      // Extracted to src/lib/trends/estimate-window.ts and unit-tested —
+      // this predicate is where a silent trend/tile divergence hides.
+      //
+      // CRITICAL: the `to` end is NOT `<= to`. useDashboardData widens it
+      // to `to + 24h - 1ms` (see its estimate branch, ~line 81) because
+      // every caller hands it a midnight-normalized `to`. Using `<= to`
+      // drops every estimate created during business hours on the final
+      // day of the window — the newest bucket, the one users look at most.
+      const DAY_MS = 24 * 60 * 60 * 1000;
+      const start = window.from.getTime();
+      const end = window.to.getTime() + DAY_MS - 1;
       const inWindow = (v: string | null | undefined) => {
         if (!v) return false;
         const t = new Date(v).getTime();
-        return !Number.isNaN(t) && t >= window.from.getTime() && t <= window.to.getTime();
+        return !Number.isNaN(t) && t >= start && t <= end;
       };
       const keptEstimates = (estimates as Array<Record<string, unknown>>).filter((e) => {
         const created = (e.hcp_data as { created_at?: string } | null)?.created_at;
