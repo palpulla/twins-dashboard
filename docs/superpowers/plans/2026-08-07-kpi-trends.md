@@ -1167,13 +1167,22 @@ The last test here is the most important one in the plan: it is the regression g
 import { describe, it, expect } from 'vitest';
 import { buildSeries } from '../build-series';
 import { getTrendKpi, TREND_KPIS, type TrendInputs } from '../kpi-registry';
-import { CHARLES_HCP_ID, MAURICE_HCP_ID, MAURICE_TECH_ID } from '../attribution';
+// Task 2 exports neither MAURICE_HCP_ID nor MAURICE_TECH_ID — it derives
+// its roster from src/lib/technicians.ts. Do the same here.
+import { CHARLES_HCP_ID, CHARLES_TECH_ID } from '../attribution';
+import { TECHNICIANS } from '@/lib/technicians';
+const MAURICE_HCP_ID = TECHNICIANS.find((t) => t.name === 'Maurice Williams')!.hcpId;
+const MAURICE_TECH_ID = TECHNICIANS.find((t) => t.name === 'Maurice Williams')!.id;
 
 let seq = 0;
+// tech_id MUST be a real tech UUID. buildOpportunities drops non-estimate
+// rows with no tech_id, so a null default makes getUniqueOpportunities
+// return [] for every fixture and the AGREEMENT loop below silently
+// compares null to null — a green test that verifies nothing.
 const mkJob = (over: Record<string, unknown> = {}) => ({
   id: `id-${++seq}`,
   job_id: `job-${seq}`,
-  tech_id: null,
+  tech_id: MAURICE_TECH_ID,
   revenue_amount: 500,
   job_type: 'Repair',
   status: 'completed',
@@ -1400,7 +1409,10 @@ export function buildSeries(
       bucketStart: key,
       label: bucketLabel(b, g),
       value: kpi.compute(subset),
-      n: kpi.denominator ? kpi.denominator(subset) : subset.jobs.length,
+      // Fall back to the row count of the KPI's OWN sources, not jobs.
+      // marketing_spend and marketing_leads read no job rows at all, so
+      // subset.jobs.length would report n = 0 beside a real dollar figure.
+      n: kpi.denominator ? kpi.denominator(subset) : defaultSampleSize(kpi, subset),
     };
   });
 }
