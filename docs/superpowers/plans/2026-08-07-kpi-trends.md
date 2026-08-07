@@ -230,6 +230,22 @@ describe('attribution', () => {
     expect(creditedJobsFor(jobs, MAURICE_TECH_ID)).toHaveLength(1);
     expect(creditedJobsFor(jobs, CHARLES_TECH_ID)).toHaveLength(0);
   });
+
+  it('credits a two-junior ticket to the primary tech only, never both', () => {
+    // Ungated assignee matching would return this job for BOTH techs, so
+    // summing per-tech trends would exceed the company total.
+    const jobs = [{
+      tech_id: MAURICE_TECH_ID,
+      hcp_data: { assigned_employees: [{ id: MAURICE_HCP_ID }, { id: NICHOLAS_HCP_ID }] },
+    }];
+    expect(creditedJobsFor(jobs, MAURICE_TECH_ID)).toHaveLength(1);
+    expect(creditedJobsFor(jobs, NICHOLAS_TECH_ID)).toHaveLength(0);
+  });
+
+  it('derives its roster from the canonical technicians list', () => {
+    expect(Object.keys(TECH_HCP_BY_UUID)).toHaveLength(TECHNICIANS.length);
+    for (const t of TECHNICIANS) expect(TECH_HCP_BY_UUID[t.id]).toBe(t.hcpId);
+  });
 });
 ```
 
@@ -255,18 +271,19 @@ Expected: FAIL, cannot resolve `../attribution`.
  * trend can never disagree about whose ticket a job is.
  */
 
-export const CHARLES_HCP_ID = 'pro_105812fc126c412c9980f9def8d49ba0';
-export const NICHOLAS_HCP_ID = 'pro_2f2f11e7ee064ff797d4bce5dc408c09';
-export const MAURICE_HCP_ID = 'pro_5df7c97afeb640409c1e84eeccd2c511';
-export const CHARLES_TECH_ID = 'cd391230-dd7b-4f82-b223-ee87ee00ce31';
-export const NICHOLAS_TECH_ID = '0fd76ae0-6772-4816-89bd-3df9df9e8b59';
-export const MAURICE_TECH_ID = '303c8010-536e-40e4-8179-126086ef5b2b';
+// Derived from the canonical roster in src/lib/technicians.ts, never
+// retyped. That file's header promises every consumer picks up a new tech
+// automatically; forking the ids here would silently break per-tech trends
+// on the next hire, in the very module that exists to prevent drift.
+import { TECHNICIANS, CHARLES_HCP_ID, TECH_BY_DB_ID } from '@/lib/technicians';
 
-export const TECH_HCP_BY_UUID: Record<string, string> = {
-  [CHARLES_TECH_ID]: CHARLES_HCP_ID,
-  [NICHOLAS_TECH_ID]: NICHOLAS_HCP_ID,
-  [MAURICE_TECH_ID]: MAURICE_HCP_ID,
-};
+export { CHARLES_HCP_ID };
+
+const techIdForHcpId = (hcpId: string) => TECHNICIANS.find((t) => t.hcpId === hcpId)?.id ?? '';
+export const CHARLES_TECH_ID = techIdForHcpId(CHARLES_HCP_ID);
+
+/** DB tech UUID -> HCP employee id, derived from the canonical roster. */
+export const TECH_HCP_BY_UUID: Record<string, string> = Object.fromEntries(TECH_BY_DB_ID);
 
 /** Structural minimum: a tech id and an hcp_data blob. */
 export interface AttributableJob {
@@ -318,10 +335,16 @@ export function creditedJobsFor<T extends AttributableJob>(jobs: T[], techUuid: 
   if (!techHcpId) return jobs;
   return jobs.filter((j) => {
     // tech_id alone is sometimes the only signal: ~5% of rows carry no
-    // assigned_employees at all. assigned_employees alone is also not
-    // enough: it carries the symmetric case where Charles is the primary
-    // tech_id but this tech is co-assigned.
-    const isTheirs = j.tech_id === techUuid || getAssignedHcpIds(j).includes(techHcpId);
+    // assigned_employees at all. The assignees branch covers the symmetric
+    // case where Charles is the primary tech_id but this tech is
+    // co-assigned — and it MUST stay gated to Charles-primary rows.
+    // Ungated, any co-assignment reads as ownership, so a ticket shared by
+    // two juniors is credited to both and per-tech totals exceed the
+    // company total. use-technician-data.ts gates its symmetric pull the
+    // same way, citing a prior inflation incident.
+    const isTheirs =
+      j.tech_id === techUuid
+      || (j.tech_id === CHARLES_TECH_ID && getAssignedHcpIds(j).includes(techHcpId));
     return isTheirs && shouldCreditTechnician(j, techHcpId);
   });
 }
