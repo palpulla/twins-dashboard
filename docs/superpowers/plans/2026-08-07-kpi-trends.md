@@ -2544,6 +2544,8 @@ Set the Company Scorecard filter to YTD and note the exact value on the **Estima
 
 Repeat the same comparison for **Conversion rate** and **Revenue**, which use different date bases and so exercise different reads.
 
+**Also check the null-basis-date gap.** `buildSeries` drops any row whose basis date is null, because it has no bucket to live in. Several canonical functions do not require that date: `calculateTotalJobAverage` counts a completed job with no `scheduled_at`, and `calculateEstimateConversionRate` counts unscheduled estimates. Those rows count in the tile and vanish from the trend. `bucketDateFor` softens this for estimates via the `hcp_data.created_at` fallback, and non-estimate rows deliberately have no fallback (Task 4 explains why), so some divergence here is inherent to plotting against time rather than a bug. The AGREEMENT test cannot see it, because it runs over rows that all have dates. Quantify it once against a live tile: if **Total job average** or **Estimate close %** differs from its tile by more than a rounding margin, count the null-`scheduled_at` rows in the window and confirm the difference is fully explained by them before shipping.
+
 - [ ] **Step 4: Confirm no KPI math moved**
 
 Run: `git diff main --stat -- src/lib/kpi-calculations.ts`
