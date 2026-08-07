@@ -717,7 +717,6 @@ describe('kpi-registry', () => {
   it('marks the inverted KPIs as lower-is-better', () => {
     expect(getTrendKpi('callback_rate')?.higherIsBetter).toBe(false);
     expect(getTrendKpi('cancellation_rate')?.higherIsBetter).toBe(false);
-    expect(getTrendKpi('cpa')?.higherIsBetter).toBe(false);
     expect(getTrendKpi('conversion')?.higherIsBetter).toBe(true);
   });
 
@@ -741,7 +740,6 @@ describe('kpi-registry', () => {
     expect(perTechKeys).toContain('revenue');
     expect(perTechKeys).not.toContain('call_booking_rate');
     expect(perTechKeys).not.toContain('marketing_spend');
-    expect(perTechKeys).not.toContain('cpa');
   });
 
   it('only claims a goalKey that exists in company_goals', () => {
@@ -771,7 +769,6 @@ import {
   calculateAvgOptionsPerTicketForTech,
   calculateAvgSoldInstall,
   calculateAvgSoldRepair,
-  calculateCPA,
   calculateCallBookingRate,
   calculateCallbackRate,
   calculateCancellationRate,
@@ -1114,19 +1111,6 @@ export const TREND_KPIS: TrendKpiDef[] = [
     perTech: false,
     higherIsBetter: true,
   },
-  {
-    key: 'cpa',
-    label: 'Cost per acquisition',
-    unit: 'usd',
-    dateBasis: 'row_date',
-    sources: ['marketing', 'jobs'],
-    needsHcpData: true,
-    aggregate: 'rate',
-    compute: (r) => (r.marketingSpend.length === 0 ? null : calculateCPA(r.marketingSpend, r.jobs)),
-    denominator: (r) => r.jobs.length,
-    perTech: false,
-    higherIsBetter: false,
-  },
 ];
 
 export function getTrendKpi(key: string): TrendKpiDef | undefined {
@@ -1143,7 +1127,7 @@ export function trendKpisForTech(): TrendKpiDef[] {
 Run: `npx vitest --run src/lib/trends/__tests__/kpi-registry.test.ts`
 Expected: PASS, 7 tests.
 
-If `cpa` fails the empty-rate assertion, check `calculateCPA`'s zero-length behavior rather than loosening the test. The rule is that a rate with no denominator gaps.
+The empty-input test only proves an entry gaps when it has NOTHING. The real hazard is a bucket FULL of rows whose canonical denominator is still empty: every `calculate*` returns a bare `0` there, and a plotted `0` on a rate is a claim, not an absence. `total_job_avg` and `call_booking_rate` both have this shape — their gap condition must count the canonical denominator (completed non-estimate jobs; calls flagged `is_lead_opportunity`), not `r.jobs.length` / `r.calls.length`. Add non-empty tests for both. If an entry cannot satisfy a test, work out whether the entry or the test is wrong before changing either.
 
 - [ ] **Step 5: Commit**
 
@@ -2257,24 +2241,45 @@ For each `<div className="kpi">` block, add the click affordance. The pattern, a
 >
 ```
 
-Tile-to-key mapping, all of which exist in the registry:
+Tile-to-key mapping. **VERIFIED against `Index.tsx` on 2026-08-07** — the earlier draft of this table listed tiles that do not exist and missed two that do. Confirm with:
+
+```bash
+grep -oE '<div className="label">[^<{]*' src/pages/Index.tsx | sed 's/<div className="label">//' | sort -u
+```
+
+The ten `.kpi` tiles that get a trend:
 
 | Tile label | `trendKpiKey` | `kpi` (Jobs tab) |
 |---|---|---|
-| Total Sales | `revenue` | `revenue` |
-| Opp. Job Avg | `opportunity_avg` | — |
+| Opp. Job Avg ⭐ | `opportunity_avg` | — |
 | Avg Sold Repair | `repair_avg` | — |
 | Avg Sold Install | `install_avg` | — |
 | Conversion | `conversion` | `closing` |
-| Membership Rate | `membership_conv` | `membership` |
-| Call Booking Rate | `call_booking_rate` | — |
+| Estimate Close % | `estimate_close_pct` | — |
 | Callback Rate | `callback_rate` | `callback` |
 | Cancellations | `cancellations` | — |
-| Options/Ticket | `options_per_ticket` | — |
+| Options / Ticket | `options_per_ticket` | — |
 | Total Opportunities | `total_opportunities` | — |
 | Completed Jobs | `completed_jobs` | — |
-| Marketing Spend | `marketing_spend` | — |
-| CPA | `cpa` | — |
+
+Handled separately, because they are not `.kpi` tiles:
+
+- **Total Sales** is the large revenue card near line 635, with its own markup and an existing `onClick`. Map it to `revenue` / Jobs tab `revenue`.
+- **Membership Rate**, **Call Booking Rate** and **Closing %** are `SemiGauge` cards in the gauge row (around line 745), not tiles. Wire the same click handler onto the gauge card wrapper: `membership_conv` (Jobs tab `membership`), `call_booking_rate`, and `closing_pct`.
+
+Deliberately NOT clickable, and no registry entry exists for them:
+
+- **Active Technicians** and **Scheduled** are point-in-time states, not period metrics. A trend of them would be meaningless.
+- **Avg appts/day** — see below.
+
+Two mismatches to respect rather than paper over:
+
+- **Avg appts/day** shows a per-day average normalized to a five-day week. The registry's `appointments` entry is the per-bucket count, because a bucket is already a fixed-width period. Related, but not the same number. Wire the tile to `appointments` and leave the chart labeled "Appointments"; do not add a per-day variant and do not adjust either number to match the other.
+- **Marketing Leads** has a tile, and `marketing_leads` is in the registry, but the tile reads from `marketing_spend.leads_generated`, which counts FORM leads only. Call and messaging campaigns read as zero. The chart footnote from Task 9 says so; do not try to "fix" the number.
+
+**CPA has no tile.** The company-wide CPA card was deliberately removed — see the comment at `Index.tsx:803` — and CPA now appears as per-channel CAC on `/marketing-roi` with different math. There is no `cpa` registry entry; do not add one.
+
+**Marketing Spend has no tile either.** Its registry entry exists only to be selectable as a right-axis overlay in Task 10.
 
 The existing Total Sales tile already has `onClick={() => setRevenueDrilldownOpen(true)}` at line ~635. Replace it with `onClick={() => openTrend('revenue', 'revenue')}`. Its behavior changes from opening the job list directly to opening the sheet on Trend, with the same job list one tab away.
 
