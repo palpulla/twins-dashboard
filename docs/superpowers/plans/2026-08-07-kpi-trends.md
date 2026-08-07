@@ -843,7 +843,11 @@ export const TREND_KPIS: TrendKpiDef[] = [
     unit: 'usd',
     dateBasis: 'completed_at',
     sources: ['jobs'],
-    needsHcpData: false,
+    // MUST be true despite the compute not reading hcp_data: this entry is
+    // perTech, and creditedJobsFor reads hcp_data.assigned_employees. Without
+    // the blob the Charles Solo Rule degenerates to "always true" and per-tech
+    // revenue credit is silently wrong — on the number that feeds commission.
+    needsHcpData: true,
     aggregate: 'sum',
     // Mirrors the Total Sales tile, which sums useDashboardData's revenue
     // query: completed_at present AND revenue_amount > 0, with no status or
@@ -1067,7 +1071,8 @@ export const TREND_KPIS: TrendKpiDef[] = [
     unit: 'count',
     dateBasis: 'completed_at',
     sources: ['jobs'],
-    needsHcpData: false,
+    // True for the attribution reason above, not because compute needs it.
+    needsHcpData: true,
     aggregate: 'sum',
     compute: (r) => r.jobs.filter((j) => j.completed_at).length,
     perTech: true,
