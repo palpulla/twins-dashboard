@@ -269,6 +269,11 @@ Findings:
 4. **Five assets use an AI-generated spokesperson.** Retired by owner decision, on the grounds
    that a synthetic person undercuts a family-run local business's core claim.
 5. **Genuine real-person and real before/after footage already exists** and was not being used.
+   **[VERIFIED]** One existing asset is the owner himself on camera, native 9:16, with the offer
+   already burned in. All new talking-head creative will feature the owner, on the reasoning that
+   an owner-on-camera pitch is the asset a family-run local operator has that a national
+   competitor does not. Note this raises a production dependency on his filming availability,
+   which is a real constraint on the one-new-creative-per-cell-per-week cadence.
 
 ### 7.3 Call-tracking defect
 

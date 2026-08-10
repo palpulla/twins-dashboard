@@ -332,8 +332,9 @@ which is worse than the current untracked state.
 | Retire | `twins_beforeafter_demo.mp4` | Fake before/after |
 | Retire | All 5 AI-avatar assets | Decision 2026-08-09 |
 
-**[UNKNOWN]** Whether the real face in `twins_49_REAL_welcome.mp4` is Daniel or Tal. Cannot be
-determined from footage. Daniel to confirm.
+**[VERIFIED]** The real face in `twins_49_REAL_welcome.mp4` is **Daniel, the owner** (confirmed
+by Daniel 2026-08-09). This makes it the reference asset for the spokesperson format: all new
+talking-head creative features Daniel on camera.
 
 ### 5.5 Higgsfield production gaps
 
