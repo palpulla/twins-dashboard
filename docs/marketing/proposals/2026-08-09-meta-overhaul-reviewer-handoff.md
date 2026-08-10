@@ -260,7 +260,11 @@ Findings:
 1. **The 0.40% before/after ad uses a fabricated before/after.** Frame extraction shows the
    "before" is a gray two-story craftsman and the "after" is an entirely different modern dark
    house. Our read is that the audience detected this. **[ASSUMED]** but strongly supported by
-   the impression volume.
+   the impression volume. **[VERIFIED]** There is no genuine door-replacement before/after in the
+   library to swap in. The only real before/after that exists is an opener replacement, where the
+   door panels and track are identical in both halves and only a ceiling unit changes, which
+   reads as nothing on a phone. **The install offer therefore has no honest hero asset today and
+   one has to be produced before that cell can run properly.**
 2. **Seven "offer ads" have a dead first second:** logo on empty color at t=0.2s, headline at
    t=1.0s, frozen frame through t=2.0s, flat vector illustration rather than real doors.
 3. **Two assets reuse the failed hook pattern:** a sports-car burnout with "wait for it..." and

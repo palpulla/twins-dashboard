@@ -300,7 +300,8 @@ works and should be reused rather than rebuilt.
 | 3 | `Twins_HOOK_FIXED_SAMPLE` (sports-car burnout, "wait for it...") and `Twins_49_TuneUp_July4th_Reel_v2` (fireworks, "wait for the finale:") use unrelated-spectacle hooks. This is the goat-video pattern that produced 7 Stop replies out of 16 | [VERIFIED] |
 | 4 | Five assets use an AI-generated spokesperson. **Retired by decision** | [VERIFIED] |
 | 5 | `twins_49_REAL_welcome.mp4` is real-person footage, native 9:16, 30.6s, with a "$49 WINTER TUNE-UP" lower third already burned in | [VERIFIED] |
-| 6 | `before and after garage door repair.mp4` is a genuine **same-garage** before/after, labeled in-frame, 1920x1080, 52.8s | [VERIFIED] |
+| 6 | `before and after garage door repair.mp4` is a genuine **same-garage** before/after, labeled in-frame, 1920x1080, 52.8s. **It is an OPENER replacement, not a door replacement** (the door panels and track are identical in both halves; only the ceiling unit changes). Visually subtle on a phone. Usable as an opener-upgrade asset or B-roll, **not** as the install-offer hero | [VERIFIED] by frame comparison |
+| 6b | **Twins has NO genuine door-replacement before/after footage.** The only door before/after in the library is the fabricated one. This is a real production gap, not a re-cut task | [VERIFIED] |
 | 7 | Real-face footage carries **no burned-in captions**. Most Reels play muted | [VERIFIED] |
 
 ### 5.3 The phone number defect
