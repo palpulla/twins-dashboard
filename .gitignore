@@ -1,3 +1,9 @@
 .secrets/
 .superpowers/
 .worktrees/
+
+# Meta rebuild 2026-08 creative: keep only the upscaled 1080x1920 heroes.
+# The 720x1280 seedance_2_5 originals are rejects/working files, see the
+# manifest in this folder for their job IDs.
+twins-media-generator/outputs/meta-rebuild-2026-08/*.mp4
+!twins-media-generator/outputs/meta-rebuild-2026-08/*_UPSCALED.mp4
