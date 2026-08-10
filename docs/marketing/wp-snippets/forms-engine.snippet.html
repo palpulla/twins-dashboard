@@ -77,7 +77,10 @@
     mount.addEventListener("input", function () { if (!started) { started = true; beacon("start"); } }, { once: true });
     mount.addEventListener("submit", function (e) {
       var form = e.target; e.preventDefault();
-      if (form.website && form.website.value) return;
+      // Honeypot is NOT decided here. The value is forwarded and lp-lead-intake
+      // drops it server-side, because a client-side check is not a control: it is
+      // skipped entirely by anything that posts without running this script.
+      // Server returns ok either way, so a bot gets no signal.
       var tok = (crypto.randomUUID && crypto.randomUUID()) || (Date.now() + "-x");
       var data = {
         name: (form.name && form.name.value || "").trim(),
@@ -87,7 +90,7 @@
         message: (form.message && form.message.value || "").trim(),
         service: chosenService || (form.service && form.service.value) || "", page: location.href, form_variant: variant,
         chooser_token: tok, consent: form.consent && form.consent.checked ? "true" : "",
-        website: ""
+        website: (form.website && form.website.value) || ""
       };
       if (!data.name || !data.phone) { alert("Please add your name and phone number."); return; }
       var btn = form.querySelector('button[type="submit"]'); if (btn) { btn.disabled = true; btn.textContent = "Sending..."; }
