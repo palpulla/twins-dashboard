@@ -4,6 +4,12 @@
 // thank-you chooser snippet 7330), and add service/zip/form_variant/chooser_token/consent
 // to the lp-lead-intake payload so the /thank-you/ chooser can resolve this lead.
 add_action( 'gform_after_submission_1', function ( $entry, $form ) {
+	// Spam gate. Gravity Forms flags spam (Zero Spam / Akismet / honeypot) but
+	// still fires gform_after_submission, so before this EVERY spam entry was
+	// forwarded to GHL anyway: 1,147 spam vs 162 real entries on 2026-08-10, and
+	// the junk landed in ghl_contacts as source "Website LP", wrecking the Call
+	// Booking Rate denominator. Verified by submitting with the honeypot filled.
+	if ( rgar( $entry, 'status' ) === 'spam' || rgar( $entry, 'is_spam' ) ) { return; }
 	$token = wp_generate_uuid4();
 	setcookie( 'twins_chooser', $token, time() + 600, '/', '', true, false );
 	$services = array();
