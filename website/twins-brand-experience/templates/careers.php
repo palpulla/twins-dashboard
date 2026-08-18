@@ -5,7 +5,7 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
     throw new DomainException('Quote action is unavailable.');
 }
 ?>
-<main id="twins-overhaul-main" class="twins-brand-page twins-brand-careers-page">
+<div id="twins-overhaul-main" class="twins-brand-page twins-brand-careers-page">
   <nav class="twins-brand-page-nav" aria-label="Careers page navigation">
     <a href="#why-twins">Why Twins</a>
     <a href="#roles">Ways to contribute</a>
@@ -131,4 +131,4 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
     <h2 id="twins-brand-careers-quote-title">Need garage door help instead?</h2>
     <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
   </section>
-</main>
+</div>

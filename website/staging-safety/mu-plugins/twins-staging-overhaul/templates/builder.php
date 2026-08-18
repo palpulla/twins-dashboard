@@ -9,6 +9,27 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Clopay's public EZDoor visualizer, embedded at Clopay's direction.
+ *
+ * Define TWINS_EZDOOR_EMBED_URL in wp-config.php to swap in the
+ * dealer-attributed URL once Twins' Clopay account manager supplies it, so
+ * quote requests raised inside the visualizer are credited to Twins. The
+ * value must be an https URL on the EZDoor host or it is ignored.
+ */
+if (!defined('TWINS_EZDOOR_EMBED_URL')) {
+    define('TWINS_EZDOOR_EMBED_URL', 'https://ezdoor.clopay.com/ezdoor/home');
+} else {
+    $twinsEzdoorParts = parse_url((string) TWINS_EZDOOR_EMBED_URL);
+    if (
+        !is_array($twinsEzdoorParts)
+        || ($twinsEzdoorParts['scheme'] ?? '') !== 'https'
+        || strtolower($twinsEzdoorParts['host'] ?? '') !== 'ezdoor.clopay.com'
+    ) {
+        twins_overhaul_refuse_route('EZDoor embed URL is not a valid EZDoor origin.');
+    }
+}
+
+/**
  * Validate one fixed local image record.
  *
  * @param mixed $image Candidate image record.
@@ -55,7 +76,7 @@ function twins_overhaul_builder_catalog(): array {
         twins_overhaul_refuse_route('builder catalog contains a remote or unreadable value.');
     }
     $hash = hash('sha256', $bytes);
-    $expectedHash = 'ce960f1267327183719192d80d249f31c903a24e5fc6471992bed00dccda74f5';
+    $expectedHash = '3840b4c75a300c7a7270cf71f141fab628e83cfd51cf052ad2284ece4d328b92';
     if (!hash_equals($expectedHash, $hash)) {
         twins_overhaul_refuse_route('builder catalog digest does not match the approved catalog.');
     }
@@ -144,9 +165,27 @@ function twins_overhaul_render_builder(array $context): string {
     );
     $markup = '<div id="twins-overhaul-main" class="twins-brand-page twins-overhaul-main twins-builder-page" tabindex="-1">';
     $markup .= '<section class="twins-builder-hero"><div class="twins-overhaul-shell"><p class="twins-overhaul-eyebrow">Official Clopay dealer</p><h1>Design your garage door with Twins</h1><p>Explore Clopay collections, pick the panel style, color, windows, and hardware you like, and share your design with the Twins team for a real quote.</p></div></section>';
+    // Clopay's own EZDoor visualizer is the primary design experience: it
+    // renders the real photographic door for every option combination and
+    // stays current with Clopay's catalogue automatically. The local
+    // catalogue browser below remains as the no-JS/fallback path.
+    $markup .= '<section class="twins-overhaul-section twins-ezdoor"><div class="twins-overhaul-shell">';
+    $markup .= '<div class="twins-ezdoor__heading"><h2>See it on a real door</h2><p>Pick a style, colour, windows, and hardware and watch the door update. You can even upload a photo of your own home to see it in place.</p></div>';
+    $markup .= '<div class="twins-ezdoor__frame">';
+    $markup .= '<iframe src="' . esc_url(TWINS_EZDOOR_EMBED_URL) . '" title="Clopay EZDoor garage door visualizer" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox" allowfullscreen></iframe>';
+    $markup .= '</div>';
+    $markup .= '<p class="twins-ezdoor__note">Designed something you like? Call <a href="tel:' . esc_attr($region['tel']) . '">' . esc_html($region['phone']) . '</a> or request a quote and the Twins team will price that exact door.</p>';
+    $markup .= '</div></section>';
+
     $markup .= '<section class="twins-overhaul-section twins-builder"><div class="twins-overhaul-shell">';
+    $markup .= '<h2 class="twins-builder__browse-title">Or browse the collections</h2>';
     $markup .= '<p class="twins-builder__truth"><strong>Manufacturer reference only.</strong> Images show product, panel, color, window, glass, hardware, or inspiration references. Your selected options are listed separately, and Twins will confirm the final appearance before ordering.</p>';
-    $markup .= '<p class="twins-builder__truth" role="note">This private staging preview does not submit or store lead information. Selections remain in this page until you leave or reload.</p>';
+    // Staging-only. The claim is true here because StagingQuoteAdapter is
+    // deliberately inert, and false on production where the quote adapter
+    // takes over, so it must not survive cutover.
+    if (!twins_overhaul_environment_is_production()) {
+        $markup .= '<p class="twins-builder__truth" role="note">This private staging preview does not submit or store lead information. Selections remain in this page until you leave or reload.</p>';
+    }
     $markup .= '<div class="twins-builder__fallback" data-builder-fallback><h2>Builder steps</h2><ol>';
     foreach ($stages as $stage) {
         $markup .= '<li>' . esc_html($stage) . '</li>';

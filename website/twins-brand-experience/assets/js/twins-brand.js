@@ -111,6 +111,340 @@
     window.addEventListener('scroll', update, { passive: true });
   }
 
+  function createVisibilityPause(element, onChange) {
+    onChange(false);
+    if (!('IntersectionObserver' in window)) {
+      return false;
+    }
+
+    let observer = null;
+    try {
+      observer = new IntersectionObserver(entries => {
+        onChange(entries.some(entry => entry.target === element && entry.isIntersecting));
+      }, { threshold: 0.2 });
+      observer.observe(element);
+      return true;
+    } catch {
+      observer?.disconnect();
+      onChange(false);
+      return false;
+    }
+  }
+
+  /**
+   * Previous/next controls for the team roster, otherwise a horizontal scroll
+   * rail with no affordance.
+   *
+   * The rail is scroll-snap-type: x mandatory, which defeats programmatic
+   * scrolling. Measured on staging: scrollBy and scrollTo with
+   * behavior:'smooth' never move it, snapped or not. A direct scrollLeft
+   * assignment does move it once snap is suspended and the style has been
+   * committed, verified live at 14 -> 394. Snap is restored on the next frame
+   * so dragging still snaps.
+   *
+   * TWINS_ROSTER_DEBUG on window turns on per-click instrumentation.
+   */
+  /**
+   * Live review figures. The server renders the last verified snapshot (the
+   * staging safety plugin blocks all WordPress outbound HTTP, so PHP cannot
+   * fetch live data here; on production it can, and this still runs as a
+   * freshness layer). The browser reads the public, read-only summary row
+   * that the daily Places cron maintains and updates the numbers in place.
+   * On any failure or implausible value the snapshot stays - the site must
+   * never show an invented rating.
+   */
+  function initLiveReviewSummary(root) {
+    const ratings = [...root.querySelectorAll('[data-twins-live-rating]')];
+    const counts = [...root.querySelectorAll('[data-twins-live-count]')];
+    if (!ratings.length && !counts.length) return;
+    const endpoint = 'https://jwrpjuqaynownxaoeayi.supabase.co/rest/v1/places_profile_summary'
+      + '?select=rating,user_rating_count&place_id=eq.ChIJ6WuQE9VSBogRgy76ORRGfHs';
+    fetch(endpoint, {
+      headers: { apikey: 'sb_publishable_22ascfuq2ALa8u5taJ0OZA_U_SpDewm', Accept: 'application/json' },
+    })
+      .then(response => (response.ok ? response.json() : null))
+      .then(rows => {
+        const row = Array.isArray(rows) ? rows[0] : null;
+        if (!row) return;
+        const rating = Number(row.rating);
+        const count = Number(row.user_rating_count);
+        if (Number.isFinite(rating) && rating > 0 && rating <= 5) {
+          ratings.forEach(element => { element.textContent = rating.toFixed(1); });
+        }
+        if (Number.isInteger(count) && count > 0) {
+          counts.forEach(element => { element.textContent = String(count); });
+        }
+      })
+      .catch(() => {});
+  }
+
+  function initHomeTeamRoster(root) {
+    const roster = root.querySelector('.twins-brand-home-team-roster');
+    const controls = root.querySelector('[data-home-team-controls]');
+    if (!roster || !controls) return;
+    const previous = controls.querySelector('[data-home-team-prev]');
+    const next = controls.querySelector('[data-home-team-next]');
+    if (!previous || !next) return;
+
+    const maxScroll = () => roster.scrollWidth - roster.clientWidth;
+    const sync = () => {
+      const max = maxScroll();
+      if (max <= 8) { controls.hidden = true; return; }
+      controls.hidden = false;
+      previous.disabled = roster.scrollLeft <= 2;
+      next.disabled = roster.scrollLeft >= max - 2;
+    };
+    const step = () => {
+      const card = roster.querySelector('.twins-brand-home-team-person');
+      const width = card ? card.getBoundingClientRect().width + 12 : 200;
+      return Math.max(width, Math.round(roster.clientWidth * 0.6));
+    };
+
+    const nudge = direction => {
+      const before = roster.scrollLeft;
+      const target = Math.max(0, Math.min(maxScroll(), before + direction * step()));
+      roster.style.scrollSnapType = 'none';
+      void roster.offsetWidth;
+      roster.scrollLeft = target;
+      const after = roster.scrollLeft;
+      if (window.TWINS_ROSTER_DEBUG) {
+        window.TWINS_ROSTER_LOG = { before, step: step(), target, after, moved: after !== before, snap: getComputedStyle(roster).scrollSnapType };
+      }
+      requestAnimationFrame(() => {
+        roster.style.scrollSnapType = '';
+        sync();
+      });
+      sync();
+    };
+
+    previous.addEventListener('click', () => nudge(-1));
+    next.addEventListener('click', () => nudge(1));
+    roster.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
+  }
+
+  function initHomeReveals(root, reducedMotion) {
+    const items = [...root.querySelectorAll('[data-home-reveal]')];
+    if (!items.length) return;
+    const reveal = item => { item.dataset.homeVisible = 'true'; };
+    if (reducedMotion.matches || !('IntersectionObserver' in window)) {
+      items.forEach(reveal);
+      return;
+    }
+
+    let observer = null;
+    const failOpen = () => {
+      observer?.disconnect();
+      document.documentElement.classList.remove('twins-home-motion-ready');
+      items.forEach(reveal);
+    };
+
+    try {
+      observer = new IntersectionObserver(entries => {
+        try {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            reveal(entry.target);
+            observer.unobserve(entry.target);
+          });
+        } catch {
+          failOpen();
+        }
+      }, { threshold: 0, rootMargin: '0px 0px 20% 0px' });
+      items.forEach(item => observer.observe(item));
+      document.documentElement.classList.add('twins-home-motion-ready');
+    } catch {
+      failOpen();
+    }
+
+    // Content must never sit hidden waiting on an observer. Anything still
+    // unrevealed shortly after load is shown regardless. Kept outside the
+    // observer setup so a missing timer API cannot disable the reveal itself.
+    if (typeof window.setTimeout === 'function') {
+      window.setTimeout(() => {
+        items.forEach(item => {
+          if (item.dataset.homeVisible !== 'true') reveal(item);
+        });
+      }, 1200);
+    }
+  }
+
+  function initHomeContinuousMotion(root, reducedMotion) {
+    const items = [...root.querySelectorAll('[data-home-motion]')];
+    if (!items.length || !('IntersectionObserver' in window)) return;
+
+    const states = new Map(items.map(item => [
+      item,
+      { viewport: false, pauses: new Set() },
+    ]));
+    const sync = item => {
+      const state = states.get(item);
+      if (!state) return;
+      const visible = state.viewport && !document.hidden && !reducedMotion.matches;
+      item.dataset.motionVisible = String(visible);
+      item.dataset.motionActive = String(visible && state.pauses.size === 0);
+      if (visible) item.dataset.motionEntered = 'true';
+    };
+    const syncAll = () => items.forEach(sync);
+    const setPause = (item, reason, paused) => {
+      const state = states.get(item);
+      if (!state) return;
+      if (paused) state.pauses.add(reason); else state.pauses.delete(reason);
+      sync(item);
+    };
+
+    let observer = null;
+    try {
+      observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          const state = states.get(entry.target);
+          if (!state) return;
+          state.viewport = entry.isIntersecting;
+          sync(entry.target);
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+      items.forEach(item => observer.observe(item));
+    } catch {
+      observer?.disconnect();
+      return;
+    }
+
+    items.forEach(item => {
+      item.dataset.motionEnhanced = 'true';
+      sync(item);
+      if (!item.hasAttribute('data-home-ticker')) return;
+      item.addEventListener('mouseenter', () => setPause(item, 'hover', true));
+      item.addEventListener('mouseleave', () => setPause(item, 'hover', false));
+      item.addEventListener('focusin', () => setPause(item, 'focus', true));
+      item.addEventListener('focusout', event => {
+        if (!item.contains(event.relatedTarget)) setPause(item, 'focus', false);
+      });
+    });
+    document.addEventListener('visibilitychange', syncAll);
+    reducedMotion.addEventListener?.('change', syncAll);
+  }
+
+  function initHomeServiceTabs(root, reducedMotion) {
+    root.querySelectorAll('[data-twins-service-tabs]').forEach(container => {
+      const tabs = [...container.querySelectorAll('[data-service-tab]')];
+      const panels = [...container.querySelectorAll('[data-service-panel]')];
+      const tablist = container.querySelector('[data-service-tablist]');
+      const controls = container.querySelector('[data-service-controls]');
+      const previous = container.querySelector('[data-service-prev]');
+      const next = container.querySelector('[data-service-next]');
+      const status = container.querySelector('[data-service-status]');
+      if (
+        !tablist
+        || !controls
+        || !previous
+        || !next
+        || !status
+        || !tabs.length
+        || tabs.length !== panels.length
+        || tabs.some(tab => !tab.id)
+        || panels.some(panel => !panel.id)
+      ) return;
+
+      let current = 0;
+      let timer = null;
+      const pauses = new Set();
+      const isPaused = () => reducedMotion.matches || document.hidden || pauses.size > 0;
+
+      const paint = index => {
+        current = (index + tabs.length) % tabs.length;
+        tabs.forEach((tab, tabIndex) => {
+          const active = tabIndex === current;
+          tab.setAttribute('aria-selected', String(active));
+          tab.tabIndex = active ? 0 : -1;
+        });
+        panels.forEach((panel, panelIndex) => {
+          const active = panelIndex === current;
+          panel.dataset.active = String(active);
+          panel.toggleAttribute('inert', !active);
+          panel.setAttribute('aria-hidden', String(!active));
+        });
+        status.textContent = `${current + 1} of ${tabs.length}`;
+      };
+
+      const stop = () => {
+        if (timer !== null) window.clearInterval(timer);
+        timer = null;
+      };
+      const syncTimer = () => {
+        const paused = isPaused();
+        container.dataset.autoplayPaused = String(paused);
+        if (paused) {
+          stop();
+          return;
+        }
+        if (timer === null) timer = window.setInterval(() => paint(current + 1), 5000);
+      };
+      const setPause = (reason, paused) => {
+        if (paused) pauses.add(reason); else pauses.delete(reason);
+        syncTimer();
+      };
+      const select = (index, moveFocus) => {
+        paint(index);
+        container.dataset.interactionPaused = 'true';
+        setPause('interaction', true);
+        if (moveFocus) tabs[current].focus();
+      };
+
+      tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => select(index, false));
+        tab.addEventListener('keydown', event => {
+          let target = null;
+          switch (event.key) {
+            case 'ArrowRight':
+            case 'ArrowDown': target = current + 1; break;
+            case 'ArrowLeft':
+            case 'ArrowUp': target = current - 1; break;
+            case 'Home': target = 0; break;
+            case 'End': target = tabs.length - 1; break;
+            default: return;
+          }
+          event.preventDefault();
+          select(target, true);
+        });
+      });
+      previous?.addEventListener('click', () => select(current - 1, false));
+      next?.addEventListener('click', () => select(current + 1, false));
+
+      container.addEventListener('mouseenter', () => setPause('hover', true));
+      container.addEventListener('mouseleave', () => setPause('hover', false));
+      container.addEventListener('focusin', () => setPause('focus', true));
+      container.addEventListener('focusout', event => {
+        if (!container.contains(event.relatedTarget)) setPause('focus', false);
+      });
+      tablist.setAttribute('role', 'tablist');
+      tablist.setAttribute('aria-label', 'Garage door services');
+      tabs.forEach((tab, index) => {
+        const panel = panels[index];
+        tab.setAttribute('role', 'tab');
+        tab.setAttribute('aria-controls', panel.id);
+        panel.setAttribute('role', 'tabpanel');
+        panel.setAttribute('aria-labelledby', tab.id);
+      });
+      status.setAttribute('role', 'status');
+      status.setAttribute('aria-live', 'polite');
+      status.setAttribute('aria-atomic', 'true');
+      paint(0);
+      tablist.removeAttribute('hidden');
+      controls.removeAttribute('hidden');
+      container.dataset.enhanced = 'true';
+      const visibilityReady = createVisibilityPause(
+        container,
+        visible => setPause('viewport', !visible),
+      );
+      if (visibilityReady) {
+        document.addEventListener('visibilitychange', syncTimer);
+        reducedMotion.addEventListener?.('change', syncTimer);
+      }
+      syncTimer();
+    });
+  }
+
   function start() {
     initZip(document);
     const header = document.querySelector('[data-twins-header]');
@@ -242,28 +576,68 @@
       const fields = [...preview.querySelectorAll('input, select, textarea')];
       const final = preview.querySelector('[data-preview-finalize]');
       const status = preview.querySelector('[data-preview-status]');
+      const successMessage = status?.textContent || '';
+      const fieldLabel = field => {
+        const label = field.closest('label');
+        const text = label?.firstChild?.textContent?.trim();
+        return text || 'This field';
+      };
+      const fieldIssue = field => {
+        const value = field.value.trim();
+        const label = fieldLabel(field);
+        if (value === '') return `${label} is required.`;
+        if (field.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          return `Enter a valid email address for ${label}.`;
+        }
+        if (field.pattern && !(new RegExp(`^(?:${field.pattern})$`)).test(value)) {
+          return `${label} does not match the requested format.`;
+        }
+        return '';
+      };
       final?.addEventListener('click', () => {
         let invalid = null;
+        const issues = [];
         fields.forEach(field => {
-          const value = field.value.trim();
-          const emailInvalid = field.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-          const patternInvalid = field.pattern && !(new RegExp(`^(?:${field.pattern})$`)).test(value);
-          const failed = value === '' || emailInvalid || patternInvalid;
+          const issue = fieldIssue(field);
+          const failed = issue !== '';
           field.setAttribute('aria-invalid', String(failed));
-          if (failed && !invalid) invalid = field;
+          if (failed) {
+            issues.push(issue);
+            if (!invalid) invalid = field;
+          }
         });
         if (invalid) {
-          if (status) status.hidden = true;
+          if (status) {
+            status.textContent = `Please fix the following: ${issues.join(' ')}`;
+            status.dataset.previewState = 'validation';
+            status.hidden = false;
+          }
           invalid.focus();
           return;
         }
-        if (status) status.hidden = false;
+        if (status) {
+          status.textContent = successMessage;
+          status.dataset.previewState = 'complete';
+          status.hidden = false;
+        }
       });
-      fields.forEach(field => field.addEventListener('input', () => field.removeAttribute('aria-invalid')));
+      fields.forEach(field => field.addEventListener('input', () => {
+        field.removeAttribute('aria-invalid');
+        if (status?.dataset.previewState === 'validation') {
+          status.hidden = true;
+          status.textContent = successMessage;
+          delete status.dataset.previewState;
+        }
+      }));
     });
 
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
     initLocationReveals(document, reducedMotion);
+    initHomeReveals(document, reducedMotion);
+    initHomeTeamRoster(document);
+    initLiveReviewSummary(document);
+    initHomeContinuousMotion(document, reducedMotion);
+    initHomeServiceTabs(document, reducedMotion);
     initLocationMobileActions(document);
     document.querySelectorAll('[data-twins-review-slider][data-review-mode="featured"]').forEach(slider => {
       const track = slider.querySelector('.twins-brand-review-track');
@@ -278,15 +652,30 @@
       let visibleCards = 1;
       let touchStartX = null;
       let permanentlyPaused = false;
+      let timer = null;
       const pauses = new Set();
-      const cardsPerPage = () => matchMedia('(min-width: 1200px)').matches ? 3 : matchMedia('(min-width: 768px)').matches ? 2 : 1;
+      const cardsPerPage = () => matchMedia('(min-width: 769px)').matches ? 3 : 1;
       const isPaused = () => pauses.size > 0 || document.hidden || reducedMotion.matches;
-      const reportPause = () => {
-        slider.dataset.autoplayPaused = String(permanentlyPaused || isPaused());
+      const stopTimer = () => {
+        if (timer !== null) window.clearInterval(timer);
+        timer = null;
+      };
+      const syncTimer = () => {
+        const paused = permanentlyPaused || isPaused() || pages <= 1;
+        slider.dataset.autoplayPaused = String(paused);
+        if (paused) {
+          stopTimer();
+          return;
+        }
+        if (timer === null) {
+          timer = window.setInterval(() => {
+            if (!permanentlyPaused && !isPaused()) go(current + 1);
+          }, 6200);
+        }
       };
       const setPause = (reason, value) => {
         if (value) pauses.add(reason); else pauses.delete(reason);
-        reportPause();
+        syncTimer();
       };
       const paint = () => {
         track.style.transform = `translate3d(-${current * 100}%, 0, 0)`;
@@ -309,7 +698,7 @@
       const manualGo = page => {
         permanentlyPaused = true;
         slider.dataset.interactionPaused = 'true';
-        reportPause();
+        syncTimer();
         go(page);
       };
       const build = () => {
@@ -319,6 +708,7 @@
         pages = Math.max(1, Math.ceil(cards.length / count));
         current = Math.min(current, pages - 1);
         paint();
+        syncTimer();
       };
 
       previous.addEventListener('click', () => manualGo(current - 1));
@@ -334,8 +724,8 @@
         if (!slider.contains(event.relatedTarget)) setPause('focus', false);
       });
       slider.addEventListener('pointerdown', () => setPause('pointer', true));
-      slider.addEventListener('pointerup', () => setPause('pointer', false));
-      slider.addEventListener('pointercancel', () => setPause('pointer', false));
+      window.addEventListener('pointerup', () => setPause('pointer', false));
+      window.addEventListener('pointercancel', () => setPause('pointer', false));
       slider.addEventListener('touchstart', event => {
         touchStartX = event.touches[0]?.clientX ?? null;
         setPause('touch', true);
@@ -348,14 +738,20 @@
         touchStartX = null;
         setPause('touch', false);
       }, { passive: true });
-      document.addEventListener('visibilitychange', reportPause);
-      reducedMotion.addEventListener?.('change', reportPause);
+      slider.addEventListener('touchcancel', () => {
+        touchStartX = null;
+        setPause('touch', false);
+      }, { passive: true });
+      const visibilityReady = createVisibilityPause(
+        slider,
+        visible => setPause('viewport', !visible),
+      );
+      if (visibilityReady) {
+        document.addEventListener('visibilitychange', syncTimer);
+        reducedMotion.addEventListener?.('change', syncTimer);
+      }
       window.addEventListener('resize', build, { passive: true });
       build();
-      reportPause();
-      setInterval(() => {
-        if (!permanentlyPaused && !isPaused()) go(current + 1);
-      }, 12000);
     });
 
     const compressHeader = () => {

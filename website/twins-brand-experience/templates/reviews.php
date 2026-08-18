@@ -6,12 +6,12 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
 }
 $context['classification'] = 'reviews-brand';
 ?>
-<main id="twins-overhaul-main" class="twins-brand-page twins-brand-reviews-page">
+<div id="twins-overhaul-main" class="twins-brand-page twins-brand-reviews-page">
   <section class="twins-brand-page-hero" aria-labelledby="twins-brand-reviews-page-title">
     <span class="twins-brand-kicker">Verified customer reviews</span>
     <h1 id="twins-brand-reviews-page-title">Straight from Twins customers</h1>
     <?php $reviewSummary = require dirname(__DIR__) . '/config/review-summary.php'; ?>
-    <p class="twins-brand-hero-proof"><span class="twins-brand-stars" aria-hidden="true">★★★★★</span> <?= htmlspecialchars(number_format($reviewSummary['ratingValue'], 1), ENT_QUOTES, 'UTF-8') ?> on Google from <?= htmlspecialchars($reviewSummary['displayCount'], ENT_QUOTES, 'UTF-8') ?> reviews</p>
+    <p class="twins-brand-hero-proof"><span class="twins-brand-stars" aria-hidden="true">★★★★★</span> <span data-twins-live-rating><?= htmlspecialchars(number_format($reviewSummary['ratingValue'], 1), ENT_QUOTES, 'UTF-8') ?></span> on Google from <span data-twins-live-count><?= htmlspecialchars($reviewSummary['displayCount'], ENT_QUOTES, 'UTF-8') ?></span> reviews</p>
     <p>The newest reviews below come straight from our Google profile.</p>
     <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
   </section>
@@ -31,4 +31,4 @@ $context['classification'] = 'reviews-brand';
     <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($market['phoneHref'], ENT_QUOTES, 'UTF-8') ?>">Call Twins</a>
     <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
   </section>
-</main>
+</div>

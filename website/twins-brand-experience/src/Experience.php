@@ -60,7 +60,7 @@ final class Experience
             $market = $this->markets->resolve($marketKey, $environment);
             $context['metroAddress'] = $this->metroAddressForContext($context, $market);
             $experience = $this;
-            if (in_array($template, ['../components/header', '../components/footer', 'service', 'editorial'], true)) {
+            if (in_array($template, ['../components/header', '../components/footer', 'home', 'service', 'editorial', 'location-index'], true)) {
                 [$phone, $phoneHref] = $this->contactContext($context, $market);
             }
             if ($template === 'service') {
@@ -150,8 +150,8 @@ final class Experience
             } elseif ($catalogView !== null) {
                 throw new \DomainException('Catalog view was supplied to a different template.');
             }
-            $booking = in_array($template, ['../components/header', 'contact'], true)
-                ? $this->booking->action($context)
+            $booking = in_array($template, ['../components/header', '../components/footer', 'home', 'contact'], true)
+                ? $this->validatedBookingAction($context, $environment)
                 : null;
             require $this->root . '/templates/' . $template . '.php';
             return (string) ob_get_clean();
@@ -169,9 +169,44 @@ final class Experience
     public function renderContact(array $context): string { return $this->render('contact', $context); }
     public function renderReviews(array $context): string { return $this->render('reviews', $context); }
     public function renderService(array $context): string { return $this->render('service', $context); }
+    public function renderLocationIndex(array $context): string { return $this->render('location-index', $context); }
     public function renderCatalog(array $context, array $catalogView): string
     {
         return $this->render('catalog', $context, $catalogView);
+    }
+
+    private function validatedBookingAction(array $context, string $environment): array
+    {
+        $booking = $this->booking->action($context);
+        $bookingMode = $booking['mode'] ?? null;
+
+        if ($environment === 'staging') {
+            if ($bookingMode !== 'dialog') {
+                throw new \DomainException('Booking action mode does not match staging.');
+            }
+            if (!isset($booking['experienceHtml']) || !is_string($booking['experienceHtml'])) {
+                throw new \DomainException('Booking dialog is unavailable.');
+            }
+            return $booking;
+        }
+
+        if ($environment === 'production') {
+            if ($bookingMode !== 'external') {
+                throw new \DomainException('Booking action mode does not match production.');
+            }
+            if (
+                !isset($booking['href'])
+                || !is_string($booking['href'])
+                || $booking['href'] === ''
+                || ($booking['target'] ?? null) !== '_blank'
+                || ($booking['rel'] ?? null) !== 'noopener noreferrer'
+            ) {
+                throw new \DomainException('External booking action is unavailable.');
+            }
+            return $booking;
+        }
+
+        throw new \DomainException('Booking environment is invalid.');
     }
 
     public function renderBlogIndex(array $context, array $blogView): string

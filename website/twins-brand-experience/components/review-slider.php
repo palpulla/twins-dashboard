@@ -1,6 +1,10 @@
 <?php
 declare(strict_types=1);
 
+if (!isset($reviewHeading) || !is_string($reviewHeading) || trim($reviewHeading) === '') {
+    $reviewHeading = 'What our customers say';
+}
+
 $collection = $experience->reviewCollection();
 $reviewsRoute = $experience->route('reviews', $marketKey);
 $isReviewsPage = ($context['classification'] ?? '') === 'reviews-brand';
@@ -10,7 +14,7 @@ if (($collection['status'] ?? null) === 'unavailable'):
 <section class="twins-brand-reviews" aria-labelledby="twins-brand-reviews-title">
   <div class="twins-brand-section-heading">
     <span class="twins-brand-kicker">Verified customer stories</span>
-    <h2 id="twins-brand-reviews-title">What our customers say</h2>
+    <h2 id="twins-brand-reviews-title"><?= htmlspecialchars($reviewHeading, ENT_QUOTES, 'UTF-8') ?></h2>
     <p role="status">Reviews are temporarily unavailable.</p>
   </div>
   <a class="twins-brand-text-link" href="<?= htmlspecialchars($reviewsRoute, ENT_QUOTES, 'UTF-8') ?>">Read all reviews</a>
@@ -25,7 +29,7 @@ if (!isset($collection['records']) || !is_array($collection['records'])) {
 
 $records = $collection['records'];
 if (!$isReviewsPage) {
-    $records = array_slice($records, 0, 9);
+    $records = array_slice($records, 0, 6);
 }
 
 $externalReviewsUrl = null;
@@ -41,9 +45,11 @@ $renderReviewCard = static function (array $review, int $index, bool $listMode):
     if ($words === false) {
         throw new DomainException('Verified review text is unavailable.');
     }
-    $isLong = count($words) > 42;
-    $excerpt = implode(' ', array_slice($words, 0, 42));
-    $class = 'twins-brand-review-card' . ($listMode ? ' twins-brand-review-card--list' : '');
+    $excerptLimit = $listMode ? 42 : 30;
+    $isLong = count($words) > $excerptLimit;
+    $excerpt = implode(' ', array_slice($words, 0, $excerptLimit));
+    $class = 'twins-brand-review-card'
+        . ($listMode ? ' twins-brand-review-card--list' : '');
 ?>
   <article class="<?= $class ?>" data-review-stable-id="<?= htmlspecialchars($review['stableId'], ENT_QUOTES, 'UTF-8') ?>" data-review-index="<?= $index ?>">
     <div class="twins-brand-review-stars" aria-label="<?= (int) $review['rating'] ?> out of 5 stars"><?= str_repeat('★', (int) $review['rating']) ?></div>
@@ -54,7 +60,7 @@ $renderReviewCard = static function (array $review, int $index, bool $listMode):
         <blockquote><?= nl2br(htmlspecialchars($review['text'], ENT_QUOTES, 'UTF-8')) ?></blockquote>
       </details>
     <?php elseif ($isLong): ?>
-      <p class="twins-brand-review-excerpt"><?= htmlspecialchars($excerpt, ENT_QUOTES, 'UTF-8') ?>…</p>
+      <blockquote class="twins-brand-review-excerpt"><?= htmlspecialchars($excerpt, ENT_QUOTES, 'UTF-8') ?>…</blockquote>
     <?php else: ?>
       <blockquote><?= nl2br(htmlspecialchars($review['text'], ENT_QUOTES, 'UTF-8')) ?></blockquote>
     <?php endif; ?>
@@ -69,7 +75,7 @@ $renderReviewCard = static function (array $review, int $index, bool $listMode):
 <section class="twins-brand-reviews" aria-labelledby="twins-brand-reviews-title">
   <div class="twins-brand-section-heading">
     <span class="twins-brand-kicker">Verified customer stories</span>
-    <h2 id="twins-brand-reviews-title">What our customers say</h2>
+    <h2 id="twins-brand-reviews-title"><?= htmlspecialchars($reviewHeading, ENT_QUOTES, 'UTF-8') ?></h2>
     <p class="twins-brand-google-attribution" aria-label="Verified Google reviews">Google reviews from real Twins customers</p>
   </div>
   <?php if ($isReviewsPage): ?>
@@ -81,9 +87,9 @@ $renderReviewCard = static function (array $review, int $index, bool $listMode):
       <div class="twins-brand-review-track">
         <?php foreach ($records as $index => $review) $renderReviewCard($review, (int) $index, false); ?>
       </div>
-      <button type="button" class="twins-brand-review-control" data-review-prev aria-label="Previous reviews">Previous</button>
+      <button type="button" class="twins-brand-review-control" data-review-prev aria-label="Previous review"><span aria-hidden="true">←</span></button>
       <output class="twins-brand-review-status" data-review-page-status aria-live="polite">1 of 1</output>
-      <button type="button" class="twins-brand-review-control" data-review-next aria-label="Next reviews">Next</button>
+      <button type="button" class="twins-brand-review-control" data-review-next aria-label="Next review"><span aria-hidden="true">→</span></button>
     </div>
     <a class="twins-brand-text-link" href="<?= htmlspecialchars($reviewsRoute, ENT_QUOTES, 'UTF-8') ?>">Read all reviews</a>
   <?php endif; ?>

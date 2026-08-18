@@ -75,18 +75,33 @@ body.twins-brand-route-builder .twins-overhaul-eyebrow {
   body.twins-brand-route-cost-madison,
   body.twins-brand-route-cost-milwaukee
 ) .twins-overhaul-button {
+  /* Aligned with .twins-brand-cta so the cost guides carry the same button
+     language as every other page: pill shape, Lilita label, soft cast shadow,
+     lift on hover. Spec 2026-08-12 §1. */
   display: inline-flex;
   min-height: 48px;
   align-items: center;
   justify-content: center;
-  padding: 12px 20px;
-  border: 3px solid var(--twins-navy);
-  border-radius: 8px;
+  padding: 14px 26px;
+  border: 2px solid rgba(7, 28, 56, .85);
+  border-radius: 999px;
   color: var(--twins-navy-950);
   background: var(--twins-yellow);
-  box-shadow: 5px 5px 0 var(--twins-navy);
-  font-weight: 950;
+  box-shadow: 0 3px 0 rgba(3, 18, 43, .38), 0 12px 24px -10px rgba(3, 18, 43, .65);
+  font-family: 'Lilita One', Impact, sans-serif;
+  font-size: 1.02rem;
+  font-weight: 400;
+  letter-spacing: .045em;
   text-decoration: none;
+  transition: transform .16s cubic-bezier(.2, .8, .2, 1), box-shadow .16s ease;
+}
+
+:is(
+  body.twins-brand-route-cost-madison,
+  body.twins-brand-route-cost-milwaukee
+) .twins-overhaul-button:is(:hover, :focus-visible) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 0 rgba(3, 18, 43, .38), 0 20px 32px -12px rgba(3, 18, 43, .7);
 }
 
 :is(
@@ -1033,6 +1048,7 @@ body.twins-brand-route-builder .twins-builder {
   width: 100%;
   max-width: 100%;
   overflow: clip;
+  background-image: repeating-linear-gradient(180deg, rgba(7, 28, 56, .035) 0 1px, transparent 1px 46px), repeating-linear-gradient(90deg, rgba(7, 28, 56, .025) 0 1px, transparent 1px 46px);
   color: var(--twins-navy);
   background:
     linear-gradient(rgba(7, 29, 59, .035) 1px, transparent 1px),
@@ -1215,16 +1231,21 @@ body.twins-brand-route-builder :where(.twins-builder__product-card, .twins-build
   padding: 11px;
   color: var(--twins-navy);
   background: var(--twins-white);
-  border: 2px solid #d4dde7;
-  border-radius: 12px;
-  box-shadow: 0 8px 18px rgba(7, 29, 59, .07);
+  border: 2px solid var(--twins-navy-950);
+  border-radius: 14px;
+  box-shadow: 4px 4px 0 var(--twins-yellow);
   text-align: left;
+  transition: transform .14s cubic-bezier(.2, .8, .2, 1), box-shadow .14s ease;
+}
+
+body.twins-brand-route-builder :where(.twins-builder__product-image, .twins-builder__option-image) {
+  background: var(--twins-cream, #fff9ec);
+  border-radius: 8px;
 }
 
 body.twins-brand-route-builder :where(.twins-builder__product-card, .twins-builder__option):hover {
-  border-color: var(--twins-yellow);
-  box-shadow: 4px 4px 0 var(--twins-yellow);
-  transform: translate(-2px, -2px);
+  box-shadow: 6px 7px 0 var(--twins-yellow);
+  transform: translateY(-2px);
 }
 
 body.twins-brand-route-builder :where(.twins-builder__product-card, .twins-builder__option)[aria-pressed="true"] {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 $pictures = [
     'crew-fleet' => [
         'original' => 'crew-fleet-original',
-        'sources' => ['crew-fleet-768w 768w', 'crew-fleet-1280w 1280w', 'crew-fleet-1920w 1920w'],
+        'sources' => ['crew-fleet-768w 768w', 'crew-fleet-1280w 1280w', 'crew-fleet-1920w 1920w', 'crew-fleet-2560w 2560w'],
         'width' => 2560,
         'height' => 1372,
         'alt' => 'The Twins Garage Doors crew with their branded service fleet',
@@ -60,18 +60,40 @@ $pictures = [
     ],
 ];
 
-if (!isset($pictures[$logicalKey])) throw new DomainException('Unknown picture key.');
+$requestedFallbackKey = $pictureFallbackLogicalKey ?? null;
+unset($pictureFallbackLogicalKey);
 
-$picture = $pictures[$logicalKey];
-$srcset = [];
-foreach ($picture['sources'] as $source) {
-    [$assetKey, $descriptor] = explode(' ', $source, 2);
-    $srcset[] = $experience->asset($assetKey) . ' ' . $descriptor;
+$resolvePicture = static function (string $key) use ($experience, $pictures): array {
+    if (!isset($pictures[$key])) {
+        throw new DomainException('Unknown picture key.');
+    }
+
+    $picture = $pictures[$key];
+    $srcset = [];
+    foreach ($picture['sources'] as $source) {
+        [$assetKey, $descriptor] = explode(' ', $source, 2);
+        $srcset[] = $experience->asset($assetKey) . ' ' . $descriptor;
+    }
+
+    return [$picture, $srcset, $experience->asset($picture['original'])];
+};
+
+try {
+    [$picture, $srcset, $resolvedSrc] = $resolvePicture($logicalKey);
+} catch (\DomainException $error) {
+    if (
+        !is_string($requestedFallbackKey)
+        || $requestedFallbackKey === ''
+        || $requestedFallbackKey === $logicalKey
+    ) {
+        throw $error;
+    }
+    [$picture, $srcset, $resolvedSrc] = $resolvePicture($requestedFallbackKey);
 }
 ?>
 <picture>
   <?php if ($srcset !== []): ?>
     <source type="image/webp" srcset="<?= htmlspecialchars(implode(', ', $srcset), ENT_QUOTES, 'UTF-8') ?>" sizes="<?= htmlspecialchars($sizes, ENT_QUOTES, 'UTF-8') ?>">
   <?php endif; ?>
-  <img src="<?= htmlspecialchars($experience->asset($picture['original']), ENT_QUOTES, 'UTF-8') ?>" width="<?= (int) $picture['width'] ?>" height="<?= (int) $picture['height'] ?>" alt="<?= htmlspecialchars($picture['alt'], ENT_QUOTES, 'UTF-8') ?>" class="<?= htmlspecialchars($class, ENT_QUOTES, 'UTF-8') ?>" loading="<?= htmlspecialchars($loading, ENT_QUOTES, 'UTF-8') ?>">
+  <img src="<?= htmlspecialchars($resolvedSrc, ENT_QUOTES, 'UTF-8') ?>" width="<?= (int) $picture['width'] ?>" height="<?= (int) $picture['height'] ?>" alt="<?= htmlspecialchars($picture['alt'], ENT_QUOTES, 'UTF-8') ?>" class="<?= htmlspecialchars($class, ENT_QUOTES, 'UTF-8') ?>" loading="<?= htmlspecialchars($loading, ENT_QUOTES, 'UTF-8') ?>"<?= $loading === 'eager' ? ' fetchpriority="high"' : ' decoding="async"' ?>>
 </picture>

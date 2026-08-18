@@ -16,6 +16,10 @@ return [
         'label' => 'Wisconsin',
         'phoneDisplay' => '(608) 420-2377',
         'phoneHref' => 'tel:+16084202377',
+        'metroLines' => [
+            ['label' => 'Madison', 'phoneDisplay' => '(608) 420-2377', 'phoneHref' => 'tel:+16084202377'],
+            ['label' => 'Milwaukee', 'phoneDisplay' => '(414) 800-9271', 'phoneHref' => 'tel:+14148009271'],
+        ],
         'routePrefix' => '/wi/',
         'address' => '2921 Landmark Pl #206, Madison, WI 53713',
         'stagingEnabled' => true,

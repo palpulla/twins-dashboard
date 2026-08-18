@@ -78,21 +78,21 @@ $locationServiceCards = $isLocation
             'route' => 'repair',
             'art' => 'spring',
             'description' => 'We diagnose broken springs, damaged cables, worn rollers, track problems, noisy movement, uneven travel, and doors that will not open or close correctly.',
-            'items' => ['Broken springs', 'Cables and rollers', 'Off-track or noisy movement'],
+            'items' => ['Full door-system inspection', 'Repair options explained first', 'Balance and safety check'],
         ],
         [
             'title' => 'Garage door opener service',
             'route' => 'opener-repair',
             'art' => 'keypad',
             'description' => 'We troubleshoot motors, remotes, wall controls, safety sensors, travel settings, drive systems, and the connection between the opener and the door.',
-            'items' => ['Safety sensors', 'Remotes and wall controls', 'Motors and drive systems'],
+            'items' => ['Sensor and control diagnosis', 'Drive and travel inspection', 'Opener replacement options'],
         ],
         [
             'title' => 'Garage door installation',
             'route' => 'installation',
             'art' => 'door',
             'description' => 'When a door is extensively damaged or no longer fits the home, we measure the opening and explain construction, insulation, window, and finish choices.',
-            'items' => ['Damaged door replacement', 'Style and window choices', 'Insulation options'],
+            'items' => ['Opening measured before quoting', 'Door and track options explained', 'Complete operating-system setup'],
         ],
     ]
     : [];
@@ -118,6 +118,19 @@ $napCount = '';
 $napAddress = '';
 $locationNearbyLinks = [];
 $locationPath = isset($context['path']) && is_string($context['path']) ? $context['path'] : '';
+$normalizedEditorialPath = '/' . trim(preg_replace(
+    '~^/(wi|ky|il)/~',
+    '/',
+    '/' . ltrim($locationPath, '/')
+), '/') . '/';
+$isFinancing = $kind === 'trust' && $normalizedEditorialPath === '/financing/';
+$financingApplyHref = 'https://wisetack.us/#/ifbtqfh/prequalify';
+if ($isFinancing) {
+    $content = preg_replace('/\s*Click to Apply\s*/i', '', $content);
+    if (!is_string($content)) {
+        throw new DomainException('Financing content could not be prepared.');
+    }
+}
 $locationNavMarketKey = $marketKey;
 if ($isLocation) {
     $napSummaryFile = dirname(__DIR__) . '/config/review-summary.php';
@@ -192,9 +205,9 @@ $locationNearbyActionLabel = $locationNavMarketKey === 'ky' ? 'View all garage d
 require_once dirname(__DIR__) . '/components/door-art.php';
 $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
 ?>
-<main id="twins-overhaul-main" class="twins-brand-page twins-brand-editorial-page<?= $isArticle ? ' twins-brand-article-page' : '' ?><?= $isLocation ? ' twins-location-page' : '' ?>">
+<div id="twins-overhaul-main" class="twins-brand-page twins-brand-editorial-page<?= $isArticle ? ' twins-brand-article-page' : '' ?><?= $isLocation ? ' twins-location-page' : '' ?>">
   <?php if ($isLocation): ?>
-    <header class="twins-location-hero" aria-labelledby="twins-location-title">
+    <header class="twins-location-hero" aria-labelledby="twins-location-title" data-location-reveal>
       <div class="twins-location-hero-copy">
         <span class="twins-brand-kicker">Garage door help in <?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?></span>
         <?= $editorialTitleMarkup ?>
@@ -219,8 +232,8 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
     <section class="twins-location-trust" role="list" aria-label="Why homeowners call Twins Garage Doors" data-location-reveal>
       <div role="listitem">
         <?php if ($napRating !== null): ?>
-          <strong><span class="twins-brand-stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <?= htmlspecialchars((string) $napRating, ENT_QUOTES, 'UTF-8') ?> on Google</strong>
-          <span><?= $napCount !== '' ? htmlspecialchars($napCount, ENT_QUOTES, 'UTF-8') . ' customer reviews' : 'Verified customer reviews' ?></span>
+          <strong><span class="twins-brand-stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <span data-twins-live-rating><?= htmlspecialchars((string) $napRating, ENT_QUOTES, 'UTF-8') ?></span> on Google</strong>
+          <span><?= $napCount !== '' ? '<span data-twins-live-count>' . htmlspecialchars($napCount, ENT_QUOTES, 'UTF-8') . '</span> customer reviews' : 'Verified customer reviews' ?></span>
         <?php else: ?>
           <strong>Customer-reviewed service</strong><span>Real feedback from Twins customers</span>
         <?php endif; ?>
@@ -241,16 +254,11 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
         <p>Twins checks the complete system before recommending repair, opener work, or replacement.</p>
       </div>
       <div class="twins-location-service-grid">
-        <?php foreach ($locationServiceCards as $serviceIndex => $serviceCard): ?>
-          <article class="twins-location-service-card<?= $serviceIndex === 1 ? ' twins-location-service-card--spotlight' : '' ?>">
+        <?php foreach ($locationServiceCards as $serviceCard): ?>
+          <article class="twins-location-service-card">
             <?= twins_brand_door_art($serviceCard['art'], 'twins-location-service-art', 'location-service-' . $serviceCard['art']) ?>
             <h3><?= htmlspecialchars($serviceCard['title'], ENT_QUOTES, 'UTF-8') ?></h3>
             <p><?= htmlspecialchars($serviceCard['description'], ENT_QUOTES, 'UTF-8') ?></p>
-            <ul class="twins-location-service-items">
-              <?php foreach ($serviceCard['items'] as $serviceItem): ?>
-                <li><?= htmlspecialchars($serviceItem, ENT_QUOTES, 'UTF-8') ?></li>
-              <?php endforeach; ?>
-            </ul>
             <a class="twins-location-service-link" href="<?= htmlspecialchars($experience->route($serviceCard['route'], $locationNavMarketKey), ENT_QUOTES, 'UTF-8') ?>">Explore <?= htmlspecialchars($serviceCard['title'], ENT_QUOTES, 'UTF-8') ?></a>
           </article>
         <?php endforeach; ?>
@@ -297,7 +305,7 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
   <?php else: ?>
     <?php if ($articleHeroImage !== ''): ?>
       <figure class="twins-brand-article-hero-media">
-        <img src="<?= htmlspecialchars($articleHeroImage, ENT_QUOTES, 'UTF-8') ?>" width="1200" height="675" alt="" decoding="async" fetchpriority="high">
+        <img src="<?= htmlspecialchars($articleHeroImage, ENT_QUOTES, 'UTF-8') ?>" width="1200" height="675" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
       </figure>
     <?php endif; ?>
     <header class="twins-brand-editorial-hero<?= $isArticle ? ' twins-brand-article-hero' : '' ?>" aria-labelledby="twins-brand-editorial-title">
@@ -313,6 +321,17 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
           <p><?= htmlspecialchars($editorial['answer'], ENT_QUOTES, 'UTF-8') ?></p>
         </div>
         <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call <?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
+      </section>
+    <?php endif; ?>
+
+    <?php if ($isFinancing): ?>
+      <section class="twins-brand-editorial-answer" aria-labelledby="twins-brand-financing-action-title">
+        <div>
+          <span class="twins-brand-kicker">Financing through Wisetack</span>
+          <h2 id="twins-brand-financing-action-title">Review your financing options</h2>
+          <p>The application opens on Wisetack in a new tab. Review the terms there before continuing.</p>
+        </div>
+        <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($financingApplyHref, ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener noreferrer">Apply with Wisetack</a>
       </section>
     <?php endif; ?>
 
@@ -377,4 +396,4 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
       <?php endif; ?>
     </div>
   </section>
-</main>
+</div>

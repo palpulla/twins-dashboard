@@ -27,7 +27,7 @@ if ($environment === 'staging') {
     }
 }
 ?>
-<main id="twins-overhaul-main" class="twins-brand-page twins-brand-contact-page">
+<div id="twins-overhaul-main" class="twins-brand-page twins-brand-contact-page">
   <section class="twins-brand-page-hero" aria-labelledby="twins-brand-contact-title">
     <span class="twins-brand-kicker">Contact Twins</span>
     <h1 id="twins-brand-contact-title">Request a Quote</h1>
@@ -76,4 +76,4 @@ if ($environment === 'staging') {
     <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($market['phoneHref'], ENT_QUOTES, 'UTF-8') ?>">Call Twins</a>
     <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
   </section>
-</main>
+</div>

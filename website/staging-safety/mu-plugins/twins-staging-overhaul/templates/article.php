@@ -19,6 +19,30 @@ function twins_overhaul_render_article_template(array $context, string $content)
         : '<h1 class="twins-overhaul-title">' . esc_html($title) . '</h1>';
     $markup .= '</div></header>';
     $markup .= '<div class="twins-overhaul-section twins-overhaul-editorial__body"><div class="twins-overhaul-shell">';
+    // Some preserved production pages (terms) carry more than one h1 of their
+    // own. Keep the first as the page h1 and demote the rest to h2 so every
+    // route has exactly one h1 (WCAG/SEO). Heading level is presentation;
+    // the preserved copy itself is not edited.
+    $h1Seen = false;
+    $content = preg_replace_callback(
+        '~<(/?)h1\b~i',
+        static function (array $m) use (&$h1Seen) {
+            if ($m[1] === '') {
+                if (!$h1Seen) {
+                    $h1Seen = true;
+                    return $m[0];
+                }
+                return '<h2';
+            }
+            static $closedFirst = false;
+            if (!$closedFirst) {
+                $closedFirst = true;
+                return $m[0];
+            }
+            return '</h2';
+        },
+        $content
+    );
     $markup .= '<article class="twins-overhaul-original-content" data-twins-original-content>' . $content . '</article>';
     $markup .= '</div></div></div>';
     return $markup;

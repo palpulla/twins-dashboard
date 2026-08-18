@@ -15,12 +15,13 @@ if (!defined('ABSPATH')) {
  */
 function twins_overhaul_regions(): array {
     $madison = array('street' => '2921 Landmark Pl #206', 'locality' => 'Madison', 'region' => 'WI', 'postalCode' => '53713');
+    $rockford = array('street' => '5758 Elaine Dr Ste 110', 'locality' => 'Rockford', 'region' => 'IL', 'postalCode' => '61108');
     $mtSterling = array('street' => '3651 Aarons Run Rd', 'locality' => 'Mt Sterling', 'region' => 'KY', 'postalCode' => '40353');
     return array(
         1 => array('key' => 'main', 'phone' => '(833) 833-2010', 'tel' => '+18338332010', 'base' => '/', 'address' => $madison),
         3 => array('key' => 'ky', 'phone' => '(859) 440-2227', 'tel' => '+18594402227', 'base' => '/ky/', 'address' => $mtSterling),
         4 => array('key' => 'wi', 'phone' => '(608) 420-2377', 'tel' => '+16084202377', 'base' => '/wi/', 'address' => $madison),
-        5 => array('key' => 'il', 'phone' => '(815) 800-2025', 'tel' => '+18158002025', 'base' => '/il/'),
+        5 => array('key' => 'il', 'phone' => '(815) 800-2025', 'tel' => '+18158002025', 'base' => '/il/', 'address' => $rockford),
     );
 }
 
@@ -357,7 +358,7 @@ function twins_overhaul_illinois_manifest(): array {
         'base' => '/il/',
         'phone' => '(815) 800-2025',
         'tel' => '+18158002025',
-        'address' => null,
+        'address' => array('street' => '5758 Elaine Dr Ste 110', 'locality' => 'Rockford', 'region' => 'IL', 'postalCode' => '61108'),
         'public' => 0,
         'core' => array(
             array('slug' => '', 'title' => 'Garage Door Service in Rockford, Illinois'),

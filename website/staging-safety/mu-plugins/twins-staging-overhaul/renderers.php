@@ -1275,6 +1275,64 @@ function twins_overhaul_output_local_font_sentinel(): void {
 }
 
 /**
+ * Preload the homepage display faces only where the branded home uses them.
+ *
+ * @return void
+ */
+function twins_overhaul_output_home_font_preloads(): void {
+    static $rendered = false;
+    if (
+        $rendered
+        || !twins_overhaul_is_allowed_chrome_request()
+        || twins_overhaul_current_classification() !== 'home-brand'
+    ) {
+        return;
+    }
+    $rendered = true;
+    $base = rtrim(content_url('mu-plugins/twins-brand-experience/assets/fonts'), '/');
+    // Lilita One is the homepage heading face and must load first. Barlow
+    // Condensed remains the fallback and is still used outside the home story.
+    echo '<link rel="preload" href="' . esc_url($base . '/lilita-one-regular.woff2') . '" as="font" type="font/woff2" crossorigin>';
+    foreach (array('barlow-condensed-extrabold.ttf', 'barlow-condensed-black.ttf') as $file) {
+        echo '<link rel="preload" href="' . esc_url($base . '/' . $file) . '" as="font" type="font/ttf" crossorigin>';
+    }
+}
+
+/**
+ * Preload the branded homepage hero mascots, which are the largest
+ * contentful paint now that the hero is an illustrated navy field rather
+ * than a photograph.
+ *
+ * @return void
+ */
+function twins_overhaul_output_home_hero_preload(): void {
+    static $rendered = false;
+    if (
+        $rendered
+        || !twins_overhaul_is_allowed_chrome_request()
+        || twins_overhaul_current_classification() !== 'home-brand'
+    ) {
+        return;
+    }
+    $rendered = true;
+    try {
+        $runtime = twins_overhaul_brand_runtime();
+        $srcset = array();
+        foreach (array('twin-left', 'twin-right') as $key) {
+            $srcset[] = $runtime->asset($key);
+        }
+    } catch (\Throwable $error) {
+        return;
+    }
+    if ($srcset === array()) {
+        return;
+    }
+    foreach ($srcset as $href) {
+        echo '<link rel="preload" as="image" href="' . esc_url($href) . '" fetchpriority="high">';
+    }
+}
+
+/**
  * Return a bounded content-derived version for one fixed portable brand asset.
  *
  * @param string $relativePath Fixed portable asset path.
@@ -1472,6 +1530,8 @@ function twins_overhaul_render_classified_content(string $classification, array 
             $context,
             twins_overhaul_blog_index_view($context)
         );
+    } elseif ($classification === 'location' && twins_overhaul_is_location_index_path((string) ($context['path'] ?? ''))) {
+        $rendered = twins_overhaul_brand_runtime()->renderLocationIndex($context);
     } elseif (in_array($classification, array('location', 'trust', 'article'), true)) {
         if ($classification === 'location' && function_exists('twins_overhaul_apply_metro_context')) {
             $context = twins_overhaul_apply_metro_context($context);
@@ -1505,7 +1565,7 @@ function twins_overhaul_render_classified_content(string $classification, array 
     if (!is_string($rendered) || (!twins_overhaul_environment_is_production() && preg_match('~</?form\b~i', $rendered))) {
         twins_overhaul_refuse_route('classified staging output retained form markup.');
     }
-    if ($classification === 'location') {
+    if ($classification === 'location' && !twins_overhaul_is_location_index_path((string) ($context['path'] ?? ''))) {
         $rendered .= twins_overhaul_location_map_markup($context);
     }
     return $rendered . twins_overhaul_brand_schema_markup($classification, $context);
@@ -1526,6 +1586,16 @@ function twins_overhaul_environment_is_production(): bool {
 }
 
 /**
+ * True only for the three approved service-area index routes.
+ *
+ * @param string $path Current request path.
+ * @return bool
+ */
+function twins_overhaul_is_location_index_path(string $path): bool {
+    return in_array($path, array('/locations/', '/wi/service-area/', '/il/locations/'), true);
+}
+
+/**
  * Render the service-area map block for location routes.
  *
  * Staging renders an outbound link card only; the live iframe embed renders
@@ -1542,11 +1612,13 @@ function twins_overhaul_location_map_markup(array $context): string {
     }
     $states = array('wi' => 'WI', 'ky' => 'KY', 'il' => 'IL');
     $state = $states[$regions[$blogId]['key']] ?? '';
-    $city = isset($context['title']) && is_string($context['title']) ? trim($context['title']) : '';
+    $city = twins_overhaul_location_place_name($context);
     if ($city === '' || str_word_count($city) > 4) {
         return '';
     }
-    $query = $state !== '' ? $city . ', ' . $state : $city;
+    $query = preg_match('/,\s+(?:Wisconsin|Kentucky|Illinois)$/', $city) === 1 || $state === ''
+        ? $city
+        : $city . ', ' . $state;
     if (stripos($city, 'madison') !== false) {
         $query = 'Twins Garage Doors, 2921 Landmark Pl #206, Madison, WI 53713';
     }
@@ -1609,6 +1681,53 @@ function twins_overhaul_is_faq_path(string $path): bool {
     return $normalized === '/faqs/';
 }
 
+/**
+ * Resolve a clean place label for location metadata, maps, and schema.
+ *
+ * Imported WordPress titles can already contain "Garage Door Service in".
+ * Location content records are the authoritative display labels, so prefer
+ * those and add the market name exactly once.
+ *
+ * @param array $context Proven current request context.
+ * @return string Clean place label, or the original title when no record exists.
+ */
+function twins_overhaul_location_place_name(array $context): string {
+    $path = isset($context['path']) && is_string($context['path']) ? $context['path'] : '';
+    $title = isset($context['title']) && is_string($context['title']) ? trim($context['title']) : '';
+    $slug = function_exists('twins_overhaul_city_slug_from_path')
+        ? twins_overhaul_city_slug_from_path($path)
+        : '';
+    $market = function_exists('twins_overhaul_market_from_path')
+        ? twins_overhaul_market_from_path($path)
+        : '';
+    $stateNames = array('wi' => 'Wisconsin', 'ky' => 'Kentucky', 'il' => 'Illinois');
+
+    if ($slug !== '' && $market !== '' && isset($stateNames[$market])) {
+        static $records = null;
+        if ($records === null) {
+            $file = dirname(__DIR__) . '/twins-brand-experience/config/location-content.php';
+            if (!is_file($file)) {
+                $file = dirname(__DIR__, 3) . '/twins-brand-experience/config/location-content.php';
+            }
+            $loaded = is_file($file) ? require $file : null;
+            $records = is_array($loaded) ? $loaded : array();
+        }
+        if (
+            isset($records[$slug]['label'])
+            && is_string($records[$slug]['label'])
+            && trim($records[$slug]['label']) !== ''
+        ) {
+            return trim($records[$slug]['label']) . ', ' . $stateNames[$market];
+        }
+    }
+
+    return trim((string) preg_replace(
+        '/^(?:Garage Door (?:Repair|Service) in)\s+/i',
+        '',
+        $title
+    ));
+}
+
 function twins_overhaul_brand_schema_markup(string $classification, array $context): string {
     if (!function_exists('get_current_blog_id') || !function_exists('home_url')) {
         return '';
@@ -1649,9 +1768,11 @@ function twins_overhaul_brand_schema_markup(string $classification, array $conte
             'bestRating' => 5,
         );
     }
-    $title = isset($context['title']) && is_string($context['title']) && trim($context['title']) !== ''
-        ? trim($context['title'])
-        : 'Twins Garage Doors';
+    $title = $classification === 'location'
+        ? twins_overhaul_location_place_name($context)
+        : (isset($context['title']) && is_string($context['title']) && trim($context['title']) !== ''
+            ? trim($context['title'])
+            : 'Twins Garage Doors');
 
     $schema = null;
     if ($classification === 'home-brand') {
@@ -1697,6 +1818,30 @@ function twins_overhaul_brand_schema_markup(string $classification, array $conte
         }
         $schema = $primaryBusiness;
         $schema['@context'] = 'https://schema.org';
+    } elseif ($classification === 'location' && twins_overhaul_is_location_index_path((string) ($context['path'] ?? ''))) {
+        $metadata = twins_overhaul_location_index_metadata((string) ($context['path'] ?? ''));
+        if ($metadata === null) {
+            return '';
+        }
+        $schema = array(
+            '@context' => 'https://schema.org',
+            '@graph' => array(
+                $primaryBusiness,
+                array(
+                    '@type' => 'CollectionPage',
+                    'name' => $metadata['heading'],
+                    'description' => $metadata['description'],
+                    'url' => home_url((string) ($context['path'] ?? '/')),
+                ),
+                array(
+                    '@type' => 'BreadcrumbList',
+                    'itemListElement' => array(
+                        array('@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => home_url('/')),
+                        array('@type' => 'ListItem', 'position' => 2, 'name' => $metadata['heading']),
+                    ),
+                ),
+            ),
+        );
     } elseif ($classification === 'location') {
         $schema = array(
             '@context' => 'https://schema.org',
@@ -1819,7 +1964,7 @@ function twins_overhaul_seo_service_descriptions(): array {
     return array(
         '/garage-door-repair/' => 'Stuck, crooked, or noisy garage door? A Twins tech looks over the whole door, tells you what is wrong, and gives you the exact price before touching anything.',
         '/garage-door-installation/' => 'Ready for a new garage door? Twins measures your opening, helps you pick a style, and gives you the exact price before we install it. Licensed and insured.',
-        '/garage-door-spring-repair/' => 'Broke a torsion spring? Do not lift the door. Twins replaces worn and snapped springs safely and gives you the price up front. Call the number for your area.',
+        '/garage-door-spring-repair/' => 'Broke a spring? Do not lift the door. Twins replaces worn and snapped torsion and extension springs safely and gives you the price up front. Call the number for your area.',
         '/garage-door-opener-repair/' => 'Opener humming, clicking, or dead? Twins checks the motor, trolley, photo eyes, and remotes, finds the fault, and prices the fix before any work begins.',
         '/emergency-garage-services/' => 'Garage door stuck open, off its track, or a dropped spring? Keep everyone clear and call Twins. We come out fast and price the fix before we start.',
         '/garage-door-services/' => 'Repairs, new doors, opener work, and the emergencies that cannot wait, all in one place. See what Twins handles and get the exact price before any work starts.',
@@ -1880,6 +2025,59 @@ function twins_overhaul_seo_singleton_map(): array {
 }
 
 /**
+ * Curated metadata for trust pages, keyed by market-normalized path.
+ *
+ * @return array<string,array{title:string,description:string}>
+ */
+function twins_overhaul_seo_trust_page_map(): array {
+    return array(
+        '/financing/' => array(
+            'title' => 'Garage Door Financing',
+            'description' => 'Explore financing options for garage door repair and replacement through Twins Garage Doors, and review the available terms before applying.',
+        ),
+        '/coupons-offers/' => array(
+            'title' => 'Garage Door Coupons & Offers',
+            'description' => 'See current garage door coupons and offers from Twins Garage Doors. Review availability and terms before scheduling your service.',
+        ),
+        '/faqs/' => array(
+            'title' => 'Garage Door FAQs',
+            'description' => 'Get straight answers from the Twins crew about garage door repairs, springs, openers, installation, maintenance, pricing, and emergencies.',
+        ),
+        '/about-us/' => array(
+            'title' => 'About Us',
+            'description' => 'Meet Twins Garage Doors, a family-owned garage door company run by twin brothers and focused on clear options, careful work, and local service.',
+        ),
+    );
+}
+
+/**
+ * Resolve fixed copy for the three service-area index routes.
+ *
+ * @param string $path Current request path.
+ * @return array{title:string,heading:string,description:string}|null
+ */
+function twins_overhaul_location_index_metadata(string $path): ?array {
+    $records = array(
+        '/locations/' => array(
+            'title' => 'Garage Door Service Areas',
+            'heading' => 'Garage Door Service Areas',
+            'description' => 'Find Twins Garage Doors service areas in Wisconsin, Illinois, and Kentucky, then choose your local team for repair, opener, and installation help.',
+        ),
+        '/wi/service-area/' => array(
+            'title' => 'Wisconsin Garage Door Service Areas',
+            'heading' => 'Wisconsin Garage Door Service Areas',
+            'description' => 'Find Twins Garage Doors service areas across the Madison and Milwaukee regions and choose your community for local garage door help.',
+        ),
+        '/il/locations/' => array(
+            'title' => 'Illinois Garage Door Service Areas',
+            'heading' => 'Illinois Garage Door Service Areas',
+            'description' => 'Find Twins Garage Doors service areas in Rockford and nearby northern Illinois communities for repair, opener, and installation help.',
+        ),
+    );
+    return $records[$path] ?? null;
+}
+
+/**
  * Resolve the title and meta description for a classified brand route.
  * Returns null for routes we intentionally leave to WordPress (preserved
  * articles, legal, campaign, cost pages with their own legacy templates).
@@ -1902,13 +2100,13 @@ function twins_overhaul_seo_metadata(string $classification, array $context): ?a
     $geoSuffix = isset($geoLabels[$marketKey]) ? ' in ' . $geoLabels[$marketKey] : '';
     $path = isset($context['path']) && is_string($context['path']) ? $context['path'] : '';
     $contextTitle = isset($context['title']) && is_string($context['title']) ? trim($context['title']) : '';
+    $normalized = '/' . trim(preg_replace('~^/(wi|ky|il)/~', '/', '/' . ltrim($path, '/')), '/') . '/';
 
     if ($classification === 'service') {
         $record = twins_overhaul_brand_schema_service_record($path);
         if ($record === null || !isset($record['h1'])) {
             return null;
         }
-        $normalized = '/' . trim(preg_replace('~^/(wi|ky|il)/~', '/', '/' . ltrim($path, '/')), '/') . '/';
         $descriptions = twins_overhaul_seo_service_descriptions();
         if (!isset($descriptions[$normalized])) {
             return null;
@@ -1917,6 +2115,16 @@ function twins_overhaul_seo_metadata(string $classification, array $context): ?a
             'title' => (string) $record['h1'] . $geoSuffix . ' | ' . $brand,
             'description' => $descriptions[$normalized],
         );
+    }
+
+    if ($classification === 'trust') {
+        $trustPages = twins_overhaul_seo_trust_page_map();
+        if (isset($trustPages[$normalized])) {
+            return array(
+                'title' => $trustPages[$normalized]['title'] . $geoSuffix . ' | ' . $brand,
+                'description' => $trustPages[$normalized]['description'],
+            );
+        }
     }
 
     $singletons = twins_overhaul_seo_singleton_map();
@@ -1930,9 +2138,23 @@ function twins_overhaul_seo_metadata(string $classification, array $context): ?a
     }
 
     if ($classification === 'location' && $contextTitle !== '') {
+        if (twins_overhaul_is_location_index_path($path)) {
+            $locationIndex = twins_overhaul_location_index_metadata($path);
+            if ($locationIndex === null) {
+                return null;
+            }
+            return array(
+                'title' => $locationIndex['title'] . ' | ' . $brand,
+                'description' => $locationIndex['description'],
+            );
+        }
+        $placeName = twins_overhaul_location_place_name($context);
+        if ($placeName === '') {
+            return null;
+        }
         return array(
-            'title' => 'Garage Door Repair in ' . $contextTitle . ' | ' . $brand,
-            'description' => 'Twins Garage Doors serves ' . $contextTitle . ' with garage door repair, spring and opener work, and new door installation, priced before any work starts.',
+            'title' => 'Garage Door Repair in ' . $placeName . ' | ' . $brand,
+            'description' => 'Twins Garage Doors serves ' . $placeName . ' with garage door repair, spring and opener work, and new door installation, priced before any work starts.',
         );
     }
 
@@ -1940,6 +2162,13 @@ function twins_overhaul_seo_metadata(string $classification, array $context): ?a
         return array(
             'title' => $contextTitle . ' | Clopay Garage Doors | ' . $brand,
             'description' => 'See the ' . $contextTitle . ' from Clopay, installed by Twins Garage Doors. Compare the look and finish and get the exact price for your garage.',
+        );
+    }
+
+    if ($classification === 'article' && $contextTitle !== '') {
+        return array(
+            'title' => $contextTitle . ' | ' . $brand,
+            'description' => 'Practical garage door guidance from the Twins crew, with clear explanations, safety context, and signs that it is time to call a trained professional.',
         );
     }
 
@@ -2009,6 +2238,19 @@ function twins_overhaul_output_seo_meta(): void {
     echo "<meta property=\"og:title\" content=\"" . $titleAttr . "\">\n";
     echo "<meta property=\"og:description\" content=\"" . $descAttr . "\">\n";
     echo "<meta property=\"og:type\" content=\"website\">\n";
+
+    if (
+        function_exists('twins_overhaul_current_classification')
+        && twins_overhaul_current_classification() === 'blog-index'
+        && function_exists('twins_overhaul_current_request_path')
+        && function_exists('network_home_url')
+    ) {
+        $path = twins_overhaul_current_request_path();
+        if (preg_match('~^/(?:wi/|ky/|il/)?blog(?:/page/[1-9][0-9]*)?/$~D', $path) === 1) {
+            $canonical = htmlspecialchars(network_home_url($path), ENT_QUOTES, 'UTF-8');
+            echo "<link rel=\"canonical\" href=\"" . $canonical . "\">\n";
+        }
+    }
 }
 
 /**
@@ -2155,7 +2397,9 @@ function twins_overhaul_register_frontend_hooks(): void {
     add_filter('template_include', 'twins_overhaul_filter_branded_template', PHP_INT_MAX, 1);
     add_filter('pre_get_document_title', 'twins_overhaul_filter_document_title', PHP_INT_MAX, 1);
     add_action('wp_head', 'twins_overhaul_output_local_font_sentinel', 1, 0);
-    add_action('wp_head', 'twins_overhaul_output_seo_meta', 2, 0);
+    add_action('wp_head', 'twins_overhaul_output_home_font_preloads', 2, 0);
+    add_action('wp_head', 'twins_overhaul_output_home_hero_preload', 2, 0);
+    add_action('wp_head', 'twins_overhaul_output_seo_meta', 3, 0);
     add_action('wp_body_open', 'twins_overhaul_output_header', 5, 0);
     add_filter('the_content', 'twins_overhaul_replace_main_content', PHP_INT_MAX, 1);
     add_action('wp_footer', 'twins_overhaul_output_footer', 5, 0);

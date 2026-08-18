@@ -24,10 +24,13 @@ final class StagingAssetResolver implements AssetResolver
         'twin-right' => 'assets/images/brand/twin-right.png',
         'truck-original' => 'assets/images/brand/twins-service-truck-cutout.png',
         'truck-webp' => 'assets/images/brand/twins-service-truck-cutout.webp',
+        'truck-webp-320' => 'assets/images/brand/twins-service-truck-cutout-320w.webp',
+        'truck-webp-880' => 'assets/images/brand/twins-service-truck-cutout-880w.webp',
         'crew-fleet-original' => 'assets/images/team/twins-crew-fleet.jpeg',
         'crew-fleet-768w' => 'assets/images/team/twins-crew-fleet-768w.webp',
         'crew-fleet-1280w' => 'assets/images/team/twins-crew-fleet-1280w.webp',
         'crew-fleet-1920w' => 'assets/images/team/twins-crew-fleet-1920w.webp',
+        'crew-fleet-2560w' => 'assets/images/team/twins-crew-fleet-2560w.webp',
         'tal-portrait-original' => 'assets/images/team/tal-joseph.jpeg',
         'tal-portrait-480w' => 'assets/images/team/tal-joseph-480w.webp',
         'tal-portrait-768w' => 'assets/images/team/tal-joseph-768w.webp',
@@ -53,6 +56,11 @@ final class StagingAssetResolver implements AssetResolver
         'nicholas-portrait-768w' => 'assets/images/team/nicholas-roccaforte-768w.webp',
         'nicholas-portrait-1066w' => 'assets/images/team/nicholas-roccaforte-1066w.webp',
         'door-builder-before-after' => 'assets/images/door-builder/twins-before-after-install.webp',
+        'opener-6690l' => 'assets/images/openers/liftmaster-6690l.png',
+        'opener-6690l-remote' => 'assets/images/openers/liftmaster-l993m-remote.jpg',
+        'opener-6690l-panel' => 'assets/images/openers/liftmaster-l958w-panel.jpg',
+        'opener-6690l-keypad' => 'assets/images/openers/liftmaster-l979m-keypad.jpg',
+        'opener-98022' => 'assets/images/openers/liftmaster-98022.png',
     ];
 
     public function __construct(string $base, string $networkHome)
@@ -78,7 +86,17 @@ final class StagingAssetResolver implements AssetResolver
         if ($baseOrigin !== $homeOrigin) {
             throw new DomainException('Cross-origin staging assets are forbidden.');
         }
-        $this->base = rtrim($base, '/');
+        $networkPath = (string) ($homeParts['path'] ?? '/');
+        if (!in_array($networkPath, ['', '/'], true)) {
+            throw new DomainException('Staging network asset origin must be root-relative.');
+        }
+        $assetRoot = '/wp-content/mu-plugins/twins-brand-experience';
+        $basePath = (string) ($baseParts['path'] ?? '');
+        $assetRootOffset = strpos($basePath, $assetRoot);
+        if ($assetRootOffset === false || substr($basePath, $assetRootOffset) !== $assetRoot) {
+            throw new DomainException('Invalid staging asset root.');
+        }
+        $this->base = rtrim($networkHome, '/') . $assetRoot;
     }
 
     public function url(string $assetKey): string
@@ -105,7 +123,8 @@ final class StagingRouteAdapter implements RouteAdapter
             'offers' => '/coupons-offers/', 'faqs' => '/faqs/', 'blog' => '/blog/', 'about' => '/about-us/',
             'team' => '/our-team/', 'careers' => '/careers/', 'contact' => '/contact-us/',
             'cable-repair' => '/garage-door-cable-repair/', 'weatherstripping' => '/garage-weatherstripping-repair/',
-            'maintenance-plans' => '/maintenance-plans/', 'property-management' => '/property-management-services/',
+            'maintenance-plans' => '/maintenance-plans/', 'protection-plans' => '/protection-plans/',
+            'property-management' => '/property-management-services/',
             'openers' => '/garage-door-openers/', 'service-area' => '/locations/',
         ],
         'wi' => [
@@ -120,6 +139,8 @@ final class StagingRouteAdapter implements RouteAdapter
             'offers' => '/wi/coupons-offers/', 'faqs' => '/wi/faqs/', 'blog' => '/wi/blog/', 'about' => '/wi/about-us/',
             'team' => '/our-team/', 'careers' => '/careers/', 'contact' => '/wi/contact-us/',
             'cable-repair' => '/wi/garage-door-cable-repair/', 'weatherstripping' => '/wi/garage-weatherstripping-repair/',
+            'maintenance-plans' => '/maintenance-plans/',
+            'protection-plans' => '/wi/protection-plans/',
             'property-management' => '/wi/property-management-services/', 'openers' => '/wi/garage-door-openers/',
             'service-area' => '/wi/service-area/',
             'city-madison' => '/wi/location/madison/', 'city-milwaukee' => '/wi/garage-door-repair-in-milwaukee-wi/',
@@ -159,6 +180,7 @@ final class StagingRouteAdapter implements RouteAdapter
             'offers' => '/ky/coupons-offers/', 'faqs' => '/ky/faqs/', 'blog' => '/ky/blog/', 'about' => '/ky/about-us/',
             'team' => '/our-team/', 'careers' => '/careers/', 'contact' => '/ky/contact-us/',
             'cable-repair' => '/ky/garage-door-cable-repair/', 'maintenance-plans' => '/ky/maintenance-plans/',
+            'protection-plans' => '/ky/protection-plans/',
             'openers' => '/ky/garage-door-openers/', 'city-lexington' => '/ky/location/lexington/',
         ],
         'il-preview' => [
@@ -172,6 +194,8 @@ final class StagingRouteAdapter implements RouteAdapter
             'cost-guide' => '/wi/garage-door-cost-in-madison-wi/', 'financing' => '/financing/',
             'offers' => '/coupons-offers/', 'faqs' => '/faqs/', 'blog' => '/blog/', 'about' => '/about-us/',
             'team' => '/our-team/', 'careers' => '/careers/', 'contact' => '/il/contact-us/',
+            'maintenance-plans' => '/maintenance-plans/',
+            'protection-plans' => '/il/protection-plans/',
             'openers' => '/il/garage-door-openers/', 'service-area' => '/il/locations/',
             'city-rockford' => '/il/location/rockford/', 'city-loves-park' => '/il/location/loves-park/',
             'city-machesney-park' => '/il/location/machesney-park/', 'city-belvidere' => '/il/location/belvidere/',
@@ -321,24 +345,27 @@ function twins_brand_staging_assert_inert_markup(string $markup, string $require
 
 final class StagingQuoteAdapter implements QuoteAdapter
 {
-    private string $href;
+    private StagingRouteAdapter $routes;
 
     public function __construct()
     {
-        $route = new StagingRouteAdapter();
-        $this->href = $route->route('contact', 'main');
+        $this->routes = new StagingRouteAdapter();
     }
 
-    private function href(): string
+    private function href(array $context): string
     {
-        return $this->href;
+        $market = $context['market'] ?? null;
+        if (!is_string($market) || !in_array($market, ['main', 'wi', 'ky', 'il-preview'], true)) {
+            throw new DomainException('Staging quote market is unavailable.');
+        }
+        return $this->routes->route('contact', $market);
     }
 
     public function action(array $context): array
     {
         twins_brand_staging_assert_context($context);
         $this->assertReady();
-        return ['mode' => 'preview', 'href' => $this->href()];
+        return ['mode' => 'preview', 'href' => $this->href($context)];
     }
 
     public function renderExperience(array $context): string
@@ -351,8 +378,18 @@ final class StagingQuoteAdapter implements QuoteAdapter
 
     public function assertReady(): void
     {
-        $href = $this->href();
-        if ($href !== rtrim(network_home_url('/'), '/') . '/contact-us/') throw new DomainException('Staging quote route is not fixed.');
+        $base = rtrim(network_home_url('/'), '/');
+        $expected = [
+            'main' => $base . '/contact-us/',
+            'wi' => $base . '/wi/contact-us/',
+            'ky' => $base . '/ky/contact-us/',
+            'il-preview' => $base . '/il/contact-us/',
+        ];
+        foreach ($expected as $market => $href) {
+            if ($this->routes->route('contact', $market) !== $href) {
+                throw new DomainException('Staging quote route is not fixed.');
+            }
+        }
         twins_brand_staging_assert_inert_markup(twins_brand_staging_quote_preview(), 'data-preview-kind="quote"');
     }
 }

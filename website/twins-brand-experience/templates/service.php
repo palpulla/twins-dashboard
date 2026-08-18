@@ -8,13 +8,16 @@ if (!isset($pageContent) || !is_array($pageContent)) {
     throw new DomainException('Service page content is unavailable.');
 }
 ?>
-<main id="twins-overhaul-main" class="twins-brand-page twins-brand-service-page">
-  <section class="twins-brand-service-hero" aria-labelledby="twins-brand-service-title">
+<div id="twins-overhaul-main" class="twins-brand-page twins-brand-service-page">
+  <?php require_once dirname(__DIR__) . '/components/service-hero-art.php'; ?>
+  <?php $serviceHeroArt = twins_brand_service_hero_art($path, $experience); ?>
+  <section class="twins-brand-service-hero<?= $serviceHeroArt !== '' ? ' twins-brand-service-hero--with-art' : '' ?>" aria-labelledby="twins-brand-service-title">
     <div>
       <span class="twins-brand-kicker">Garage door service guide</span>
       <h1 id="twins-brand-service-title"><?= htmlspecialchars($pageContent['h1'], ENT_QUOTES, 'UTF-8') ?></h1>
       <p>Straight answers, safe work, and upfront options from the local Twins crew.</p>
     </div>
+    <?= $serviceHeroArt ?>
     <div class="twins-brand-service-hero-actions">
       <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>">Call Twins</a>
       <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
@@ -109,12 +112,6 @@ if (!isset($pageContent) || !is_array($pageContent)) {
 
   <section class="twins-brand-service-area" aria-labelledby="twins-brand-service-area-title">
     <div>
-      <?php require_once dirname(__DIR__) . '/components/door-art.php'; ?>
-      <div class="twins-brand-icon-row twins-brand-icon-row--start" aria-hidden="true">
-        <?= twins_brand_door_art('spring') ?>
-        <?= twins_brand_door_art('roller') ?>
-        <?= twins_brand_door_art('keypad') ?>
-      </div>
       <span class="twins-brand-kicker">Your selected service area</span>
       <h2 id="twins-brand-service-area-title"><?= htmlspecialchars($market['label'], ENT_QUOTES, 'UTF-8') ?></h2>
       <p>This page uses the contact details and service routes for the market selected in the shared Twins experience.</p>
@@ -148,4 +145,4 @@ if (!isset($pageContent) || !is_array($pageContent)) {
       <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
     </div>
   </section>
-</main>
+</div>

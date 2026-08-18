@@ -87,7 +87,7 @@ $teamPromises = [
     ['Honest, upfront pricing', 'What we tell you on the phone is what you pay when the job is done.'],
 ];
 ?>
-<main id="twins-overhaul-main" class="twins-brand-page twins-brand-team-page">
+<div id="twins-overhaul-main" class="twins-brand-page twins-brand-team-page">
   <section class="twins-brand-page-hero" aria-labelledby="twins-brand-team-title">
     <span class="twins-brand-kicker">Our Team</span>
     <h1 id="twins-brand-team-title">Meet the Twins Crew</h1>
@@ -163,4 +163,4 @@ $teamPromises = [
     <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($market['phoneHref'], ENT_QUOTES, 'UTF-8') ?>">Call Twins</a>
     <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
   </section>
-</main>
+</div>

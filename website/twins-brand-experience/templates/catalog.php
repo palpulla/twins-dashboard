@@ -32,7 +32,7 @@ $escape = static function (string $value): string {
     return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 };
 ?>
-<main id="twins-overhaul-main" class="twins-brand-page twins-brand-catalog-page">
+<div id="twins-overhaul-main" class="twins-brand-page twins-brand-catalog-page">
   <section class="twins-brand-catalog-hero" aria-labelledby="twins-catalog-title">
     <div class="twins-brand-catalog-hero__copy">
       <span class="twins-brand-kicker"><?= $escape($eyebrow) ?></span>
@@ -231,4 +231,4 @@ $escape = static function (string $value): string {
   <?php endif; ?>
 
   <p class="twins-brand-catalog-preview-notice">Private staging preview. This page does not contact Clopay, submit a quote request, or store project information.</p>
-</main>
+</div>

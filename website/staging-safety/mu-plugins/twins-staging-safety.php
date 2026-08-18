@@ -84,10 +84,20 @@ function twins_staging_safety_csp_policy() {
         "style-src 'self' 'unsafe-inline'",
         "img-src 'self' data: https://www.clopaydoor.com",
         "font-src 'self'",
-        "connect-src 'self'",
+        // Read-only aggregate rating/count row, publishable key, maintained
+        // by the daily Places cron. A GET to our own project cannot create
+        // leads, send mail, or mutate anything, so it does not weaken the
+        // isolation this plugin exists to enforce. Same per-origin exception
+        // pattern as the clopaydoor.com img-src entry above.
+        "connect-src 'self' https://jwrpjuqaynownxaoeayi.supabase.co",
         "media-src 'self'",
-        "frame-src 'self'",
-        "child-src 'self'",
+        // Clopay's own EZDoor visualizer, embedded on the door builder at
+        // Clopay's direction. It is a sandboxed third-party document: it
+        // cannot read this origin, and the sandbox attribute on the iframe
+        // withholds top-navigation. Same per-origin exception pattern as the
+        // clopaydoor.com img-src entry above.
+        "frame-src 'self' https://ezdoor.clopay.com",
+        "child-src 'self' https://ezdoor.clopay.com",
         "worker-src 'self'",
         "manifest-src 'self'",
         "form-action 'self'",

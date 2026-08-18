@@ -183,6 +183,147 @@
     probe.src = src;
   }
 
+
+  /**
+   * Clopay's gallery carries real photographs of the same door in specific
+   * finishes ("Canyon Ridge 4-Layer Natural Finish", "... Black", "... Walnut").
+   * Match the chosen colour to one of those so the reference photo actually
+   * changes with the selection, using Clopay's own photography rather than a
+   * drawn approximation. Returns null when the finish has no gallery photo,
+   * which is common, and the caller falls back to the collection showcase.
+   */
+  /**
+   * Composite door illustration from Clopay's own published art (builder v2,
+   * docs/HANDOFF-builder-v2-compositor.md). Panel field is the chosen colour
+   * swatch tiled as a texture; panel geometry is drawn as bevel strokes over
+   * that texture; the chosen top section's real image forms the window row;
+   * hardware thumbnails overlay at handle height. Every layer is a
+   * manufacturer image or a neutral bevel; nothing invents colour or product
+   * art. Drawn at devicePixelRatio into a 720-logical-px canvas.
+   */
+  function builderCompositeDoor(owner, state, container) {
+    if (!state.color || !state.color.image) return false;
+    const canvas = owner.createElement('canvas');
+    const ratio = Math.min(2, window.devicePixelRatio || 1);
+    const W = 720;
+    const H = 500;
+    canvas.width = W * ratio;
+    canvas.height = H * ratio;
+    canvas.style.width = '100%';
+    canvas.style.maxWidth = '360px';
+    canvas.style.height = 'auto';
+    canvas.setAttribute('data-builder-composite', '');
+    canvas.setAttribute('role', 'img');
+    canvas.setAttribute('aria-label', 'Illustration of your selected door assembled from manufacturer images');
+    const context = canvas.getContext('2d');
+    if (!context) return false;
+    context.scale(ratio, ratio);
+
+    // A load that HANGS (neither event fires) would otherwise leave the
+    // promise unsettled and the board empty forever. 4s cap: whatever has
+    // not settled resolves null and the fallback photograph takes over.
+    const load = source => new Promise(resolve => {
+      if (!source || !source.src) { resolve(null); return; }
+      const timer = window.setTimeout(() => resolve(null), 4000);
+      const image = new Image();
+      image.decoding = 'async';
+      image.onload = () => { window.clearTimeout(timer); resolve(image); };
+      image.onerror = () => { window.clearTimeout(timer); resolve(null); };
+      image.src = source.src;
+    });
+
+    Promise.all([
+      load(state.color.image),
+      load(state.window && !state.window.solid ? state.window.image : null),
+      load(state.hardware ? state.hardware.image : null),
+    ]).then(([swatch, section, hardware]) => {
+      if (!swatch) {
+        // Never leave an empty board: fall back to the collection photograph.
+        const fallback = builderImage(owner, state.product.showcase, state.product.title, 'twins-builder__door-photo');
+        fallback.style.maxWidth = `${state.product.showcase.width}px`;
+        fallback.style.width = '100%';
+        fallback.style.height = 'auto';
+        canvas.replaceWith(fallback);
+        return;
+      }
+      const panelStyle = builderPanelStyle(state);
+      const columns = panelStyle === 'long' || panelStyle === 'carriage' ? 2 : 4;
+      const doorX = 24;
+      const doorY = 24;
+      const doorW = W - 48;
+      const doorH = H - 48;
+      // Frame.
+      context.fillStyle = '#071c38';
+      context.fillRect(doorX - 8, doorY - 8, doorW + 16, doorH + 16);
+      // Face: tiled swatch.
+      const pattern = context.createPattern(swatch, 'repeat');
+      context.fillStyle = pattern || '#d9d2c4';
+      context.fillRect(doorX, doorY, doorW, doorH);
+
+      const rows = 4;
+      const hasWindows = Boolean(section);
+      const rowH = doorH / rows;
+      // Window row from the real top-section image, width-fit.
+      if (hasWindows) {
+        const sectionRatio = section.height / section.width;
+        const drawH = Math.min(rowH, doorW * sectionRatio);
+        context.drawImage(section, doorX, doorY + (rowH - drawH) / 2, doorW, drawH);
+      }
+      // Panel bevels over the texture: neutral shading only, no colour.
+      const gap = 6;
+      for (let row = hasWindows ? 1 : 0; row < rows; row += 1) {
+        for (let column = 0; column < columns; column += 1) {
+          const cellW = (doorW - gap * (columns - 1)) / columns;
+          const x = doorX + column * (cellW + gap);
+          const y = doorY + row * rowH + 4;
+          const h = rowH - 8;
+          context.strokeStyle = 'rgba(0, 0, 0, .28)';
+          context.lineWidth = 2;
+          context.strokeRect(x + 6, y + 4, cellW - 12, h - 8);
+          context.strokeStyle = 'rgba(255, 255, 255, .22)';
+          context.lineWidth = 1;
+          context.strokeRect(x + 8, y + 6, cellW - 16, h - 12);
+        }
+      }
+      // Row seams.
+      context.strokeStyle = 'rgba(0, 0, 0, .34)';
+      context.lineWidth = 2;
+      for (let row = 1; row < rows; row += 1) {
+        context.beginPath();
+        context.moveTo(doorX, doorY + row * rowH);
+        context.lineTo(doorX + doorW, doorY + row * rowH);
+        context.stroke();
+      }
+      // Hardware overlays at handle height on the second-to-last row seam.
+      if (hardware) {
+        const hardwareW = 56;
+        const hardwareH = hardware.height / hardware.width * hardwareW;
+        const y = doorY + doorH - rowH * 1.5 - hardwareH / 2;
+        // Hardware thumbnails ship on white; multiply makes the white
+        // disappear into the door texture so no white box surrounds handles.
+        context.globalCompositeOperation = 'multiply';
+        context.drawImage(hardware, doorX + 24, y, hardwareW, hardwareH);
+        context.drawImage(hardware, doorX + doorW - 24 - hardwareW, y, hardwareW, hardwareH);
+        context.globalCompositeOperation = 'source-over';
+      }
+    }).catch(() => {});
+
+    container.appendChild(canvas);
+    return true;
+  }
+
+  function builderFinishPhoto(product, color) {
+    if (!color || !Array.isArray(product.gallery) || !product.gallery.length) return null;
+    const token = String(color.title || '')
+      .replace(/ultra-?grain|cypress|finish|primed|no finish|\(|\)|\*/gi, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (token.length < 3) return null;
+    const needle = token.toLowerCase();
+    const hit = product.gallery.find(item => String(item.title || '').toLowerCase().includes(needle));
+    return hit || null;
+  }
+
   function builderKeywordSource(state) {
     return [
       state.design ? `${state.design.group} ${state.design.title}` : '',
@@ -323,11 +464,27 @@
       hardware += `<circle cx="${left + 138}" cy="${hingeY}" r="3.4" fill="#1c2430"></circle>`;
     }
 
+    // The catalog names design options opaquely ("Option-D", "Design 13"), so
+    // keyword inference alone cannot tell them apart and the door never
+    // changed when a design was picked. When the selected design carries a
+    // validated local swatch, render that swatch as the door face so every
+    // pick is visible. The synthetic cells stay as the fallback.
+    const swatch = state.design && validBuilderImage(state.design.image) ? state.design.image.src : '';
+    let face = `<rect x="20" y="20" width="180" height="150" rx="4" data-door-paint fill="${facePaint}"></rect>` + cells;
+    if (swatch) {
+      const href = swatch.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+      face = '<defs><clipPath id="twins-door-face"><rect x="20" y="20" width="180" height="150" rx="4"></rect></clipPath></defs>'
+        + `<rect x="20" y="20" width="180" height="150" rx="4" data-door-paint fill="${facePaint}"></rect>`
+        + `<image href="${href}" x="20" y="20" width="180" height="150"`
+        + ' preserveAspectRatio="xMidYMid slice" clip-path="url(#twins-door-face)"'
+        + ' data-door-swatch></image>'
+        + `<rect x="20" y="20" width="180" height="150" rx="4" fill="none" stroke="rgba(7,29,59,.35)" stroke-width="2"></rect>`;
+    }
+
     return '<svg viewBox="0 0 220 190" role="img" aria-hidden="true" focusable="false">'
       + '<rect x="2" y="2" width="216" height="186" rx="10" fill="#ffc83d"></rect>'
       + '<rect x="11" y="11" width="198" height="168" rx="6" fill="#071d3b"></rect>'
-      + `<rect x="20" y="20" width="180" height="150" rx="4" data-door-paint fill="${facePaint}"></rect>`
-      + cells
+      + face
       + hardware
       + '</svg>';
   }
@@ -402,23 +559,43 @@
       function renderReference(parent) {
         if (!state.product) return;
         const figure = builderElement(owner, 'figure', 'twins-builder__reference');
+        // The drawn SVG door was removed deliberately. It inferred geometry
+        // from keywords in option titles and could not show the chosen colour,
+        // windows or hardware, so it rendered a door that was not the one the
+        // customer had selected. Clopay's public v2 API returns option lists
+        // and swatches but no composite render, so an accurate preview is not
+        // possible here. Showing the collection's own photograph alongside the
+        // real manufacturer samples is honest; drawing a wrong door is not.
         const art = builderElement(owner, 'div', 'twins-builder__door-art');
         art.setAttribute('data-builder-door-art', '');
-        const cachedPaint = state.color ? builderSwatchColors.get(state.color.image.src) || null : null;
-        art.innerHTML = builderDoorSvg(state, cachedPaint);
-        figure.appendChild(art);
-        if (state.color && !cachedPaint) {
-          builderDominantColor(state.color.image.src, color => {
-            if (!color) return;
-            art.querySelectorAll('[data-door-paint]').forEach(face => {
-              face.style.fill = color;
-            });
-          });
+        const finishPhoto = builderFinishPhoto(state.product, state.color);
+        const composited = !finishPhoto && state.color
+          ? builderCompositeDoor(owner, state, art)
+          : false;
+        const shown = finishPhoto ? finishPhoto.image : state.product.showcase;
+        const photo = composited ? null : builderImage(owner, shown, state.product.title, 'twins-builder__door-photo');
+        // Never upscale. Showcase art is 1190px wide but the finish photos
+        // Clopay publishes are only 372px, so stretching one to the other's
+        // slot is what made the board look soft the moment a colour matched.
+        // Cap at the intrinsic width: smaller and sharp beats bigger and blurry.
+        if (photo) {
+          photo.style.maxWidth = `${shown.width}px`;
+          photo.style.width = '100%';
+          photo.style.height = 'auto';
+          art.appendChild(photo);
         }
+        figure.appendChild(art);
         const selections = configurationRows().slice(1).map(row => row[1]).join(', ');
+        // Say plainly which of the two the visitor is looking at, so a
+        // representative photo is never mistaken for their exact finish.
+        const provenance = finishPhoto
+          ? `Photograph of this door in ${optionLabel(state.color)}.`
+          : (composited
+            ? 'Illustration assembled from the manufacturer\'s images for your selections.'
+            : 'Representative photograph of this collection.');
         const caption = selections
-          ? `Illustrated preview of your door: ${selections}. Manufacturer samples below show true finishes. Manufacturer reference only. Twins confirms final appearance before ordering.`
-          : 'Illustrated preview of your door updates with every choice you make. Manufacturer reference only. Twins confirms final appearance before ordering.';
+          ? `${state.product.title}. ${provenance} Your selections: ${selections}. The samples below are the manufacturer's own images for each choice. Twins confirms the final appearance before ordering.`
+          : `${state.product.title}. ${provenance} Choose a design, colour, windows and hardware to build your selection list. Twins confirms the final appearance before ordering.`;
         figure.appendChild(builderElement(
           owner,
           'figcaption',
