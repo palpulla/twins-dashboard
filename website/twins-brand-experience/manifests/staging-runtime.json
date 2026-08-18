@@ -8,15 +8,15 @@
       "role": "deploy",
       "source": "twins-brand-experience/assets/css/twins-brand-families.css",
       "destination": "twins-brand-experience/assets/css/twins-brand-families.css",
-      "size": 49932,
-      "sha256": "8bfb855366111b32604b2e34f39c6eee2e65a88065a4a70ca9ce8d5e3f3fb5d0"
+      "size": 51019,
+      "sha256": "e2a8420a2dea99ba88c8140086075e8ca55ce70c87c92bd02afedee1e97127e3"
     },
     {
       "role": "deploy",
       "source": "twins-brand-experience/assets/css/twins-brand.css",
       "destination": "twins-brand-experience/assets/css/twins-brand.css",
-      "size": 86556,
-      "sha256": "13c132d91c0f4ea312eb88eb34678ec02e253051bcf038e2c34692f82230c107"
+      "size": 143683,
+      "sha256": "2ce2268ce7c3aba13b5e5062b2deb1751aec19b9de0770f4a40fd9cdc43e3feb"
     },
     {
       "role": "deploy",
@@ -274,15 +274,15 @@
       "role": "deploy",
       "source": "twins-brand-experience/assets/js/twins-brand.js",
       "destination": "twins-brand-experience/assets/js/twins-brand.js",
-      "size": 15952,
-      "sha256": "51362fb628f7d1302e5bb36db2b3c56ae1d9165cd85389a46cf596bd2a09666c"
+      "size": 30707,
+      "sha256": "b21b85f795c111a72b046d96400d2fe02578ef6fe90a21d71e836e6cdfbe9842"
     },
     {
       "role": "deploy",
       "source": "twins-brand-experience/assets/js/twins-builder.js",
       "destination": "twins-brand-experience/assets/js/twins-builder.js",
-      "size": 32154,
-      "sha256": "fb10e274bd3fcbf659cd58ad8324043fb8bc345aa6aad0949bf88cfe0dfffdb2"
+      "size": 41194,
+      "sha256": "4d73645e78a5b9313b45439995bd4dd7055ced6a6f04e56cb4a5e512e474d17c"
     },
     {
       "role": "deploy",
@@ -302,15 +302,50 @@
       "role": "deploy",
       "source": "twins-brand-experience/components/footer.php",
       "destination": "twins-brand-experience/components/footer.php",
-      "size": 3542,
-      "sha256": "3b3885a2031e09884cafd547dcd876a183b000f48e453a72d1ed435d5a4f188d"
+      "size": 4030,
+      "sha256": "c9cc353e9727a07cb54578d7cefbf9718b015e5b75197a7caa0a67f671d98e87"
     },
     {
       "role": "deploy",
       "source": "twins-brand-experience/components/header.php",
       "destination": "twins-brand-experience/components/header.php",
-      "size": 6778,
-      "sha256": "c3b3a8ab765a3fc81f69404cc5f84662be54189e5c4c1013d46e4d2ef02b41c5"
+      "size": 5869,
+      "sha256": "c65485d74e0d78fc4b5d06916f649e08e94568a9a709459ea9f0993dbd4d0472"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/components/home/closing.php",
+      "destination": "twins-brand-experience/components/home/closing.php",
+      "size": 3957,
+      "sha256": "db897351634866cad46cd722dbb1e10885921c73aaade1a14bfc84705da37fe1"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/components/home/company-story.php",
+      "destination": "twins-brand-experience/components/home/company-story.php",
+      "size": 2801,
+      "sha256": "7695d6d8cf433424f2a658241597554357f046f109e8a14833523b1b4e839031"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/components/home/service-journey.php",
+      "destination": "twins-brand-experience/components/home/service-journey.php",
+      "size": 1486,
+      "sha256": "7a92d50adf4a00b1443fbf8db42a870e04ac626570869349286f93ea5fd322c1"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/components/home/service-showcase.php",
+      "destination": "twins-brand-experience/components/home/service-showcase.php",
+      "size": 2590,
+      "sha256": "5faf994c4e0aeac1ebe147fc4ab65293e7fbd26fdab8f47a43416bd5164e0bc1"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/components/home/why-doors.php",
+      "destination": "twins-brand-experience/components/home/why-doors.php",
+      "size": 4865,
+      "sha256": "df359330b8aa283cf9888367d920fa0e02afc504f09a59272d1252e52bd0b8da"
     },
     {
       "role": "deploy",
@@ -323,15 +358,15 @@
       "role": "deploy",
       "source": "twins-brand-experience/components/picture.php",
       "destination": "twins-brand-experience/components/picture.php",
-      "size": 3427,
-      "sha256": "a99c9e80cfb120388622f8ee2462a2dfa1a7c2c09665e5447db6f6665c76f24c"
+      "size": 4161,
+      "sha256": "511f609cc05d3ec5262a4d5db6364b92f20a2b4c41d50c241fa6b2ffbdba4a7a"
     },
     {
       "role": "deploy",
       "source": "twins-brand-experience/components/review-slider.php",
       "destination": "twins-brand-experience/components/review-slider.php",
-      "size": 4869,
-      "sha256": "01255e419be69279747023f6135a847f0f7ffc4caf49d39b9f55be8c9aa6f88e"
+      "size": 5231,
+      "sha256": "a5bfd7a56a7507e2827a4874d1c8bbbea720b50ef2b6f96e34aac4e5038db9bb"
     },
     {
       "role": "deploy",
@@ -339,6 +374,13 @@
       "destination": "twins-brand-experience/components/service-areas-panel.php",
       "size": 1290,
       "sha256": "6e68e9090d1c58ce5bc0985f00a119068f6eee73e443d15b78294cd6fa8c91e9"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/components/service-hero-art.php",
+      "destination": "twins-brand-experience/components/service-hero-art.php",
+      "size": 9805,
+      "sha256": "f81d0240a9ac4476f9e75ee3710bc3360b8c542195dd6daa200836bea46bc3d4"
     },
     {
       "role": "deploy",
@@ -358,8 +400,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/config/markets.php",
       "destination": "twins-brand-experience/config/markets.php",
-      "size": 1342,
-      "sha256": "3269dcf58c6a85d9513ad1e072f8b4408f556f1e31c5dfc357fa1f3043a2bf2a"
+      "size": 1595,
+      "sha256": "4fbb69c29ca215e1881b31ce41af47239c634ce60a0c3eea4fca99919ba29e60"
     },
     {
       "role": "deploy",
@@ -372,8 +414,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/config/review-summary.php",
       "destination": "twins-brand-experience/config/review-summary.php",
-      "size": 549,
-      "sha256": "add7e94184b9556f29b857cf16b97cfca3cb451e67d512410d4cd6e34d12c230"
+      "size": 3018,
+      "sha256": "cfd8ef86b8eabf379f2f80a1faffc043ce9c55a7e35056e8fc0f893a31510d08"
     },
     {
       "role": "deploy",
@@ -393,8 +435,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/src/Experience.php",
       "destination": "twins-brand-experience/src/Experience.php",
-      "size": 19624,
-      "sha256": "be529e8bb713d70f477a43be8e53bd092130148069c6d953f34db512679c2e61"
+      "size": 21154,
+      "sha256": "4bf7a06cbb9bddb18f73c2f519950883b6c02da663cd78ab23d5a468dc186e5f"
     },
     {
       "role": "deploy",
@@ -421,64 +463,71 @@
       "role": "deploy",
       "source": "twins-brand-experience/templates/blog-index.php",
       "destination": "twins-brand-experience/templates/blog-index.php",
-      "size": 4712,
-      "sha256": "c0b81c52bad91eb52da44ec03b530e4e8f7871a83b32fee70da4c3decb78df6c"
+      "size": 4396,
+      "sha256": "0a05a83cfca08579b4042d80c68490e9b77a17e75d693a84462a5ed2d0b27d2c"
     },
     {
       "role": "deploy",
       "source": "twins-brand-experience/templates/careers.php",
       "destination": "twins-brand-experience/templates/careers.php",
-      "size": 6661,
-      "sha256": "7f69ee2c8e172509e1c8777ee9c92a431d04c0e00b29f4fc0b6fbea3f260feba"
+      "size": 6659,
+      "sha256": "0a8953fcbab8988544f82720dee3a4cd99a9c411af9bacef42391071cb493b39"
     },
     {
       "role": "deploy",
       "source": "twins-brand-experience/templates/catalog.php",
       "destination": "twins-brand-experience/templates/catalog.php",
-      "size": 11964,
-      "sha256": "4078f66404f7dde8731f0c5a39260fbf71c7fa0a47f8caaa6d967d0352ff2ee9"
+      "size": 11962,
+      "sha256": "b54f5f46fd9798fda3cc87eb8e5bb508a56a6473c225d2cf9f7557a494e0867b"
     },
     {
       "role": "deploy",
       "source": "twins-brand-experience/templates/contact.php",
       "destination": "twins-brand-experience/templates/contact.php",
-      "size": 4211,
-      "sha256": "1c8b3dc9ca8317d6cd9833c8e008e32ad162aae8b6b07b3e56117826d507fd42"
+      "size": 4209,
+      "sha256": "f9f58a973df8ccfb7144a46a7ddcca9c69c16bdf0d238b787b230fe713ef00df"
     },
     {
       "role": "deploy",
       "source": "twins-brand-experience/templates/editorial.php",
       "destination": "twins-brand-experience/templates/editorial.php",
-      "size": 21200,
-      "sha256": "90850e89d5695926357baf6905084473181a7a6513437309db3390cb51dbf84b"
+      "size": 22192,
+      "sha256": "1030dc0e117d923a1ade409acbccfb90b26a677d5747db9d19da0b07133a509c"
     },
     {
       "role": "deploy",
       "source": "twins-brand-experience/templates/home.php",
       "destination": "twins-brand-experience/templates/home.php",
-      "size": 9438,
-      "sha256": "6c7259e770eded511d6416ced0c93506f4a65aa55572013fa896904bdd060c83"
+      "size": 9620,
+      "sha256": "80ccca2ee85512e4aeff211b5b06863af52750619347a61550f155bf11332b27"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/templates/location-index.php",
+      "destination": "twins-brand-experience/templates/location-index.php",
+      "size": 6115,
+      "sha256": "4cc5e6d550da09f3583f3765f932361b2e29ae2a84d430fe9f04fe2583eb8449"
     },
     {
       "role": "deploy",
       "source": "twins-brand-experience/templates/reviews.php",
       "destination": "twins-brand-experience/templates/reviews.php",
-      "size": 2283,
-      "sha256": "436047a43aea77303d7ed849cc680f5cd047acc279c3b5e1bd52e390a4789e62"
+      "size": 2352,
+      "sha256": "6d9f5b0c891e87e3f392ab84ec08183b267e932bc3726a189772e3d2a29760c2"
     },
     {
       "role": "deploy",
       "source": "twins-brand-experience/templates/service.php",
       "destination": "twins-brand-experience/templates/service.php",
-      "size": 8226,
-      "sha256": "cdfb75536616ae02db8d9c46f72368f7be177692ef0a9382ba55ad1d0b25e295"
+      "size": 8169,
+      "sha256": "1f47fed8755d078114b3ba0314fe309a79cd07da0422c78dbba2288aacefc54f"
     },
     {
       "role": "deploy",
       "source": "twins-brand-experience/templates/team.php",
       "destination": "twins-brand-experience/templates/team.php",
-      "size": 9287,
-      "sha256": "43bb9849fc757337cb5aace6798a2f38e82d89e344a913ea42e6777b761cb4aa"
+      "size": 9285,
+      "sha256": "5adbde2c3e36cc3d696d5609cc9b9e3819be9ec7126f4698fc6804f3a66d75f5"
     },
     {
       "role": "verify-prerequisite",
@@ -6112,15 +6161,22 @@
       "role": "deploy",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/adapters/BrandStagingAdapters.php",
       "destination": "twins-staging-overhaul/adapters/BrandStagingAdapters.php",
-      "size": 21143,
-      "sha256": "961320c8d8222d94ffc523b26caf7f46e0e2b3903ba49faa026f76ba29b45e03"
+      "size": 23335,
+      "sha256": "b3438db4b0204b3fae25cd4a12cb908ab084b9f623416a618944ad7ef31a4897"
     },
     {
       "role": "deploy",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/adapters/BrandStagingPreviews.php",
       "destination": "twins-staging-overhaul/adapters/BrandStagingPreviews.php",
-      "size": 3238,
-      "sha256": "5d7e8409d42f9d2a8bb1558154130b556f4264c34d31eb38620b09cf9d264141"
+      "size": 3750,
+      "sha256": "750c78b28c796a98e2045c56cb4ce2ff7fdfad09310ac21045eb05420d5cb63e"
+    },
+    {
+      "role": "deploy",
+      "source": "staging-safety/mu-plugins/twins-staging-overhaul/adapters/production-adapters.php",
+      "destination": "twins-staging-overhaul/adapters/production-adapters.php",
+      "size": 6938,
+      "sha256": "5fc40333c2707071acbb6268161780591c242efb787bc6fd0282eb4f213456b4"
     },
     {
       "role": "deploy",
@@ -6154,15 +6210,15 @@
       "role": "deploy",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/data.php",
       "destination": "twins-staging-overhaul/data.php",
-      "size": 18616,
-      "sha256": "b5bc6207b4f936a6c1d276643ee59f0105d987ff6149f88794440047fcdc3078"
+      "size": 18878,
+      "sha256": "395e21f032a878930a8d26b9fdb390099ba6f01b9d3dfb1ccb73294f48292d77"
     },
     {
       "role": "deploy",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/renderers.php",
       "destination": "twins-staging-overhaul/renderers.php",
-      "size": 90115,
-      "sha256": "c6940066eeb2dc22743bf428f5dacc14e7b566608c4bd9b5a24c7c8085107e61"
+      "size": 100439,
+      "sha256": "9d359e7bbfddb0d843db3db545ff871caca04fe4c96e8873b2d44359bf36762b"
     },
     {
       "role": "deploy",
@@ -6175,8 +6231,8 @@
       "role": "deploy",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/templates/article.php",
       "destination": "twins-staging-overhaul/templates/article.php",
-      "size": 1357,
-      "sha256": "51e709bae65a40998783ba176c6d3b48ad87211bce952491b4fdd39fa7ff7397"
+      "size": 2184,
+      "sha256": "59ea0c8d0287611348c29ce69817fa95bcc3baa8ab51d29da60878b41e955f6c"
     },
     {
       "role": "deploy",
@@ -6189,8 +6245,8 @@
       "role": "deploy",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/templates/builder.php",
       "destination": "twins-staging-overhaul/templates/builder.php",
-      "size": 8509,
-      "sha256": "2300e4f85c1018ad46f8e3370eb67528a35383e7d1c8ca304075b35c552338c1"
+      "size": 10994,
+      "sha256": "bbdff1234249827f0809f37c544e5b8a80503fd5307d1f0de9ac3f6d7bdd61f8"
     },
     {
       "role": "deploy",
@@ -6238,8 +6294,8 @@
       "role": "verify-prerequisite",
       "source": "staging-safety/mu-plugins/twins-staging-safety.php",
       "destination": "twins-staging-safety.php",
-      "size": 28336,
-      "sha256": "0aedbd14df0ce5276b8400e6b4180af7eca0072e5403ac5d4280d6a01f9c6cd2"
+      "size": 29147,
+      "sha256": "355c8fb5c96d8e9a5ab6f9818b12dec1c6e980f55422d36e314355adc8d62d19"
     }
   ]
 }
