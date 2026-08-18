@@ -38,7 +38,9 @@ test('portable regional literals byte-match the fixed staging registry', () => {
   }
 
   const portableMarkets = new Map();
-  const portablePattern = /'(main|wi|ky|il-preview)'\s*=>\s*\[\s*'label'\s*=>\s*'[^']*'\s*,\s*'phoneDisplay'\s*=>\s*'([^']*)'\s*,\s*'phoneHref'\s*=>\s*'([^']*)'\s*,\s*'routePrefix'\s*=>\s*'([^']*)'/g;
+  // r30 adds an optional metroLines list (Madison/Milwaukee) between the
+  // market phone and its route prefix.
+  const portablePattern = /'(main|wi|ky|il-preview)'\s*=>\s*\[\s*'label'\s*=>\s*'[^']*'\s*,\s*'phoneDisplay'\s*=>\s*'([^']*)'\s*,\s*'phoneHref'\s*=>\s*'([^']*)'\s*,\s*(?:'metroLines'\s*=>\s*\[[\s\S]*?\],\s*)?'routePrefix'\s*=>\s*'([^']*)'/g;
   for (const match of portableSource.matchAll(portablePattern)) {
     portableMarkets.set(match[1], {
       phoneDisplay: match[2],

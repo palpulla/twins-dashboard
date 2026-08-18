@@ -21,31 +21,29 @@ const phpHarnessSource = name => {
 };
 
 test('header exposes the approved complete navigation and CTA copy', () => {
+  // r30 header: four nav groups (Repair Services / Garage Doors / Why Twins /
+  // Service Area), Book Garage Door Service + Call Now CTAs, no header quote CTA.
   const html = source('header.php') + source('nav-data.php');
-  for (const label of ['Services', 'Garage Doors', 'Service Areas', 'Resources', 'About', 'Our Team', 'Careers', 'Book Online', 'Request a Quote']) {
+  for (const label of ['Repair Services', 'Garage Doors', 'Why Twins', 'Service Area', 'Our Team', 'Careers', 'Book Garage Door Service', 'Call Now']) {
     assert.match(html, new RegExp(label.replace(' ', '\\s+')));
   }
   assert.doesNotMatch(html, /Get an Estimate|Request Exact Quote/);
   assert.match(html, /aria-controls="twins-brand-drawer"/);
   assert.match(html, /aria-expanded="false"/);
   assert.match(html, /===\s*['"]dialog['"]/);
-  assert.match(html, /===\s*['"]external['"]/);
 });
 
-test('location classification keeps the familiar shared header and location quote label', () => {
+test('location classification keeps the familiar shared header', () => {
+  // r30 removed the location-specific header quote label; the header is one
+  // shared chrome (shell + mainbar + market strip) for every classification.
   const header = source('header.php');
 
-  assert.match(header, /\$isLocationHeader\s*=\s*isset\(\$context\['classification'\]\)/);
-  assert.match(
-    header,
-    /\$headerQuoteLabel\s*=\s*\$isLocationHeader\s*\?\s*'Get a Free Quote'\s*:\s*'Request a Quote'/,
-  );
   assert.equal((header.match(/<header class="twins-brand-header"/g) || []).length, 1);
-  assert.equal((header.match(/<div class="twins-brand-fascia">/g) || []).length, 1);
-  assert.match(header, /twins-brand-utility/);
+  assert.equal((header.match(/<div class="twins-brand-mainbar">/g) || []).length, 1);
+  assert.match(header, /twins-brand-market-strip/);
   assert.match(header, /twins-brand-primary-nav/);
   assert.match(header, /twins-brand-phone/);
-  assert.doesNotMatch(header, /twins-brand-header--location|twins-brand-fascia--location/);
+  assert.doesNotMatch(header, /twins-brand-header--location|twins-brand-mainbar--location/);
   assert.doesNotMatch(header, /twins-brand-location-nav|twins-brand-drawer--location/);
 });
 
@@ -63,7 +61,9 @@ test('location characters are limited to one service cameo and the final CTA edg
 
 test('conversion controls retain the display font and location service links are touch-sized text actions', () => {
   const css = fs.readFileSync(path.join(root, 'assets/css/twins-brand.css'), 'utf8');
-  const utilityPhone = css.match(/\.twins-brand-utility \.twins-brand-phone\s*\{([^}]*)\}/);
+  // r30 replaced the utility bar with header actions; the shared phone link
+  // itself carries the touch-target guarantees.
+  const utilityPhone = css.match(/\.twins-brand-phone\s*\{([^}]*)\}/);
 
   assert.match(css, /\.twins-brand-cta\s*\{[^}]*font-family:\s*'Lilita One', Impact, sans-serif/);
   assert.match(css, /\.twins-location-service-link\s*\{[^}]*display:\s*(?:inline-)?flex[^}]*align-items:\s*center[^}]*min-height:\s*44px/);
@@ -100,30 +100,35 @@ test('header carries a cache-independent guard against duplicate legacy chrome',
   assert.match(guard[1], /display:\s*none\s*!important/);
 });
 
-test('header binds booking mode to environment and emits only exact safe external links', () => {
+test('booking mode is bound to environment centrally and headers emit only exact safe external links', () => {
+  // r30 moved the environment/booking-mode binding out of the header template
+  // into Experience::validatedBookingAction, which every booking consumer uses.
+  const experience = fs.readFileSync(path.join(root, 'src/Experience.php'), 'utf8');
+  assert.match(experience, /\$environment\s*===\s*['"]staging['"][\s\S]*?\$bookingMode\s*!==\s*['"]dialog['"]/);
+  assert.match(experience, /\$environment\s*===\s*['"]production['"][\s\S]*?\$bookingMode\s*!==\s*['"]external['"]/);
+  assert.match(experience, /\$booking\[['"]target['"]\s*\]\s*\?\?\s*null\)\s*!==\s*['"]_blank['"]/);
+  assert.match(experience, /\$booking\[['"]rel['"]\s*\]\s*\?\?\s*null\)\s*!==\s*['"]noopener noreferrer['"]/);
   const html = source('header.php');
-  assert.match(html, /\$environment\s*===\s*['"]staging['"][\s\S]*?\$bookingMode\s*!==\s*['"]dialog['"]/);
-  assert.match(html, /\$environment\s*===\s*['"]production['"][\s\S]*?\$bookingMode\s*!==\s*['"]external['"]/);
-  assert.match(html, /\$booking\[['"]target['"]\]/);
-  assert.match(html, /\$booking\[['"]rel['"]\]/);
-  assert.equal((html.match(/target="_blank" rel="noopener noreferrer"/g) || []).length, 2);
+  assert.equal((html.match(/target="_blank" rel="noopener noreferrer"/g) || []).length, 3);
 });
 
 test('header exposes the service-area chooser as a native market menu with approved phones', () => {
   const header = source('header.php');
   assert.match(header, /<details class="twins-brand-market-menu"/);
-  assert.match(header, /<summary>Choose your service area<\/summary>/);
-  assert.match(header, /\$availableMarket\[['"]phoneDisplay['"]\]/);
-  assert.doesNotMatch(header, /<span>Choose your service area<\/span>/);
+  assert.match(header, /<summary>Choose Your Service Area<\/summary>/);
+  // r30 lists one row per metro (Madison/Milwaukee) via metroLines.
+  assert.match(header, /\$availableRow\[['"]phoneDisplay['"]\]/);
+  assert.doesNotMatch(header, /<span>Choose Your Service Area<\/span>/);
 });
 
 test('shared chrome uses normalized path contact while the market selector stays market-wide', () => {
   const header = source('header.php');
   const footer = source('footer.php');
   const experience = fs.readFileSync(path.join(root, 'src/Experience.php'), 'utf8');
+  // r30 extended contact context to the home and location-index templates.
   assert.match(
     experience,
-    /in_array\(\$template,\s*\[['"]\.\.\/components\/header['"],\s*['"]\.\.\/components\/footer['"],\s*['"]service['"],\s*['"]editorial['"]\],\s*true\)/,
+    /in_array\(\$template,\s*\[['"]\.\.\/components\/header['"],\s*['"]\.\.\/components\/footer['"],\s*['"]home['"],\s*['"]service['"],\s*['"]editorial['"],\s*['"]location-index['"]\],\s*true\)/,
   );
   assert.match(header, /class="twins-brand-phone" href="<\?= htmlspecialchars\(\$phoneHref,[\s\S]*?<\?= htmlspecialchars\(\$phone,/);
   assert.doesNotMatch(header, /class="twins-brand-phone"[\s\S]*?\$market\[['"]phone(?:Href|Display)['"]\]/);
@@ -137,11 +142,13 @@ test('review component exposes bounded featured and static list modes without do
   const html = source('review-slider.php');
   assert.match(html, /twins-brand-review-slider/);
   assert.match(html, /data-review-mode="featured"/);
-  assert.match(html, /array_slice\(\$records,\s*0,\s*9\)/);
+  // r30: six featured cards, 30-word featured excerpts (42 in list mode).
+  assert.match(html, /array_slice\(\$records,\s*0,\s*6\)/);
   assert.match(html, /twins-brand-review-list/);
   assert.match(html, /data-review-page-status/);
   assert.match(html, /twins-brand-review-control/);
-  assert.match(html, /count\(\$words\)\s*>\s*42/);
+  assert.match(html, /\$excerptLimit\s*=\s*\$listMode\s*\?\s*42\s*:\s*30;/);
+  assert.match(html, /count\(\$words\)\s*>\s*\$excerptLimit/);
   assert.match(html, /\$listMode\s*&&\s*\$isLong/);
   assert.match(html, /<details/);
   assert.match(html, /Read full review/);
@@ -161,7 +168,7 @@ test('PHP renderer harness proves the static Reviews mode keeps the full collect
   const harness = phpHarnessSource('renderer-contract-harness.php');
   assert.match(harness, /reviews list did not render the full verified collection/);
   assert.match(harness, /reviews list changed the complete long quote/);
-  assert.match(harness, /featured slider did not stay within nine records/);
+  assert.match(harness, /featured slider did not stay within six records/);
   assert.match(harness, /['"]classification['"]\s*=>\s*['"]reviews-brand['"]/);
 });
 
@@ -183,15 +190,19 @@ test('picture component accepts logical keys, not paths or URLs', () => {
 });
 
 test('footer has only the approved mobile quick actions and no fixed host', () => {
+  // r30 mobile quick actions: Call Now + Book Online (dialog button on staging,
+  // exact safe external link otherwise); the quote CTA moved to the footer band.
   const html = source('footer.php');
   assert.match(html, /twins-brand-mobile-actions/);
-  assert.match(html, /Call Twins/);
+  assert.match(html, /Call Now/);
+  assert.match(html, /Book Online/);
   assert.match(html, /Request a Quote/);
   assert.doesNotMatch(html, /Get an Estimate|Request Exact Quote|https?:\/\//);
   assert.match(html, /\$context\['classification'\][\s\S]*?===\s*'location'/);
   assert.match(html, /\(\?:wi\|il\|ky\)\/location/);
   assert.match(html, /\$isLocationFooter \? 'Get a Free Quote' : 'Request a Quote'/);
-  assert.match(html, /\$isLocationFooter \? 'Call Now' : 'Call Twins'/);
+  assert.match(html, /\$footerBookingMode === 'dialog'/);
+  assert.match(html, /target="_blank" rel="noopener noreferrer"/);
 });
 
 test('components never default a missing market or environment', () => {

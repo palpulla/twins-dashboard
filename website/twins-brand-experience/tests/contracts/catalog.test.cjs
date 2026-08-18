@@ -151,7 +151,12 @@ test('catalog, cost, and builder use only scoped portable family assets', () => 
   assert.match(builder, /BUILDER_LOCAL_IMAGE/);
   assert.match(builder, /data-twins-overhaul-builder/);
   assert.match(builder, /data-builder-enhanced/);
-  assert.match(builder, /Manufacturer reference only/);
+  // r30 moved the "Manufacturer reference only" truth copy out of the script
+  // and into the builder template markup; keep asserting it renders.
+  assert.match(
+    read('website/staging-safety/mu-plugins/twins-staging-overhaul/templates/builder.php'),
+    /Manufacturer reference only/,
+  );
   assert.doesNotMatch(
     builder,
     /\b(?:fetch|XMLHttpRequest|WebSocket|EventSource|sendBeacon|requestSubmit|localStorage|sessionStorage|indexedDB)\b|\.submit\s*\(/,

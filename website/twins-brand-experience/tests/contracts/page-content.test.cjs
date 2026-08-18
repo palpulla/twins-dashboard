@@ -179,7 +179,12 @@ test('portable service and editorial templates keep adapters and inert content b
   assert.match(editorial, /\$phone/);
   assert.doesNotMatch(editorial, /\$market\[['"]phone(?:Href|Display)['"]\]/);
   assert.match(editorial, /\$quote\[['"]href['"]\]/);
-  assert.doesNotMatch(editorial, /elementor|<form\b|type=["']submit["']|https?:\/\//i);
+  // r30 carves out exactly one external literal: the financing page's
+  // Wisetack prequalify CTA, rendered target=_blank with the fixed rel.
+  const wisetackHref = "$financingApplyHref = 'https://wisetack.us/#/ifbtqfh/prequalify';";
+  assert.ok(editorial.includes(wisetackHref), 'approved Wisetack apply link is missing');
+  assert.match(editorial, /htmlspecialchars\(\$financingApplyHref[^)]*\)\s*\?>" target="_blank" rel="noopener noreferrer"/);
+  assert.doesNotMatch(editorial.replace(wisetackHref, ''), /elementor|<form\b|type=["']submit["']|https?:\/\//i);
 });
 
 test('portable runtime wires registry resolution and classified renderer dispatch without weakening preserved routes', () => {

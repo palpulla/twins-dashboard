@@ -59,10 +59,11 @@ test('services are limited to three concise choices and one character cameo', ()
   assert.match(template, /twins-location-service-card/);
 });
 
-test('only the five post-hero sections participate in location reveals', () => {
-  assert.match(template, /<header class="twins-location-hero" aria-labelledby="twins-location-title">/);
-  assert.doesNotMatch(template, /<header class="twins-location-hero"[^>]*data-location-reveal/);
-  assert.equal((template.match(/data-location-reveal/g) || []).length, 5);
+test('all six location sections participate in one-time reveals, hero included', () => {
+  // r30 added the hero itself to the reveal set: six data-location-reveal
+  // sections total (hero, trust, services, local proof, FAQ, final CTA).
+  assert.match(template, /<header class="twins-location-hero" aria-labelledby="twins-location-title" data-location-reveal>/);
+  assert.equal((template.match(/data-location-reveal/g) || []).length, 6);
   for (const className of [
     'twins-location-trust',
     'twins-location-services',
@@ -74,23 +75,23 @@ test('only the five post-hero sections participate in location reveals', () => {
   assert.match(template, /<section class="twins-brand-faq"[^>]*aria-labelledby="twins-location-questions-title"[^>]*data-location-reveal/);
 });
 
-test('service cards render approved scan-friendly issue lists and one visual spotlight', () => {
+test('service cards are three concise inspection-first summaries without spotlight or lists', () => {
+  // r30 dropped the per-card issue <ul> and the spotlight variant; each card is
+  // art + title + description + one explore link, and the card copy leads with
+  // inspection-first language.
   for (const item of [
-    'Broken springs',
-    'Cables and rollers',
-    'Off-track or noisy movement',
-    'Safety sensors',
-    'Remotes and wall controls',
-    'Motors and drive systems',
-    'Damaged door replacement',
-    'Style and window choices',
-    'Insulation options',
+    'Full door-system inspection',
+    'Repair options explained first',
+    'Balance and safety check',
+    'Sensor and control diagnosis',
+    'Opener replacement options',
+    'Opening measured before quoting',
   ]) {
     assert.match(template, new RegExp(item));
   }
-  assert.match(template, /foreach \(\$locationServiceCards as \$serviceIndex => \$serviceCard\)/);
-  assert.match(template, /\$serviceIndex === 1 \? ' twins-location-service-card--spotlight' : ''/);
-  assert.match(template, /<ul class="twins-location-service-items">[\s\S]*?foreach \(\$serviceCard\['items'\] as \$serviceItem\)/);
+  assert.match(template, /foreach \(\$locationServiceCards as \$serviceCard\)/);
+  assert.doesNotMatch(template, /twins-location-service-card--spotlight/);
+  assert.doesNotMatch(template, /<ul class="twins-location-service-items">/);
   assert.doesNotMatch(template, /recommended|preferred|featured/i);
 });
 
@@ -220,7 +221,8 @@ test('quote is primary copy and unverified urgency claims stay absent', () => {
   assert.match(template, /<div class="twins-brand-final-actions">\s*<\?php if \(\$isLocation\): \?>\s*<a class="twins-brand-cta twins-brand-cta--quote"[\s\S]*?>Get a Free Quote<\/a>\s*<a class="twins-brand-cta twins-brand-cta--call"[\s\S]*?>Call[\s\S]*?<\/a>\s*<\?php else: \?>/,
     'location final CTA must render quote before call');
   assert.match(footer, /\$isLocationFooter \? 'Get a Free Quote' : 'Request a Quote'/);
-  assert.match(footer, /\$isLocationFooter \? 'Call Now' : 'Call Twins'/);
+  // r30 mobile quick actions always read Call Now; the label ternary is gone.
+  assert.match(footer, />Call Now<\/a>/);
   assert.doesNotMatch(template.toLowerCase(), /same[- ]day|within \d+|guaranteed response|recently opened/);
   for (const claim of [
     'done today',
@@ -240,39 +242,44 @@ test('location motion is finite, bounded, fail-open, and reduced-motion safe', (
   assert.match(script, /if \(!\('IntersectionObserver' in window\)\)\s*\{[\s\S]*?items\.forEach\(reveal\)/);
   assert.match(script, /observer\.unobserve\(entry\.target\)/);
 
-  assert.match(css, /\.twins-location-motion-ready \[data-location-reveal\]\s*\{[^}]*translateY\(10px\)[^}]*420ms ease-out/);
-  assert.match(css, /\.twins-location-service-card\s*\{[^}]*transition:\s*transform 160ms ease-out/);
-  assert.match(css, /\.twins-location-service-card:is\(:hover,\s*:focus-within\)\s*\{[^}]*translateY\(-3px\)/);
-  assert.match(css, /\.twins-location-page \.twins-brand-cta--quote\s*\{[^}]*animation:\s*none[^}]*background-position:\s*100% 0[^}]*160ms ease-out/);
-  assert.match(css, /\.twins-location-page \.twins-brand-cta--quote:is\(:hover,\s*:focus-visible\)\s*\{[^}]*background-position:\s*0 0/);
-  assert.match(css, /\.twins-location-page \.twins-location-twin\s*\{[^}]*animation:\s*none/);
+  // r30 reveal motion: one shared 18px/.55s fade-up gated behind the
+  // twins-location-motion-ready class so no-JS never hides content.
+  assert.match(css, /\.twins-location-motion-ready \[data-location-reveal\]\s*\{[^}]*opacity:\s*0[^}]*translateY\(18px\)[^}]*transition:\s*opacity \.55s ease,\s*transform \.55s ease/);
+  assert.match(css, /\.twins-location-motion-ready \[data-location-reveal\]\[data-location-visible="true"\]\s*\{[^}]*opacity:\s*1[^}]*translateY\(0\)/);
 
-  assert.doesNotMatch(css, /\.twins-location[^,{]*\{[^}]*animation:[^;}]*infinite/);
+  // The only continuous location animation is the bounded 5px mascot float,
+  // and reduced motion disables it outright.
+  assert.match(css, /@keyframes twins-location-float\s*\{[^{}]*\{[^}]*translateY\(0\)[^}]*\}[^{}]*\{[^}]*translateY\(-5px\)[^}]*\}/);
+  assert.match(css, /\.twins-location-page \.twins-location-twin\s*\{[^}]*animation:\s*twins-location-float 6s ease-in-out infinite/);
   assert.doesNotMatch(css, /\.twins-location[^,{]*\{[^}]*animation:[^;}]*twins-brand-cta-pulse/);
   assert.doesNotMatch(css, /(^|\n)\[data-location-reveal\]\s*\{[^}]*opacity:\s*0/);
-  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.twins-location-page \[data-location-reveal\][^{]*\{[^}]*opacity:\s*1 !important[^}]*transition:\s*none !important/);
-  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.twins-location-page \.twins-location-service-card[^{]*\{[^}]*transform:\s*none !important[^}]*transition:\s*none !important/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.twins-location-page \.twins-location-twin\s*\{[^}]*animation:\s*none !important[^}]*transform:\s*none !important/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.twins-location-page \[data-location-reveal\]\s*\{[^}]*opacity:\s*1 !important[^}]*transition:\s*none !important/);
 });
 
-test('post-hero sections use the dark showroom palette and static panel texture', () => {
-  assert.match(css, /\.twins-location-trust\s*\{[^}]*background:\s*var\(--twins-gold\)/);
-  assert.match(css, /\.twins-location-services\s*\{[^}]*color:\s*var\(--twins-white\)[^}]*background-color:\s*var\(--twins-navy-950\)/);
-  assert.match(css, /\.twins-location-local-proof\s*\{[^}]*color:\s*var\(--twins-white\)[^}]*background-color:\s*#081f40/);
-  assert.match(css, /\.twins-location-page \.twins-brand-faq\s*\{[^}]*color:\s*var\(--twins-white\)[^}]*background-color:\s*#0b2c58/);
-  assert.match(css, /\.twins-location-final-cta\s*\{[^}]*background-color:\s*var\(--twins-navy-950\)/);
-  assert.match(css, /\.twins-location-services::before,\s*\.twins-location-local-proof::before,\s*\.twins-location-page \.twins-brand-faq::before,\s*\.twins-location-final-cta::before\s*\{[^}]*repeating-linear-gradient/);
-  assert.match(css, /\.twins-location-service-card\s*\{[^}]*border:\s*2px solid rgba\(255,\s*200,\s*61,\s*\.5\)/);
-  assert.match(css, /\.twins-location-service-card--spotlight\s*\{[^}]*background:\s*var\(--twins-gold\)/);
-  assert.match(css, /\.twins-location-proof-list li\s*\{[^}]*border:\s*1px solid rgba\(255,\s*200,\s*61,\s*\.5\)/);
-  assert.match(css, /\.twins-location-page \.twins-brand-faq details\s*\{[^}]*background:\s*#081f40[^}]*border:\s*1px solid rgba\(255,\s*200,\s*61,\s*\.5\)/);
-  assert.match(css, /\.twins-location-local-proof-media\s*\{[^}]*max-height:\s*440px[^}]*background:\s*var\(--twins-gold\)/);
+test('location sections use the premium navy hero and light editorial palette', () => {
+  // r30 replaced the dark showroom treatment: navy hero and final CTA with a
+  // shared grid texture, white/cream working sections separated by hairlines.
+  assert.match(css, /\.twins-location-page\s*\{[^}]*background:\s*#f8f4eb/);
+  assert.match(css, /\.twins-location-hero\s*\{[^}]*color:\s*var\(--twins-white\)[^}]*background:\s*var\(--twins-navy-950\)/);
+  assert.match(css, /\.twins-location-hero::before,\s*\.twins-location-final-cta::before\s*\{[\s\S]{0,220}?repeating-linear-gradient/);
+  assert.match(css, /\.twins-location-trust\s*\{[^}]*background:\s*var\(--twins-white\)/);
+  assert.match(css, /\.twins-location-local-proof\s*\{[^}]*background:\s*var\(--twins-white\)/);
+  assert.match(css, /\.twins-location-final-cta\s*\{[^}]*color:\s*var\(--twins-white\)[^}]*background:\s*var\(--twins-navy-950\)/);
+  assert.match(css, /\.twins-location-service-grid\s*\{[^}]*border-top:\s*1px solid rgba\(7,29,59,\.2\)[^}]*border-bottom:\s*1px solid rgba\(7,29,59,\.2\)/);
+  assert.match(css, /\.twins-location-service-card\s*\{[^}]*border-left:\s*1px solid rgba\(7,29,59,\.2\)/);
+  assert.match(css, /\.twins-location-hero-media\s*\{[^}]*background:\s*var\(--twins-gold\)/);
+  assert.match(css, /\.twins-location-local-proof-media\s*\{[^}]*max-height:\s*440px[^}]*background:\s*var\(--twins-navy-950\)/);
+  assert.doesNotMatch(css, /twins-location-service-card--spotlight/);
 });
 
-test('service cards expose one stretched link without nested controls', () => {
-  assert.match(css, /\.twins-location-service-card\s*\{[^}]*position:\s*relative/);
-  assert.match(css, /\.twins-location-service-link::after\s*\{[^}]*position:\s*absolute[^}]*inset:\s*0/);
-  assert.match(css, /\.twins-location-service-card:focus-within\s*\{[^}]*outline:/);
+test('service cards expose one visible touch-sized link without nested controls', () => {
+  // r30 dropped the stretched-link overlay; each card ends in one explicit
+  // 44px-tall explore link and never nests a second control.
+  assert.match(css, /\.twins-location-service-link\s*\{[^}]*display:\s*inline-flex[^}]*align-items:\s*center[^}]*min-height:\s*44px/);
+  assert.doesNotMatch(css, /\.twins-location-service-link::after/);
   assert.doesNotMatch(template, /<article[^>]*>\s*<a[^>]*>[\s\S]*?<a/);
+  assert.match(template, /<a class="twins-location-service-link"/);
 });
 
 test('recovery CSS locks alignment and contained image proportions', () => {

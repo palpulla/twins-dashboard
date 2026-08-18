@@ -63,7 +63,12 @@ test('context-aware labels keep Illinois anchors truthful and qualify the Wiscon
 
 test('reduced-motion CSS explicitly disables smooth scrolling on the document element', () => {
   const css = read('website/twins-brand-experience/assets/css/twins-brand.css');
-  const reducedMotion = css.match(/@media \(prefers-reduced-motion:\s*reduce\)\s*\{([\s\S]*?)\n\}/);
-  assert.ok(reducedMotion, 'reduced-motion block is missing');
-  assert.match(reducedMotion[1], /html\s*\{\s*scroll-behavior:\s*auto\s*!important;\s*\}/);
+  // r30 added earlier, smaller reduced-motion blocks; assert the guarantee
+  // holds in at least one of them rather than pinning block order.
+  const reducedMotionBlocks = [...css.matchAll(/@media \(prefers-reduced-motion:\s*reduce\)\s*\{([\s\S]*?)\n\}/g)];
+  assert.ok(reducedMotionBlocks.length > 0, 'reduced-motion block is missing');
+  assert.ok(
+    reducedMotionBlocks.some(block => /html\s*\{\s*scroll-behavior:\s*auto\s*!important;\s*\}/.test(block[1])),
+    'no reduced-motion block disables smooth scrolling on the document element',
+  );
 });

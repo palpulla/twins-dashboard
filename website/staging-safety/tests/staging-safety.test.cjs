@@ -11,6 +11,9 @@ const TWX_V2_CSS_PATH = path.join(ROOT, 'mu-plugins', 'twins-staging-assets', 't
 const HARNESS_PATH = path.join(__dirname, 'wordpress-harness.php');
 const CHROME_TRANSITION_PATH = path.join(ROOT, 'tools', 'staging-chrome-transition.php');
 const CHROME_TRANSITION_HARNESS_PATH = path.join(__dirname, 'staging-chrome-transition-harness.php');
+// r30 per-origin exceptions: Clopay product imagery (img-src), the read-only
+// public Supabase review-summary row (connect-src), and Clopay's sandboxed
+// EZDoor visualizer (frame/child-src). Nothing else leaves the origin.
 const EXPECTED_CSP_DIRECTIVES = [
   "default-src 'self'",
   "base-uri 'self'",
@@ -19,10 +22,10 @@ const EXPECTED_CSP_DIRECTIVES = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https://www.clopaydoor.com",
   "font-src 'self'",
-  "connect-src 'self'",
+  "connect-src 'self' https://jwrpjuqaynownxaoeayi.supabase.co",
   "media-src 'self'",
-  "frame-src 'self'",
-  "child-src 'self'",
+  "frame-src 'self' https://ezdoor.clopay.com",
+  "child-src 'self' https://ezdoor.clopay.com",
   "worker-src 'self'",
   "manifest-src 'self'",
   "form-action 'self'",
@@ -139,26 +142,38 @@ test('all responses and crawler surfaces are marked noindex, nofollow and noarch
   assert.match(functionBody(source, 'twins_staging_safety_robots_txt'), /Disallow:\s*\//);
 });
 
-test('quarantine CSP permits same-origin connections and Clopay images only', () => {
+test('quarantine CSP permits only the four pinned per-origin exceptions', () => {
   const source = read(PLUGIN_PATH);
   const policyBody = functionBody(source, 'twins_staging_safety_csp_policy');
   const directives = Array.from(policyBody.matchAll(/^\s*"([^"]+)",?\s*$/gm), (match) => match[1]);
   assert.deepEqual(directives, EXPECTED_CSP_DIRECTIVES);
 
   const policy = directives.join('; ');
-  assert.equal((policy.match(/https:\/\//g) || []).length, 1);
+  // Exactly four external origin grants across the whole policy, each pinned
+  // to one host on one directive; everything else stays same-origin.
+  assert.equal((policy.match(/https:\/\//g) || []).length, 4);
   assert.equal((policy.match(/data:/g) || []).length, 1);
   assert.deepEqual(
     directives.filter((directive) => directive.includes('https://')),
-    ["img-src 'self' data: https://www.clopaydoor.com"]
+    [
+      "img-src 'self' data: https://www.clopaydoor.com",
+      "connect-src 'self' https://jwrpjuqaynownxaoeayi.supabase.co",
+      "frame-src 'self' https://ezdoor.clopay.com",
+      "child-src 'self' https://ezdoor.clopay.com",
+    ]
   );
   assert.deepEqual(
     directives.filter((directive) => directive.includes('data:')),
     ["img-src 'self' data: https://www.clopaydoor.com"]
   );
   assert.match(policy, /img-src 'self' data: https:\/\/www\.clopaydoor\.com/);
-  assert.match(policy, /connect-src 'self'/);
-  assert.doesNotMatch(policy, /connect-src[^;]*https:\/\//);
+  assert.match(policy, /connect-src 'self' https:\/\/jwrpjuqaynownxaoeayi\.supabase\.co/);
+  // The lead-capable directives never leave the origin.
+  for (const locked of ['default-src', 'form-action', 'script-src', 'font-src', 'media-src', 'worker-src', 'manifest-src', 'frame-ancestors', 'navigate-to']) {
+    const directive = directives.find(entry => entry.startsWith(`${locked} `));
+    assert.ok(directive, `${locked} directive is missing`);
+    assert.doesNotMatch(directive, /https?:\/\//);
+  }
   assert.doesNotMatch(policy, /(?:^|\s)https:(?:\s|;|$)/);
   assert.doesNotMatch(policy, /\*/);
 

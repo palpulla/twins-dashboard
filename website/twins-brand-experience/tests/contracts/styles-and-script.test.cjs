@@ -13,20 +13,33 @@ test('CSS pins fonts, logo floors, breakpoints, Twin motion, and reduced motion'
   assert.match(css, /font-family:\s*['"]Lilita One['"]/);
   assert.match(css, /font-family:\s*['"]Nunito['"]/);
   assert.doesNotMatch(css, /fonts\.(googleapis|gstatic)\.com/);
-  for (const token of ['--twins-logo-expanded: 204px', '--twins-logo-compressed: 180px', 'width: 190px', 'width: 176px', 'width: 154px', 'width: 148px', 'width: 140px']) assert.ok(css.includes(token), token);
+  // r30 compact header: 132px base logo stepping down to 92px on the
+  // narrowest breakpoints; the mobile-proof band and right-twin float retired.
+  for (const token of ['width: 132px', 'width: 120px', 'width: 110px', 'width: 100px', 'width: 92px']) assert.ok(css.includes(token), token);
   assert.match(css, /@keyframes twins-brand-float-left/);
-  assert.match(css, /@keyframes twins-brand-float-right/);
+  assert.match(css, /@keyframes twins-location-float/);
   assert.match(css, /\.twins-brand-cta--book::after[\s\S]*content:\s*['"]→['"]/);
   assert.match(css, /linear-gradient/);
   assert.match(css, /\.twins-brand-cta:active/);
-  assert.match(css, /\.twins-brand-mobile-proof[\s\S]*display:\s*none/);
-  assert.match(css, /\.twins-brand-truck--hero[\s\S]*display:\s*none/);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
   assert.match(css, /animation:\s*none\s*!important/);
 });
 
-test('runtime script contains no transport, analytics, or external destination', () => {
-  assert.doesNotMatch(js, /fetch\s*\(|XMLHttpRequest|sendBeacon|WebSocket|EventSource|\.submit\s*\(|requestSubmit|location\s*=|window\.open|gtag|dataLayer|fbq/i);
+test('runtime script has no transport beyond the two approved guarded operations', () => {
+  // r30 allows exactly two narrow exceptions, both mirrored by the staging
+  // CSP: the ZIP router's safeLocalPath-guarded local navigation, and the
+  // read-only GET of the pinned public Supabase review-summary row (the same
+  // origin the safety plugin's connect-src names). Everything else stays
+  // forbidden.
+  assert.match(js, /const destination = safeLocalPath\(ZIP_ROUTES\[zip\.slice\(0, 3\)\] \|\| ZIP_FALLBACK\);/);
+  assert.equal((js.match(/(?:window\.)?location(?:\.href|\.assign|\.replace)?\s*=|window\.open/g) || []).length, 1);
+  assert.equal((js.match(/fetch\s*\(/g) || []).length, 1);
+  assert.match(js, /const endpoint = 'https:\/\/jwrpjuqaynownxaoeayi\.supabase\.co\/rest\/v1\/places_profile_summary'\n\s*\+ '\?select=rating,user_rating_count&place_id=eq\.ChIJ6WuQE9VSBogRgy76ORRGfHs';/);
+  assert.doesNotMatch(js, /method:|POST|PUT|PATCH|DELETE/);
+  const withoutGuardedOperations = js
+    .replace('window.location.href = destination;', '')
+    .replace('fetch(endpoint, {', '');
+  assert.doesNotMatch(withoutGuardedOperations, /fetch\s*\(|XMLHttpRequest|sendBeacon|WebSocket|EventSource|\.submit\s*\(|requestSubmit|location\s*=|window\.open|gtag|dataLayer|fbq/i);
   for (const marker of ['Escape', 'visibilitychange', 'pointerdown', 'touchstart', 'focusin', 'aria-expanded']) assert.ok(js.includes(marker), marker);
 });
 
@@ -38,7 +51,8 @@ test('review runtime uses bounded status controls and permanently pauses after m
   assert.match(js, /toggleAttribute\(['"]inert['"]/);
   assert.match(js, /setAttribute\(['"]aria-hidden['"],\s*['"]true['"]\)/);
   assert.match(js, /removeAttribute\(['"]aria-hidden['"]\)/);
-  assert.match(js, /12000/);
+  // r30 autoplay advances every 6.2s and still stops for good on manual use.
+  assert.match(js, /6200/);
   assert.doesNotMatch(js, /setInterval\([^;]*7000/);
   assert.doesNotMatch(js, /twins-brand-review-dots/);
   assert.match(css, /\.twins-brand-review-control/);
@@ -72,7 +86,9 @@ test('door-builder CTA fixture classes exactly match runtime and use contextual 
     assert.ok(match, 'Design Your Door CTA is missing');
     return match[1].trim().split(/\s+/).sort();
   };
-  assert.deepEqual(classesFor(browserFixture), classesFor(homeTemplate));
-  assert.deepEqual(classesFor(homeTemplate), ['twins-brand-cta']);
+  // r30 moved the Design Your Door CTA into the why-doors home component.
+  const whyDoors = fs.readFileSync(path.join(root, 'components/home/why-doors.php'), 'utf8');
+  assert.deepEqual(classesFor(browserFixture), classesFor(whyDoors));
+  assert.deepEqual(classesFor(whyDoors), ['twins-brand-cta']);
   assert.match(css, /\.twins-brand-door-builder\s+\.twins-brand-cta\s*\{/);
 });

@@ -778,21 +778,23 @@ $expect(strpos($stagingSlider, $businessReviewsUrl) === false, 'staging slider e
 foreach ($records as $record) {
     $expect(strpos($stagingSlider, $record['sourceRecordUrl']) === false, 'slider exposed a per-record source URL');
 }
-$featuredRecords = array_slice($records, 0, 9);
+// r30 tightened the featured slider to six records and a 30-word excerpt
+// rendered as a quoted blockquote (list mode keeps 42 words).
+$featuredRecords = array_slice($records, 0, 6);
 foreach ($featuredRecords as $record) {
     $expect(strpos($stagingSlider, 'aria-label="' . $record['rating'] . ' out of 5 stars"') !== false, 'slider rating label drifted');
 }
 preg_match_all('/<article\b[^>]*>(.*?)<\/article>/s', $stagingSlider, $cards);
-$expect(count($cards[1]) === 9, 'featured slider did not stay within nine records');
-$expect(strpos($stagingSlider, $records[9]['author']) === false, 'featured slider rendered a record beyond its nine-record cap');
+$expect(count($cards[1]) === 6, 'featured slider did not stay within six records');
+$expect(strpos($stagingSlider, $records[6]['author']) === false, 'featured slider rendered a record beyond its six-record cap');
 $expect(strpos($stagingSlider, '<details') === false, 'featured slider exposed a long-review disclosure');
 foreach ($featuredRecords as $index => $record) {
     $card = $cards[1][$index];
     if ($record['stableId'] === 'review-beta') {
         $words = preg_split('/\s+/u', trim($record['text']));
         $expect($words !== false, 'long review words were unavailable');
-        $expectedExcerpt = implode(' ', array_slice($words, 0, 42)) . '…';
-        $expect(preg_match('/<p class="twins-brand-review-excerpt">(.*?)<\/p>/s', $card, $quoteMatch) === 1, 'featured long review excerpt is missing');
+        $expectedExcerpt = implode(' ', array_slice($words, 0, 30)) . '…';
+        $expect(preg_match('/<blockquote class="twins-brand-review-excerpt">(.*?)<\/blockquote>/s', $card, $quoteMatch) === 1, 'featured long review excerpt is missing');
         $expect(html_entity_decode($quoteMatch[1], ENT_QUOTES | ENT_HTML5, 'UTF-8') === $expectedExcerpt, 'featured long review excerpt changed');
         $expect(strpos($card, htmlspecialchars($record['text'], ENT_QUOTES, 'UTF-8')) === false, 'featured long review exposed complete disclosure text');
     } else {

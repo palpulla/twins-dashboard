@@ -6,21 +6,24 @@ const test = require('node:test');
 const root = path.resolve(__dirname, '../..');
 const template = name => fs.readFileSync(path.join(root, 'templates', name), 'utf8');
 
-test('home contains every approved section in order', () => {
+test('home contains every approved scene in order', () => {
+  // r30 home story: hero + proof ticker in the template, then the scene
+  // components in their include order.
   const html = template('home.php');
-  const markers = ['brand-hero', 'trust-ribbon', 'service-pathways', 'review-slider', 'team-story', 'door-builder', 'market-selector', 'careers', 'final-cta'];
+  const markers = ['brand-hero', 'data-home-ticker', 'components/home/company-story.php', 'components/home/service-showcase.php', 'review-slider', 'components/home/service-journey.php', 'components/home/why-doors.php', 'components/home/closing.php'];
   let cursor = -1;
   for (const marker of markers) {
     const next = html.indexOf(marker);
     assert.ok(next > cursor, `${marker} is missing or out of order`);
     cursor = next;
   }
-  assert.match(html, /Garage Door <em>Repair<\/em> & Installation, Done Right <em>Today<\/em>\./);
-  assert.match(html, /twins-brand-offer-chip/);
+  assert.match(html, /Garage door trouble\? <em>Call the Twins\.<\/em>/);
+  assert.match(html, /twins-brand-hero-tag/);
+  assert.match(html, /\$0 Service Call With Repair/);
   assert.match(html, /twins-brand-hero-proof/);
-  assert.match(html, /Same-day appointments/);
-  assert.match(html, /Upfront pricing/);
-  assert.match(html, /Most repairs done in one visit/);
+  assert.match(html, /Licensed and insured/);
+  assert.match(html, /You see the exact price before we start/);
+  assert.doesNotMatch(html, /Same-day appointments|Most repairs done in one visit/);
 });
 
 test('team and careers use real fixed picture keys', () => {
@@ -31,19 +34,29 @@ test('team and careers use real fixed picture keys', () => {
 });
 
 test('all redesigned templates use exact quote copy', () => {
-  for (const name of ['home.php', 'team.php', 'careers.php', 'contact.php', 'reviews.php', 'blog-index.php']) {
+  // r30 home converts through Book Online and Call Now instead of a quote CTA.
+  for (const name of ['team.php', 'careers.php', 'contact.php', 'reviews.php', 'blog-index.php']) {
     const html = template(name);
     assert.doesNotMatch(html, /Get an Estimate|Request Exact Quote/);
     assert.match(html, /Request a Quote/);
   }
+  const home = template('home.php');
+  assert.doesNotMatch(home, /Get an Estimate|Request Exact Quote/);
+  assert.match(home, /Book Online/);
+  assert.match(home, /Call Now/);
 });
 
-test('homepage has deterministic desktop and mobile truck placements', () => {
-  const html = template('home.php');
-  assert.match(html, /twins-brand-hero[\s\S]*twins-brand-truck--hero/);
-  assert.match(html, /twins-brand-mobile-proof[\s\S]*twins-brand-truck--mobile-proof/);
-  assert.match(html, /door-builder-before-after/);
-  assert.match(html, /twins-brand-careers-copy[\s\S]*\$environment\s*===\s*['"]staging['"]/);
+test('homepage has deterministic hero and truck placements', () => {
+  // r30 hero: illustrated SVG door with both eager mascots; the branded truck
+  // now anchors the service journey (320w) and closing backdrop (880w).
+  const home = template('home.php');
+  assert.match(home, /twins-brand-hero[\s\S]*twins-brand-hero-door/);
+  assert.match(home, /twins-brand-hero-twin--left[\s\S]*twins-brand-hero-twin--right/);
+  assert.equal((home.match(/fetchpriority="high"/g) || []).length, 2);
+  const journey = fs.readFileSync(path.join(root, 'components/home/service-journey.php'), 'utf8');
+  assert.match(journey, /twins-brand-journey-truck[\s\S]*truck-webp-320/);
+  const closing = fs.readFileSync(path.join(root, 'components/home/closing.php'), 'utf8');
+  assert.match(closing, /twins-brand-closing-backdrop[\s\S]*truck-webp-880/);
 });
 
 test('supporting journeys preserve approved copy and adapter boundaries', () => {
