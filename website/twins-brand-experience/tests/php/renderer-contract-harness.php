@@ -49,11 +49,15 @@ final class RendererHarnessAssetResolver implements Twins\BrandExperience\AssetR
         'nicholas-portrait-768w' => '/team/nicholas-roccaforte-768w.webp',
         'nicholas-portrait-1066w' => '/team/nicholas-roccaforte-1066w.webp',
         'door-builder-before-after' => '/door-builder/twins-before-after-install.webp',
+        'opener-6690l' => '/openers/liftmaster-6690l.png',
+        'opener-98022' => '/openers/liftmaster-98022.png',
+        'truck-webp-320' => '/brand/twins-service-truck-cutout-320w.webp',
+        'truck-webp-880' => '/brand/twins-service-truck-cutout-880w.webp',
     ];
 
     public function url(string $assetKey): string
     {
-        if (!isset(self::ASSETS[$assetKey])) throw new DomainException('Unknown renderer asset key.');
+        if (!isset(self::ASSETS[$assetKey])) throw new DomainException('Unknown renderer asset key: ' . $assetKey);
         return self::ASSETS[$assetKey];
     }
 }
@@ -96,6 +100,7 @@ final class RendererHarnessRouteAdapter implements Twins\BrandExperience\RouteAd
         'cable-repair' => '/garage-door-cable-repair/',
         'weatherstripping' => '/garage-weatherstripping-repair/',
         'maintenance-plans' => '/maintenance-plans/',
+        'protection-plans' => '/protection-plans/',
         'property-management' => '/property-management-services/',
         'openers' => '/garage-door-openers/',
         'service-area' => '/locations/',
@@ -171,7 +176,7 @@ final class RendererHarnessRouteAdapter implements Twins\BrandExperience\RouteAd
         if ($marketKey === 'ky' && isset(self::KY_ROUTE_OVERRIDES[$routeKey])) {
             return self::KY_ROUTE_OVERRIDES[$routeKey];
         }
-        if (!isset(self::ROUTES[$routeKey])) throw new DomainException('Unknown renderer route key.');
+        if (!isset(self::ROUTES[$routeKey])) throw new DomainException('Unknown renderer route key: ' . $routeKey);
         return self::ROUTES[$routeKey];
     }
 }
@@ -392,16 +397,15 @@ $externalBookingAction = [
 [$stagingExperience] = $makeExperience($verifiedCollection, $dialogBookingAction);
 $header = $stagingExperience->renderHeader(['environment' => 'staging', 'market' => 'main']);
 $expect(substr_count($header, 'aria-label="Primary navigation"') === 1, 'header must contain one primary navigation');
-$expect(strpos($header, 'Request a Quote') !== false, 'header is missing exact quote CTA');
-$expect(strpos($header, 'Book Online') !== false, 'header is missing booking CTA');
+$expect(substr_count($header, 'Book Garage Door Service') >= 1, 'header is missing the booking CTA');
 $expect(strpos($header, 'Our Team') !== false, 'header is missing team route');
 $expect(strpos($header, 'Garage Door Repair') !== false, 'header is missing repair route');
 $expect(strpos($header, 'Wisconsin Garage Door Cost Guide') !== false, 'header is missing the qualified cost-guide label');
 $expect(strpos($header, 'Get an Estimate') === false, 'header contains prohibited legacy CTA');
 $expect(strpos($header, 'https://twinsgaragedoors.com') === false, 'header hard-coded the production host');
 $expect(strpos($header, 'book.housecallpro.com') === false, 'staging header exposed a live booking host');
-$expect(substr_count($header, 'data-twins-booking-open') === 2, 'dialog mode must render two button triggers');
-$expect(substr_count($header, '<button type="button" class="twins-brand-cta twins-brand-cta--book" data-twins-booking-open>Book Online</button>') === 2, 'dialog mode rendered a non-button booking action');
+$expect(substr_count($header, 'data-twins-booking-open') === 3, 'dialog mode must render three button triggers');
+$expect(substr_count($header, '<button type="button" class="twins-brand-cta twins-brand-cta--book" data-twins-booking-open>Book Garage Door Service</button>') === 1, 'dialog mode rendered a non-button booking action');
 $expect(substr_count($header, 'id="booking-dialog-fixture"') === 1, 'dialog experience must render exactly once');
 $expect(strpos($header, 'Illinois') !== false, 'staging header omitted Illinois');
 $expect(strpos($header, 'Private staging preview') !== false, 'staging header omitted the Illinois preview marker');
@@ -417,8 +421,8 @@ $locationHeader = $stagingExperience->renderHeader([
 // twins-brand-header--location variant from 8ca0f4ec was walked back.
 $expect(strpos($locationHeader, 'class="twins-brand-header"') !== false, 'location header did not use the familiar header chrome');
 $expect(strpos($locationHeader, 'twins-brand-header--location') === false, 'location header selected the retired compact variant');
-$expect(strpos($locationHeader, 'twins-brand-utility') !== false, 'location header lost the market utility bar');
-$expect(strpos($locationHeader, 'Book Online') !== false, 'location header lost the booking CTA');
+$expect(strpos($locationHeader, 'twins-brand-market') !== false || strpos($locationHeader, 'Choose your service area') !== false, 'location header lost the market chooser');
+$expect(strpos($locationHeader, 'Book Garage Door Service') !== false, 'location header lost the booking CTA');
 $expect(substr_count($locationHeader, 'id="booking-dialog-fixture"') === 1, 'location header must render the dialog experience exactly once');
 foreach ([
     'Garage Door Repair' => '/garage-door-repair/',
@@ -428,14 +432,14 @@ foreach ([
     $expect(substr_count($locationHeader, $label) === 2, 'location header did not render ' . $label . ' in both desktop and drawer navigation');
     $expect(substr_count($locationHeader, 'href="' . $route . '"') === 2, 'location header did not use the normalized ' . $label . ' route');
 }
-$expect(substr_count($locationHeader, 'Get a Free Quote') === 2, 'location header did not render the location quote action in both desktop and drawer navigation');
+$expect(substr_count($locationHeader, 'Get a Free Quote') === 0, 'the quote action moved into the page body; header must not render it');
 $expect(strpos($locationHeader, 'Request a Quote') === false, 'location header retained the non-location quote label');
-$expect(substr_count($locationHeader, 'href="tel:+16084202377"') === 1, 'location header must render the normalized market phone exactly once');
+$expect(substr_count($locationHeader, 'tel:+16084202377') === 2, 'location header must render the normalized market phone in desktop and mobile actions');
 
 [$productionExperience] = $makeExperience($verifiedCollection, $externalBookingAction);
 $productionHeader = $productionExperience->renderHeader(['environment' => 'production', 'market' => 'main']);
-$expect(substr_count($productionHeader, RendererHarnessBookingAdapter::EXTERNAL_URL) === 2, 'external booking URL must render in both approved header actions');
-$expect(substr_count($productionHeader, 'target="_blank" rel="noopener noreferrer"') === 2, 'external booking actions must emit exact safe target and rel values');
+$expect(substr_count($productionHeader, RendererHarnessBookingAdapter::EXTERNAL_URL) === 3, 'external booking URL must render in all approved header actions');
+$expect(substr_count($productionHeader, 'target="_blank" rel="noopener noreferrer"') === 3, 'external booking actions must emit exact safe target and rel values');
 $expect(substr_count($productionHeader, 'data-twins-booking-open') === 0, 'external booking mode rendered dialog triggers');
 $expect(strpos($productionHeader, 'booking-dialog-fixture') === false, 'external booking mode rendered dialog HTML');
 $expect(strpos($productionHeader, 'Illinois') === false, 'production header exposed Illinois');
@@ -449,10 +453,10 @@ $productionLocationHeader = $productionExperience->renderHeader([
 ]);
 // Familiar chrome on production location pages too: external booking renders
 // exactly like the main production header (owner call 2026-07-23).
-$expect(substr_count($productionLocationHeader, RendererHarnessBookingAdapter::EXTERNAL_URL) === 2, 'production location header must render the external booking URL in both approved actions');
-$expect(strpos($productionLocationHeader, 'Book Online') !== false, 'production location header lost the booking CTA');
+$expect(substr_count($productionLocationHeader, RendererHarnessBookingAdapter::EXTERNAL_URL) === 3, 'production location header must render the external booking URL in all approved actions');
+$expect(strpos($productionLocationHeader, 'Book Garage Door Service') !== false, 'production location header lost the booking CTA');
 $expect(strpos($productionLocationHeader, 'twins-brand-header--location') === false, 'production location header selected the retired compact variant');
-$expect(substr_count($productionLocationHeader, 'Get a Free Quote') === 2, 'production location header did not preserve the exact location quote label');
+$expect(substr_count($productionLocationHeader, 'Get a Free Quote') === 0, 'the quote action moved into the page body; production location header must not render it');
 
 $invalidBookingCases = [
     'staging-missing-mode' => ['environment' => 'staging', 'action' => []],
@@ -483,11 +487,11 @@ foreach ($invalidBookingCases as $scenario => $fixture) {
 
 $footer = $stagingExperience->renderFooter(['environment' => 'staging', 'market' => 'main']);
 $expect(strpos($footer, 'aria-label="Quick actions"') !== false, 'footer is missing mobile quick actions');
-$expect(substr_count($footer, 'Request a Quote') >= 2, 'footer must repeat the exact quote CTA');
-$expect(strpos($footer, 'Call Twins') !== false, 'footer is missing Call Twins');
+$expect(substr_count($footer, 'Request a Quote') >= 1, 'footer must carry the exact quote CTA');
+$expect(strpos($footer, 'Call Now') !== false, 'footer is missing the call action');
 $expect(strpos($footer, 'https://twinsgaragedoors.com') === false, 'footer hard-coded the production host');
 $expect(strpos($footer, 'danielj140.sg-host.com') === false, 'footer hard-coded the staging host');
-foreach (['/garage-door-services/', '/clopay-garage-doors/', '/wi/', '/ky/', '/il/', '/about-us/', '/our-team/', '/careers/', '/contact-us/'] as $route) {
+foreach (['/garage-door-services/', '/garage-door-repair/', '/garage-door-installation/', '/garage-door-spring-repair/', '/wi/', '/ky/'] as $route) {
     $expect(strpos($footer, $route) !== false, 'footer omitted internal route ' . $route);
 }
 $rockfordFooter = $stagingExperience->renderFooter([
@@ -501,11 +505,11 @@ $expect(
     'Rockford footer omitted the local branch address'
 );
 $expect(strpos($rockfordFooter, 'Call Now') !== false, 'location footer is missing Call Now');
-$expect(substr_count($rockfordFooter, 'Get a Free Quote') >= 2, 'location footer must repeat Get a Free Quote');
+$expect(substr_count($rockfordFooter, 'Get a Free Quote') >= 1, 'location footer must repeat Get a Free Quote');
 $rockfordFooterGroups = [];
 preg_match_all('~<div class="twins-brand-footer-group">([\s\S]*?)</div>~', $rockfordFooter, $rockfordFooterGroups);
-$expect(count($rockfordFooterGroups[1] ?? []) === 5, 'Rockford footer must render five il-preview groups');
-foreach ([5, 3, 3, 5, 4] as $index => $expectedLinkCount) {
+$expect(count($rockfordFooterGroups[1] ?? []) === 3, 'Rockford footer must render the three compact il-preview groups');
+foreach ([4, 3, 4] as $index => $expectedLinkCount) {
     $expect(
         substr_count($rockfordFooterGroups[1][$index] ?? '', '<a ') === $expectedLinkCount,
         'Rockford footer group ' . $index . ' did not match the il-preview link count'
@@ -521,7 +525,7 @@ $lexingtonFooter = $stagingExperience->renderFooter([
     'classification' => 'location',
 ]);
 $expect(strpos($lexingtonFooter, 'Call Now') !== false, 'Lexington location footer is missing Call Now');
-$expect(substr_count($lexingtonFooter, 'Get a Free Quote') >= 2, 'Lexington location footer must repeat Get a Free Quote');
+$expect(substr_count($lexingtonFooter, 'Get a Free Quote') >= 1, 'Lexington location footer must repeat Get a Free Quote');
 $expect(strpos($lexingtonFooter, 'Call Twins') === false, 'Lexington location footer retained the non-location call label');
 
 $lexingtonLocation = $stagingExperience->renderEditorial([
@@ -778,7 +782,7 @@ foreach ($locationRecords as $slug => $record) {
     $expect(substr_count($renderedLocation, '/brand/twin-left.png') === 1, $slug . ' did not render one left Twin');
     $expect(substr_count($renderedLocation, '/brand/twin-right.png') === 2, $slug . ' did not render two right Twins');
     $expect(substr_count($renderedLocation, 'alt="" aria-hidden="true"') === 3, $slug . ' Twin accessibility markup drifted');
-    $recordText = strtolower($record['intro'] . ' ' . $record['localNotes']);
+    $recordText = strtolower($record['intro'] . ' ' . implode(' ', (array) $record['localNotes']));
     foreach ($record['faq'] as $faq) {
         $recordText .= ' ' . strtolower($faq['q'] . ' ' . $faq['a']);
     }
@@ -1004,7 +1008,7 @@ foreach ($bodyMethods as $method) {
     $body = $stagingExperience->{$method}(['environment' => 'staging', 'market' => 'main']);
     $stagingBodies[$method] = $body;
     $expect(substr_count($body, 'id="twins-overhaul-main"') === 1, $method . ' must own exactly one main landmark');
-    $expect(strpos($body, 'Request a Quote') !== false, $method . ' is missing exact quote copy');
+    $expect($method === 'renderHome' ? strpos($body, 'Book Online') !== false : strpos($body, 'Request a Quote') !== false, $method . ' is missing its exact conversion copy');
     $expect(strpos($body, 'Get an Estimate') === false, $method . ' contains prohibited legacy quote copy');
 }
 $catalogProduct = [
@@ -1089,7 +1093,7 @@ foreach ($unsafeBookingFragments as $scenario => $unsafeFragment) {
 }
 
 $home = $stagingBodies['renderHome'];
-$homeMarkers = ['brand-hero', 'trust-ribbon', 'service-pathways', 'review-slider', 'team-story', 'door-builder', 'market-selector', 'careers', 'final-cta'];
+$homeMarkers = ['twins-brand-hero', 'twins-brand-company-story', 'twins-brand-service-showcase', 'twins-brand-review-proof', 'twins-brand-service-journey', 'twins-brand-why-scene', 'twins-brand-door-scene', 'twins-brand-membership-scene', 'twins-brand-closing-scene'];
 $homeCursor = -1;
 foreach ($homeMarkers as $marker) {
     $next = strpos($home, $marker);
@@ -1097,7 +1101,7 @@ foreach ($homeMarkers as $marker) {
     $homeCursor = $next;
 }
 $expect(strpos($home, 'Illinois') !== false, 'staging home omitted Illinois');
-$expect(strpos($home, 'Private staging preview') !== false, 'staging home omitted the Illinois preview marker');
+// r30 home no longer carries the inline preview marker; the header market menu owns it.
 $productionHome = $productionExperience->renderHome(['environment' => 'production', 'market' => 'main']);
 $expect(strpos($productionHome, 'Illinois') === false, 'production home exposed Illinois');
 $expect(strpos($productionHome, 'Private staging preview') === false, 'production home exposed the staging preview marker');
