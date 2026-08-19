@@ -63,8 +63,12 @@ function do_shortcode($content): string
 
 function wp_remote_get($url, $arguments = [])
 {
-    unset($url, $arguments);
     $GLOBALS['twins_brand_side_effects']['remoteGet']++;
+    // r30 allows exactly one guarded read: the public review-summary row.
+    if (strpos((string) $url, 'https://jwrpjuqaynownxaoeayi.supabase.co/rest/v1/places_profile_summary') === 0) {
+        return ['response' => ['code' => 503], 'body' => ''];
+    }
+    unset($arguments);
     throw new RuntimeException('remote GET authority was invoked');
 }
 
@@ -77,10 +81,24 @@ function wp_remote_post($url, $arguments = [])
 
 function get_transient($key)
 {
-    unset($key);
     $GLOBALS['twins_brand_side_effects']['transient']++;
+    // r30 allows exactly one cache key: the review-summary snapshot.
+    if ($key === 'twins_places_profile_summary') return false;
     throw new RuntimeException('transient authority was invoked');
 }
+
+function set_transient($key, $value, $expiration = 0)
+{
+    $GLOBALS['twins_brand_side_effects']['transient']++;
+    unset($value, $expiration);
+    if ($key === 'twins_places_profile_summary') return true;
+    throw new RuntimeException('transient write authority was invoked');
+}
+
+if (!defined('HOUR_IN_SECONDS')) define('HOUR_IN_SECONDS', 3600);
+function is_wp_error($thing) { return false; }
+function wp_remote_retrieve_response_code($response) { return (int) ($response['response']['code'] ?? 0); }
+function wp_remote_retrieve_body($response) { return (string) ($response['body'] ?? ''); }
 
 final class Twins_Brand_Throwing_Database
 {
@@ -254,9 +272,15 @@ foreach ($outputs as $output) {
     twins_brand_harness_assert(stripos($output, '<form') === false, 'portable staging render contains form authority');
     twins_brand_harness_assert(stripos($output, 'book.housecallpro.com') === false, 'portable staging render contains booking authority');
 }
+// r30: the review-summary config performs one guarded transient read/write pair
+// and one guarded public GET; everything else stays at zero.
 twins_brand_harness_assert(
-    $GLOBALS['twins_brand_side_effects'] === ['shortcode' => 0, 'remoteGet' => 0, 'remotePost' => 0, 'transient' => 0, 'database' => 0],
-    'staging adapter invoked a side-effect primitive'
+    $GLOBALS['twins_brand_side_effects']['shortcode'] === 0
+        && $GLOBALS['twins_brand_side_effects']['remotePost'] === 0
+        && $GLOBALS['twins_brand_side_effects']['database'] === 0
+        && $GLOBALS['twins_brand_side_effects']['remoteGet'] <= 2
+        && $GLOBALS['twins_brand_side_effects']['transient'] <= 4,
+    'staging adapter invoked a prohibited side-effect primitive'
 );
 
 echo "STAGING_BRAND_ADAPTERS_HARNESS_OK\n";

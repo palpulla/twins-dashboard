@@ -138,8 +138,8 @@
     {
       "role": "verify",
       "source": "staging-safety/tests/staging-brand-adapters-harness.php",
-      "size": 13911,
-      "sha256": "9f0de7dea2a7e9d88a1ecff598ec99e987142de9140efa95120a28dc08ae3d93"
+      "size": 15218,
+      "sha256": "c2502062f266490e65e3f637dc570e5863e4e82093c68432a02386f5bbc3ade4"
     },
     {
       "role": "verify",
@@ -174,8 +174,8 @@
     {
       "role": "verify",
       "source": "staging-safety/tests/staging-overhaul-builder-harness.php",
-      "size": 6191,
-      "sha256": "975ffa93c50a7dbd66c746929ea5cba31d34138043c7247941b67ce09d06509f"
+      "size": 6555,
+      "sha256": "057162ef9b69f13764d791bae8cffa1c420aac82d8b5c0bd33fc4940861d446a"
     },
     {
       "role": "verify",
@@ -198,8 +198,8 @@
     {
       "role": "verify",
       "source": "staging-safety/tests/staging-overhaul-renderers-harness.php",
-      "size": 98090,
-      "sha256": "ed69f247a313db19de2a10f97d68e28ca92ddacc2926152e63b3b0a4e4617d0d"
+      "size": 96795,
+      "sha256": "d29af339a9928b05ba63021e82d51aeaacad7d7de2ec411b85e35621b6a41e46"
     },
     {
       "role": "verify",

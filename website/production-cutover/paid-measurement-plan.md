@@ -228,10 +228,25 @@ Each step is blocked by the one above it.
      flushed, site verified healthy, and the live classifier now returns
      `class=campaign-preserve | chrome=NO`.
 
-     This bypassed the release gate. **Whoever ships r19 must run
-     `--capture-expected-old` so the edited file is baselined**, otherwise the
-     deploy's drift check will fail against the manifest. r19 ships byte-identical
-     content, so it is a no-op for this file once baselined.
+     This bypassed the release gate, so the note here used to read "whoever ships
+     r19 must run `--capture-expected-old` to baseline the edited file".
+
+     **✅ RESOLVED 2026-07-23 — no capture needed, do not run one.** The fix was
+     committed as `2751e061` on 2026-07-22 16:30 and shipped through the normal
+     release path: **r30 deployed 2026-07-23 07:14:38**. Verified without SSH by
+     matching the shipped artefact to the recorded deploy:
+
+     - `dist/staging-runtime/wp-content/mu-plugins/twins-staging-overhaul/routes.php:128`
+       contains `array(7092, 7093, 7727)`
+     - that package's `deployPackageSha256` is `6f14d084…518e98`
+     - `dist/.staging-deploy/staging-remediation-r30-20260723/deploy-attempt.json`
+       records the identical `deployPackageSha256`
+
+     So the deployed bytes came from the manifest-verified package, not the hand
+     edit, and there is no drift left to baseline. Running
+     `--capture-expected-old` now would baseline **post-deploy** bytes against an
+     already-completed transaction — meaningless at best. The host backup
+     `~/routes.php.bak-20260722` is now redundant and can be removed.
 
      **What the page looks like on staging vs production.** The
      `campaign-preserve` renderer applies two deliberate transformations

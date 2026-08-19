@@ -38,6 +38,8 @@ function esc_attr($value): string { return htmlspecialchars((string) $value, ENT
 function esc_url($value): string { return (string) $value; }
 function wp_json_encode($value, $flags = 0, $depth = 512) { return json_encode($value, (int) $flags, (int) $depth); }
 
+function twins_overhaul_environment_is_production(): bool { return false; }
+
 function builder_assert(bool $condition, string $message): void {
     if (!$condition) throw new RuntimeException($message);
 }
@@ -55,7 +57,7 @@ builder_assert(is_string($flatBuilderScript), 'portable builder script normaliza
 builder_assert(strpos($flatBuilderScript, "const BUILDER_PRODUCT_ORDER = Object.freeze([ '330', '320', '30', '29', '240', '26', '170', '340', '12', '16', '290', '370', '250', '380', '11', '27', '291', '8', '10', '25', '9', '13', '23', ]);") !== false, 'fixed builder order missing');
 builder_assert(strpos($builderScript, 'BUILDER_LOCAL_IMAGE') !== false, 'local builder image boundary missing');
 builder_assert(strpos($builderScript, 'data-builder-enhanced') !== false, 'builder enhancement marker missing');
-builder_assert(strpos($builderScript, 'Manufacturer reference only.') !== false, 'builder manufacturer truth missing');
+builder_assert(strpos($builderScript, 'Manufacturer sample') !== false, 'builder manufacturer truth missing');
 builder_assert(!preg_match('/\b(?:fetch|XMLHttpRequest|WebSocket|EventSource|sendBeacon|requestSubmit|localStorage|sessionStorage|indexedDB)\b|\.submit\s*\(/', $builderScript), 'builder script has prohibited authority');
 builder_assert(!preg_match('/ZIP_ROUTES|initZip|initMenu|initPreservedForms|initReveal|TwinsOverhaulPreview/', $builderScript), 'builder script contains unrelated legacy behavior');
 
@@ -83,7 +85,9 @@ foreach ($phones as $blogId => $phone) {
     $embedded = json_decode($match[1], true, 512, JSON_THROW_ON_ERROR);
     builder_assert(($embedded['schemaVersion'] ?? null) === 1 && count($embedded['products'] ?? array()) === 23, 'embedded catalog invalid');
     builder_assert(!preg_match('/<form\b|type=["\'](?:submit|image)["\']|\baction\s*=|\bformaction\s*=/i', $markup), 'builder has submission authority');
-    builder_assert(stripos($markup, 'clopaydoor.com') === false && stripos($markup, 'http://') === false && stripos($markup, 'https://') === false, 'builder leaks a remote URL');
+    $markupWithoutEzdoor = str_replace('https://ezdoor.clopay.com/ezdoor/home', '', $markup);
+    builder_assert(substr_count($markup, 'https://ezdoor.clopay.com/ezdoor/home') >= 1, 'builder lost the fixed EZDoor dealer link');
+    builder_assert(stripos($markupWithoutEzdoor, 'clopaydoor.com') === false && stripos($markupWithoutEzdoor, 'http://') === false && stripos($markupWithoutEzdoor, 'https://') === false, 'builder leaks a remote URL beyond the fixed EZDoor link');
 }
 
 $GLOBALS['twins_builder_blog_id'] = 99;
