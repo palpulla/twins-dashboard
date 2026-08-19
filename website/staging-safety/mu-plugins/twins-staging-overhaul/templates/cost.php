@@ -40,7 +40,7 @@ function twins_overhaul_render_cost_page(string $market, array $context): string
     $markup .= '<p class="twins-cost-sticker">' . esc_html($data['sticker']) . '</p>';
     $markup .= '<div class="twins-cost-hero__mascots" aria-hidden="true"><img src="' . esc_url(twins_overhaul_asset_url('twin-left')) . '" width="196" height="534" alt=""><img src="' . esc_url(twins_overhaul_asset_url('twin-right')) . '" width="297" height="538" alt=""></div>';
     $markup .= '<div class="twins-cost-hero__deck">';
-    foreach (array($rows[1], $rows[3], $rows[2]) as $row) {
+    foreach (array($rows[1], $rows[6], $rows[4]) as $row) {
         $markup .= '<div class="twins-cost-hero__price"><span>' . esc_html($row['service']) . '</span><strong>' . esc_html($row['range']) . '</strong></div>';
     }
     $markup .= '<p class="twins-cost-short-disclaimer">' . esc_html($data['shortDisclaimer']) . '</p>';
@@ -77,7 +77,11 @@ function twins_overhaul_render_cost_page(string $market, array $context): string
     }
     $markup .= '</tbody></table></div>';
     $markup .= '<p class="twins-cost-short-disclaimer">' . esc_html($data['shortDisclaimer']) . '</p>';
-    $markup .= '<aside class="twins-cost-spring-note"><h3>About spring-related repairs</h3><p>' . esc_html($data['springClarification']) . '</p></aside>';
+    $markup .= '<aside class="twins-cost-spring-note"><h3>Three honest footnotes</h3>';
+    foreach ($data['footnotes'] as $footnote) {
+        $markup .= '<p>' . esc_html($footnote) . '</p>';
+    }
+    $markup .= '</aside>';
     $markup .= '<aside class="twins-cost-full-disclaimer"><strong>Every Twins project is priced individually</strong><p>' . esc_html($data['fullDisclaimer']) . '</p></aside>';
     $markup .= '</div></section>';
 
