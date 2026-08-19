@@ -316,36 +316,43 @@
       "role": "deploy",
       "source": "twins-brand-experience/components/home/closing.php",
       "destination": "twins-brand-experience/components/home/closing.php",
-      "size": 3957,
-      "sha256": "db897351634866cad46cd722dbb1e10885921c73aaade1a14bfc84705da37fe1"
+      "size": 4547,
+      "sha256": "7c431ae2b0ab90bddb0ea3a47e2d045eca4acd60873d9bb691a3b3c08e3e079f"
     },
     {
       "role": "deploy",
       "source": "twins-brand-experience/components/home/company-story.php",
       "destination": "twins-brand-experience/components/home/company-story.php",
-      "size": 2801,
-      "sha256": "7695d6d8cf433424f2a658241597554357f046f109e8a14833523b1b4e839031"
+      "size": 2824,
+      "sha256": "f7cc69060e634edae51e2b717ccaf62ca599e01cb80169faab3ccb46a93af5f5"
     },
     {
       "role": "deploy",
       "source": "twins-brand-experience/components/home/service-journey.php",
       "destination": "twins-brand-experience/components/home/service-journey.php",
-      "size": 1486,
-      "sha256": "7a92d50adf4a00b1443fbf8db42a870e04ac626570869349286f93ea5fd322c1"
+      "size": 1699,
+      "sha256": "7b1bdbf00c6eff7701eb61ce98ad52ec33d762b98c0453e73bfa38e4f002510a"
     },
     {
       "role": "deploy",
       "source": "twins-brand-experience/components/home/service-showcase.php",
       "destination": "twins-brand-experience/components/home/service-showcase.php",
-      "size": 2590,
-      "sha256": "5faf994c4e0aeac1ebe147fc4ab65293e7fbd26fdab8f47a43416bd5164e0bc1"
+      "size": 2583,
+      "sha256": "42842258c069075514d4f43f5e9e763f0e32b2f648431ca90ae3c199299b316f"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/components/home/structured-data.php",
+      "destination": "twins-brand-experience/components/home/structured-data.php",
+      "size": 3213,
+      "sha256": "6dd86a8e68ada6daeaec5944ff35d30613b244f53b1449e58daf8412ea94fc63"
     },
     {
       "role": "deploy",
       "source": "twins-brand-experience/components/home/why-doors.php",
       "destination": "twins-brand-experience/components/home/why-doors.php",
-      "size": 4865,
-      "sha256": "df359330b8aa283cf9888367d920fa0e02afc504f09a59272d1252e52bd0b8da"
+      "size": 5246,
+      "sha256": "e66954342b7d706165b3d5de769c44721036ae96b62aeb3770cbfa5ab8c40d61"
     },
     {
       "role": "deploy",
@@ -505,8 +512,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/templates/home.php",
       "destination": "twins-brand-experience/templates/home.php",
-      "size": 9620,
-      "sha256": "80ccca2ee85512e4aeff211b5b06863af52750619347a61550f155bf11332b27"
+      "size": 11657,
+      "sha256": "5a4d5cdf76341b8178cc8688ada48fee83de98b108c373f05fb772ca06acd0c1"
     },
     {
       "role": "deploy",
@@ -6224,8 +6231,8 @@
       "role": "deploy",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/cost-data.php",
       "destination": "twins-staging-overhaul/cost-data.php",
-      "size": 16779,
-      "sha256": "dc4465f3abf853e2f6e44d842f3823305104ac61bf279a6f7fbbc3e94bbfe9d5"
+      "size": 23647,
+      "sha256": "5d08094e0c2cbf04c4eb97d65849b4384374b94ba318bf15006985fbdae1a511"
     },
     {
       "role": "deploy",
@@ -6238,8 +6245,8 @@
       "role": "deploy",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/renderers.php",
       "destination": "twins-staging-overhaul/renderers.php",
-      "size": 102144,
-      "sha256": "20e0a8260c8b3d1b032488cc1cb17b8a0ebae3f4e2de2aebff268c6e15ae85ce"
+      "size": 102150,
+      "sha256": "2e0587dfdceaf9fa93f0fe406cd55984c40d124b49a13dd3de3272765b6f641f"
     },
     {
       "role": "deploy",
@@ -6273,8 +6280,8 @@
       "role": "deploy",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/templates/cost.php",
       "destination": "twins-staging-overhaul/templates/cost.php",
-      "size": 13953,
-      "sha256": "eda199b63f2c3b2caa97ad4198d8e2f018fd79171563357050cf1db2a14ca582"
+      "size": 14024,
+      "sha256": "346513fdf9c6fdf82885d6c07315174189c197817434b41e4baae254647228e0"
     },
     {
       "role": "deploy",
