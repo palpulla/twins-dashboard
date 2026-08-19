@@ -108,6 +108,11 @@ test('local proof has one owned image and three concise proof statements', () =>
   assert.match(template, /Complete system inspection/);
   assert.match(template, /Plain-language options/);
   assert.match(template, /Respect for your home/);
+  // r31: the localized paragraphs live in a readable-measure copy column and
+  // the NAP card, owned image, and proof statements move into a right rail.
+  assert.match(template, /<div class="twins-location-local-proof-copy">[\s\S]*?<aside class="twins-location-local-proof-rail"[\s\S]*?twins-location-address[\s\S]*?twins-location-local-proof-media[\s\S]*?twins-location-proof-list/);
+  assert.match(css, /\.twins-location-local-proof-copy > p\s*\{[^}]*max-width:\s*65ch/);
+  assert.match(css, /\.twins-location-local-proof-rail \.twins-location-address\s*\{[^}]*border:\s*2px solid var\(--twins-navy-950\)[^}]*box-shadow:\s*4px 5px 0 var\(--twins-gold\)/);
 });
 
 test('Kentucky location service routes remain market-local', () => {
@@ -298,20 +303,41 @@ test('location motion is finite, bounded, fail-open, and reduced-motion safe', (
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.twins-location-page \[data-location-reveal\]\s*\{[^}]*opacity:\s*1 !important[^}]*transition:\s*none !important/);
 });
 
-test('location sections use the premium navy hero and light editorial palette', () => {
-  // r30 replaced the dark showroom treatment: navy hero and final CTA with a
-  // shared grid texture, white/cream working sections separated by hairlines.
+test('location sections use the premium navy hero and alternating band palette', () => {
+  // r31 density pass: navy hero and final CTA keep the shared grid texture,
+  // and the in-between monotony is broken by borrowed home-scene bands — a
+  // navy services panel with the diagonal home-showcase texture and a navy
+  // reviews band with gold headings — around white/cream working sections.
   assert.match(css, /\.twins-location-page\s*\{[^}]*background:\s*#f8f4eb/);
   assert.match(css, /\.twins-location-hero\s*\{[^}]*color:\s*var\(--twins-white\)[^}]*background:\s*var\(--twins-navy-950\)/);
   assert.match(css, /\.twins-location-hero::before,\s*\.twins-location-final-cta::before\s*\{[\s\S]{0,220}?repeating-linear-gradient/);
   assert.match(css, /\.twins-location-trust\s*\{[^}]*background:\s*var\(--twins-white\)/);
+  assert.match(css, /\.twins-location-services\s*\{[^}]*color:\s*var\(--twins-cream\)[^}]*background-color:\s*var\(--twins-navy-900\)/);
+  assert.match(css, /\.twins-location-services::before\s*\{[\s\S]{0,220}?repeating-linear-gradient\(135deg, rgba\(255,255,255,\.05\) 0 2px, transparent 2px 18px\)/);
   assert.match(css, /\.twins-location-local-proof\s*\{[^}]*background:\s*var\(--twins-white\)/);
+  assert.match(css, /\.twins-location-reviews\s*\{[^}]*color:\s*var\(--twins-cream\)[^}]*background:\s*var\(--twins-navy-950\)/);
+  assert.match(css, /\.twins-location-reviews \.twins-brand-section-heading h2\s*\{[^}]*color:\s*var\(--twins-gold\)/);
   assert.match(css, /\.twins-location-final-cta\s*\{[^}]*color:\s*var\(--twins-white\)[^}]*background:\s*var\(--twins-navy-950\)/);
-  assert.match(css, /\.twins-location-service-grid\s*\{[^}]*border-top:\s*1px solid rgba\(7,29,59,\.2\)[^}]*border-bottom:\s*1px solid rgba\(7,29,59,\.2\)/);
-  assert.match(css, /\.twins-location-service-card\s*\{[^}]*border-left:\s*1px solid rgba\(7,29,59,\.2\)/);
+  assert.match(css, /\.twins-location-service-grid\s*\{[^}]*border-top:\s*1px solid rgba\(255,255,255,\.18\)[^}]*border-bottom:\s*1px solid rgba\(255,255,255,\.18\)/);
+  assert.match(css, /\.twins-location-service-card\s*\{[^}]*border-left:\s*1px solid rgba\(255,255,255,\.18\)/);
   assert.match(css, /\.twins-location-hero-media\s*\{[^}]*background:\s*var\(--twins-gold\)/);
   assert.match(css, /\.twins-location-local-proof-media\s*\{[^}]*max-height:\s*440px[^}]*background:\s*var\(--twins-navy-950\)/);
   assert.doesNotMatch(css, /twins-location-service-card--spotlight/);
+});
+
+test('location sections keep a compact vertical rhythm without dead bands', () => {
+  // The r31 density pass: 48-64px section paddings everywhere, a 72px final
+  // CTA, one shared max-width container that now includes the FAQ, a framed
+  // map card with the door-panel motif, and gold-accent neighbor chips.
+  assert.match(css, /\.twins-location-hero\s*\{[^}]*padding-block:\s*clamp\(48px, 6vw, 64px\)/);
+  assert.match(css, /\.twins-location-services\s*\{[^}]*padding-block:\s*clamp\(48px, 6vw, 64px\)/);
+  assert.match(css, /\.twins-location-local-proof\s*\{[^}]*padding-block:\s*clamp\(48px, 6vw, 64px\)/);
+  assert.match(css, /\.twins-location-page :is\(\.twins-location-reviews, \.twins-location-map-section, \.twins-location-neighbors, \.twins-location-resources, \.twins-brand-faq\)\s*\{[^}]*padding-block:\s*clamp\(48px, 6vw, 64px\)/);
+  assert.match(css, /\.twins-location-final-cta\s*\{[^}]*padding:\s*72px clamp\(140px, 13vw, 210px\)/);
+  assert.match(css, /\.twins-location-map-frame\s*\{[\s\S]{0,400}?border:\s*2px solid var\(--twins-navy-950\)/);
+  assert.match(css, /\.twins-location-map-frame::before\s*\{[\s\S]{0,400}?repeating-linear-gradient/);
+  assert.match(template, /<div class="twins-location-map-frame">\s*<iframe class="twins-brand-location-map"/);
+  assert.match(css, /\.twins-location-neighbors \.twins-brand-location-links a\s*\{[^}]*border-radius:\s*999px[^}]*box-shadow:\s*4px 5px 0 var\(--twins-gold\)/);
 });
 
 test('service cards expose one visible touch-sized link without nested controls', () => {
@@ -329,7 +355,8 @@ test('recovery CSS locks alignment and contained image proportions', () => {
   assert.match(css, /\.twins-location-hero\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1\.15fr\) minmax\(320px,\s*\.85fr\)/);
   assert.match(css, /\.twins-location-hero-media\s*\{[^}]*max-height:\s*460px/);
   assert.match(css, /\.twins-location-hero-image\s*\{[^}]*aspect-ratio:\s*4\s*\/\s*3/);
-  assert.match(css, /\.twins-location-local-proof\s*\{[^}]*grid-template-columns:\s*minmax\(320px,\s*\.85fr\) minmax\(0,\s*1\.15fr\)/);
+  assert.match(css, /\.twins-location-local-proof\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1\.1fr\) minmax\(320px,\s*\.9fr\)/);
+  assert.match(css, /@media \(max-width:\s*900px\)\s*\{\s*\n\s*\.twins-location-local-proof\s*\{[^}]*grid-template-columns:\s*1fr/);
   assert.match(css, /@media \(max-width:\s*1024px\)[\s\S]*?\.twins-location-hero\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1\.15fr\) minmax\(300px,\s*\.85fr\)/);
   assert.match(css, /@media \(max-width:\s*768px\)[\s\S]*?\.twins-location-hero-media\s*\{[^}]*max-height:\s*310px/);
   assert.match(css, /@media \(max-width:\s*768px\)[\s\S]*?\.twins-location-service-grid\s*\{[^}]*grid-template-columns:\s*1fr/);

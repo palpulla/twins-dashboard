@@ -1235,8 +1235,8 @@ body.twins-brand-experience .twins-brand-service-phone { color: var(--twins-whit
   grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr);
   align-items: center;
   gap: clamp(42px, 6vw, 76px);
-  min-height: 610px;
-  padding-block: clamp(64px, 7vw, 84px);
+  min-height: 560px;
+  padding-block: clamp(48px, 6vw, 64px);
   color: var(--twins-white);
   background: var(--twins-navy-950);
   isolation: isolate;
@@ -1295,70 +1295,124 @@ body.twins-brand-experience .twins-location-hero .twins-brand-kicker { color: va
 .twins-location-trust .twins-brand-stars { color: #9b6a00; }
 .twins-location-services {
   position: relative;
-  padding-block: clamp(72px, 7vw, 88px);
+  isolation: isolate;
+  padding-block: clamp(48px, 6vw, 64px);
   overflow: hidden;
+  color: var(--twins-cream);
+  background-color: var(--twins-navy-900);
 }
+.twins-location-services::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.05) 0 2px, transparent 2px 18px);
+}
+body.twins-brand-experience .twins-location-services .twins-brand-kicker { color: var(--twins-gold); }
+.twins-location-services .twins-location-section-heading h2 { color: var(--twins-white); }
+.twins-location-services .twins-location-section-heading > p { color: #dbe8f8; }
 .twins-location-section-heading { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, .7fr); gap: 42px; align-items: end; margin-bottom: 36px; }
 .twins-location-section-heading .twins-brand-kicker { grid-column: 1; }
 .twins-location-section-heading h2 { max-width: 720px; margin: 8px 0 0; font-size: clamp(2.55rem, 4.3vw, 4rem); line-height: .98; text-transform: uppercase; }
 .twins-location-section-heading > p { grid-column: 2; grid-row: 1 / span 2; max-width: 54ch; margin: 0; color: var(--twins-muted); }
 .twins-location-section-heading > a { display: inline-flex; align-items: center; min-height: 44px; align-self: end; justify-self: end; color: var(--twins-navy-800); font-weight: 1000; text-decoration-thickness: 3px; text-underline-offset: 4px; }
-.twins-location-service-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid rgba(7,29,59,.2); border-bottom: 1px solid rgba(7,29,59,.2); }
-.twins-location-service-card { display: grid; align-content: start; gap: 14px; min-height: 350px; padding: 32px; background: transparent; border-left: 1px solid rgba(7,29,59,.2); }
+.twins-location-service-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid rgba(255,255,255,.18); border-bottom: 1px solid rgba(255,255,255,.18); }
+.twins-location-service-card { display: grid; align-content: start; gap: 14px; min-height: 350px; padding: 32px; background: transparent; border-left: 1px solid rgba(255,255,255,.18); }
 .twins-location-service-card:first-child { border-left: 0; }
 .twins-location-service-art { width: 76px; height: 56px; margin-bottom: 8px; }
-.twins-location-service-card h3 { margin: 0; color: var(--twins-navy-950); font-size: 1.8rem; text-transform: uppercase; }
-.twins-location-service-card p { margin: 0; color: var(--twins-muted); }
-body.twins-brand-experience .twins-location-service-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: auto; color: var(--twins-navy-800); font-weight: 1000; text-underline-offset: 4px; }
+.twins-location-service-card h3 { margin: 0; color: var(--twins-white); font-size: 1.8rem; text-transform: uppercase; }
+.twins-location-service-card p { margin: 0; color: #c9d7e9; }
+body.twins-brand-experience .twins-location-service-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: auto; color: var(--twins-gold); font-weight: 1000; text-underline-offset: 4px; }
 .twins-location-local-proof {
   display: grid;
-  grid-template-columns: minmax(320px, .85fr) minmax(0, 1.15fr);
-  gap: clamp(44px, 6vw, 78px);
-  align-items: center;
-  padding-block: clamp(72px, 7vw, 88px);
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, .9fr);
+  gap: clamp(40px, 5vw, 64px);
+  align-items: start;
+  padding-block: clamp(48px, 6vw, 64px);
   background: var(--twins-white);
   border-top: 1px solid rgba(7,29,59,.12);
 }
+.twins-location-local-proof-rail { display: grid; gap: 18px; align-content: start; margin: 0; }
 .twins-location-local-proof-media { max-height: 440px; margin: 0; padding: 8px; overflow: hidden; background: var(--twins-navy-950); border-radius: 14px; }
 .twins-location-local-proof-media picture { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 8px; }
 .twins-location-local-proof-image { display: block; width: 100%; height: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
 .twins-location-local-proof-copy h2 { max-width: 760px; margin: 10px 0 18px; font-size: clamp(2.55rem, 4.3vw, 4rem); line-height: .98; text-transform: uppercase; }
-.twins-location-local-proof-copy > p { max-width: 64ch; color: var(--twins-muted); }
+.twins-location-local-proof-copy > p { max-width: 65ch; color: var(--twins-muted); }
 .twins-location-address { color: var(--twins-navy-800) !important; font-weight: 1000; }
-.twins-location-proof-list { display: grid; gap: 0; margin: 26px 0 0; padding: 0; border-top: 1px solid rgba(7,29,59,.16); list-style: none; }
+.twins-location-local-proof-rail .twins-location-address {
+  margin: 0;
+  padding: 16px 20px;
+  background: var(--twins-cream);
+  border: 2px solid var(--twins-navy-950);
+  border-radius: 12px;
+  box-shadow: 4px 5px 0 var(--twins-gold);
+}
+.twins-location-proof-list { display: grid; gap: 0; margin: 6px 0 0; padding: 0; border-top: 1px solid rgba(7,29,59,.16); list-style: none; }
 .twins-location-proof-list li { display: grid; grid-template-columns: minmax(170px, .6fr) minmax(0, 1fr); gap: 20px; padding: 16px 0; border-bottom: 1px solid rgba(7,29,59,.16); }
+.twins-location-local-proof-rail .twins-location-proof-list li { grid-template-columns: 1fr; gap: 5px; padding: 12px 0; }
 .twins-location-proof-list strong { color: var(--twins-navy-950); }
 .twins-location-proof-list span { color: var(--twins-muted); }
 .twins-location-page .twins-location-twin { position: absolute; z-index: 2; display: block; height: auto; pointer-events: none; filter: drop-shadow(3px 7px 7px rgba(0,0,0,.2)); animation: twins-location-float 6s ease-in-out infinite; }
 .twins-location-twin--services { right: var(--twins-location-gutter); bottom: 14px; width: clamp(72px, 7vw, 104px); }
 .twins-location-twin--final-left { left: max(18px, calc((100vw - 1320px) / 2)); bottom: -14px; width: clamp(86px, 8vw, 118px); }
 .twins-location-twin--final-right { right: max(18px, calc((100vw - 1320px) / 2)); bottom: -14px; width: clamp(92px, 8vw, 124px); }
-.twins-location-final-cta { position: relative; isolation: isolate; min-height: 360px; padding: 72px clamp(140px, 13vw, 210px); overflow: hidden; color: var(--twins-white); background: var(--twins-navy-950); }
+.twins-brand-final-cta.twins-location-final-cta { position: relative; isolation: isolate; min-height: 360px; padding: 72px clamp(140px, 13vw, 210px); overflow: hidden; color: var(--twins-white); background: var(--twins-navy-950); }
 .twins-location-final-cta > p { max-width: 650px; margin: 0 auto 24px; color: #e5eef8; }
 .twins-location-motion-ready [data-location-reveal] { opacity: 0; transform: translateY(18px); transition: opacity .55s ease, transform .55s ease; }
 .twins-location-motion-ready [data-location-reveal][data-location-visible="true"] { opacity: 1; transform: translateY(0); }
 
 /* Record-backed location sections: verbatim reviews, live map with NAP,
-   neighbor links, and the three evergreen resource guides. */
-.twins-location-page :is(.twins-location-reviews, .twins-location-map-section, .twins-location-neighbors, .twins-location-resources) { width: 100%; padding-inline: max(var(--twins-location-gutter), calc((100vw - var(--twins-location-max)) / 2)); padding-block: clamp(56px, 6vw, 72px); }
-.twins-location-page :is(.twins-location-reviews, .twins-location-map-section, .twins-location-neighbors, .twins-location-resources) .twins-brand-section-heading { margin-bottom: 0; }
-.twins-location-page :is(.twins-location-reviews, .twins-location-map-section, .twins-location-neighbors, .twins-location-resources) .twins-brand-section-heading h2 { max-width: 720px; margin: 8px 0 0; font-size: clamp(2.1rem, 3.6vw, 3.1rem); line-height: .98; text-transform: uppercase; }
-.twins-location-reviews { background: var(--twins-white); border-top: 1px solid rgba(7,29,59,.12); }
-.twins-location-reviews .twins-brand-google-attribution { margin: 12px 0 0; color: var(--twins-muted); font-size: .9rem; font-weight: 800; }
-.twins-location-review-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 30px; border-top: 1px solid rgba(7,29,59,.2); border-bottom: 1px solid rgba(7,29,59,.2); }
-.twins-location-review-card { display: grid; align-content: start; gap: 12px; padding: 28px; border-left: 1px solid rgba(7,29,59,.2); }
+   neighbor links, and the three evergreen resource guides. The location FAQ
+   shares the same container so every section keeps one left edge. */
+.twins-location-page :is(.twins-location-reviews, .twins-location-map-section, .twins-location-neighbors, .twins-location-resources, .twins-brand-faq) { width: 100%; padding-inline: max(var(--twins-location-gutter), calc((100vw - var(--twins-location-max)) / 2)); padding-block: clamp(48px, 6vw, 64px); }
+.twins-location-page :is(.twins-location-reviews, .twins-location-map-section, .twins-location-neighbors, .twins-location-resources, .twins-brand-faq) .twins-brand-section-heading { margin-bottom: 0; }
+.twins-location-page :is(.twins-location-reviews, .twins-location-map-section, .twins-location-neighbors, .twins-location-resources, .twins-brand-faq) .twins-brand-section-heading h2 { max-width: 720px; margin: 8px 0 0; font-size: clamp(2.1rem, 3.6vw, 3.1rem); line-height: .98; text-transform: uppercase; }
+.twins-location-reviews { color: var(--twins-cream); background: var(--twins-navy-950); }
+body.twins-brand-experience .twins-location-reviews .twins-brand-kicker { color: var(--twins-gold); }
+.twins-location-reviews .twins-brand-section-heading h2 { color: var(--twins-gold); }
+.twins-location-reviews .twins-brand-google-attribution { margin: 12px 0 0; color: #b9c9dd; font-size: .9rem; font-weight: 800; }
+.twins-location-review-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 30px; border-top: 1px solid rgba(255,255,255,.18); border-bottom: 1px solid rgba(255,255,255,.18); }
+.twins-location-review-card { display: grid; align-content: start; gap: 12px; padding: 28px; border-left: 1px solid rgba(255,255,255,.18); }
 .twins-location-review-card:first-child { border-left: 0; }
-.twins-location-review-card blockquote { margin: 0; color: var(--twins-ink); line-height: 1.6; }
+.twins-location-reviews .twins-brand-review-stars { color: var(--twins-gold); }
+.twins-location-review-card blockquote { margin: 0; color: #e8f1fb; line-height: 1.6; }
 .twins-location-review-card footer { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: auto; }
-.twins-location-review-card strong { color: var(--twins-navy-950); font-weight: 1000; }
-.twins-location-review-card time { color: var(--twins-muted); font-size: .85rem; font-weight: 800; }
-.twins-location-reviews .twins-brand-text-link { margin-top: 22px; }
-.twins-location-map-section .twins-brand-location-map { display: block; max-width: 100%; margin-top: 30px; }
+.twins-location-review-card strong { color: var(--twins-white); font-weight: 1000; }
+.twins-location-review-card time { color: #b9c9dd; font-size: .85rem; font-weight: 800; }
+.twins-location-reviews .twins-brand-text-link { margin-top: 22px; color: var(--twins-gold); }
+.twins-location-map-frame {
+  position: relative;
+  isolation: isolate;
+  max-width: 1040px;
+  margin-top: 28px;
+  padding: clamp(14px, 2.5vw, 24px);
+  background: var(--twins-white);
+  border: 2px solid var(--twins-navy-950);
+  border-radius: var(--twins-card-radius);
+  box-shadow: var(--twins-card-lift);
+  overflow: hidden;
+}
+.twins-location-map-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .5;
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0 44px, rgba(7,29,59,.12) 45px 46px),
+    repeating-linear-gradient(90deg, transparent 0 110px, rgba(7,29,59,.08) 111px 112px);
+}
+.twins-location-map-section .twins-brand-location-map { position: relative; z-index: 1; display: block; width: 100%; max-width: 100%; margin-top: 0; border-width: 2px; border-radius: 8px; box-shadow: none; }
+.twins-location-map-frame .twins-location-map-nap { position: relative; z-index: 1; }
 .twins-location-map-nap { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: baseline; margin: 18px 0 0; color: var(--twins-navy-950); }
 .twins-location-map-nap strong { font-weight: 1000; }
 .twins-location-map-nap a { color: var(--twins-navy-800); font-weight: 1000; text-underline-offset: 3px; }
 .twins-location-neighbors { background: var(--twins-white); border-top: 1px solid rgba(7,29,59,.12); }
-.twins-location-neighbors .twins-brand-location-links, .twins-location-resources .twins-brand-location-links { margin-top: 26px; }
+.twins-location-neighbors .twins-brand-location-links { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; margin-top: 26px; }
+.twins-location-neighbors .twins-brand-location-links a { justify-content: center; background: var(--twins-cream); border-radius: 999px; box-shadow: 4px 5px 0 var(--twins-gold); }
+.twins-location-resources .twins-brand-location-links { margin-top: 26px; }
 .twins-location-neighbors .twins-brand-text-link { margin-top: 22px; }
 .twins-location-resources { border-top: 1px solid rgba(7,29,59,.12); }
 
@@ -1366,11 +1420,17 @@ body.twins-brand-experience .twins-location-service-link { display: inline-flex;
   .twins-location-hero { grid-template-columns: minmax(0, 1.15fr) minmax(300px, .85fr); gap: 34px; min-height: 560px; }
   .twins-location-services { padding-bottom: 144px; }
   .twins-location-service-card { min-height: 330px; padding: 26px; }
-  .twins-location-local-proof { grid-template-columns: minmax(280px, .9fr) minmax(0, 1.1fr); gap: 38px; }
+  .twins-location-local-proof { grid-template-columns: minmax(0, 1.05fr) minmax(280px, .95fr); gap: 34px; }
   .twins-location-twin--services { right: var(--twins-location-gutter); bottom: 16px; width: 64px; }
-  .twins-location-final-cta { padding-bottom: 190px; }
+  .twins-brand-final-cta.twins-location-final-cta { padding-bottom: 190px; }
   .twins-location-twin--final-left { bottom: 0; width: 64px; }
   .twins-location-twin--final-right { bottom: 0; width: 68px; }
+}
+@media (max-width: 900px) {
+  .twins-location-local-proof { grid-template-columns: 1fr; }
+  .twins-location-local-proof-rail { justify-items: start; }
+  .twins-location-local-proof-rail .twins-location-address { justify-self: stretch; }
+  .twins-location-local-proof-media { width: min(100%, 408px); }
 }
 @media (max-width: 768px) {
   .twins-location-page { --twins-location-gutter: 20px; }
@@ -1387,17 +1447,17 @@ body.twins-brand-experience .twins-location-service-link { display: inline-flex;
   .twins-location-section-heading { grid-template-columns: 1fr; gap: 14px; margin-bottom: 28px; }
   .twins-location-section-heading > p { grid-column: 1; grid-row: auto; }
   .twins-location-service-grid { grid-template-columns: 1fr; }
-  .twins-location-service-card { min-height: 0; padding: 26px 0; border-top: 1px solid rgba(7,29,59,.2); border-left: 0; }
+  .twins-location-service-card { min-height: 0; padding: 26px 0; border-top: 1px solid rgba(255,255,255,.18); border-left: 0; }
   .twins-location-service-card:first-child { border-top: 0; }
   .twins-location-local-proof { grid-template-columns: 1fr; }
   .twins-location-local-proof-media { width: min(100%, 408px); max-height: 310px; }
   .twins-location-proof-list li { grid-template-columns: 1fr; gap: 5px; }
   .twins-location-review-grid { grid-template-columns: 1fr; }
-  .twins-location-review-card { padding: 22px 0; border-top: 1px solid rgba(7,29,59,.2); border-left: 0; }
+  .twins-location-review-card { padding: 22px 0; border-top: 1px solid rgba(255,255,255,.18); border-left: 0; }
   .twins-location-review-card:first-child { border-top: 0; }
   .twins-location-map-section .twins-brand-location-map { height: 300px; }
   .twins-location-twin--services { bottom: 14px; width: 56px; }
-  .twins-location-final-cta { min-height: 340px; padding: 60px 96px 170px; }
+  .twins-brand-final-cta.twins-location-final-cta { min-height: 340px; padding: 60px 96px 170px; }
   .twins-location-twin--final-left { bottom: 0; width: 56px; }
   .twins-location-twin--final-right { bottom: 0; width: 60px; }
 }
@@ -1406,7 +1466,7 @@ body.twins-brand-experience .twins-location-service-link { display: inline-flex;
   .twins-location-actions .twins-brand-cta { flex: 1 1 100%; justify-content: center; }
   .twins-location-services { padding-bottom: 56px; }
   .twins-location-page .twins-location-twin--services { display: none; }
-  .twins-location-final-cta { padding: 54px 20px 150px; }
+  .twins-brand-final-cta.twins-location-final-cta { padding: 54px 20px 150px; }
   .twins-location-twin--final-left { left: 16px; bottom: 0; width: 48px; }
   .twins-location-twin--final-right { right: 16px; bottom: 0; width: 54px; }
 }

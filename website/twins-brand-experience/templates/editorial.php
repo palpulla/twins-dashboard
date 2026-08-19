@@ -428,28 +428,30 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
     </section>
 
     <section class="twins-location-local-proof" aria-labelledby="twins-location-local-proof-title" data-location-reveal>
-      <figure class="twins-location-local-proof-media">
-        <?php
-        $logicalKey = 'door-builder-before-after';
-        $sizes = '(max-width: 768px) 100vw, 42vw';
-        $class = 'twins-location-local-proof-image';
-        $loading = 'lazy';
-        require dirname(__DIR__) . '/components/picture.php';
-        ?>
-      </figure>
       <div class="twins-location-local-proof-copy">
         <span class="twins-brand-kicker">Local garage door service</span>
         <h2 id="twins-location-local-proof-title">Practical help for <?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?> homeowners.</h2>
         <?php if ($locationRecord !== null): foreach ($locationRecord['localNotes'] as $locationNote): ?>
           <p><?= htmlspecialchars($locationNote, ENT_QUOTES, 'UTF-8') ?></p>
         <?php endforeach; endif; ?>
+      </div>
+      <aside class="twins-location-local-proof-rail" aria-label="Local service details">
         <?php if ($napAddress !== ''): ?><p class="twins-location-address"><?= htmlspecialchars($napAddress, ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?>
+        <figure class="twins-location-local-proof-media">
+          <?php
+          $logicalKey = 'door-builder-before-after';
+          $sizes = '(max-width: 768px) 100vw, 42vw';
+          $class = 'twins-location-local-proof-image';
+          $loading = 'lazy';
+          require dirname(__DIR__) . '/components/picture.php';
+          ?>
+        </figure>
         <ul class="twins-location-proof-list">
           <li><strong>Complete system inspection</strong><span>Door, hardware, opener, controls, and safety equipment checked together.</span></li>
           <li><strong>Plain-language options</strong><span>Repair and replacement paths explained before work moves forward.</span></li>
           <li><strong>Respect for your home</strong><span>Licensed and insured service centered on safe, reliable operation.</span></li>
         </ul>
-      </div>
+      </aside>
     </section>
 
     <?php if ($locationReviewQuotes !== []): ?>
@@ -481,14 +483,16 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
           <span class="twins-brand-kicker">Find us on the map</span>
           <h2 id="twins-location-map-title"><?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?> service area</h2>
         </div>
-        <iframe class="twins-brand-location-map" title="Map of <?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?>" src="<?= htmlspecialchars($locationMapEmbedUrl, ENT_QUOTES, 'UTF-8') ?>" width="600" height="380" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-        <?php if ($napAddress !== ''): ?>
-          <p class="twins-location-map-nap">
-            <strong>Serving <?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?> from</strong>
-            <span><?= htmlspecialchars($napAddress, ENT_QUOTES, 'UTF-8') ?></span>
-            <a href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
-          </p>
-        <?php endif; ?>
+        <div class="twins-location-map-frame">
+          <iframe class="twins-brand-location-map" title="Map of <?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?>" src="<?= htmlspecialchars($locationMapEmbedUrl, ENT_QUOTES, 'UTF-8') ?>" width="600" height="380" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          <?php if ($napAddress !== ''): ?>
+            <p class="twins-location-map-nap">
+              <strong>Serving <?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?> from</strong>
+              <span><?= htmlspecialchars($napAddress, ENT_QUOTES, 'UTF-8') ?></span>
+              <a href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
+            </p>
+          <?php endif; ?>
+        </div>
       </section>
     <?php endif; ?>
 
