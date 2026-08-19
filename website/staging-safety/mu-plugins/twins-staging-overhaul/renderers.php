@@ -2023,7 +2023,7 @@ function twins_overhaul_seo_singleton_map(): array {
     return array(
         'home-brand' => array(
             'title' => 'Garage Door Repair & Installation',
-            'description' => 'Garage door stuck, noisy, or off its track? Twins Garage Doors repairs and installs doors and openers and gives you the exact price before any work starts.',
+            'description' => 'Broken spring? Door stuck? Twins Garage Doors runs same-day garage door repair with a flat price you approve before any work starts. $0 service call with repair.',
             'geo' => true,
         ),
         'reviews-brand' => array(
