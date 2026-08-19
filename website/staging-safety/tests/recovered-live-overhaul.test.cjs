@@ -62,7 +62,7 @@ const LIVE_HASHES = Object.freeze({
   [`${PACKAGE}/templates/builder.php`]: '488ed5c9646f6bcb6271e4dbf518b4e9e003323f169c1de2a4e90f9ffc9d22af',
   [`${ASSETS}/twins-overhaul.css`]: 'a3fb61ed0da87e839d53fe4983cd7b0b4b67b844902abd7c8a8ab09e22b051a8',
   [`${ASSETS}/twins-overhaul.js`]: '549faf277bbadc3d8a9cbbacacc682762a9584df23ab60c8fb98d4e9e031f0ae',
-  [`${ASSETS}/clopay-products.json`]: 'ce960f1267327183719192d80d249f31c903a24e5fc6471992bed00dccda74f5',
+  [`${ASSETS}/clopay-products.json`]: '3840b4c75a300c7a7270cf71f141fab628e83cfd51cf052ad2284ece4d328b92',
   [`${ASSETS}/nunito-variable.woff2`]: 'ba344451eab25b217a165363b1982048a5e5830a0daf36577973955a04cac793',
   [`${ASSETS}/twins-logo.png`]: 'cc63412115076e387953b81e9d936a3d40559afa2edc314b912a66b79d0bc0f0',
   [`${ASSETS}/twin-left.png`]: '267ce3a33a3bbee09f9517409523c09246ac0488182625baeb9e4cdac84b293a',
@@ -348,11 +348,10 @@ test('door builder is a frozen local-only 23-product catalog whose content-addre
   assert.equal(catalog.products.length, 23);
   assert.deepEqual(catalog.products.map((product) => product.id), expectedOrder);
   assert.doesNotMatch(catalogBytes, /(?:https?:|\/\/www\.|clopaydoor\.com)/i);
-  // KNOWN GAP (r30 baseline): builder.php pins the digest of the catalog as
-  // deployed on the host in r30, but the r30 capture excluded
-  // twins-staging-assets, so the repo still carries the r29 catalog
-  // (LIVE_HASHES above). Recapture clopay-products.json from the host before
-  // the next deploy and re-unify these two pins.
+  // Gap closed 2026-08-18: the r30 catalog was recaptured from the host
+  // (fd1d8576) and the two catalog images it references beyond the r29 set
+  // were pulled read-only from the host, so LIVE_HASHES above and the
+  // builder.php pin now agree on the same deployed catalog digest.
   const R30_HOST_CATALOG_SHA256 = '3840b4c75a300c7a7270cf71f141fab628e83cfd51cf052ad2284ece4d328b92';
   assert.match(builderPhp, new RegExp(R30_HOST_CATALOG_SHA256));
   assert.match(builderPhp, /filesize\(\$path\)[\s\S]*?>\s*2097152/);
