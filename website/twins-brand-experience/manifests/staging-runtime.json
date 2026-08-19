@@ -351,8 +351,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/components/home/why-doors.php",
       "destination": "twins-brand-experience/components/home/why-doors.php",
-      "size": 5246,
-      "sha256": "e66954342b7d706165b3d5de769c44721036ae96b62aeb3770cbfa5ab8c40d61"
+      "size": 5232,
+      "sha256": "b7f5ba1aa50081042670e3eae8e1386b65283b3deb802f504fc3b9457ee8169d"
     },
     {
       "role": "deploy",

@@ -18,7 +18,7 @@ $homeTeamMembers = [
     <span class="twins-brand-kicker">Why Twins</span>
     <h2 id="twins-brand-why-title">Meet the Twins. And the crew.</h2>
     <ol>
-      <li><strong>Family owned</strong><span>Twin brothers Daniel and Tal built the company on a simple idea: show up when you say you will, charge what you quoted, and stand behind the work.</span></li>
+      <li><strong>Family owned</strong><span>Daniel and Tal built the company on a simple idea: show up when you say you will, charge what you quoted, and stand behind the work.</span></li>
       <li><strong>Techs people know by name</strong><span>Madison keeps mentioning Charles, Maurice, and Nicholas by name in review after review.</span></li>
       <li><strong>Flat price first</strong><span>You approve the exact number before any work starts.</span></li>
       <li><strong>The guarantee</strong><span>"Done Right, or We Make It Right." No arguing, no fine print.</span></li>
