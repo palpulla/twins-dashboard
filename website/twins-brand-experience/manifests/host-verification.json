@@ -576,8 +576,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/tools/private-staging-deploy.php",
-      "size": 69392,
-      "sha256": "ae6d8f47d836aa0f37ad01f92e8d47aa7613c47db1c8e9301ae8e13a9666e0a2"
+      "size": 69595,
+      "sha256": "f3f8776ada3bd5a13a770126d0dd692964f8094f25d0596b5b3119824f0db676"
     }
   ]
 }

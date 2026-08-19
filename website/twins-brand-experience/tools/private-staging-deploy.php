@@ -832,9 +832,11 @@ final class TwinsPrivateStagingDeploy
             'clopayHead' => 'twins_staging_http_blocked',
             'arbitraryExternal' => 'twins_staging_http_blocked',
         ];
+        // r30 CSP: guarded Supabase review-summary origin + the fixed EZDoor embed origins.
         $expectedCsp = "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; "
             . "style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.clopaydoor.com; font-src 'self'; "
-            . "connect-src 'self'; media-src 'self'; frame-src 'self'; child-src 'self'; worker-src 'self'; "
+            . "connect-src 'self' https://jwrpjuqaynownxaoeayi.supabase.co; media-src 'self'; frame-src 'self' https://ezdoor.clopay.com; "
+            . "child-src 'self' https://ezdoor.clopay.com; worker-src 'self'; "
             . "manifest-src 'self'; form-action 'self'; frame-ancestors 'self'; navigate-to 'self';";
         $reviewPlaceholder = $report['reviewPlaceholder'] ?? null;
         $integrationPlaceholder = $report['integrationPlaceholder'] ?? null;
