@@ -7,6 +7,167 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
 if (!isset($pageContent) || !is_array($pageContent)) {
     throw new DomainException('Service page content is unavailable.');
 }
+
+$servicePath = isset($path) && is_string($path) ? $path : '';
+$serviceNormalizedPath = '/' . trim(preg_replace(
+    '~^/(wi|ky|il)/~',
+    '/',
+    '/' . ltrim($servicePath, '/')
+), '/') . '/';
+$serviceFacts = $pageContent['answerFacts'];
+$servicePriceRange = $pageContent['priceRange'];
+$serviceSafety = $pageContent['safety'];
+$servicePlans = $pageContent['plans'];
+$serviceGuarantee = 'Done Right, or We Make It Right.';
+$serviceGuaranteeDetail = 'If something about our work is not right, we come back and fix it. No arguing, no fine print.';
+
+// Verbatim Google review quotes: the service-tagged pool from the city-page
+// system, filtered to this record's tag first and rotated deterministically
+// per path so pages differ without relabeling any quote.
+$serviceReviewQuotes = [];
+$serviceQuotesFile = dirname(__DIR__) . '/config/review-quotes.php';
+$serviceQuotesPool = is_file($serviceQuotesFile) ? require $serviceQuotesFile : [];
+if (is_array($serviceQuotesPool)) {
+    $serviceQuotesPool = array_values(array_filter(
+        $serviceQuotesPool,
+        static fn($reviewQuote): bool => is_array($reviewQuote)
+            && isset($reviewQuote['text'], $reviewQuote['author'], $reviewQuote['rating'], $reviewQuote['date'], $reviewQuote['service'])
+            && is_string($reviewQuote['text']) && trim($reviewQuote['text']) !== ''
+            && is_string($reviewQuote['author']) && trim($reviewQuote['author']) !== ''
+            && is_int($reviewQuote['rating']) && $reviewQuote['rating'] >= 1 && $reviewQuote['rating'] <= 5
+            && is_string($reviewQuote['date'])
+            && is_string($reviewQuote['service'])
+    ));
+    $serviceTagged = array_values(array_filter(
+        $serviceQuotesPool,
+        static fn(array $reviewQuote): bool => $reviewQuote['service'] === $pageContent['reviewTag']
+    ));
+    $serviceUntagged = array_values(array_filter(
+        $serviceQuotesPool,
+        static fn(array $reviewQuote): bool => $reviewQuote['service'] !== $pageContent['reviewTag']
+    ));
+    $serviceOrderedPool = array_merge($serviceTagged, $serviceUntagged);
+    if (count($serviceOrderedPool) >= 3) {
+        if (count($serviceTagged) >= 3) {
+            $serviceQuoteOffset = crc32($serviceNormalizedPath) % count($serviceTagged);
+            for ($serviceQuoteIndex = 0; $serviceQuoteIndex < 3; $serviceQuoteIndex++) {
+                $serviceReviewQuotes[] = $serviceTagged[($serviceQuoteOffset + $serviceQuoteIndex) % count($serviceTagged)];
+            }
+        } else {
+            $serviceReviewQuotes = array_slice($serviceOrderedPool, 0, 3);
+        }
+    }
+}
+
+// Structured data owned by this template: Service + BreadcrumbList + FAQPage
+// (docs/marketing/website-rebuild/build/schema/service-page.jsonld), with the
+// FAQPage mirroring exactly the questions rendered below.
+$serviceMarketNap = [
+    'main' => ['street' => '2921 Landmark Pl, Ste 206', 'locality' => 'Madison', 'region' => 'WI', 'postalCode' => '53713', 'state' => 'Wisconsin', 'city' => 'Madison'],
+    'wi' => ['street' => '2921 Landmark Pl, Ste 206', 'locality' => 'Madison', 'region' => 'WI', 'postalCode' => '53713', 'state' => 'Wisconsin', 'city' => 'Madison'],
+    'ky' => ['street' => '3651 Aarons Run Rd', 'locality' => 'Mt Sterling', 'region' => 'KY', 'postalCode' => '40353', 'state' => 'Kentucky', 'city' => 'Mt Sterling'],
+    'il-preview' => ['street' => '5758 Elaine Dr', 'locality' => 'Rockford', 'region' => 'IL', 'postalCode' => '61108', 'state' => 'Illinois', 'city' => 'Rockford'],
+];
+$serviceJsonLd = '';
+$serviceNap = $serviceMarketNap[$marketKey] ?? null;
+if ($serviceNap !== null && $servicePath !== '') {
+    $serviceAbsoluteUrl = static fn(string $urlPath): string => function_exists('home_url') ? (string) home_url($urlPath) : $urlPath;
+    $servicePageUrl = $serviceAbsoluteUrl($servicePath);
+    $serviceProvider = [
+        '@type' => 'HomeAndConstructionBusiness',
+        'name' => 'Twins Garage Doors',
+        'telephone' => '+1' . preg_replace('/\D+/', '', $phone),
+        'url' => $serviceAbsoluteUrl('/'),
+        'address' => [
+            '@type' => 'PostalAddress',
+            'streetAddress' => $serviceNap['street'],
+            'addressLocality' => $serviceNap['locality'],
+            'addressRegion' => $serviceNap['region'],
+            'postalCode' => $serviceNap['postalCode'],
+            'addressCountry' => 'US',
+        ],
+    ];
+    $serviceSummaryFile = dirname(__DIR__) . '/config/review-summary.php';
+    $serviceSummary = is_file($serviceSummaryFile) ? require $serviceSummaryFile : [];
+    if (
+        is_array($serviceSummary)
+        && isset($serviceSummary['ratingValue'], $serviceSummary['reviewCountFloor'])
+        && (is_float($serviceSummary['ratingValue']) || is_int($serviceSummary['ratingValue']))
+        && is_int($serviceSummary['reviewCountFloor'])
+    ) {
+        $serviceProvider['aggregateRating'] = [
+            '@type' => 'AggregateRating',
+            'ratingValue' => $serviceSummary['ratingValue'],
+            'reviewCount' => $serviceSummary['reviewCountFloor'],
+            'bestRating' => 5,
+        ];
+    }
+    $serviceSchemaService = [
+        '@type' => 'Service',
+        '@id' => $servicePageUrl . '#service',
+        'name' => $pageContent['h1'],
+        'serviceType' => $pageContent['h1'],
+        'url' => $servicePageUrl,
+        'description' => $pageContent['directAnswer'],
+        'provider' => $serviceProvider,
+        'areaServed' => [
+            '@type' => 'City',
+            'name' => $serviceNap['city'],
+            'containedInPlace' => ['@type' => 'State', 'name' => $serviceNap['state']],
+        ],
+    ];
+    if ($servicePriceRange !== null) {
+        $serviceSchemaService['offers'] = [
+            '@type' => 'Offer',
+            'priceCurrency' => 'USD',
+            'priceSpecification' => [
+                '@type' => 'PriceSpecification',
+                'minPrice' => $servicePriceRange['min'],
+                'maxPrice' => $servicePriceRange['max'],
+                'priceCurrency' => 'USD',
+            ],
+        ];
+    }
+    $serviceBreadcrumbItems = [
+        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $serviceAbsoluteUrl('/')],
+    ];
+    if ($serviceNormalizedPath === '/garage-door-services/') {
+        $serviceBreadcrumbItems[] = ['@type' => 'ListItem', 'position' => 2, 'name' => $pageContent['h1'], 'item' => $servicePageUrl];
+    } else {
+        $serviceBreadcrumbItems[] = ['@type' => 'ListItem', 'position' => 2, 'name' => 'Garage Door Services', 'item' => $serviceAbsoluteUrl($experience->route('services', $marketKey))];
+        $serviceBreadcrumbItems[] = ['@type' => 'ListItem', 'position' => 3, 'name' => $pageContent['h1'], 'item' => $servicePageUrl];
+    }
+    $serviceSchemaGraph = [
+        '@context' => 'https://schema.org',
+        '@graph' => [
+            $serviceSchemaService,
+            [
+                '@type' => 'BreadcrumbList',
+                '@id' => $servicePageUrl . '#breadcrumb',
+                'itemListElement' => $serviceBreadcrumbItems,
+            ],
+            [
+                '@type' => 'FAQPage',
+                '@id' => $servicePageUrl . '#faq',
+                'mainEntity' => array_map(
+                    static fn(array $faq): array => [
+                        '@type' => 'Question',
+                        'name' => (string) $faq['question'],
+                        'acceptedAnswer' => ['@type' => 'Answer', 'text' => (string) $faq['answer']],
+                    ],
+                    $pageContent['faqs']
+                ),
+            ],
+        ],
+    ];
+    $serviceJsonLdCandidate = json_encode(
+        $serviceSchemaGraph,
+        JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP
+    );
+    if (is_string($serviceJsonLdCandidate) && $serviceJsonLdCandidate !== '' && stripos($serviceJsonLdCandidate, '<') === false) {
+        $serviceJsonLd = $serviceJsonLdCandidate;
+    }
+}
 ?>
 <div id="twins-overhaul-main" class="twins-brand-page twins-brand-service-page">
   <?php require_once dirname(__DIR__) . '/components/service-hero-art.php'; ?>
@@ -29,21 +190,30 @@ if (!isset($pageContent) || !is_array($pageContent)) {
       <span class="twins-brand-kicker">Direct answer</span>
       <h2 id="twins-brand-direct-answer-title">What to know first</h2>
       <p><?= htmlspecialchars($pageContent['directAnswer'], ENT_QUOTES, 'UTF-8') ?></p>
+      <p class="twins-brand-service-guarantee-line"><strong><?= htmlspecialchars($serviceGuarantee, ENT_QUOTES, 'UTF-8') ?></strong> <?= htmlspecialchars($serviceGuaranteeDetail, ENT_QUOTES, 'UTF-8') ?></p>
     </div>
-    <aside class="twins-brand-service-safety" aria-labelledby="twins-brand-service-safety-title">
-      <h2 id="twins-brand-service-safety-title">Safety first</h2>
-      <p><?= htmlspecialchars($pageContent['safety'], ENT_QUOTES, 'UTF-8') ?></p>
+    <aside class="twins-brand-service-facts" aria-labelledby="twins-brand-service-facts-title">
+      <h2 id="twins-brand-service-facts-title">The short version</h2>
+      <dl>
+        <?php if ($serviceFacts['cost'] !== null): ?>
+          <div><dt>Typical cost</dt><dd><?= htmlspecialchars($serviceFacts['cost'], ENT_QUOTES, 'UTF-8') ?></dd></div>
+        <?php endif; ?>
+        <?php if ($serviceFacts['timing'] !== null): ?>
+          <div><dt>Timing</dt><dd><?= htmlspecialchars($serviceFacts['timing'], ENT_QUOTES, 'UTF-8') ?></dd></div>
+        <?php endif; ?>
+        <div><dt>When to call</dt><dd><?= htmlspecialchars($serviceFacts['call'], ENT_QUOTES, 'UTF-8') ?></dd></div>
+      </dl>
     </aside>
   </section>
 
-  <section class="twins-brand-service-needs" aria-labelledby="twins-brand-service-needs-title">
+  <section class="twins-brand-service-signs" aria-labelledby="twins-brand-service-signs-title">
     <div class="twins-brand-section-heading">
-      <span class="twins-brand-kicker">When this path fits</span>
-      <h2 id="twins-brand-service-needs-title">Start with the service concern</h2>
+      <span class="twins-brand-kicker">Warning signs</span>
+      <h2 id="twins-brand-service-signs-title">Signs this is your door</h2>
     </div>
     <ul class="twins-brand-service-grid">
-      <?php foreach ($pageContent['needs'] as $need): ?>
-        <li><?= htmlspecialchars($need, ENT_QUOTES, 'UTF-8') ?></li>
+      <?php foreach ($pageContent['warningSigns'] as $serviceSign): ?>
+        <li><?= htmlspecialchars($serviceSign, ENT_QUOTES, 'UTF-8') ?></li>
       <?php endforeach; ?>
     </ul>
   </section>
@@ -58,27 +228,50 @@ if (!isset($pageContent) || !is_array($pageContent)) {
         <?php endforeach; ?>
       </ol>
     </div>
-    <aside class="twins-brand-service-prepare" aria-labelledby="twins-brand-service-prepare-title">
-      <h2 id="twins-brand-service-prepare-title">What to prepare</h2>
-      <ul>
-        <?php foreach ($pageContent['prepare'] as $item): ?>
-          <li><?= htmlspecialchars($item, ENT_QUOTES, 'UTF-8') ?></li>
-        <?php endforeach; ?>
-      </ul>
+    <aside class="twins-brand-service-guarantee" aria-labelledby="twins-brand-service-guarantee-title">
+      <h2 id="twins-brand-service-guarantee-title"><?= htmlspecialchars($serviceGuarantee, ENT_QUOTES, 'UTF-8') ?></h2>
+      <p><?= htmlspecialchars($serviceGuaranteeDetail, ENT_QUOTES, 'UTF-8') ?> You approve the exact price before any work starts, and the number you approve is the number you pay.</p>
     </aside>
   </section>
 
-  <?php $isMembership = $path === '/protection-plans/'; ?>
-  <section class="twins-brand-service-options<?= $isMembership ? ' twins-brand-membership' : '' ?>" aria-labelledby="twins-brand-service-options-title">
+  <section class="twins-brand-service-cost" aria-labelledby="twins-brand-service-cost-title">
     <div class="twins-brand-section-heading">
-      <span class="twins-brand-kicker"><?= $isMembership ? 'Membership tiers' : 'Options and tradeoffs' ?></span>
-      <h2 id="twins-brand-service-options-title"><?= $isMembership ? 'Choose your TwinShield plan' : 'Review the next-step paths' ?></h2>
+      <span class="twins-brand-kicker">Real prices from completed jobs</span>
+      <h2 id="twins-brand-service-cost-title">What it costs</h2>
     </div>
-    <?php if ($isMembership): ?>
+    <?php if ($servicePriceRange !== null): ?>
+      <p class="twins-brand-service-cost-range" aria-label="Typical price range">
+        $<?= htmlspecialchars(number_format($servicePriceRange['min']), ENT_QUOTES, 'UTF-8') ?>
+        <span>to</span>
+        $<?= htmlspecialchars(number_format($servicePriceRange['max']), ENT_QUOTES, 'UTF-8') ?>
+      </p>
+    <?php endif; ?>
+    <div class="twins-brand-service-cost-copy">
+      <?php foreach ($pageContent['costParagraphs'] as $serviceCostParagraph): ?>
+        <p><?= htmlspecialchars($serviceCostParagraph, ENT_QUOTES, 'UTF-8') ?></p>
+      <?php endforeach; ?>
+    </div>
+  </section>
+
+  <?php if ($serviceSafety !== null): ?>
+    <section class="twins-brand-service-safety-section" aria-labelledby="twins-brand-service-safety-title">
+      <div class="twins-brand-service-safety">
+        <h2 id="twins-brand-service-safety-title">Do not DIY this one. Seriously.</h2>
+        <p><?= htmlspecialchars($serviceSafety, ENT_QUOTES, 'UTF-8') ?></p>
+      </div>
+    </section>
+  <?php endif; ?>
+
+  <?php if ($servicePlans !== null): ?>
+    <section class="twins-brand-service-options twins-brand-membership" aria-labelledby="twins-brand-service-options-title">
+      <div class="twins-brand-section-heading">
+        <span class="twins-brand-kicker">Membership tiers</span>
+        <h2 id="twins-brand-service-options-title">Choose your TwinShield plan</h2>
+      </div>
       <div class="twins-brand-membership-grid">
-        <?php foreach ($pageContent['options'] as $planIndex => $plan): ?>
+        <?php foreach ($servicePlans as $planIndex => $plan): ?>
           <?php
-            $planParts = explode(' — ', $plan['tradeoff'], 2);
+            $planParts = explode(' - ', $plan['tradeoff'], 2);
             $planPrice = $planParts[0];
             $planBenefits = $planParts[1] ?? '';
             $planRecommended = $planIndex === 1;
@@ -93,16 +286,37 @@ if (!isset($pageContent) || !is_array($pageContent)) {
           </article>
         <?php endforeach; ?>
       </div>
-    <?php else: ?>
-      <div class="twins-brand-service-option-grid">
-        <?php foreach ($pageContent['options'] as $option): ?>
-          <article>
-            <h3><?= htmlspecialchars($option['option'], ENT_QUOTES, 'UTF-8') ?></h3>
-            <p><?= htmlspecialchars($option['tradeoff'], ENT_QUOTES, 'UTF-8') ?></p>
+    </section>
+  <?php endif; ?>
+
+  <?php if ($serviceReviewQuotes !== []): ?>
+    <section class="twins-brand-service-reviews" aria-labelledby="twins-brand-service-reviews-title">
+      <div class="twins-brand-section-heading">
+        <span class="twins-brand-kicker">Verified customer stories</span>
+        <h2 id="twins-brand-service-reviews-title">What Twins customers say</h2>
+        <p class="twins-brand-google-attribution" aria-label="Verified Google reviews">Verbatim Google reviews from real Twins customers</p>
+      </div>
+      <div class="twins-location-review-grid">
+        <?php foreach ($serviceReviewQuotes as $serviceQuoteRecord): ?>
+          <article class="twins-location-review-card">
+            <div class="twins-brand-review-stars" aria-label="<?= (int) $serviceQuoteRecord['rating'] ?> out of 5 stars"><?= str_repeat('★', (int) $serviceQuoteRecord['rating']) ?></div>
+            <blockquote><?= htmlspecialchars($serviceQuoteRecord['text'], ENT_QUOTES, 'UTF-8') ?></blockquote>
+            <footer>
+              <strong><?= htmlspecialchars($serviceQuoteRecord['author'], ENT_QUOTES, 'UTF-8') ?></strong>
+              <time datetime="<?= htmlspecialchars($serviceQuoteRecord['date'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($serviceQuoteRecord['date'], ENT_QUOTES, 'UTF-8') ?></time>
+            </footer>
           </article>
         <?php endforeach; ?>
       </div>
-    <?php endif; ?>
+      <a class="twins-brand-text-link" href="<?= htmlspecialchars($experience->route('reviews', $marketKey), ENT_QUOTES, 'UTF-8') ?>">Read all reviews</a>
+    </section>
+  <?php endif; ?>
+
+  <section class="twins-brand-service-related" aria-labelledby="twins-brand-service-related-title">
+    <div class="twins-brand-section-heading">
+      <span class="twins-brand-kicker">Related services</span>
+      <h2 id="twins-brand-service-related-title">While we are on the subject</h2>
+    </div>
     <nav class="twins-brand-service-links" aria-label="Related garage door pages">
       <?php foreach ($pageContent['links'] as $link): ?>
         <a href="<?= htmlspecialchars($experience->route($link['route'], $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($experience->contextualRouteLabel($link['route'], $marketKey, $link['label']), ENT_QUOTES, 'UTF-8') ?></a>
@@ -145,4 +359,7 @@ if (!isset($pageContent) || !is_array($pageContent)) {
       <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
     </div>
   </section>
+  <?php if ($serviceJsonLd !== ''): ?>
+    <script type="application/ld+json"><?= $serviceJsonLd ?></script>
+  <?php endif; ?>
 </div>

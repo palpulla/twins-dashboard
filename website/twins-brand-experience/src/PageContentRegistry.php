@@ -5,14 +5,24 @@ namespace Twins\BrandExperience;
 
 final class PageContentRegistry
 {
+    /**
+     * Fixed record shape for the 2026-08-18 service-page system: answer-first
+     * block with fact chips, warning signs, process steps, a real-price cost
+     * section, a safety module gated to the tension pages, service-tagged
+     * review quotes, and a five-question FAQ. Every key is present on every
+     * record; nullable keys are null where a capability does not apply.
+     */
     private const REQUIRED_KEYS = [
         'h1',
         'directAnswer',
-        'needs',
-        'safety',
+        'answerFacts',
+        'priceRange',
+        'warningSigns',
         'process',
-        'options',
-        'prepare',
+        'costParagraphs',
+        'safety',
+        'plans',
+        'reviewTag',
         'faqs',
         'links',
     ];
@@ -54,14 +64,52 @@ final class PageContentRegistry
         'garage-doors',
         'door-builder',
         'contact',
+        'openers',
+        'maintenance-plans',
     ];
 
     private const MARKET_PREFIXES = ['wi', 'ky', 'il'];
 
     /**
-     * The membership page is the one page that publishes rates. Service prices
-     * stay quote-only because they depend on the door; membership rates are
-     * fixed program figures that are the same for every customer.
+     * Pages that render the mandatory tension-safety module. Only these three
+     * carry a safety string; every other record keeps safety null so the
+     * module cannot quietly spread to pages it was not written for.
+     */
+    private const SAFETY_PATHS = [
+        '/garage-door-spring-repair/',
+        '/garage-door-cable-repair/',
+        '/emergency-garage-services/',
+    ];
+
+    /** Service tags available in config/review-quotes.php. */
+    private const REVIEW_TAGS = ['springs', 'openers', 'installation', 'emergency', 'general'];
+
+    /**
+     * Approved price figures from docs/marketing/website-rebuild/data/
+     * price-ranges.json (completed HCP jobs, last 24 months, p20/p80), plus
+     * the two approved offers ($0 service call with repair, $49 tune-up).
+     * Any other dollar figure on a non-membership page fails closed here.
+     */
+    private const APPROVED_SERVICE_AMOUNTS = [
+        '0', '49', '50', '100', '300', '325', '575', '625',
+        '775', '1,225', '1,400', '2,625', '3,425', '3,525', '4,400',
+    ];
+
+    /** Approved p20/p80 pairs from price-ranges.json for schema offers. */
+    private const APPROVED_PRICE_RANGES = [
+        [575, 1225],
+        [100, 300],
+        [775, 1400],
+        [325, 625],
+        [2625, 3525],
+        [3425, 4400],
+        [50, 100],
+    ];
+
+    /**
+     * The membership page is the one page that publishes program rates.
+     * Service prices elsewhere are historical ranges from price-ranges.json;
+     * membership rates are fixed program figures.
      */
     private const MEMBERSHIP_PATH = '/protection-plans/';
 
@@ -157,25 +205,77 @@ final class PageContentRegistry
         }
 
         $this->plain($record['h1'], 1, 80, 'h1');
-        $answer = $this->plain($record['directAnswer'], 200, 500, 'direct answer');
+        $answer = $this->plain($record['directAnswer'], 200, 520, 'direct answer');
         $words = preg_split('/\s+/', trim($answer));
         $wordCount = is_array($words) ? count($words) : 0;
         if ($wordCount < 40 || $wordCount > 60) {
             throw new \InvalidArgumentException('A direct answer is outside the fixed word boundary.');
         }
-        $this->stringList($record['needs'], 3, 5, 'needs');
-        $this->plain($record['safety'], 20, 400, 'safety');
+
+        $facts = $record['answerFacts'];
+        if (!is_array($facts)) {
+            throw new \InvalidArgumentException('A fixed answer-fact panel is invalid.');
+        }
+        $factKeys = array_keys($facts);
+        sort($factKeys);
+        if ($factKeys !== ['call', 'cost', 'timing']) {
+            throw new \InvalidArgumentException('A fixed answer-fact panel has an unknown shape.');
+        }
+        foreach (['cost', 'timing'] as $optionalFact) {
+            if ($facts[$optionalFact] !== null) {
+                $this->plain($facts[$optionalFact], 1, 160, 'answer fact ' . $optionalFact);
+            }
+        }
+        $this->plain($facts['call'], 1, 160, 'answer fact call');
+
+        $range = $record['priceRange'];
+        if ($range !== null) {
+            if (!is_array($range)) {
+                throw new \InvalidArgumentException('A fixed price range is invalid.');
+            }
+            $rangeKeys = array_keys($range);
+            sort($rangeKeys);
+            if ($rangeKeys !== ['max', 'min'] || !is_int($range['min']) || !is_int($range['max'])) {
+                throw new \InvalidArgumentException('A fixed price range has an unknown shape.');
+            }
+            if (!in_array([$range['min'], $range['max']], self::APPROVED_PRICE_RANGES, true)) {
+                throw new \InvalidArgumentException('A fixed price range is not an approved data figure.');
+            }
+        }
+
+        $this->stringList($record['warningSigns'], 3, 5, 'warning signs');
         $this->stringList($record['process'], 3, 5, 'process');
-        $this->nestedList($record['options'], 2, 4, ['option', 'tradeoff'], [
-            'option' => [1, 100],
-            'tradeoff' => [1, 300],
-        ], 'options');
-        $this->stringList($record['prepare'], 3, 5, 'prepare');
-        $this->nestedList($record['faqs'], 4, 6, ['question', 'answer'], [
+        $this->stringList($record['costParagraphs'], 1, 4, 'cost paragraphs', 500);
+
+        $isSafetyPath = in_array($path, self::SAFETY_PATHS, true);
+        if ($isSafetyPath) {
+            $safety = $this->plain($record['safety'], 20, 500, 'safety');
+            if (stripos($safety, 'dangerous tension') === false || stripos($safety, 'trained professionals') === false) {
+                throw new \InvalidArgumentException('The fixed tension safety boundary is incomplete.');
+            }
+        } elseif ($record['safety'] !== null) {
+            throw new \InvalidArgumentException('A safety module is registered outside the fixed tension pages.');
+        }
+
+        $publishesRates = $path === self::MEMBERSHIP_PATH;
+        if ($publishesRates) {
+            $this->nestedList($record['plans'], 3, 3, ['option', 'tradeoff'], [
+                'option' => [1, 100],
+                'tradeoff' => [1, 400],
+            ], 'plans');
+        } elseif ($record['plans'] !== null) {
+            throw new \InvalidArgumentException('Plan tiers are registered outside the membership page.');
+        }
+
+        if (!is_string($record['reviewTag']) || !in_array($record['reviewTag'], self::REVIEW_TAGS, true)) {
+            throw new \InvalidArgumentException('A fixed review tag is unknown.');
+        }
+
+        $this->nestedList($record['faqs'], 5, 5, ['question', 'answer'], [
             'question' => [5, 180],
-            'answer' => [20, 500],
+            'answer' => [20, 600],
         ], 'faqs');
-        $this->nestedList($record['links'], 3, 5, ['label', 'route'], [
+        $this->nestedList($record['links'], 2, 4, ['label', 'route'], [
             'label' => [1, 100],
             'route' => [1, 40],
         ], 'links');
@@ -205,43 +305,48 @@ final class PageContentRegistry
 
         $values = $this->flattenValues($record);
         $customerText = implode("\n", $values);
-        $publishesRates = $path === self::MEMBERSHIP_PATH;
         $claimText = $publishesRates
             ? str_replace(self::MEMBERSHIP_PLAN_NAMES, '', $customerText)
             : $customerText;
         if (
             preg_match('/\(\d{3}\)\s*\d{3}-\d{4}/', $customerText)
             || preg_match('/\b(?:Wisconsin|Kentucky|Illinois|Madison|Milwaukee|Rockford|Lexington)\b/i', $customerText)
-            || (!$publishesRates && preg_match('/(?:\$|USD)\s*\d|\d+\s*[-–]\s*\d+\s*(?:dollars?|USD)/i', $customerText))
-            || preg_match('/#1|number one|No\.\s*1|top-rated|\bbest\b/i', $claimText)
-            || preg_match('/\b(?:warranty|guarantee|certified|certification|years in business|cycle rating)\b/i', $customerText)
-            || preg_match('/\b(?:24\/7|365|same-day|same-visit|in-one-visit|fastest|most|often|usually|likely|quieter)\b|lower cost|higher cost|fewer return visits/i', $customerText)
-            || preg_match('/replace (?:the )?spring yourself|DIY spring|with the proper tools/i', $customerText)
+            || preg_match('/\x{2013}|\x{2014}/u', $customerText)
+            || preg_match('/24\s*\/\s*7|\b365\b|\blifetime\b/i', $customerText)
+            || preg_match('/#1|number one|No\.\s*1|top-rated/i', $claimText)
+            || preg_match('/\bbest\b/i', $claimText)
+            || preg_match('/\b(?:warrant(?:y|ies)|guaranteed?)\b/i', $customerText)
+            || preg_match('/\b(?:certified|certification|years in business)\b/i', $customerText)
+            || preg_match('/replace (?:the )?spring yourself|DIY spring/i', $customerText)
+            || preg_match('/\$\d+(?:\.\d+)?k\b/i', $customerText)
         ) {
             throw new \InvalidArgumentException('A fixed page-content record contains prohibited copy.');
         }
-        if ($publishesRates) {
-            $this->assertPublishedRates($customerText);
-        }
-        if ($path === '/garage-door-spring-repair/') {
-            if (stripos($record['safety'], 'dangerous tension') === false || stripos($record['safety'], 'trained professionals') === false) {
-                throw new \InvalidArgumentException('The fixed spring safety boundary is incomplete.');
-            }
-        }
+        $this->assertApprovedAmounts($customerText, $publishesRates);
     }
 
-    private function assertPublishedRates(string $customerText): void
+    /**
+     * Every published dollar amount must trace to an approved source: the
+     * price-ranges.json figures and the two offers on service pages, or the
+     * pinned program rates on the membership page.
+     */
+    private function assertApprovedAmounts(string $customerText, bool $publishesRates): void
     {
-        if (preg_match('/\bUSD\b|\d+\s*[-–]\s*\d+\s*dollars?/i', $customerText) === 1) {
-            throw new \InvalidArgumentException('A published rate uses an unapproved currency form.');
+        if (preg_match('/\bUSD\b|\d+\s*(?:-|to)\s*\d+\s*dollars?/i', $customerText) === 1) {
+            throw new \InvalidArgumentException('A published amount uses an unapproved currency form.');
         }
         if (preg_match_all('/\$(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/', $customerText, $amounts) === false) {
-            throw new \InvalidArgumentException('A published rate could not be read.');
+            throw new \InvalidArgumentException('A published amount could not be read.');
         }
+        $approved = $publishesRates ? self::MEMBERSHIP_RATES : self::APPROVED_SERVICE_AMOUNTS;
         foreach ($amounts[1] as $amount) {
-            if (!in_array(str_replace(',', '', $amount), self::MEMBERSHIP_RATES, true)) {
-                throw new \InvalidArgumentException('A published rate is not an approved program figure.');
+            if (in_array($amount, $approved, true)) {
+                continue;
             }
+            if (in_array(str_replace(',', '', $amount), $approved, true)) {
+                continue;
+            }
+            throw new \InvalidArgumentException('A published amount is not an approved figure.');
         }
     }
 
@@ -265,13 +370,13 @@ final class PageContentRegistry
         return $value;
     }
 
-    private function stringList($items, int $minimum, int $maximum, string $field): void
+    private function stringList($items, int $minimum, int $maximum, string $field, int $itemMaximum = 240): void
     {
         if (!is_array($items) || !$this->isList($items) || count($items) < $minimum || count($items) > $maximum) {
             throw new \InvalidArgumentException('A fixed ' . $field . ' list is invalid.');
         }
         foreach ($items as $item) {
-            $this->plain($item, 1, 240, $field);
+            $this->plain($item, 1, $itemMaximum, $field);
         }
     }
 
@@ -318,33 +423,29 @@ final class PageContentRegistry
         return [
             'h1' => $boundedTitle,
             'directAnswer' => 'This page provides general guidance for a garage door service without service-specific content. A technician can inspect the project, explain the available next steps, and provide an exact price before work begins. Use the regional call or quote option shown on the page, and avoid operating the door if it appears unsafe.',
-            'needs' => [
-                'You need help identifying the appropriate garage door service path.',
+            'answerFacts' => [
+                'cost' => null,
+                'timing' => null,
+                'call' => 'Call when you want a technician to inspect the door and price the work first.',
+            ],
+            'priceRange' => null,
+            'warningSigns' => [
+                'The door is behaving differently and you are not sure which service fits.',
                 'You want a technician to inspect the specific project.',
                 'You want to review available next steps before authorizing work.',
             ],
-            'safety' => 'If the door appears unsafe, stop using it and keep people, pets, and vehicles clear. Do not handle the spring system; springs are under dangerous tension and should be handled by trained professionals.',
             'process' => [
                 'Describe what you observed without repeatedly operating the door.',
                 'A technician inspects the specific service concern.',
                 'Review the findings and available next steps.',
                 'Review the exact price before work begins.',
             ],
-            'options' => [
-                [
-                    'option' => 'Service-specific next step',
-                    'tradeoff' => 'Use the inspection findings to select the appropriate fixed service path.',
-                ],
-                [
-                    'option' => 'Pause before authorizing work',
-                    'tradeoff' => 'Review the findings and exact price before choosing a next step.',
-                ],
+            'costParagraphs' => [
+                'This page does not publish a one-size-fits-all price. A technician inspects the project and provides the exact price before any work begins.',
             ],
-            'prepare' => [
-                'Note what you observed from a safe distance.',
-                'Keep the door area clear if the situation appears unsafe.',
-                'Do not handle or adjust the spring system.',
-            ],
+            'safety' => null,
+            'plans' => null,
+            'reviewTag' => 'general',
             'faqs' => [
                 [
                     'question' => 'Why am I seeing general service guidance?',
@@ -361,6 +462,10 @@ final class PageContentRegistry
                 [
                     'question' => 'What should I do if the door appears unsafe?',
                     'answer' => 'Stop using it, keep people, pets, and vehicles clear, and do not force it. Do not handle the spring system.',
+                ],
+                [
+                    'question' => 'Which number should I call?',
+                    'answer' => 'Use the number shown on this page. It follows the service area selected in the shared Twins experience, so the right one is already on your screen.',
                 ],
             ],
             'links' => [

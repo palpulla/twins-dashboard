@@ -959,7 +959,12 @@ body.twins-brand-experience .twins-brand-careers-hero a.twins-brand-cta {
 .twins-brand-service-hero-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 14px; }
 .twins-brand-direct-answer,
 .twins-brand-service-needs,
+.twins-brand-service-signs,
 .twins-brand-service-process,
+.twins-brand-service-cost,
+.twins-brand-service-safety-section,
+.twins-brand-service-reviews,
+.twins-brand-service-related,
 .twins-brand-service-options,
 .twins-brand-service-area,
 .twins-brand-faq,
@@ -988,8 +993,57 @@ body.twins-brand-experience .twins-brand-careers-hero a.twins-brand-cta {
 }
 .twins-brand-service-safety h2 { color: var(--twins-navy-950); font-size: 2.25rem; text-transform: uppercase; }
 .twins-brand-service-needs,
+.twins-brand-service-signs,
+.twins-brand-service-related,
 .twins-brand-service-options { background: #f4ead6; }
+.twins-brand-service-facts {
+  padding: clamp(24px, 4vw, 40px);
+  color: var(--twins-white);
+  background: var(--twins-navy-900);
+  border: 4px solid var(--twins-gold);
+  border-radius: 8px 34px 8px 34px;
+  box-shadow: 10px 12px 0 rgba(0, 0, 0, .3);
+}
+.twins-brand-service-facts h2 { color: var(--twins-gold); font-size: 2.2rem; text-transform: uppercase; }
+.twins-brand-service-facts dl { display: grid; gap: 16px; margin: 20px 0 0; }
+.twins-brand-service-facts dt { color: var(--twins-gold); font-size: .95rem; font-weight: 1000; letter-spacing: .04em; text-transform: uppercase; }
+.twins-brand-service-facts dd { margin: 4px 0 0; color: var(--twins-white); font-weight: 750; }
+.twins-brand-service-guarantee-line { max-width: 780px; margin-top: 18px; color: #e8f1fb; }
+.twins-brand-service-guarantee-line strong { color: var(--twins-gold); }
+.twins-brand-service-guarantee {
+  padding: clamp(26px, 4vw, 42px);
+  color: var(--twins-white);
+  background: var(--twins-navy-900);
+  border: 4px solid var(--twins-gold);
+  border-radius: 8px 34px 8px 34px;
+}
+.twins-brand-service-guarantee h2 { color: var(--twins-gold); font-size: 2.2rem; }
+.twins-brand-service-guarantee p { margin-top: 14px; color: #e8f1fb; }
+.twins-brand-service-cost { background: var(--twins-white); }
+.twins-brand-service-cost-range {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 14px;
+  margin: 26px 0 0;
+  color: var(--twins-navy-950);
+  font-family: var(--twins-font-display, inherit);
+  font-size: clamp(2.4rem, 5vw, 4.6rem);
+  font-weight: 1000;
+  text-transform: uppercase;
+}
+.twins-brand-service-cost-range span { color: var(--twins-gold-strong); font-size: .5em; }
+.twins-brand-service-cost-copy { max-width: 880px; display: grid; gap: 14px; margin-top: 24px; }
+.twins-brand-service-cost-copy p { color: var(--twins-ink); font-size: 1.08rem; }
+.twins-brand-service-safety-section { background: var(--twins-navy-950); }
+.twins-brand-service-reviews { background: var(--twins-white); border-top: 1px solid rgba(7, 29, 59, .12); }
+.twins-brand-service-reviews .twins-brand-google-attribution { margin: 12px 0 0; color: var(--twins-muted); font-size: .9rem; font-weight: 800; }
+.twins-brand-service-reviews .twins-brand-text-link { margin-top: 22px; }
 .twins-brand-service-needs h2,
+.twins-brand-service-signs h2,
+.twins-brand-service-cost h2,
+.twins-brand-service-reviews h2,
+.twins-brand-service-related h2,
 .twins-brand-service-process h2,
 .twins-brand-service-options h2,
 .twins-brand-faq h2,
@@ -1652,7 +1706,12 @@ body.twins-brand-experience .twins-brand-blog-page-link:is(:hover, :focus-visibl
   .twins-brand-editorial-hero,
   .twins-brand-direct-answer,
   .twins-brand-service-needs,
+  .twins-brand-service-signs,
   .twins-brand-service-process,
+  .twins-brand-service-cost,
+  .twins-brand-service-safety-section,
+  .twins-brand-service-reviews,
+  .twins-brand-service-related,
   .twins-brand-service-options,
   .twins-brand-service-area,
   .twins-brand-faq,

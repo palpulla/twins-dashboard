@@ -1833,38 +1833,11 @@ function twins_overhaul_brand_schema_markup(string $classification, array $conte
         $schema['@context'] = 'https://schema.org';
         $schema['image'] = home_url('/wp-content/mu-plugins/twins-brand-experience/assets/images/brand/twins-logo.png');
     } elseif ($classification === 'service') {
-        $record = twins_overhaul_brand_schema_service_record((string) ($context['path'] ?? ''));
-        if ($record === null) {
-            return '';
-        }
-        $questions = array();
-        foreach ($record['faqs'] as $faq) {
-            $questions[] = array(
-                '@type' => 'Question',
-                'name' => (string) $faq['question'],
-                'acceptedAnswer' => array('@type' => 'Answer', 'text' => (string) $faq['answer']),
-            );
-        }
-        $schema = array(
-            '@context' => 'https://schema.org',
-            '@graph' => array(
-                array(
-                    '@type' => 'Service',
-                    'name' => (string) $record['h1'],
-                    'serviceType' => (string) $record['h1'],
-                    'description' => (string) $record['directAnswer'],
-                    'provider' => $business,
-                ),
-                array('@type' => 'FAQPage', 'mainEntity' => $questions),
-                array(
-                    '@type' => 'BreadcrumbList',
-                    'itemListElement' => array(
-                        array('@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => home_url('/')),
-                        array('@type' => 'ListItem', 'position' => 2, 'name' => (string) $record['h1']),
-                    ),
-                ),
-            ),
-        );
+        // The brand service template emits the full service-page schema stack
+        // (Service + BreadcrumbList + FAQPage mirroring the rendered
+        // accordion), so the renderer-level schema stands down here exactly
+        // like it does for record-backed location pages.
+        return '';
     } elseif ($classification === 'reviews-brand') {
         if (!isset($primaryBusiness['aggregateRating'])) {
             return '';
@@ -2019,20 +1992,24 @@ function twins_overhaul_brand_schema_review_rating() {
  * @return array<string,string>
  */
 function twins_overhaul_seo_service_descriptions(): array {
+    // Adapted from docs/marketing/website-rebuild/build/seo-meta.json for the
+    // shared market-neutral records: same problem + price + offer framing,
+    // with the metro name and phone dropped because one record serves every
+    // market prefix. Prices trace to data/price-ranges.json.
     return array(
-        '/garage-door-repair/' => 'Stuck, crooked, or noisy garage door? A Twins tech looks over the whole door, tells you what is wrong, and gives you the exact price before touching anything.',
-        '/garage-door-installation/' => 'Ready for a new garage door? Twins measures your opening, helps you pick a style, and gives you the exact price before we install it. Licensed and insured.',
-        '/garage-door-spring-repair/' => 'Broke a spring? Do not lift the door. Twins replaces worn and snapped torsion and extension springs safely and gives you the price up front. Call the number for your area.',
-        '/garage-door-opener-repair/' => 'Opener humming, clicking, or dead? Twins checks the motor, trolley, photo eyes, and remotes, finds the fault, and prices the fix before any work begins.',
-        '/emergency-garage-services/' => 'Garage door stuck open, off its track, or a dropped spring? Keep everyone clear and call Twins. We come out fast and price the fix before we start.',
-        '/garage-door-services/' => 'Repairs, new doors, opener work, and the emergencies that cannot wait, all in one place. See what Twins handles and get the exact price before any work starts.',
-        '/garage-door-cable-repair/' => 'Garage door hanging crooked or stopped dead? A frayed or off-track cable is often why. Twins replaces cables safely and prices the fix before starting.',
-        '/garage-door-openers/' => 'Shopping for a garage door opener? Twins installs LiftMaster belt, chain, and wall-mount drives and helps you pick the right one for your garage.',
-        '/garage-weatherstripping-repair/' => 'Daylight or a draft under your garage door? Twins replaces worn bottom seals and the side and top trim so the cold, the rain, and pests stay out.',
-        '/garage-door-tune-up/' => 'A Twins tune-up tightens the hardware, lubricates the rollers and springs, and checks the balance so small problems get caught before they strand you.',
-        '/maintenance-plans/' => 'Put your garage door on our calendar. A Twins maintenance plan runs the full tune-up at set intervals and flags wear before it becomes a breakdown.',
-        '/property-management-services/' => 'Manage rentals or commercial property? Twins is the one call for every garage door in your portfolio. Licensed, insured, and scheduled around your tenants.',
-        '/protection-plans/' => 'TwinShield is our membership plan for the whole garage door system: scheduled tech visits plus member benefits. See what is covered and how to join.',
+        '/garage-door-repair/' => 'Garage door repair for springs, cables, openers, and more. Flat quotes before work starts, same-day service, and a $0 service call with repair.',
+        '/garage-door-installation/' => 'New Clopay garage door installation. Singles typically $2,625 to $3,525 installed, doubles $3,425 to $4,400, quoted flat after we measure your opening.',
+        '/garage-door-spring-repair/' => 'Garage door spring repair, most jobs $575 to $1,225 with a flat quote before work starts. Same-day service and a $0 service call with repair.',
+        '/garage-door-opener-repair/' => 'Garage door opener repair for every major brand. Sensor and keypad fixes usually $100 to $300, new LiftMaster installs $775 to $1,400, quoted flat first.',
+        '/emergency-garage-services/' => 'Emergency garage door repair. Stuck open, car trapped, or spring snapped? Same-day service with a flat quote before work starts and a $0 service call with repair.',
+        '/garage-door-services/' => 'Repairs, new doors, opener work, and the emergencies that cannot wait, all in one place. Flat quotes before work starts and a $0 service call with repair.',
+        '/garage-door-cable-repair/' => 'Garage door cable repair, most jobs $325 to $625 with a flat quote before work starts. Same-day service and a $0 service call with repair.',
+        '/garage-door-openers/' => 'New LiftMaster garage door opener installation, most jobs $775 to $1,400 installed with a flat quote first. Belt or chain, battery backup, myQ control.',
+        '/garage-weatherstripping-repair/' => 'Garage door weatherstripping repair. Stop drafts, snow dust, and pests with one of the least expensive fixes on the door. $0 service call with repair.',
+        '/garage-door-tune-up/' => 'The $49 garage door tune-up: a full inspection and lubrication of the whole system so small problems get caught before they strand you.',
+        '/maintenance-plans/' => '$49 garage door tune-ups and TwinShield maintenance membership. Full inspection and lubrication on a schedule so small problems stay small.',
+        '/property-management-services/' => 'Garage door repair and maintenance for property managers, HOAs, and landlords. One vendor, flat quotes to your approver, same-day emergency response.',
+        '/protection-plans/' => 'TwinShield is our 12-month garage door membership: tune-ups, repair savings, and equipment credit in three tiers. See the rates and what each tier includes.',
     );
 }
 
