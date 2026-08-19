@@ -198,7 +198,7 @@ if ($isLocation) {
     if ($locationRecord !== null && isset($locationRecord['neighborLinks'])) {
         $locationNearbyLinks = [];
         foreach ($locationRecord['neighborLinks'] as $locationNeighbor) {
-            $locationNearbyLinks[] = [$locationNeighbor['label'], 'city-' . $locationNeighbor['slug']];
+            $locationNearbyLinks[] = [$locationNeighbor['label'], 'city-' . $locationNeighbor['slug'], $locationNeighbor['market']];
         }
     }
 }
@@ -499,8 +499,8 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
           <h2 id="twins-location-neighbors-title"><?= htmlspecialchars($locationNearbyTitle, ENT_QUOTES, 'UTF-8') ?></h2>
         </div>
         <nav class="twins-brand-location-links" aria-label="Nearby areas we serve">
-          <?php foreach ($locationNearbyLinks as [$locationNearbyLabel, $locationNearbyRoute]): ?>
-            <a href="<?= htmlspecialchars($experience->route($locationNearbyRoute, $locationNavMarketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($locationNearbyLabel, ENT_QUOTES, 'UTF-8') ?></a>
+          <?php foreach ($locationNearbyLinks as $locationNearbyLink): ?>
+            <a href="<?= htmlspecialchars($experience->route($locationNearbyLink[1], $locationNearbyLink[2] ?? $locationNavMarketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($locationNearbyLink[0], ENT_QUOTES, 'UTF-8') ?></a>
           <?php endforeach; ?>
         </nav>
         <a class="twins-brand-text-link" href="<?= htmlspecialchars($experience->route($locationNearbyActionRoute, $locationNavMarketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($locationNearbyActionLabel, ENT_QUOTES, 'UTF-8') ?></a>

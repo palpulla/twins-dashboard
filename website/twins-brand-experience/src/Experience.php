@@ -483,7 +483,14 @@ final class Experience
                 ) {
                     throw new \DomainException('Location neighbor is not registered.');
                 }
-                $neighborLinks[] = ['slug' => $neighborSlug, 'label' => $neighborRecord['label']];
+                // City routes are registered under the market that serves the
+                // neighbor, so a Rockford page links its Wisconsin neighbors
+                // through the Wisconsin route map.
+                $neighborLinks[] = [
+                    'slug' => $neighborSlug,
+                    'label' => $neighborRecord['label'],
+                    'market' => ($neighborRecord['metro'] ?? '') === 'rockford' ? 'il-preview' : 'wi',
+                ];
             }
             $record['neighborLinks'] = $neighborLinks;
         }
