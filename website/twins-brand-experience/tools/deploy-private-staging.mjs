@@ -68,8 +68,14 @@ function run(command, args, options = {}) {
   const stderr = typeof result.stderr === 'string' ? result.stderr : '';
   const keyscanCommentsOnly = options.stderrPolicy === 'keyscan-comments' &&
     stderr.trim().split(/\r?\n/).every(line => line.startsWith('# '));
+  // The shared host's own login scripts emit transient fork-retry warnings to stderr while
+  // the account is process-throttled, even when every command succeeds (verified 2026-08-19).
+  // Exactly that one warning shape is tolerated; any other stderr byte stays fatal.
+  const hostProfileNoiseOnly = stderr.trim() !== '' &&
+    stderr.trim().split(/\r?\n/).every(line =>
+      /^\/etc\/profile\.d\/[A-Za-z0-9._-]+\.sh: fork: (?:retry: )?Resource temporarily unavailable$/.test(line.trim()));
   if (result.error || result.signal || result.status !== 0 ||
-      (stderr.trim() !== '' && !keyscanCommentsOnly)) {
+      (stderr.trim() !== '' && !keyscanCommentsOnly && !hostProfileNoiseOnly)) {
     finish(options.failure || 'TRANSPORT_OPERATION_FAILED', 1);
   }
   return stdout;
