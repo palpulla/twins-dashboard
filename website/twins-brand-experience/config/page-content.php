@@ -343,7 +343,7 @@ return [
             ],
             [
                 'question' => 'Are you licensed and insured?',
-                'answer' => 'Yes. We are a licensed and insured local garage door company, family owned and run by twin brothers, and the tech who shows up at your house works for us.',
+                'answer' => 'Yes. We are a licensed and insured local garage door company, family owned and operated, and the tech who shows up at your house works for us.',
             ],
             [
                 'question' => 'Do you give prices over the phone?',

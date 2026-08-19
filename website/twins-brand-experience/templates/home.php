@@ -114,12 +114,12 @@ $homeServices = [
   <div class="twins-brand-proof-ticker" data-home-motion data-home-ticker tabindex="0" aria-label="Service promises">
     <div class="twins-brand-proof-track">
       <span>Licensed and insured</span>
-      <span>Family owned by twin brothers</span>
+      <span>Family owned and operated</span>
       <span>Same-day and emergency service</span>
       <span>You approve a flat price before any work starts</span>
       <span>Real local technicians, not a call center</span>
       <span aria-hidden="true">Licensed and insured</span>
-      <span aria-hidden="true">Family owned by twin brothers</span>
+      <span aria-hidden="true">Family owned and operated</span>
       <span aria-hidden="true">Same-day and emergency service</span>
       <span aria-hidden="true">You approve a flat price before any work starts</span>
       <span aria-hidden="true">Real local technicians, not a call center</span>

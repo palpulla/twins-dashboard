@@ -400,7 +400,7 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
           <strong>Customer-reviewed service</strong><span>Real feedback from Twins customers</span>
         <?php endif; ?>
       </div>
-      <div role="listitem"><strong>Family owned</strong><span>Run by twin brothers, not a franchise</span></div>
+      <div role="listitem"><strong>Family owned</strong><span>A local company, not a franchise</span></div>
       <div role="listitem"><strong>Licensed and insured</strong><span>Professional service for your home</span></div>
     </section>
 

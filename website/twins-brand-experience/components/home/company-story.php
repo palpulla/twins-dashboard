@@ -2,8 +2,8 @@
 <section class="twins-brand-company-story" data-home-scene="company-story" aria-labelledby="twins-brand-company-title" data-home-reveal>
   <div class="twins-brand-company-copy">
     <span class="twins-brand-kicker">Local people. Branded trucks. Real work.</span>
-    <h2 id="twins-brand-company-title">A Madison company owned by twin brothers.</h2>
-    <p>Twins Garage Doors is exactly what it sounds like: a Madison company owned by twin brothers, with techs your neighbors already know by name.</p>
+    <h2 id="twins-brand-company-title">A Madison family company.</h2>
+    <p>Twins Garage Doors is a Madison family company, with techs your neighbors already know by name.</p>
     <a class="twins-brand-cta" href="<?= htmlspecialchars($homeRoutes['team'], ENT_QUOTES, 'UTF-8') ?>">Meet the Team</a>
     <ul class="twins-brand-company-proof" aria-label="Why homeowners call Twins">
       <li><strong><span data-twins-live-count><?= htmlspecialchars($reviewSummary['displayCount'], ENT_QUOTES, 'UTF-8') ?></span>+</strong><span>Google reviews</span></li>

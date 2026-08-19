@@ -86,7 +86,7 @@ foreach ([
     'Garage door trouble? <em>Call the Twins.</em>',
     'Same-day garage door repair across Madison and southern Wisconsin.',
     '$0 Service Call With Repair',
-    'Family owned by twin brothers',
+    'Family owned and operated',
     'You approve a flat price before any work starts',
     'What is your door doing?',
     'Loud bang, then stuck',
