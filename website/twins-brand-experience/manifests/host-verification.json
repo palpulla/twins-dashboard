@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "remoteDirectory": "/home/customer/staging-safety/staging-remediation-r32-20260819/verification/",
+  "remoteDirectory": "/home/customer/staging-safety/staging-remediation-r33-20260819/verification/",
   "productionWriteAuthority": false,
   "files": [
     {
@@ -66,8 +66,8 @@
     {
       "role": "verify",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/renderers.php",
-      "size": 102150,
-      "sha256": "2e0587dfdceaf9fa93f0fe406cd55984c40d124b49a13dd3de3272765b6f641f"
+      "size": 102836,
+      "sha256": "12f24f41843d4c318c1a72dbdbb59d1ce417ddbc8da72b874fc4dd1f0629c47f"
     },
     {
       "role": "verify",
@@ -379,7 +379,7 @@
       "role": "verify",
       "source": "twins-brand-experience/manifests/staging-runtime.json",
       "size": 369505,
-      "sha256": "12d16387be09b1bdc2345c1e301f05c1975bf31db0ca4af2e767c7c7ad38a103"
+      "sha256": "2dbcce7294dafeafd96b14ae3883d21ed2f5d0d13698a92304a86e83de7e8aed"
     },
     {
       "role": "verify",
@@ -577,7 +577,7 @@
       "role": "verify",
       "source": "twins-brand-experience/tools/private-staging-deploy.php",
       "size": 69595,
-      "sha256": "2c9e89528041071a13f93d3cee915297729d8402989c9264ede15d0f8f5b2ec7"
+      "sha256": "e8fcbaf29a282ac3cbb15661deaecd99ca2704945444329cd79a51d7f7848099"
     }
   ]
 }

@@ -2431,6 +2431,7 @@ function twins_overhaul_register_frontend_hooks(): void {
     add_filter('get_search_form', 'twins_overhaul_filter_search_form', PHP_INT_MAX, 2);
     add_filter('template_include', 'twins_overhaul_filter_branded_template', PHP_INT_MAX, 1);
     add_filter('pre_get_document_title', 'twins_overhaul_filter_document_title', PHP_INT_MAX, 1);
+    add_action('template_redirect', 'twins_overhaul_redirect_retired_ky_market', 0, 0);
     add_action('wp_head', 'twins_overhaul_output_local_font_sentinel', 1, 0);
     add_action('wp_head', 'twins_overhaul_output_home_font_preloads', 2, 0);
     add_action('wp_head', 'twins_overhaul_output_home_hero_preload', 2, 0);
@@ -2441,3 +2442,20 @@ function twins_overhaul_register_frontend_hooks(): void {
 }
 
 twins_overhaul_register_frontend_hooks();
+
+/**
+ * The Kentucky market is retired (brand toolkit v1.0, August 2026). Front-end
+ * requests to the KY subsite permanently redirect to the main-site homepage.
+ * Admin, login, and REST stay reachable so the archived site remains manageable.
+ */
+function twins_overhaul_redirect_retired_ky_market(): void {
+    if (!is_multisite() || get_current_blog_id() !== 3) {
+        return;
+    }
+    if (is_admin() || wp_doing_ajax() || (defined('REST_REQUEST') && REST_REQUEST)) {
+        return;
+    }
+    $home = network_home_url('/');
+    wp_safe_redirect($home, 301, 'twins-ky-retired');
+    exit;
+}
