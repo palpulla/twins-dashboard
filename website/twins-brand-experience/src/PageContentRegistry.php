@@ -95,7 +95,11 @@ final class PageContentRegistry
         '775', '1,225', '1,400', '2,625', '3,425', '3,525', '4,400',
     ];
 
-    /** Approved p20/p80 pairs from price-ranges.json for schema offers. */
+    /**
+     * Approved p20/p80 pairs from price-ranges.json for schema offers, plus
+     * the combined installation span (single p20 to double p80) already
+     * approved in build/seo-meta.json for door-installation pages.
+     */
     private const APPROVED_PRICE_RANGES = [
         [575, 1225],
         [100, 300],
@@ -103,6 +107,7 @@ final class PageContentRegistry
         [325, 625],
         [2625, 3525],
         [3425, 4400],
+        [2625, 4400],
         [50, 100],
     ];
 
