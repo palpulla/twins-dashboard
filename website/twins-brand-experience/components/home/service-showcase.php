@@ -2,7 +2,7 @@
 <section class="twins-brand-service-showcase" data-home-scene="service-showcase" aria-labelledby="twins-brand-services-title" data-home-reveal>
   <header>
     <span class="twins-brand-kicker">Services we offer</span>
-    <h2 id="twins-brand-services-title">The right help for the door in front of you.</h2>
+    <h2 id="twins-brand-services-title">Four things we do all day, every day.</h2>
   </header>
   <div class="twins-brand-service-feature" data-home-service-showcase data-twins-service-tabs>
     <div class="twins-brand-service-tabs" data-service-tablist hidden>

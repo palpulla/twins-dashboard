@@ -5,12 +5,14 @@ $reviewSummary = require dirname(__DIR__) . '/config/review-summary.php';
 require dirname(__DIR__) . '/components/nav-data.php';
 
 $homeProblemPaths = [
-    ['label' => 'Door will not open or close', 'route' => 'repair', 'copy' => 'The door is stuck, heavy, crooked, or unresponsive.'],
-    ['label' => 'Broken spring', 'route' => 'spring-repair', 'copy' => 'You heard a bang, see a spring gap, or the door feels unusually heavy.'],
-    ['label' => 'Loud, shaking, or off track', 'route' => 'repair', 'copy' => 'The door scrapes, tilts, rattles, or no longer travels smoothly.'],
-    ['label' => 'Opener or remote problem', 'route' => 'openers', 'copy' => 'The motor, wall control, remote, or safety sensors are acting up.'],
-    ['label' => 'Damaged hardware or weather seal', 'route' => 'repair', 'copy' => 'Cables, rollers, tracks, panels, or seals need attention.'],
-    ['label' => 'Need a new garage door', 'route' => 'installation', 'copy' => 'Compare replacement options and design a door for your home.'],
+    ['label' => 'Door will not open', 'route' => 'repair', 'copy' => 'Could be a spring, the opener, or a snapped cable. Do not force it, that makes it worse.'],
+    ['label' => 'Door will not close', 'route' => 'repair', 'copy' => 'Usually the safety sensors or the track. One of the most common calls we run.'],
+    ['label' => 'Loud bang, then stuck', 'route' => 'spring-repair', 'copy' => 'That bang was almost certainly a spring breaking. Do not lift the door.'],
+    ['label' => 'Crooked or off track', 'route' => 'repair', 'copy' => 'Stop using the door. A door off its track can come out of the opening.'],
+    ['label' => 'Grinding or squealing', 'route' => 'repair', 'copy' => 'Rollers, hinges, or a dry track asking for help before something bigger breaks.'],
+    ['label' => 'Opener will not respond', 'route' => 'openers', 'copy' => 'Remote, logic board, or power. We repair every major opener brand.'],
+    ['label' => 'I hit it with the car', 'route' => 'repair', 'copy' => 'It happens more than you would think. Panels and tracks can often be repaired.'],
+    ['label' => 'Need a new garage door', 'route' => 'installation', 'copy' => 'Design your door online, then we measure and quote it in person.'],
 ];
 
 $homeRoutes = [
@@ -37,11 +39,16 @@ if (in_array($marketKey, ['main', 'wi'], true)) {
 
 $homeAreaLinks = array_slice($marketCityLinks, 0, 12);
 
+// Five cost-intent-first questions from the approved 2026-08-18 homepage copy.
+// Every dollar figure traces to docs/marketing/website-rebuild/data/price-ranges.json
+// and the job count to its 24-month completed-jobs window. The FAQPage JSON-LD in
+// components/home/structured-data.php mirrors this list exactly.
 $homeFaqs = [
-    ['question' => 'How do I know whether to repair or replace the door?', 'answer' => 'A technician inspects the door, explains what can be repaired, and gives you the exact price before work begins. You can compare that with replacement options and decide without pressure.'],
-    ['question' => 'What should I do if a spring breaks?', 'answer' => 'Stop using the door, keep people and vehicles clear, and do not touch the spring or loose cables. Springs are under dangerous tension and should be handled by trained professionals.'],
-    ['question' => 'Why can’t the website give one repair price?', 'answer' => 'The price depends on the failed part, the door, and what the inspection finds. Twins provides the exact price before work begins rather than publishing a one-size-fits-all number.'],
-    ['question' => 'Can I book online?', 'answer' => 'Yes. Use Book Online to start the current booking flow, or call the verified number shown for your service area.'],
+    ['question' => 'How much does it cost to repair a garage door in Madison?', 'answer' => 'Spring replacement, the most common repair, usually lands between $575 and $1,225 on the whole ticket, and cable repairs run $325 to $625, based on our own completed jobs. You approve a flat quote before any work starts, and the service call is $0 when we do the repair.'],
+    ['question' => 'How much does a new garage door cost?', 'answer' => 'A new installed single door typically runs $2,625 to $3,525, and a double $3,425 to $4,400, depending on insulation, windows, and style. Financing through GoodLeap means monthly payments are available on new doors. Our Madison cost guide breaks down real numbers from real local jobs.'],
+    ['question' => 'Can I fix my garage door myself?', 'answer' => 'Please do not touch the springs or cables. They are under hundreds of pounds of tension and injure people every year. Sensors, remotes, and lubrication are fair DIY territory. Anything attached to the spring system is a call to us, and with $0 service call with repair, the diagnosis costs you nothing.'],
+    ['question' => 'How fast can you get to my house?', 'answer' => 'We run same-day and emergency service across the Madison area, with more than 1,600 completed jobs in the last two years. Call us, tell us what the door is doing, and we will give you an honest arrival window, not a vague "sometime this week."'],
+    ['question' => 'Do you guarantee your work?', 'answer' => 'Yes, and we named it: "Done Right, or We Make It Right." If something about our work is not right, we come back and fix it. No arguing, no fine print. We are licensed, insured, and local, so making it right is a short drive for us.'],
 ];
 
 $homeServiceRoutes = [
@@ -51,11 +58,13 @@ $homeServiceRoutes = [
     'emergency-service' => $experience->route('emergency-service', $marketKey),
 ];
 
+// Numbered services 01 to 04 from the approved homepage copy. The spring range
+// is the whole-ticket figure from data/price-ranges.json (n=432).
 $homeServices = [
-    ['id' => 'repair', 'label' => 'Garage Door Repair', 'route' => 'repair', 'picture' => 'technician-at-work', 'heading' => 'Find the cause. Fix the door.', 'copy' => 'We inspect the springs, cables, rollers, tracks, sections, balance, and opener connection before pricing the repair.'],
-    ['id' => 'installation', 'label' => 'Garage Door Installation', 'route' => 'installation', 'picture' => 'door-builder-before-after', 'heading' => 'A new door that fits the home.', 'copy' => 'Compare construction, insulation, windows, and finishes after the opening is measured and the options are explained.'],
-    ['id' => 'opener', 'label' => 'Opener Repair', 'route' => 'opener-repair', 'picture' => 'technician-at-work', 'heading' => 'Get the controls talking again.', 'copy' => 'We diagnose the motor, wall control, remotes, sensors, travel, and the door itself before recommending the next step.'],
-    ['id' => 'urgent', 'label' => 'Emergency Garage Door Help', 'route' => 'emergency-service', 'picture' => 'crew-fleet', 'heading' => 'Secure the opening first.', 'copy' => 'If the door looks unsafe, stop using it, keep people and vehicles clear, and call the verified number for your market.'],
+    ['id' => 'repair', 'label' => 'Garage Door Repair', 'route' => 'repair', 'picture' => 'technician-at-work', 'heading' => 'Springs, cables, rollers, tracks, panels.', 'copy' => 'Your tech diagnoses the problem in front of you and quotes a flat price before touching a wrench. Most spring replacements run $575 to $1,225.'],
+    ['id' => 'installation', 'label' => 'Garage Door Installation', 'route' => 'installation', 'picture' => 'door-builder-before-after', 'heading' => 'New doors built for Wisconsin winters.', 'copy' => 'New Clopay doors, from insulated steel to modern full-view glass. Design your door online, then we measure and quote it in person. Financing through GoodLeap, monthly payments available on new doors.'],
+    ['id' => 'opener', 'label' => 'Garage Door Openers', 'route' => 'opener-repair', 'picture' => 'technician-at-work', 'heading' => 'Openers installed and repaired.', 'copy' => 'We install LiftMaster openers and repair every major brand, belt or chain, smart or basic. If the door is fine but the motor gave up, this is your card.'],
+    ['id' => 'urgent', 'label' => 'Emergency Garage Door Help', 'route' => 'emergency-service', 'picture' => 'crew-fleet', 'heading' => 'Stuck door? We get moving.', 'copy' => 'Door stuck open with a snowstorm coming? We run same-day and emergency service across the Madison area. Call us and we will get a tech headed your way.'],
 ];
 ?>
 <div id="twins-overhaul-main" class="twins-brand-page twins-brand-home">
@@ -84,7 +93,7 @@ $homeServices = [
       <span class="twins-brand-hero-tag">$0 Service Call With Repair</span>
       <span class="twins-brand-kicker"><?= htmlspecialchars($market['label'], ENT_QUOTES, 'UTF-8') ?> residential garage door repair</span>
       <h1>Garage door trouble? <em>Call the Twins.</em></h1>
-      <p>Local technicians, a clear diagnosis, and the exact price before anything gets fixed.</p>
+      <p>Same-day garage door repair across Madison and southern Wisconsin. Real local techs your neighbors know by name, and a flat price you approve before any work starts.</p>
       <div class="twins-brand-hero-actions">
         <?php if (($booking['mode'] ?? null) === 'dialog'): ?>
           <button type="button" class="twins-brand-cta twins-brand-cta--book" data-twins-booking-open>Book Online</button>
@@ -105,12 +114,14 @@ $homeServices = [
   <div class="twins-brand-proof-ticker" data-home-motion data-home-ticker tabindex="0" aria-label="Service promises">
     <div class="twins-brand-proof-track">
       <span>Licensed and insured</span>
-      <span>You see the exact price before we start</span>
-      <span>Springs, openers, cables, and new doors</span>
+      <span>Family owned by twin brothers</span>
+      <span>Same-day and emergency service</span>
+      <span>You approve a flat price before any work starts</span>
       <span>Real local technicians, not a call center</span>
       <span aria-hidden="true">Licensed and insured</span>
-      <span aria-hidden="true">You see the exact price before we start</span>
-      <span aria-hidden="true">Springs, openers, cables, and new doors</span>
+      <span aria-hidden="true">Family owned by twin brothers</span>
+      <span aria-hidden="true">Same-day and emergency service</span>
+      <span aria-hidden="true">You approve a flat price before any work starts</span>
       <span aria-hidden="true">Real local technicians, not a call center</span>
     </div>
   </div>
@@ -119,7 +130,7 @@ $homeServices = [
   <?php require dirname(__DIR__) . '/components/home/service-showcase.php'; ?>
 
   <section class="twins-brand-review-proof" data-section="review-slider" data-home-scene="customer-stories" data-review-wall data-home-reveal data-home-motion>
-    <?php $reviewHeading = 'The kind of service people remember.'; ?>
+    <?php $reviewHeading = 'The reviews name names.'; ?>
     <?php require dirname(__DIR__) . '/components/review-slider.php'; ?>
   </section>
 

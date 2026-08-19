@@ -22,7 +22,8 @@ test('home contains every approved scene in order', () => {
   assert.match(html, /\$0 Service Call With Repair/);
   assert.match(html, /twins-brand-hero-proof/);
   assert.match(html, /Licensed and insured/);
-  assert.match(html, /You see the exact price before we start/);
+  assert.match(html, /Family owned by twin brothers/);
+  assert.match(html, /You approve a flat price before any work starts/);
   assert.doesNotMatch(html, /Same-day appointments|Most repairs done in one visit/);
 });
 

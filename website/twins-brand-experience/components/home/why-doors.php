@@ -16,12 +16,12 @@ $homeTeamMembers = [
 <section class="twins-brand-why-scene" data-home-scene="why-twins" data-home-why aria-labelledby="twins-brand-why-title" data-home-reveal data-home-motion>
   <div class="twins-brand-why-copy">
     <span class="twins-brand-kicker">Why Twins</span>
-    <h2 id="twins-brand-why-title">We take care of garage doors and the people who own them.</h2>
+    <h2 id="twins-brand-why-title">Meet the Twins. And the crew.</h2>
     <ol>
-      <li><strong>Options before work begins</strong><span>Review the findings and exact price before approving a repair.</span></li>
-      <li><strong>Real local technicians</strong><span>Meet the people and equipment behind the service.</span></li>
-      <li><strong>Call or book online</strong><span>Use the verified contact path shown for your market.</span></li>
-      <li><strong>Verified customer feedback</strong><span>Read feedback from the captured Google Business Profile collection.</span></li>
+      <li><strong>Family owned</strong><span>Twin brothers Daniel and Tal built the company on a simple idea: show up when you say you will, charge what you quoted, and stand behind the work.</span></li>
+      <li><strong>Techs people know by name</strong><span>Madison keeps mentioning Charles, Maurice, and Nicholas by name in review after review.</span></li>
+      <li><strong>Flat price first</strong><span>You approve the exact number before any work starts.</span></li>
+      <li><strong>The guarantee</strong><span>"Done Right, or We Make It Right." No arguing, no fine print.</span></li>
     </ol>
     <span class="twins-brand-character-stage">
       <img src="<?= htmlspecialchars($experience->asset('twin-right'), ENT_QUOTES, 'UTF-8') ?>" width="297" height="538" alt="" aria-hidden="true" loading="lazy" decoding="async">
@@ -74,8 +74,9 @@ $homeTeamMembers = [
   </div>
   <div class="twins-brand-door-copy">
     <span class="twins-brand-kicker">Repair or replace</span>
-    <h2 id="twins-brand-doors-title">A new door, without the pressure.</h2>
-    <p>If repair is still the sound choice, we explain it. If replacement makes more sense, compare available construction and design options.</p>
+    <h2 id="twins-brand-doors-title">Fix it or replace it? Straight answer.</h2>
+    <p>A good repair beats a new door more often than you would think, and our techs quote the repair first. If the door is rusted through, cracked across multiple panels, or the fix costs more than the door is worth, we will say so and show you the math. Your call either way.</p>
+    <p>Picking a new door? Choose the style, color, windows, and insulation from your couch. Build it online, then we measure your opening and quote the real number in person.</p>
     <a class="twins-brand-cta" href="<?= htmlspecialchars($homeRoutes['door-builder'], ENT_QUOTES, 'UTF-8') ?>">Design Your Door</a>
     <a href="<?= htmlspecialchars($homeRoutes['garage-doors'], ENT_QUOTES, 'UTF-8') ?>">Explore Garage Doors</a>
   </div>
