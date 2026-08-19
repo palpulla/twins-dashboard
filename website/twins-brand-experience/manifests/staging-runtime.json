@@ -15,8 +15,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/assets/css/twins-brand.css",
       "destination": "twins-brand-experience/assets/css/twins-brand.css",
-      "size": 146807,
-      "sha256": "8595cc8ccc962b14b760d1e10ead1bec909afafa68ed26247e302a148182a071"
+      "size": 149556,
+      "sha256": "f9ec5b8dc39e237f998796ce10f0c667f9d4c15fc53a07df569928b4524a127b"
     },
     {
       "role": "deploy",
@@ -407,8 +407,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/config/page-content.php",
       "destination": "twins-brand-experience/config/page-content.php",
-      "size": 60060,
-      "sha256": "82ec9c8c642ae9eedd6932807ff5fed79339dca9c5d9ecf38b7ee760a9cd573a"
+      "size": 69798,
+      "sha256": "1c756e75624eec4f5a2ae755fad0800d6744ea2c40feb63b05766c3ba82dac40"
     },
     {
       "role": "deploy",
@@ -456,8 +456,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/src/PageContentRegistry.php",
       "destination": "twins-brand-experience/src/PageContentRegistry.php",
-      "size": 16260,
-      "sha256": "683904ae97f3da7e2894576d7cb247e48a12cab01eea12b9ac7cf950e16da1dc"
+      "size": 20692,
+      "sha256": "4b65acb686c4d3318ace0f48bd4dff371d7214ac333e01bae91dfe34c6166e44"
     },
     {
       "role": "deploy",
@@ -526,8 +526,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/templates/service.php",
       "destination": "twins-brand-experience/templates/service.php",
-      "size": 8169,
-      "sha256": "1f47fed8755d078114b3ba0314fe309a79cd07da0422c78dbba2288aacefc54f"
+      "size": 19610,
+      "sha256": "5ca15256cc3feeda94d265333da527a78adc3445e0bfec085bd858b4e5c5bd9f"
     },
     {
       "role": "deploy",
@@ -6238,8 +6238,8 @@
       "role": "deploy",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/renderers.php",
       "destination": "twins-staging-overhaul/renderers.php",
-      "size": 102993,
-      "sha256": "45891be6c2f80343d8e2a2f81660e0c90ef99b5ab4562a7a495d2eea539cee2c"
+      "size": 102144,
+      "sha256": "20e0a8260c8b3d1b032488cc1cb17b8a0ebae3f4e2de2aebff268c6e15ae85ce"
     },
     {
       "role": "deploy",
