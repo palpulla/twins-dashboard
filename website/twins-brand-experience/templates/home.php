@@ -41,8 +41,8 @@ $homeAreaLinks = array_slice($marketCityLinks, 0, 12);
 
 // Five cost-intent-first questions from the approved 2026-08-18 homepage copy.
 // Every dollar figure traces to docs/marketing/website-rebuild/data/price-ranges.json
-// and the job count to its 24-month completed-jobs window. The FAQPage JSON-LD in
-// components/home/structured-data.php mirrors this list exactly.
+// and the job count to its 24-month completed-jobs window. The FAQPage JSON-LD
+// emitted by the home structured-data component mirrors this list exactly.
 $homeFaqs = [
     ['question' => 'How much does it cost to repair a garage door in Madison?', 'answer' => 'Spring replacement, the most common repair, usually lands between $575 and $1,225 on the whole ticket, and cable repairs run $325 to $625, based on our own completed jobs. You approve a flat quote before any work starts, and the service call is $0 when we do the repair.'],
     ['question' => 'How much does a new garage door cost?', 'answer' => 'A new installed single door typically runs $2,625 to $3,525, and a double $3,425 to $4,400, depending on insulation, windows, and style. Financing through GoodLeap means monthly payments are available on new doors. Our Madison cost guide breaks down real numbers from real local jobs.'],

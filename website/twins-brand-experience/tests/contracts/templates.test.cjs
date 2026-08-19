@@ -10,7 +10,7 @@ test('home contains every approved scene in order', () => {
   // r30 home story: hero + proof ticker in the template, then the scene
   // components in their include order.
   const html = template('home.php');
-  const markers = ['brand-hero', 'data-home-ticker', 'components/home/company-story.php', 'components/home/service-showcase.php', 'review-slider', 'components/home/service-journey.php', 'components/home/why-doors.php', 'components/home/closing.php'];
+  const markers = ['brand-hero', 'data-home-ticker', 'components/home/company-story.php', 'components/home/service-showcase.php', 'review-slider', 'components/home/service-journey.php', 'components/home/why-doors.php', 'components/home/closing.php', 'components/home/structured-data.php'];
   let cursor = -1;
   for (const marker of markers) {
     const next = html.indexOf(marker);
@@ -25,6 +25,36 @@ test('home contains every approved scene in order', () => {
   assert.match(html, /Family owned by twin brothers/);
   assert.match(html, /You approve a flat price before any work starts/);
   assert.doesNotMatch(html, /Same-day appointments|Most repairs done in one visit/);
+});
+
+test('home carries the approved 2026-08-18 copy set and traceable figures', () => {
+  const html = template('home.php');
+  // Every dollar figure traces to docs/marketing/website-rebuild/data/price-ranges.json.
+  for (const figure of ['$575 and $1,225', '$575 to $1,225', '$325 to $625', '$2,625 to $3,525', '$3,425 to $4,400']) {
+    assert.ok(html.includes(figure), `home template lost the approved figure ${figure}`);
+  }
+  assert.match(html, /Done Right, or We Make It Right\./);
+  assert.match(html, /Financing through GoodLeap/);
+  assert.doesNotMatch(html, /—|–/, 'home template carries an em- or en-dash');
+  assert.doesNotMatch(html, /24\s*\/\s*7|\blifetime\b/i);
+  assert.doesNotMatch(html, /verified contact path|verified number/i);
+  const journey = fs.readFileSync(path.join(root, 'components/home/service-journey.php'), 'utf8');
+  assert.match(journey, /Done Right, or We Make It Right\./);
+  const closing = fs.readFileSync(path.join(root, 'components/home/closing.php'), 'utf8');
+  assert.match(closing, /TwinShield\. The no-surprises plan\./);
+  assert.match(closing, /GoodLeap/);
+  assert.doesNotMatch(closing, /\$\d+\s*(?:\/|per)\s*(?:mo|month|year)/i, 'TwinShield card must not invent a price');
+});
+
+test('home structured data is Organization + FAQPage and defers LocalBusiness to the renderer', () => {
+  const schema = fs.readFileSync(path.join(root, 'components/home/structured-data.php'), 'utf8');
+  assert.match(schema, /function_exists\('home_url'\)/);
+  assert.match(schema, /'@type' => 'Organization'/);
+  assert.match(schema, /'slogan' => 'Your Garage Door, Done Right\.'/);
+  assert.match(schema, /'@type' => 'FAQPage'/);
+  assert.match(schema, /\$homeFaqs\s*\)/, 'FAQPage must be built from the rendered $homeFaqs list');
+  assert.doesNotMatch(schema, /'@type' => 'LocalBusiness'/, 'renderers.php owns the LocalBusiness node for home-brand');
+  assert.match(schema, /markets\.php/);
 });
 
 test('team and careers use real fixed picture keys', () => {
