@@ -558,6 +558,67 @@ $illinoisService = $stagingExperience->renderService([
 $expect(strpos($illinoisService, '>Garage Door Spring Repair</a>') === false, 'Illinois service links retained the misleading Spring Repair label');
 $expect(strpos($illinoisService, '>Garage Door Openers</a>') !== false, 'Illinois service links omitted the Garage Door Openers destination label');
 
+// 2026-08-18 service-page system: answer facts, warning signs, real-price
+// cost section, gated safety module, service-tagged review quotes, related
+// services, five-question FAQ, and template-owned JSON-LD.
+$springService = $stagingExperience->renderService([
+    'environment' => 'staging',
+    'market' => 'wi',
+    'path' => '/wi/garage-door-spring-repair/',
+    'title' => 'Garage Door Spring Repair',
+]);
+foreach ([
+    'twins-brand-service-facts',
+    'twins-brand-service-signs',
+    'twins-brand-service-cost',
+    'twins-brand-service-safety-section',
+    'twins-brand-service-reviews',
+    'twins-brand-service-related',
+] as $serviceSection) {
+    $expect(strpos($springService, $serviceSection) !== false, 'spring service page omitted ' . $serviceSection);
+}
+$expect(substr_count($springService, 'Done Right, or We Make It Right.') === 2, 'spring page must carry the verbatim guarantee in the answer block and the process card');
+$expect(strpos($springService, 'Typical cost') !== false, 'spring page omitted the cost fact chip');
+$expect(strpos($springService, 'When to call') !== false, 'spring page omitted the when-to-call fact chip');
+$expect(strpos($springService, '$575') !== false && strpos($springService, '$1,225') !== false, 'spring page lost the approved price range');
+$expect(strpos($springService, 'dangerous tension') !== false && strpos($springService, 'trained professionals') !== false, 'spring page lost the mandatory safety framing');
+$expect(substr_count($springService, '<details') === 5, 'spring page must render exactly five FAQ items');
+$expect(substr_count($springService, 'twins-location-review-card') === 3, 'spring page must render three verbatim review quotes');
+$expect(strpos($springService, 'Verbatim Google reviews from real Twins customers') !== false, 'spring review quotes lost their attribution');
+$expect(strpos($springService, 'fixed same day') !== false, 'spring page did not pick from the springs-tagged quote pool');
+$expect(strpos($springService, 'type="application/ld+json"') !== false, 'spring page omitted its JSON-LD script');
+$expect(strpos($springService, '"@type":"Service"') !== false, 'spring schema omitted the Service node');
+$expect(strpos($springService, '"@type":"BreadcrumbList"') !== false, 'spring schema omitted the BreadcrumbList node');
+$expect(strpos($springService, '"@type":"FAQPage"') !== false, 'spring schema omitted the FAQPage node');
+$expect(strpos($springService, '"minPrice":575') !== false && strpos($springService, '"maxPrice":1225') !== false, 'spring schema offers lost the approved range');
+$expect(strpos($springService, 'Can I replace garage door springs myself?') !== false, 'spring schema and accordion lost an approved FAQ');
+$expect(substr_count($springService, 'Can I replace garage door springs myself?') === 2, 'spring FAQPage must mirror the rendered accordion');
+$expect(strpos($springService, 'href="/wi/maintenance-plans/"') === false, 'wi maintenance link must use the shared main route');
+$expect(strpos($springService, 'href="/maintenance-plans/"') !== false, 'spring page omitted the maintenance related link');
+
+$weatherService = $stagingExperience->renderService([
+    'environment' => 'staging',
+    'market' => 'main',
+    'path' => '/garage-weatherstripping-repair/',
+    'title' => 'Weatherstripping Repair',
+]);
+$expect(strpos($weatherService, 'twins-brand-service-safety') === false, 'the safety module leaked onto a non-tension page');
+$expect(strpos($weatherService, 'twins-brand-membership-card') === false, 'membership cards leaked onto a service page');
+$expect(strpos($weatherService, '"minPrice"') === false, 'weatherstripping schema invented a price range');
+$expect(strpos($weatherService, 'least expensive repairs') !== false, 'weatherstripping page lost its approved cost framing');
+
+$membershipService = $stagingExperience->renderService([
+    'environment' => 'staging',
+    'market' => 'main',
+    'path' => '/protection-plans/',
+    'title' => 'TwinShield Protection Plans',
+]);
+$expect(substr_count($membershipService, 'twins-brand-membership-card') >= 3, 'membership page must render three plan cards');
+$expect(strpos($membershipService, 'twins-brand-membership-card--featured') !== false, 'membership page lost the recommended tier');
+$expect(strpos($membershipService, '$12.99/mo or $149/yr') !== false, 'membership card lost the Core price line');
+$expect(strpos($membershipService, 'Ask about Core') !== false, 'membership card lost the tier CTA');
+$expect(strpos($membershipService, 'twins-brand-service-safety') === false, 'the safety module leaked onto the membership page');
+
 $madisonLocation = $stagingExperience->renderEditorial([
     'environment' => 'staging',
     'market' => 'main',

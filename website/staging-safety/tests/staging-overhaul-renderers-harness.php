@@ -1097,7 +1097,9 @@ if ($scenario === 'family-once') {
     twins_overhaul_renderer_assert(strpos($rendered, '/contact-us/') !== false, 'service page lost the quote adapter action');
     twins_overhaul_renderer_assert(strpos($rendered, '/wi/garage-door-opener-repair/') !== false, 'service page bypassed market-aware internal links');
     twins_overhaul_renderer_assert(strpos($rendered, 'id="twins-overhaul-main"') !== false, 'service family lacks skip target');
-    twins_overhaul_renderer_assert(!preg_match('/\b(?:five[- ]star|same[- ]day|licensed|guaranteed|24\/7)\b/i', $rendered), 'service family invented an unsupported claim');
+    // Same-day framing is owner-approved 2026-08-18 copy (and appears inside
+    // verbatim customer review quotes); invented claims stay banned.
+    twins_overhaul_renderer_assert(!preg_match('/\b(?:five[- ]star|licensed|guaranteed|24\/7)\b/i', $rendered), 'service family invented an unsupported claim');
     twins_overhaul_renderer_assert(!preg_match('/<form\b|type=["\']submit["\']|\baction=/i', $rendered), 'service family contains an active form');
 }
 

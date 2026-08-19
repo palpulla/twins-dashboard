@@ -169,7 +169,7 @@ try {
         )
     ));
     sort($publicMethods);
-    $expectedMethods = ['applicationAdapter', 'asset', 'assetHandles', 'bookingAdapter', 'contextualRouteLabel', 'markets', 'quoteAdapter', 'renderBlogIndex', 'renderCareers', 'renderCatalog', 'renderContact', 'renderEditorial', 'renderFooter', 'renderHeader', 'renderHome', 'renderReviews', 'renderService', 'renderTeam', 'reviewCollection', 'route'];
+    $expectedMethods = ['applicationAdapter', 'asset', 'assetHandles', 'bookingAdapter', 'contextualRouteLabel', 'markets', 'quoteAdapter', 'renderBlogIndex', 'renderCareers', 'renderCatalog', 'renderContact', 'renderEditorial', 'renderFooter', 'renderHeader', 'renderHome', 'renderLocationIndex', 'renderReviews', 'renderService', 'renderTeam', 'reviewCollection', 'route'];
     sort($expectedMethods);
     $expect($publicMethods === $expectedMethods, 'portable Experience surface drift: ' . json_encode($publicMethods));
 
@@ -200,7 +200,9 @@ try {
         $routes = $routes ?? new PortableHarnessRouteAdapter($normalized);
         $reviews = $reviews ?? new PortableHarnessReviewsProvider();
         $quote = $quote ?? new PortableHarnessQuoteAdapter();
-        $booking = $booking ?? new PortableHarnessBookingAdapter();
+        // r30 moved booking-mode validation into Experience: staging renders
+        // demand a dialog action, so the default fixture speaks that contract.
+        $booking = $booking ?? new PortableHarnessBookingAdapter(true);
         $applications = new PortableHarnessApplicationAdapter();
         return [
             new Twins\BrandExperience\Experience($assets, $routes, $reviews, $quote, $booking, $applications, $registry, $root),
@@ -242,14 +244,24 @@ if ($booking !== null) throw new RuntimeException('booking escaped header scope'
 ?>
 <main id="twins-overhaul-main" class="twins-brand-page"></main>
 PHP;
-    foreach (['home', 'team', 'careers', 'reviews'] as $template) {
+    foreach (['team', 'careers', 'reviews'] as $template) {
         $path = $fixtureRoot . '/templates/' . $template . '.php';
         $expect(file_put_contents($path, $requiredScope) === strlen($requiredScope), 'could not write ' . $template . ' fixture');
         $fixtureFiles[] = $path;
     }
+    // r30: header, footer, home, and contact receive the validated booking
+    // action; every other surface must keep it out of scope.
+    $bookingScope = str_replace(
+        "if (\$booking !== null) throw new RuntimeException('booking escaped header scope');",
+        "if (!isset(\$booking['mode']) || \$booking['mode'] !== 'dialog') throw new RuntimeException('missing staging booking scope');",
+        $requiredScope
+    );
+    $homePath = $fixtureRoot . '/templates/home.php';
+    $expect(file_put_contents($homePath, $bookingScope) === strlen($bookingScope), 'could not write home fixture');
+    $fixtureFiles[] = $homePath;
     $contactScope = str_replace(
         "if (\$booking !== null) throw new RuntimeException('booking escaped header scope');",
-        "if (!isset(\$booking['mode']) || \$booking['mode'] !== 'fixture') throw new RuntimeException('missing contact booking scope');",
+        "if (!isset(\$booking['mode']) || \$booking['mode'] !== 'dialog') throw new RuntimeException('missing contact booking scope');",
         $requiredScope
     );
     $contactPath = $fixtureRoot . '/templates/contact.php';
@@ -269,14 +281,14 @@ PHP;
     $footerScope = str_replace(
         '<main id="twins-overhaul-main" class="twins-brand-page"></main>',
         '<footer class="twins-brand-footer"></footer>',
-        $requiredScope
+        $bookingScope
     );
     $footerPath = $fixtureRoot . '/components/footer.php';
     $expect(file_put_contents($footerPath, $footerScope) === strlen($footerScope), 'could not write footer fixture');
     $fixtureFiles[] = $footerPath;
     $headerScope = str_replace(
         ["if (\$booking !== null) throw new RuntimeException('booking escaped header scope');", '<main id="twins-overhaul-main" class="twins-brand-page"></main>'],
-        ["if (!isset(\$booking['mode']) || \$booking['mode'] !== 'fixture') throw new RuntimeException('missing booking scope');", '<header class="twins-brand-header"></header>'],
+        ["if (!isset(\$booking['mode']) || \$booking['mode'] !== 'dialog') throw new RuntimeException('missing booking scope');", '<header class="twins-brand-header"></header>'],
         $requiredScope
     );
     $headerPath = $fixtureRoot . '/components/header.php';
@@ -299,7 +311,7 @@ PHP;
     ]);
     $expect(strpos($catalogOutput, 'twins-brand-catalog-page') !== false, 'renderCatalog did not render its bounded fixture');
     $expect($quote->actionCalls === 8, 'quote action did not run for every public render surface');
-    $expect($booking->actionCalls === 2, 'booking action must run for exactly the header and contact surfaces');
+    $expect($booking->actionCalls === 4, 'booking action must run for exactly the header, footer, home, and contact surfaces');
     $expect($experience->assetHandles() === ['style' => 'twins-brand-experience', 'script' => 'twins-brand-experience'], 'asset handles drifted');
     $expect($experience->asset('logo') === '/assets/logo', 'asset facade drifted');
     $expect($experience->route('home', 'main') === '/routes/home/main', 'route facade drifted');
@@ -318,18 +330,19 @@ PHP;
     [$membershipExperience] = $makeExperience($membershipContext, $membershipRoot);
     $membershipHtml = $membershipExperience->renderService($membershipContext);
     $expect(strpos($membershipHtml, 'twins-brand-membership-grid') !== false, 'membership page must render the pricing grid');
-    $expect(strpos($membershipHtml, 'twins-brand-service-option-grid') === false, 'membership page must not fall back to the generic option grid');
     $expect(substr_count($membershipHtml, 'class="twins-brand-membership-card') === 3, 'membership page must render exactly three pricing cards');
     $expect(substr_count($membershipHtml, 'twins-brand-membership-badge') === 1, 'membership page must show exactly one Recommended badge');
     $expect(substr_count($membershipHtml, 'twins-brand-membership-cta') === 3, 'each membership tier needs a call-to-action');
     foreach (['$12.99/mo or $149/yr', '$18.99/mo or $199/yr', '$24.99/mo or $279/yr'] as $membershipPrice) {
         $expect(strpos($membershipHtml, $membershipPrice) !== false, 'membership pricing lost ' . $membershipPrice);
     }
-    $expect(strpos($membershipHtml, ' — ') === false, 'membership card leaked the raw price/benefit delimiter');
+    $expect(strpos($membershipHtml, '$12.99/mo or $149/yr - ') === false, 'membership card leaked the raw price/benefit delimiter');
     $genericContext = ['environment' => 'staging', 'market' => 'wi', 'path' => '/garage-door-repair/', 'title' => 'Garage Door Repair'];
     [$genericExperience] = $makeExperience($genericContext, $membershipRoot);
     $genericService = $genericExperience->renderService($genericContext);
-    $expect(strpos($genericService, 'twins-brand-service-option-grid') !== false, 'non-membership service page must keep the generic option grid');
+    $expect(strpos($genericService, 'twins-brand-service-signs') !== false, 'non-membership service page must render the warning-signs section');
+    $expect(strpos($genericService, 'twins-brand-service-cost') !== false, 'non-membership service page must render the cost section');
+    $expect(strpos($genericService, 'Done Right, or We Make It Right.') !== false, 'service page lost the verbatim guarantee');
     $expect(strpos($genericService, 'twins-brand-membership-grid') === false, 'non-membership service page must not render pricing cards');
 
     $homePath = $fixtureRoot . '/templates/home.php';
@@ -406,7 +419,7 @@ PHP;
             $renderableReviews
         );
         foreach ($renderMethods as $method) $actualExperience->{$method}([]);
-        $expect($actualQuote->actionCalls === 7 && $actualBooking->actionCalls === 2, 'regular templates did not render in ' . $environment);
+        $expect($actualQuote->actionCalls === 7 && $actualBooking->actionCalls === 4, 'regular templates did not render in ' . $environment);
     }
 } catch (Throwable $error) {
     while (ob_get_level() > $initialBufferLevel) ob_end_clean();

@@ -20,9 +20,30 @@ const routes = [
   '/property-management-services/',
   '/protection-plans/',
 ];
-const requiredKeys = ['h1', 'directAnswer', 'needs', 'safety', 'process', 'options', 'prepare', 'faqs', 'links'];
-// The membership page publishes fixed program rates; every other page stays
-// quote-only. Both sets are pinned so a stale figure fails here, not live.
+const requiredKeys = [
+  'h1',
+  'directAnswer',
+  'answerFacts',
+  'priceRange',
+  'warningSigns',
+  'process',
+  'costParagraphs',
+  'safety',
+  'plans',
+  'reviewTag',
+  'faqs',
+  'links',
+];
+// Only these three pages render the tension-safety module.
+const safetyRoutes = [
+  '/garage-door-spring-repair/',
+  '/garage-door-cable-repair/',
+  '/emergency-garage-services/',
+];
+// The membership page publishes fixed program rates; every other page may
+// publish only figures from data/price-ranges.json plus the two approved
+// offers ($0 service call with repair, $49 tune-up). Both sets are pinned so
+// a stale figure fails here, not live.
 const membershipRoute = '/protection-plans/';
 const membershipRates = new Set([
   '12.99', '149', '155.88', '38.97', '37.25', '150',
@@ -34,6 +55,27 @@ const planNames = [
   'TwinShield Priority - Best Value',
   'TwinShield Premier - Maximum Care',
 ];
+// p20/p80 pairs from docs/marketing/website-rebuild/data/price-ranges.json
+// (generated 2026-08-18 from completed HCP jobs, last 24 months). The docs
+// tree is not checked out everywhere, so the approved figures are pinned here
+// verbatim: spring, opener repair, opener install, cable, single door,
+// double door, tune-up.
+const approvedPriceRanges = [
+  [575, 1225],
+  [100, 300],
+  [775, 1400],
+  [325, 625],
+  [2625, 3525],
+  [3425, 4400],
+  [50, 100],
+];
+// The two approved offers plus every approved percentile figure.
+const approvedServiceAmounts = new Set(['0', '49']);
+for (const [low, high] of approvedPriceRanges) {
+  approvedServiceAmounts.add(String(low));
+  approvedServiceAmounts.add(String(high));
+}
+const guarantee = 'Done Right, or We Make It Right.';
 
 const read = relative => fs.readFileSync(path.join(root, relative), 'utf8');
 const wordCount = value => value.trim().split(/\s+/).length;
@@ -62,7 +104,7 @@ function customerValues(block) {
   return [...block.matchAll(/=>\s*'((?:\\'|[^'])*)'/g)].map(match => unescapePhp(match[1]));
 }
 
-test('fixed page-content config contains exactly thirteen conservative bespoke records', () => {
+test('fixed page-content config contains exactly thirteen approved-copy service records', () => {
   const source = read('config/page-content.php');
   const keys = [...source.matchAll(/^ {4}'(\/[^']+\/)'\s*=>\s*\[/gm)].map(match => match[1]);
   assert.deepEqual(keys, routes);
@@ -71,22 +113,61 @@ test('fixed page-content config contains exactly thirteen conservative bespoke r
     const answer = scalar(block, 'directAnswer');
     assert.ok(wordCount(answer) >= 40 && wordCount(answer) <= 60, `${route} direct answer word count`);
     const questions = [...block.matchAll(/'question'\s*=>\s*'((?:\\'|[^'])*)'/g)].map(match => unescapePhp(match[1]));
-    assert.ok(questions.length >= 4 && questions.length <= 6, `${route} FAQ count`);
+    assert.equal(questions.length, 5, `${route} FAQ count is not five`);
     assert.ok(questions.every(question => question.endsWith('?')), `${route} FAQ punctuation`);
+    assert.match(block, /'answerFacts'\s*=>\s*\[/, `${route} answer facts are missing`);
+    assert.match(block, /'call'\s*=>\s*'/, `${route} when-to-call fact is missing`);
+    assert.match(block, /'reviewTag'\s*=>\s*'(?:springs|openers|installation|emergency|general)'/, `${route} review tag`);
+    assert.match(block, /'costParagraphs'\s*=>\s*\[/, `${route} cost section copy is missing`);
+    assert.match(block, /'warningSigns'\s*=>\s*\[/, `${route} warning signs are missing`);
+
+    if (safetyRoutes.includes(route)) {
+      const safety = scalar(block, 'safety');
+      assert.match(safety, /dangerous tension/i, `${route} safety framing`);
+      assert.match(safety, /trained professionals?/i, `${route} safety handling`);
+    } else {
+      assert.match(block, /'safety'\s*=>\s*null/, `${route} must not carry a safety module`);
+    }
+    if (route !== membershipRoute) {
+      assert.match(block, /'plans'\s*=>\s*null/, `${route} must not carry plan tiers`);
+    }
+
+    const linkRoutes = [...block.matchAll(/'route'\s*=>\s*'([a-z-]+)'/g)].map(match => match[1]);
+    assert.ok(linkRoutes.length >= 2 && linkRoutes.length <= 4, `${route} related-services count`);
+    assert.equal(new Set(linkRoutes).size, linkRoutes.length, `${route} related-services duplicates`);
   }
 
   const values = [...recordBlocks(source).values()].flatMap(customerValues).join('\n');
+  // Market-neutral records: one record serves every market prefix.
   assert.doesNotMatch(values, /\(\d{3}\)\s*\d{3}-\d{4}|(?:Wisconsin|Kentucky|Illinois|Madison|Milwaukee|Rockford|Lexington)/i);
-  assert.doesNotMatch(values, /#1|number one|No\.\s*1|top-rated|replace (?:the )?spring yourself|DIY spring|with the proper tools/i);
-  assert.doesNotMatch(values, /\b(?:24\/7|365|same-day|same-visit|in-one-visit|fastest|most|often|usually|likely|quieter|fewer return visits)\b/i);
+  // Style law: no em-dashes, no 24/7, no lifetime claims, no superlatives,
+  // no warranty/guarantee wording in records (the guarantee is template-owned
+  // and rendered verbatim), no $Xk money formatting, no DIY spring framing.
+  assert.doesNotMatch(values, /—|–/, 'records carry an em- or en-dash');
+  assert.doesNotMatch(values, /24\s*\/\s*7|\b365\b|\blifetime\b/i);
+  assert.doesNotMatch(values, /#1|number one|No\.\s*1|top-rated/i);
+  assert.doesNotMatch(values, /\b(?:warrant(?:y|ies)|guaranteed?)\b/i);
+  assert.doesNotMatch(values, /replace (?:the )?spring yourself|DIY spring/i);
+  assert.doesNotMatch(values, /\$\d+(?:\.\d+)?k\b/i, 'full dollar amounts only');
+  assert.ok(!values.includes(guarantee), 'the guarantee line is template-owned, not record copy');
 
   const blocks = recordBlocks(source);
-  const quoteOnly = [...blocks]
+  // Every published figure on a non-membership page traces to
+  // data/price-ranges.json or an approved offer.
+  for (const [route, block] of blocks) {
+    if (route === membershipRoute) continue;
+    for (const amount of customerValues(block).join('\n').matchAll(/\$(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/g)) {
+      assert.ok(
+        approvedServiceAmounts.has(amount[1].replace(/,/g, '')),
+        `${route} publishes $${amount[1]}, which is not in price-ranges.json or an approved offer`,
+      );
+    }
+  }
+  const quoteText = [...blocks]
     .filter(([route]) => route !== membershipRoute)
     .flatMap(([, block]) => customerValues(block))
     .join('\n');
-  assert.doesNotMatch(quoteOnly, /(?:\$|USD)\s*\d/i, 'service pages stay quote-only');
-  assert.doesNotMatch(quoteOnly, /\bbest\b/i, 'service pages carry no superlative');
+  assert.doesNotMatch(quoteText, /\bbest\b/i, 'service pages carry no superlative');
 
   const membership = customerValues(blocks.get(membershipRoute)).join('\n');
   for (const amount of membership.matchAll(/\$(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/g)) {
@@ -103,17 +184,14 @@ test('fixed page-content config contains exactly thirteen conservative bespoke r
   }
 
   // The service template renders the membership tiers as pricing cards by
-  // splitting each tradeoff into a price line and benefits on " — ". Pin that
-  // structure so the parse in templates/service.php cannot silently break.
+  // splitting each tradeoff into a price line and benefits on the first
+  // " - " delimiter. Pin that structure so the parse in templates/service.php
+  // cannot silently break.
   const membershipTradeoffs = [...blocks.get(membershipRoute).matchAll(/'tradeoff'\s*=>\s*'((?:\\'|[^'])*)'/g)].map(m => unescapePhp(m[1]));
   assert.equal(membershipTradeoffs.length, 3, 'membership page has three plan tiers');
   for (const tradeoff of membershipTradeoffs) {
-    assert.match(tradeoff, /^\$\d[\d.]*\/mo or \$\d+\/yr — \S/, 'each tier leads with "$price/mo or $price/yr — " then benefits');
+    assert.match(tradeoff, /^\$\d[\d.]*\/mo or \$\d+\/yr - \S/, 'each tier leads with "$price/mo or $price/yr - " then benefits');
   }
-
-  const spring = recordBlocks(source).get('/garage-door-spring-repair/');
-  assert.match(scalar(spring, 'safety'), /dangerous tension/i);
-  assert.match(scalar(spring, 'safety'), /trained professionals?/i);
 });
 
 test('PageContentRegistry is fixed-shape, fail-closed, and performs no caller-selected I/O', () => {
@@ -136,6 +214,17 @@ test('PageContentRegistry is fixed-shape, fail-closed, and performs no caller-se
   assert.match(source, /%\(2f\|5c\)|%2f|%5c/i);
   assert.match(source, /40/);
   assert.match(source, /60/);
+  // Approved price-range pairs in the registry mirror data/price-ranges.json.
+  for (const [low, high] of approvedPriceRanges) {
+    assert.match(
+      source,
+      new RegExp(`\\[${low}, ${high}\\]`),
+      `registry is missing the approved ${low}-${high} range`,
+    );
+  }
+  assert.match(source, /SAFETY_PATHS/);
+  assert.match(source, /REVIEW_TAGS/);
+  assert.match(source, /APPROVED_SERVICE_AMOUNTS/);
   for (const assertion of [
     "$pageRegistry->resolve('/wi/garage-door-spring-repair/', '<script>ignored bespoke title</script>')",
     "$pageRegistry->resolve('/wi/garage-door-cable-repair/', '<script>hostile mutable title</script>')",
@@ -151,9 +240,15 @@ test('portable service and editorial templates keep adapters and inert content b
   const serviceSections = [
     'twins-brand-service-hero',
     'twins-brand-direct-answer',
-    'twins-brand-service-needs',
+    'twins-brand-service-facts',
+    'twins-brand-service-signs',
     'twins-brand-service-process',
-    'twins-brand-service-options',
+    'twins-brand-service-guarantee-title',
+    'twins-brand-service-cost',
+    'twins-brand-service-safety',
+    'twins-brand-membership',
+    'twins-brand-service-reviews',
+    'twins-brand-service-related',
     'twins-brand-service-area',
     'twins-brand-faq',
     'twins-brand-final-cta',
@@ -165,12 +260,37 @@ test('portable service and editorial templates keep adapters and inert content b
     cursor = next;
   }
   assert.equal((service.match(/<h1\b/g) || []).length, 1);
-  assert.doesNotMatch(service, /data-twins-original-content|\$content|replace it yourself|DIY spring|#1/i);
+  assert.doesNotMatch(service, /data-twins-original-content|\$content\b|replace it yourself|DIY spring|#1/i);
   assert.match(service, /\$phoneHref/);
   assert.match(service, /\$phone/);
   assert.doesNotMatch(service, /\$market\[['"]phone(?:Href|Display)['"]\]/);
   assert.match(service, /\$experience->route\(\$link\[['"]route['"]\], \$marketKey\)/);
   assert.match(service, /\$quote\[['"]href['"]\]/);
+
+  // The guarantee is template-owned and verbatim.
+  assert.ok(service.includes(`$serviceGuarantee = '${guarantee}'`), 'the verbatim guarantee is missing');
+  // The safety module renders only when the record carries safety copy, and
+  // the membership cards only when the record carries plan tiers.
+  assert.match(service, /\$serviceSafety = \$pageContent\['safety'\]/);
+  assert.match(service, /if \(\$serviceSafety !== null\)/);
+  assert.match(service, /\$servicePlans = \$pageContent\['plans'\]/);
+  assert.match(service, /if \(\$servicePlans !== null\)/);
+  // Verbatim service-tagged review quotes reuse the city-system pool with the
+  // deterministic per-path picker.
+  assert.match(service, /config\/review-quotes\.php/);
+  assert.match(service, /crc32\(\$serviceNormalizedPath\)/);
+  assert.match(service, /\$pageContent\['reviewTag'\]/);
+  // Template-owned JSON-LD: Service + BreadcrumbList + FAQPage mirroring the
+  // rendered accordion, prices only from the validated record range.
+  for (const marker of [
+    "'@type' => 'Service'",
+    "'@type' => 'BreadcrumbList'",
+    "'@type' => 'FAQPage'",
+    "'@type' => 'PriceSpecification'",
+    '$pageContent[\'faqs\']',
+    'JSON_HEX_TAG | JSON_HEX_AMP',
+  ]) assert.ok(service.includes(marker), `service schema marker missing: ${marker}`);
+  assert.match(service, /type="application\/ld\+json"/);
 
   assert.equal((editorial.match(/<h1\b/g) || []).length, 1);
   assert.match(editorial, /twins-brand-editorial-page/);
@@ -190,6 +310,12 @@ test('portable service and editorial templates keep adapters and inert content b
   assert.ok(editorial.includes(schemaContext), 'JSON-LD schema context is missing');
   assert.doesNotMatch(
     editorial.replaceAll(wisetackHref, '').replaceAll(schemaContext, ''),
+    /elementor|<form\b|type=["']submit["']|https?:\/\//i,
+  );
+  // The service template's only external literals are schema vocabulary
+  // identifiers inside the JSON-LD graph.
+  assert.doesNotMatch(
+    service.replaceAll(schemaContext, ''),
     /elementor|<form\b|type=["']submit["']|https?:\/\//i,
   );
 });
@@ -215,6 +341,12 @@ test('portable runtime wires registry resolution and classified renderer dispatc
   const catalogBranch = renderers.match(/\} elseif \(\$classification === 'catalog-preserve'\) \{([\s\S]*?)\} elseif/);
   assert.ok(catalogBranch, 'catalog renderer branch is missing');
   assert.doesNotMatch(catalogBranch[1], /twins_overhaul_wrap_preserved_content/);
+  // The renderer-level service schema stands down: the brand template owns
+  // the Service + BreadcrumbList + FAQPage stack.
+  const serviceSchemaBranch = renderers.match(/\} elseif \(\$classification === 'service'\) \{([\s\S]*?)\} elseif \(\$classification === 'reviews-brand'\)/);
+  assert.ok(serviceSchemaBranch, 'service schema branch is missing');
+  assert.match(serviceSchemaBranch[1], /return '';/);
+  assert.doesNotMatch(serviceSchemaBranch[1], /'@type' => 'Service'/);
 });
 
 test('renderer harness pins spring safety, one H1, FAQ depth, and raw-body removal', () => {
@@ -250,6 +382,14 @@ test('service and editorial CSS is responsive and pins readable foreground color
     '.twins-brand-service-page',
     '.twins-brand-service-hero',
     '.twins-brand-direct-answer',
+    '.twins-brand-service-facts',
+    '.twins-brand-service-signs',
+    '.twins-brand-service-guarantee',
+    '.twins-brand-service-cost',
+    '.twins-brand-service-cost-range',
+    '.twins-brand-service-safety-section',
+    '.twins-brand-service-reviews',
+    '.twins-brand-service-related',
     '.twins-brand-service-grid',
     '.twins-brand-service-options',
     '.twins-brand-service-area',
