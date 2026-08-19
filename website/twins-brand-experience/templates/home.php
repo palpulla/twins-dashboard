@@ -137,4 +137,5 @@ $homeServices = [
   <?php require dirname(__DIR__) . '/components/home/service-journey.php'; ?>
   <?php require dirname(__DIR__) . '/components/home/why-doors.php'; ?>
   <?php require dirname(__DIR__) . '/components/home/closing.php'; ?>
+  <?php require dirname(__DIR__) . '/components/home/structured-data.php'; ?>
 </div>
