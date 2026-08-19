@@ -14,8 +14,8 @@ if (!defined('ABSPATH')) {
  * @return array<int,array>
  */
 function twins_overhaul_regions(): array {
-    $madison = array('street' => '2921 Landmark Pl #206', 'locality' => 'Madison', 'region' => 'WI', 'postalCode' => '53713');
-    $rockford = array('street' => '5758 Elaine Dr Ste 110', 'locality' => 'Rockford', 'region' => 'IL', 'postalCode' => '61108');
+    $madison = array('street' => '2921 Landmark Pl, Ste 206', 'locality' => 'Madison', 'region' => 'WI', 'postalCode' => '53713');
+    $rockford = array('street' => '5758 Elaine Dr', 'locality' => 'Rockford', 'region' => 'IL', 'postalCode' => '61108');
     $mtSterling = array('street' => '3651 Aarons Run Rd', 'locality' => 'Mt Sterling', 'region' => 'KY', 'postalCode' => '40353');
     return array(
         1 => array('key' => 'main', 'phone' => '(833) 833-2010', 'tel' => '+18338332010', 'base' => '/', 'address' => $madison),
@@ -39,9 +39,9 @@ function twins_overhaul_regions(): array {
  * @return array<string,array<string,mixed>> Fixed metro definitions.
  */
 function twins_overhaul_metros(): array {
-    $madison = array('street' => '2921 Landmark Pl #206', 'locality' => 'Madison', 'region' => 'WI', 'postalCode' => '53713');
+    $madison = array('street' => '2921 Landmark Pl, Ste 206', 'locality' => 'Madison', 'region' => 'WI', 'postalCode' => '53713');
     $wauwatosa = array('street' => '11220 W Burleigh St Ste 100', 'locality' => 'Wauwatosa', 'region' => 'WI', 'postalCode' => '53222');
-    $rockford = array('street' => '5758 Elaine Dr Ste 110', 'locality' => 'Rockford', 'region' => 'IL', 'postalCode' => '61108');
+    $rockford = array('street' => '5758 Elaine Dr', 'locality' => 'Rockford', 'region' => 'IL', 'postalCode' => '61108');
     $mtSterling = array('street' => '3651 Aarons Run Rd', 'locality' => 'Mt Sterling', 'region' => 'KY', 'postalCode' => '40353');
 
     return array(
@@ -358,7 +358,7 @@ function twins_overhaul_illinois_manifest(): array {
         'base' => '/il/',
         'phone' => '(815) 800-2025',
         'tel' => '+18158002025',
-        'address' => array('street' => '5758 Elaine Dr Ste 110', 'locality' => 'Rockford', 'region' => 'IL', 'postalCode' => '61108'),
+        'address' => array('street' => '5758 Elaine Dr', 'locality' => 'Rockford', 'region' => 'IL', 'postalCode' => '61108'),
         'public' => 0,
         'core' => array(
             array('slug' => '', 'title' => 'Garage Door Service in Rockford, Illinois'),
