@@ -38,7 +38,9 @@ final class HomeFocusedRoutes implements Twins\BrandExperience\RouteAdapter
 }
 final class HomeFocusedReviews implements Twins\BrandExperience\ReviewsProvider
 {
-    public function collection(): array { return ['status' => 'fixture']; }
+    // The home template embeds the shared review slider; the harness focuses
+    // on the home scenes, so the slider renders its unavailable notice.
+    public function collection(): array { return ['status' => 'unavailable', 'reason' => 'fixture']; }
 }
 final class HomeFocusedQuote implements Twins\BrandExperience\QuoteAdapter
 {

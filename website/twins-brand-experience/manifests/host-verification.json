@@ -540,8 +540,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/tests/php/home-page-harness.php",
-      "size": 8383,
-      "sha256": "19f6dc1a416139a63bc1a910874234bebe841f33db6b6c07b010d5e3e615ad67"
+      "size": 8561,
+      "sha256": "aa308024e91e3576006f158d3785aba4cbba895ef46fc66bb746642a16f7ed97"
     },
     {
       "role": "verify",
