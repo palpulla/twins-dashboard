@@ -400,8 +400,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/config/location-content.php",
       "destination": "twins-brand-experience/config/location-content.php",
-      "size": 144619,
-      "sha256": "ebc804eae3757da5cf793ec835b3f66900213741e4dea0c047bd10a2e18da44b"
+      "size": 144563,
+      "sha256": "792de84e9e7a058e53e6688070c7421d09e987b8264671df02688d7390f01324"
     },
     {
       "role": "deploy",
