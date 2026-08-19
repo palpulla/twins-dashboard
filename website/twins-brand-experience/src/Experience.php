@@ -407,10 +407,18 @@ final class Experience
             || !array_key_exists('completedJobs', $record)
             || !(is_int($record['completedJobs'] ?? null) || ($record['completedJobs'] ?? null) === null)
             || !is_string($record['intro'])
-            || !is_string($record['localNotes'])
+            || !(is_string($record['localNotes']) || is_array($record['localNotes']))
             || !is_array($record['faq'])
         ) {
             throw new \DomainException('Location content record is invalid.');
+        }
+        if (is_string($record['localNotes'])) {
+            $record['localNotes'] = $record['localNotes'] === '' ? [] : [$record['localNotes']];
+        }
+        foreach ($record['localNotes'] as $note) {
+            if (!is_string($note) || trim($note) === '') {
+                throw new \DomainException('Location note record is invalid.');
+            }
         }
         foreach ($record['faq'] as $faq) {
             if (
@@ -424,6 +432,61 @@ final class Experience
                 throw new \DomainException('Location FAQ record is invalid.');
             }
         }
+        $hasLat = array_key_exists('lat', $record);
+        $hasLng = array_key_exists('lng', $record);
+        if ($hasLat !== $hasLng) {
+            throw new \DomainException('Location coordinates are incomplete.');
+        }
+        if ($hasLat) {
+            $lat = $record['lat'];
+            $lng = $record['lng'];
+            if (
+                !(is_int($lat) || is_float($lat))
+                || !(is_int($lng) || is_float($lng))
+                || $lat < -90 || $lat > 90
+                || $lng < -180 || $lng > 180
+            ) {
+                throw new \DomainException('Location coordinates are invalid.');
+            }
+        }
+        if (array_key_exists('mapEmbedUrl', $record)) {
+            $mapEmbedUrl = $record['mapEmbedUrl'];
+            if (
+                !is_string($mapEmbedUrl)
+                || strlen($mapEmbedUrl) > 512
+                || strpos($mapEmbedUrl, 'https://www.google.com/maps') !== 0
+                || preg_match('~^https://www\.google\.com/maps[A-Za-z0-9/?&=+%.,_:!*\'()-]*$~D', $mapEmbedUrl) !== 1
+            ) {
+                throw new \DomainException('Location map embed is outside the fixed allowlist.');
+            }
+        }
+        if (array_key_exists('neighbors', $record)) {
+            if (!is_array($record['neighbors']) || count($record['neighbors']) !== 6) {
+                throw new \DomainException('Location neighbor list is invalid.');
+            }
+            $neighborLinks = [];
+            foreach ($record['neighbors'] as $neighborSlug) {
+                if (
+                    !is_string($neighborSlug)
+                    || preg_match('/^[a-z][a-z0-9-]{0,39}$/D', $neighborSlug) !== 1
+                    || $neighborSlug === $slug
+                    || in_array($neighborSlug, array_column($neighborLinks, 'slug'), true)
+                ) {
+                    throw new \DomainException('Location neighbor slug is invalid.');
+                }
+                $neighborRecord = $this->locationContentRecords[$neighborSlug] ?? null;
+                if (
+                    !is_array($neighborRecord)
+                    || !isset($neighborRecord['label'])
+                    || !is_string($neighborRecord['label'])
+                    || $neighborRecord['label'] === ''
+                ) {
+                    throw new \DomainException('Location neighbor is not registered.');
+                }
+                $neighborLinks[] = ['slug' => $neighborSlug, 'label' => $neighborRecord['label']];
+            }
+            $record['neighborLinks'] = $neighborLinks;
+        }
         return $record;
     }
 
@@ -434,9 +497,9 @@ final class Experience
         }
 
         $metroAddresses = [
-            'madison' => '2921 Landmark Pl #206, Madison, WI 53713',
+            'madison' => '2921 Landmark Pl, Ste 206, Madison, WI 53713',
             'milwaukee' => '11220 W Burleigh St Ste 100, Wauwatosa, WI 53222',
-            'rockford' => '5758 Elaine Dr Ste 110, Rockford, IL 61108',
+            'rockford' => '5758 Elaine Dr, Rockford, IL 61108',
         ];
         $path = $context['path'] ?? null;
         if (is_string($path)) {

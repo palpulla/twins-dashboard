@@ -1284,6 +1284,30 @@ body.twins-brand-experience .twins-location-service-link { display: inline-flex;
 .twins-location-motion-ready [data-location-reveal] { opacity: 0; transform: translateY(18px); transition: opacity .55s ease, transform .55s ease; }
 .twins-location-motion-ready [data-location-reveal][data-location-visible="true"] { opacity: 1; transform: translateY(0); }
 
+/* Record-backed location sections: verbatim reviews, live map with NAP,
+   neighbor links, and the three evergreen resource guides. */
+.twins-location-page :is(.twins-location-reviews, .twins-location-map-section, .twins-location-neighbors, .twins-location-resources) { width: 100%; padding-inline: max(var(--twins-location-gutter), calc((100vw - var(--twins-location-max)) / 2)); padding-block: clamp(56px, 6vw, 72px); }
+.twins-location-page :is(.twins-location-reviews, .twins-location-map-section, .twins-location-neighbors, .twins-location-resources) .twins-brand-section-heading { margin-bottom: 0; }
+.twins-location-page :is(.twins-location-reviews, .twins-location-map-section, .twins-location-neighbors, .twins-location-resources) .twins-brand-section-heading h2 { max-width: 720px; margin: 8px 0 0; font-size: clamp(2.1rem, 3.6vw, 3.1rem); line-height: .98; text-transform: uppercase; }
+.twins-location-reviews { background: var(--twins-white); border-top: 1px solid rgba(7,29,59,.12); }
+.twins-location-reviews .twins-brand-google-attribution { margin: 12px 0 0; color: var(--twins-muted); font-size: .9rem; font-weight: 800; }
+.twins-location-review-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 30px; border-top: 1px solid rgba(7,29,59,.2); border-bottom: 1px solid rgba(7,29,59,.2); }
+.twins-location-review-card { display: grid; align-content: start; gap: 12px; padding: 28px; border-left: 1px solid rgba(7,29,59,.2); }
+.twins-location-review-card:first-child { border-left: 0; }
+.twins-location-review-card blockquote { margin: 0; color: var(--twins-ink); line-height: 1.6; }
+.twins-location-review-card footer { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: auto; }
+.twins-location-review-card strong { color: var(--twins-navy-950); font-weight: 1000; }
+.twins-location-review-card time { color: var(--twins-muted); font-size: .85rem; font-weight: 800; }
+.twins-location-reviews .twins-brand-text-link { margin-top: 22px; }
+.twins-location-map-section .twins-brand-location-map { display: block; max-width: 100%; margin-top: 30px; }
+.twins-location-map-nap { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: baseline; margin: 18px 0 0; color: var(--twins-navy-950); }
+.twins-location-map-nap strong { font-weight: 1000; }
+.twins-location-map-nap a { color: var(--twins-navy-800); font-weight: 1000; text-underline-offset: 3px; }
+.twins-location-neighbors { background: var(--twins-white); border-top: 1px solid rgba(7,29,59,.12); }
+.twins-location-neighbors .twins-brand-location-links, .twins-location-resources .twins-brand-location-links { margin-top: 26px; }
+.twins-location-neighbors .twins-brand-text-link { margin-top: 22px; }
+.twins-location-resources { border-top: 1px solid rgba(7,29,59,.12); }
+
 @media (max-width: 1024px) {
   .twins-location-hero { grid-template-columns: minmax(0, 1.15fr) minmax(300px, .85fr); gap: 34px; min-height: 560px; }
   .twins-location-services { padding-bottom: 144px; }
@@ -1314,6 +1338,10 @@ body.twins-brand-experience .twins-location-service-link { display: inline-flex;
   .twins-location-local-proof { grid-template-columns: 1fr; }
   .twins-location-local-proof-media { width: min(100%, 408px); max-height: 310px; }
   .twins-location-proof-list li { grid-template-columns: 1fr; gap: 5px; }
+  .twins-location-review-grid { grid-template-columns: 1fr; }
+  .twins-location-review-card { padding: 22px 0; border-top: 1px solid rgba(7,29,59,.2); border-left: 0; }
+  .twins-location-review-card:first-child { border-top: 0; }
+  .twins-location-map-section .twins-brand-location-map { height: 300px; }
   .twins-location-twin--services { bottom: 14px; width: 56px; }
   .twins-location-final-cta { min-height: 340px; padding: 60px 96px 170px; }
   .twins-location-twin--final-left { bottom: 0; width: 56px; }

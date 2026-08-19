@@ -1596,15 +1596,68 @@ function twins_overhaul_is_location_index_path(string $path): bool {
 }
 
 /**
+ * Load the location-content record that backs a location path, if any.
+ *
+ * City-page-system records carry mapEmbedUrl, neighbors, and coordinates; for
+ * those pages the brand template owns the live map embed and the structured
+ * data, so the legacy appended map card and the renderer-level location schema
+ * both stand down (see twins_overhaul_location_map_markup and
+ * twins_overhaul_brand_schema_markup).
+ *
+ * @param string $path Current request path.
+ * @return array|null The raw record, or null when the path has none.
+ */
+function twins_overhaul_location_content_record(string $path) {
+    static $records = null;
+    if ($records === null) {
+        $file = dirname(__DIR__) . '/twins-brand-experience/config/location-content.php';
+        if (!is_file($file)) {
+            $file = dirname(__DIR__, 3) . '/twins-brand-experience/config/location-content.php';
+        }
+        $loaded = is_file($file) ? require $file : null;
+        $records = is_array($loaded) ? $loaded : array();
+    }
+    $slug = '';
+    if ($path === '/wi/garage-door-repair-in-milwaukee-wi/') {
+        $slug = 'milwaukee';
+    } elseif (preg_match('~^/(?:wi|il|ky)/location/([a-z][a-z0-9-]{0,39})/$~D', $path, $match) === 1) {
+        $slug = $match[1];
+    } elseif (preg_match('~^/location/([a-z][a-z0-9-]{0,39})/$~D', $path, $match) === 1) {
+        $slug = $match[1];
+    }
+    return $slug !== '' && isset($records[$slug]) && is_array($records[$slug]) ? $records[$slug] : null;
+}
+
+/**
+ * True when the brand template renders this location page's live map and
+ * structured data itself (record-backed city-page system).
+ *
+ * @param array $context Proven current request context.
+ * @return bool
+ */
+function twins_overhaul_location_template_owns_map_and_schema(array $context): bool {
+    $record = twins_overhaul_location_content_record((string) ($context['path'] ?? ''));
+    return is_array($record)
+        && isset($record['mapEmbedUrl'])
+        && is_string($record['mapEmbedUrl'])
+        && strpos($record['mapEmbedUrl'], 'https://www.google.com/maps') === 0;
+}
+
+/**
  * Render the service-area map block for location routes.
  *
  * Staging renders an outbound link card only; the live iframe embed renders
- * exclusively under a production environment constant.
+ * exclusively under a production environment constant. Record-backed city
+ * pages render their own live embed in the brand template, so this appended
+ * block stands down for them.
  *
  * @param array $context Proven current request context.
  * @return string
  */
 function twins_overhaul_location_map_markup(array $context): string {
+    if (twins_overhaul_location_template_owns_map_and_schema($context)) {
+        return '';
+    }
     $regions = twins_overhaul_regions();
     $blogId = (int) get_current_blog_id();
     if (!isset($regions[$blogId])) {
@@ -1843,6 +1896,11 @@ function twins_overhaul_brand_schema_markup(string $classification, array $conte
             ),
         );
     } elseif ($classification === 'location') {
+        if (twins_overhaul_location_template_owns_map_and_schema($context)) {
+            // The brand template emits the full city-page schema stack
+            // (HomeAndConstructionBusiness + BreadcrumbList + FAQPage).
+            return '';
+        }
         $schema = array(
             '@context' => 'https://schema.org',
             '@graph' => array(

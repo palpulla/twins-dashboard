@@ -139,9 +139,9 @@ if ($isLocation) {
     $napCount = isset($napSummary['displayCount']) ? (string) $napSummary['displayCount'] : '';
 
     $metroAddresses = [
-        'madison' => '2921 Landmark Pl #206, Madison, WI 53713',
+        'madison' => '2921 Landmark Pl, Ste 206, Madison, WI 53713',
         'milwaukee' => '11220 W Burleigh St Ste 100, Wauwatosa, WI 53222',
-        'rockford' => '5758 Elaine Dr Ste 110, Rockford, IL 61108',
+        'rockford' => '5758 Elaine Dr, Rockford, IL 61108',
     ];
     $locationMetro = $locationRecord !== null ? $locationRecord['metro'] : '';
     $napAddress = isset($context['metroAddress']) && is_string($context['metroAddress']) && $context['metroAddress'] !== ''
@@ -195,6 +195,168 @@ if ($isLocation) {
         $nearbyByMetro[$locationMetro] ?? [],
         static fn(array $item): bool => strpos($item[1], 'city-') === 0 && strcasecmp($item[0], $locationLabel) !== 0
     )), 0, 6);
+    if ($locationRecord !== null && isset($locationRecord['neighborLinks'])) {
+        $locationNearbyLinks = [];
+        foreach ($locationRecord['neighborLinks'] as $locationNeighbor) {
+            $locationNearbyLinks[] = [$locationNeighbor['label'], 'city-' . $locationNeighbor['slug']];
+        }
+    }
+}
+$locationMapEmbedUrl = $locationRecord !== null && isset($locationRecord['mapEmbedUrl'])
+    ? $locationRecord['mapEmbedUrl']
+    : '';
+$locationMetroNap = [
+    'madison' => ['street' => '2921 Landmark Pl, Ste 206', 'locality' => 'Madison', 'region' => 'WI', 'postalCode' => '53713'],
+    'milwaukee' => ['street' => '11220 W Burleigh St Ste 100', 'locality' => 'Wauwatosa', 'region' => 'WI', 'postalCode' => '53222'],
+    'rockford' => ['street' => '5758 Elaine Dr', 'locality' => 'Rockford', 'region' => 'IL', 'postalCode' => '61108'],
+];
+$locationNap = $locationRecord !== null ? ($locationMetroNap[$locationRecord['metro']] ?? null) : null;
+
+// Verbatim Google review quotes: a service-tagged pool without city attribution,
+// rotated deterministically per location path so pages differ without ever
+// relabeling a quote as city-specific.
+$locationReviewQuotes = [];
+if ($locationRecord !== null) {
+    $locationQuotesFile = dirname(__DIR__) . '/config/review-quotes.php';
+    $locationQuotesPool = is_file($locationQuotesFile) ? require $locationQuotesFile : [];
+    if (is_array($locationQuotesPool)) {
+        $locationQuotesPool = array_values(array_filter(
+            $locationQuotesPool,
+            static fn($quote): bool => is_array($quote)
+                && isset($quote['text'], $quote['author'], $quote['rating'], $quote['date'])
+                && is_string($quote['text']) && trim($quote['text']) !== ''
+                && is_string($quote['author']) && trim($quote['author']) !== ''
+                && is_int($quote['rating']) && $quote['rating'] >= 1 && $quote['rating'] <= 5
+                && is_string($quote['date'])
+        ));
+        $locationQuoteCount = count($locationQuotesPool);
+        if ($locationQuoteCount >= 3) {
+            $locationQuoteOffset = crc32($locationPath) % $locationQuoteCount;
+            for ($locationQuoteIndex = 0; $locationQuoteIndex < 3; $locationQuoteIndex++) {
+                $locationReviewQuotes[] = $locationQuotesPool[($locationQuoteOffset + $locationQuoteIndex) % $locationQuoteCount];
+            }
+        }
+    }
+}
+
+// Helpful resources: the metro cost guide plus the two evergreen guides linked
+// from every city page. Rockford borrows the Madison guide until an Illinois
+// cost page exists.
+$locationResourceLinks = [];
+if ($locationRecord !== null) {
+    $locationCostGuides = [
+        'madison' => ['How much does a garage door cost in Madison?', '/wi/garage-door-cost-in-madison-wi/'],
+        'milwaukee' => ['How much does a garage door cost in Milwaukee?', '/wi/garage-door-cost-in-milwaukee-wi/'],
+        'rockford' => ['How much does a garage door cost in Madison?', '/wi/garage-door-cost-in-madison-wi/'],
+    ];
+    $locationResourceLinks = [
+        $locationCostGuides[$locationRecord['metro']] ?? $locationCostGuides['madison'],
+        ['Is it cheaper to repair or replace a garage door?', '/is-it-cheaper-to-repair-or-replace-a-garage-door/'],
+        ['Belt drive vs. chain drive garage door openers', '/belt-drive-vs-chain-drive-openers/'],
+    ];
+}
+// Structured data for record-backed location pages: the schema stack from the
+// approved city-page template (HomeAndConstructionBusiness + BreadcrumbList +
+// FAQPage). The FAQPage mirrors only the FAQs rendered on this page.
+$locationJsonLd = '';
+if ($isLocation && $locationRecord !== null && isset($locationRecord['lat'], $locationRecord['lng']) && $locationNap !== null) {
+    $locationStateName = $locationRecord['metro'] === 'rockford' ? 'Illinois' : 'Wisconsin';
+    $locationStateAbbr = $locationRecord['metro'] === 'rockford' ? 'IL' : 'WI';
+    $locationAbsoluteUrl = static fn(string $urlPath): string => function_exists('home_url') ? (string) home_url($urlPath) : $urlPath;
+    $locationPageUrl = $locationAbsoluteUrl($locationPath);
+    $locationSchemaBusiness = [
+        '@type' => 'HomeAndConstructionBusiness',
+        '@id' => $locationPageUrl . '#business',
+        'name' => 'Twins Garage Doors',
+        'url' => $locationPageUrl,
+        'telephone' => '+1' . preg_replace('/\D+/', '', $phone),
+        'priceRange' => '$$',
+        'address' => [
+            '@type' => 'PostalAddress',
+            'streetAddress' => $locationNap['street'],
+            'addressLocality' => $locationNap['locality'],
+            'addressRegion' => $locationNap['region'],
+            'postalCode' => $locationNap['postalCode'],
+            'addressCountry' => 'US',
+        ],
+        'geo' => [
+            '@type' => 'GeoCoordinates',
+            'latitude' => $locationRecord['lat'],
+            'longitude' => $locationRecord['lng'],
+        ],
+        'areaServed' => [
+            '@type' => 'City',
+            'name' => $locationLabel,
+            'containedInPlace' => ['@type' => 'State', 'name' => $locationStateName],
+        ],
+        'openingHoursSpecification' => [[
+            '@type' => 'OpeningHoursSpecification',
+            'dayOfWeek' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+            'opens' => '00:00',
+            'closes' => '23:59',
+        ]],
+        'hasOfferCatalog' => [
+            '@type' => 'OfferCatalog',
+            'name' => 'Garage door services in ' . $locationLabel . ', ' . $locationStateAbbr,
+            'itemListElement' => array_map(
+                static fn(string $serviceName): array => [
+                    '@type' => 'Offer',
+                    'itemOffered' => ['@type' => 'Service', 'name' => $serviceName],
+                ],
+                [
+                    'Garage Door Repair',
+                    'Garage Door Spring Repair',
+                    'Garage Door Cable Repair',
+                    'Garage Door Opener Repair',
+                    'Garage Door Installation',
+                    'Emergency Garage Door Repair',
+                ]
+            ),
+        ],
+    ];
+    if ($napRating !== null && $napCount !== '') {
+        $locationSchemaBusiness['aggregateRating'] = [
+            '@type' => 'AggregateRating',
+            'ratingValue' => $napRating,
+            'reviewCount' => (int) $napCount,
+            'bestRating' => 5,
+        ];
+    }
+    $locationSchemaGraph = [
+        '@context' => 'https://schema.org',
+        '@graph' => [
+            $locationSchemaBusiness,
+            [
+                '@type' => 'BreadcrumbList',
+                '@id' => $locationPageUrl . '#breadcrumb',
+                'itemListElement' => [
+                    ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $locationAbsoluteUrl('/')],
+                    ['@type' => 'ListItem', 'position' => 2, 'name' => 'Locations', 'item' => $locationAbsoluteUrl($experience->route('service-area', $locationNavMarketKey))],
+                    ['@type' => 'ListItem', 'position' => 3, 'name' => $locationStateAbbr, 'item' => $locationAbsoluteUrl($experience->route($locationStateAbbr === 'IL' ? 'il-preview' : 'wi', $locationNavMarketKey))],
+                    ['@type' => 'ListItem', 'position' => 4, 'name' => $locationLabel, 'item' => $locationPageUrl],
+                ],
+            ],
+            [
+                '@type' => 'FAQPage',
+                '@id' => $locationPageUrl . '#faq',
+                'mainEntity' => array_map(
+                    static fn(array $faq): array => [
+                        '@type' => 'Question',
+                        'name' => (string) $faq['question'],
+                        'acceptedAnswer' => ['@type' => 'Answer', 'text' => (string) $faq['answer']],
+                    ],
+                    $editorialFaqs
+                ),
+            ],
+        ],
+    ];
+    $locationJsonLdCandidate = json_encode(
+        $locationSchemaGraph,
+        JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP
+    );
+    if (is_string($locationJsonLdCandidate) && $locationJsonLdCandidate !== '' && stripos($locationJsonLdCandidate, '<') === false) {
+        $locationJsonLd = $locationJsonLdCandidate;
+    }
 }
 $locationNearbyKicker = $locationNavMarketKey === 'ky' ? 'Kentucky garage door services' : 'Nearby service areas';
 $locationNearbyTitle = $locationNavMarketKey === 'ky'
@@ -278,9 +440,9 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
       <div class="twins-location-local-proof-copy">
         <span class="twins-brand-kicker">Local garage door service</span>
         <h2 id="twins-location-local-proof-title">Practical help for <?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?> homeowners.</h2>
-        <?php if ($locationRecord !== null && $locationRecord['localNotes'] !== ''): ?>
-          <p><?= htmlspecialchars($locationRecord['localNotes'], ENT_QUOTES, 'UTF-8') ?></p>
-        <?php endif; ?>
+        <?php if ($locationRecord !== null): foreach ($locationRecord['localNotes'] as $locationNote): ?>
+          <p><?= htmlspecialchars($locationNote, ENT_QUOTES, 'UTF-8') ?></p>
+        <?php endforeach; endif; ?>
         <?php if ($napAddress !== ''): ?><p class="twins-location-address"><?= htmlspecialchars($napAddress, ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?>
         <ul class="twins-location-proof-list">
           <li><strong>Complete system inspection</strong><span>Door, hardware, opener, controls, and safety equipment checked together.</span></li>
@@ -289,6 +451,75 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
         </ul>
       </div>
     </section>
+
+    <?php if ($locationReviewQuotes !== []): ?>
+      <section class="twins-location-reviews" aria-labelledby="twins-location-reviews-title" data-location-reveal>
+        <div class="twins-brand-section-heading">
+          <span class="twins-brand-kicker">Verified customer stories</span>
+          <h2 id="twins-location-reviews-title">What Twins customers say</h2>
+          <p class="twins-brand-google-attribution" aria-label="Verified Google reviews">Verbatim Google reviews from real Twins customers</p>
+        </div>
+        <div class="twins-location-review-grid">
+          <?php foreach ($locationReviewQuotes as $locationQuote): ?>
+            <article class="twins-location-review-card">
+              <div class="twins-brand-review-stars" aria-label="<?= (int) $locationQuote['rating'] ?> out of 5 stars"><?= str_repeat('★', (int) $locationQuote['rating']) ?></div>
+              <blockquote><?= htmlspecialchars($locationQuote['text'], ENT_QUOTES, 'UTF-8') ?></blockquote>
+              <footer>
+                <strong><?= htmlspecialchars($locationQuote['author'], ENT_QUOTES, 'UTF-8') ?></strong>
+                <time datetime="<?= htmlspecialchars($locationQuote['date'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($locationQuote['date'], ENT_QUOTES, 'UTF-8') ?></time>
+              </footer>
+            </article>
+          <?php endforeach; ?>
+        </div>
+        <a class="twins-brand-text-link" href="<?= htmlspecialchars($experience->route('reviews', $locationNavMarketKey), ENT_QUOTES, 'UTF-8') ?>">Read all reviews</a>
+      </section>
+    <?php endif; ?>
+
+    <?php if ($locationMapEmbedUrl !== ''): ?>
+      <section class="twins-location-map-section" aria-labelledby="twins-location-map-title" data-location-reveal>
+        <div class="twins-brand-section-heading">
+          <span class="twins-brand-kicker">Find us on the map</span>
+          <h2 id="twins-location-map-title"><?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?> service area</h2>
+        </div>
+        <iframe class="twins-brand-location-map" title="Map of <?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?>" src="<?= htmlspecialchars($locationMapEmbedUrl, ENT_QUOTES, 'UTF-8') ?>" width="600" height="380" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <?php if ($napAddress !== ''): ?>
+          <p class="twins-location-map-nap">
+            <strong>Serving <?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?> from</strong>
+            <span><?= htmlspecialchars($napAddress, ENT_QUOTES, 'UTF-8') ?></span>
+            <a href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
+          </p>
+        <?php endif; ?>
+      </section>
+    <?php endif; ?>
+
+    <?php if ($locationNearbyLinks !== []): ?>
+      <section class="twins-location-neighbors" aria-labelledby="twins-location-neighbors-title" data-location-reveal>
+        <div class="twins-brand-section-heading">
+          <span class="twins-brand-kicker"><?= htmlspecialchars($locationNearbyKicker, ENT_QUOTES, 'UTF-8') ?></span>
+          <h2 id="twins-location-neighbors-title"><?= htmlspecialchars($locationNearbyTitle, ENT_QUOTES, 'UTF-8') ?></h2>
+        </div>
+        <nav class="twins-brand-location-links" aria-label="Nearby areas we serve">
+          <?php foreach ($locationNearbyLinks as [$locationNearbyLabel, $locationNearbyRoute]): ?>
+            <a href="<?= htmlspecialchars($experience->route($locationNearbyRoute, $locationNavMarketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($locationNearbyLabel, ENT_QUOTES, 'UTF-8') ?></a>
+          <?php endforeach; ?>
+        </nav>
+        <a class="twins-brand-text-link" href="<?= htmlspecialchars($experience->route($locationNearbyActionRoute, $locationNavMarketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($locationNearbyActionLabel, ENT_QUOTES, 'UTF-8') ?></a>
+      </section>
+    <?php endif; ?>
+
+    <?php if ($locationResourceLinks !== []): ?>
+      <section class="twins-location-resources" aria-labelledby="twins-location-resources-title" data-location-reveal>
+        <div class="twins-brand-section-heading">
+          <span class="twins-brand-kicker">Helpful resources</span>
+          <h2 id="twins-location-resources-title">Guides from the Twins team</h2>
+        </div>
+        <nav class="twins-brand-location-links twins-location-resource-links" aria-label="Helpful garage door guides">
+          <?php foreach ($locationResourceLinks as [$locationResourceLabel, $locationResourceHref]): ?>
+            <a href="<?= htmlspecialchars($locationResourceHref, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($locationResourceLabel, ENT_QUOTES, 'UTF-8') ?></a>
+          <?php endforeach; ?>
+        </nav>
+      </section>
+    <?php endif; ?>
     <?php if ($editorialFaqs !== []): ?>
       <section class="twins-brand-faq" aria-labelledby="twins-location-questions-title" data-location-reveal>
         <div class="twins-brand-section-heading">
@@ -301,6 +532,9 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
           <?php endforeach; ?>
         </div>
       </section>
+    <?php endif; ?>
+    <?php if ($locationJsonLd !== ''): ?>
+      <script type="application/ld+json"><?= $locationJsonLd ?></script>
     <?php endif; ?>
   <?php else: ?>
     <?php if ($articleHeroImage !== ''): ?>
