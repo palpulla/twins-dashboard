@@ -82,12 +82,14 @@ for (const viewport of viewports) {
     await expect(page.locator('.twins-location-service-card')).toHaveCount(3);
     await expect(page.locator('.twins-location-local-proof')).toHaveCount(1);
     await expect(page.locator('.twins-location-final-cta')).toHaveCount(1);
-    await expect(page.locator('#twins-overhaul-main > [data-location-reveal]')).toHaveCount(5);
-    await expect(page.locator('.twins-location-hero')).not.toHaveAttribute('data-location-reveal', '');
-    await expect(page.locator('.twins-location-service-card--spotlight')).toHaveCount(1);
-    await expect(page.locator('.twins-location-service-card--spotlight')).toHaveJSProperty('tagName', 'ARTICLE');
-    await expect(page.locator('.twins-location-service-items')).toHaveCount(3);
-    await expect(page.locator('.twins-location-service-items li')).toHaveCount(9);
+    await expect(page.locator('#twins-overhaul-main > [data-location-reveal]')).toHaveCount(10);
+    await expect(page.locator('.twins-location-hero')).toHaveAttribute('data-location-reveal', '');
+    await expect(page.locator('.twins-location-service-card--spotlight')).toHaveCount(0);
+    await expect(page.locator('.twins-location-service-items')).toHaveCount(0);
+    await expect(page.locator('.twins-location-reviews .twins-location-review-card')).toHaveCount(3);
+    await expect(page.locator('.twins-location-map-section iframe.twins-brand-location-map')).toHaveCount(1);
+    await expect(page.locator('.twins-location-neighbors nav a')).toHaveCount(6);
+    await expect(page.locator('.twins-location-resources nav a')).toHaveCount(3);
     await expect(page.locator('.twins-brand-faq[aria-labelledby="twins-location-questions-title"]')).toHaveCount(1);
     await expect(page.locator('.twins-location-hero-stage, .twins-location-orbit, .twins-location-system, .twins-location-guidance, .twins-location-process, .twins-location-branch, .twins-location-nearby, .twins-location-faq')).toHaveCount(0);
     await expect(page.locator('.twins-location-hero .twins-brand-cta--quote')).toHaveText('Get a Free Quote');
@@ -114,17 +116,6 @@ for (const viewport of viewports) {
       'Garage door opener service',
       'Garage door installation',
     ]);
-    await expect(page.locator('.twins-location-service-items li')).toHaveText([
-      'Broken springs',
-      'Cables and rollers',
-      'Off-track or noisy movement',
-      'Safety sensors',
-      'Remotes and wall controls',
-      'Motors and drive systems',
-      'Damaged door replacement',
-      'Style and window choices',
-      'Insulation options',
-    ]);
     await expect(page.locator('.twins-location-local-proof-media picture')).toHaveCount(1);
     await expect(page.locator('.twins-location-local-proof-image')).toHaveAttribute(
       'alt',
@@ -135,7 +126,7 @@ for (const viewport of viewports) {
       'Plain-language options',
       'Respect for your home',
     ]);
-    await expect(page.locator('.twins-location-address')).toHaveText('5758 Elaine Dr Ste 110, Rockford, IL 61108');
+    await expect(page.locator('.twins-location-address')).toHaveText('5758 Elaine Dr, Rockford, IL 61108');
 
     await expect(page.locator('.twins-location-final-cta .twins-brand-final-actions > a').first()).toHaveClass(/twins-brand-cta--quote/);
     await expect(page.locator('.twins-location-final-cta .twins-brand-final-actions > a').last()).toHaveClass(/twins-brand-cta--call/);
@@ -150,7 +141,7 @@ for (const viewport of viewports) {
       .toEqual([5, 3, 3, 5, 4]);
     await expect(page.locator('.twins-brand-footer-group').first()).not.toContainText('Spring Repair');
     await expect(page.locator('.twins-brand-footer-group').nth(3)).not.toContainText('Wisconsin Garage Door Cost Guide');
-    await expect(page.locator('.twins-brand-footer-nap')).toContainText('5758 Elaine Dr Ste 110, Rockford, IL 61108');
+    await expect(page.locator('.twins-brand-footer-nap')).toContainText('5758 Elaine Dr, Rockford, IL 61108');
     await expect(page.locator('.twins-brand-mobile-actions > a')).toHaveCount(2);
     await expect(page.locator('.twins-brand-mobile-actions > a')).toHaveText(['Call Now', 'Get a Free Quote']);
 

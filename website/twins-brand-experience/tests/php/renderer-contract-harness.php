@@ -497,7 +497,7 @@ $rockfordFooter = $stagingExperience->renderFooter([
     'classification' => 'location',
 ]);
 $expect(
-    strpos($rockfordFooter, '5758 Elaine Dr Ste 110, Rockford, IL 61108') !== false,
+    strpos($rockfordFooter, '5758 Elaine Dr, Rockford, IL 61108') !== false,
     'Rockford footer omitted the local branch address'
 );
 $expect(strpos($rockfordFooter, 'Call Now') !== false, 'location footer is missing Call Now');
@@ -565,16 +565,16 @@ $madisonLocation = $stagingExperience->renderEditorial([
     'title' => 'Madison',
 ], '<p>LEGACY MADISON LOCATION BODY</p>', 'location');
 $expect(
-    strpos($madisonLocation, 'Twins Garage Doors repairs broken springs, cables, rollers, tracks, and openers across Madison.') !== false,
+    strpos($madisonLocation, 'This is our home turf. Our shop sits just off the Beltline on Madison') !== false,
     'Madison location intro did not replace the shared default'
 );
 $expect(
-    strpos($madisonLocation, 'Madison puts garage doors through deep freezes, wet spring weather, summer humidity, and road salt.') !== false,
+    strpos($madisonLocation, htmlspecialchars('Madison\'s housing makes for interesting garage door work.', ENT_QUOTES, 'UTF-8')) !== false,
     'Madison location notes were not rendered'
 );
 $expect(
-    strpos($madisonLocation, 'What garage door problems do you repair in Madison?') !== false
-        && strpos($madisonLocation, 'Should I replace my Madison garage door or repair it?') !== false,
+    strpos($madisonLocation, 'How much does it cost to repair a garage door in Madison?') !== false
+        && strpos($madisonLocation, 'Can I replace garage door springs myself?') !== false,
     'Madison location FAQs were not rendered'
 );
 $expect(strpos($madisonLocation, 'LEGACY MADISON LOCATION BODY') === false, 'Madison location rendered the preserved legacy body');
@@ -586,7 +586,7 @@ $milwaukeeLocation = $stagingExperience->renderEditorial([
     'title' => 'Garage Door Repair in Milwaukee',
 ], '<p>LEGACY MILWAUKEE LOCATION BODY</p>', 'location');
 $expect(
-    strpos($milwaukeeLocation, 'Twins Garage Doors provides garage door repair, opener service, and replacement installation in Milwaukee.') !== false,
+    strpos($milwaukeeLocation, 'Our Milwaukee office sits on Burleigh Street in Wauwatosa, just west of Highway 100') !== false,
     'Milwaukee special route did not resolve its location content'
 );
 $expect(strpos($milwaukeeLocation, 'LEGACY MILWAUKEE LOCATION BODY') === false, 'Milwaukee location rendered the preserved legacy body');
@@ -612,11 +612,90 @@ foreach ($locationRecords as $slug => $record) {
         'path' => $path,
         'title' => $record['label'],
     ], '<p>LEGACY LOCATION BODY FOR ' . $slug . '</p>', 'location');
-    foreach ([$record['intro'], $record['localNotes']] as $expectedCopy) {
+    $recordNotes = is_array($record['localNotes']) ? $record['localNotes'] : [$record['localNotes']];
+    foreach (array_merge([$record['intro']], $recordNotes) as $expectedCopy) {
         $expect(
             strpos($renderedLocation, htmlspecialchars($expectedCopy, ENT_QUOTES, 'UTF-8')) !== false,
             $slug . ' did not render its city copy'
         );
+    }
+    foreach ($record['faq'] as $faq) {
+        $expect(
+            strpos($renderedLocation, htmlspecialchars($faq['q'], ENT_QUOTES, 'UTF-8')) !== false
+                && strpos($renderedLocation, htmlspecialchars($faq['a'], ENT_QUOTES, 'UTF-8')) !== false,
+            $slug . ' did not render all of its FAQs'
+        );
+    }
+    if (isset($record['mapEmbedUrl'])) {
+        $expect(
+            substr_count($renderedLocation, 'src="' . htmlspecialchars($record['mapEmbedUrl'], ENT_QUOTES, 'UTF-8') . '"') === 1,
+            $slug . ' did not render its live map embed exactly once'
+        );
+        $expect(
+            strpos($renderedLocation, 'Open the') === false,
+            $slug . ' retained the placeholder map link'
+        );
+    }
+    if (isset($record['neighbors'])) {
+        $expect(
+            substr_count($renderedLocation, '<nav class="twins-brand-location-links" aria-label="Nearby areas we serve">') === 1,
+            $slug . ' did not render its neighbor links block'
+        );
+        foreach ($record['neighbors'] as $neighborSlug) {
+            $neighborHrefNeedle = $neighborSlug === 'milwaukee'
+                ? '/wi/garage-door-repair-in-milwaukee-wi/"'
+                : '/location/' . $neighborSlug . '/"';
+            $expect(
+                strpos($renderedLocation, $neighborHrefNeedle) !== false,
+                $slug . ' did not link neighbor ' . $neighborSlug
+            );
+        }
+    }
+    $expect(
+        substr_count($renderedLocation, 'class="twins-location-review-card"') === 3,
+        $slug . ' did not render three verbatim review quotes'
+    );
+    $expect(
+        strpos($renderedLocation, 'aria-label="Helpful garage door guides"') !== false
+            && strpos($renderedLocation, '/is-it-cheaper-to-repair-or-replace-a-garage-door/') !== false
+            && strpos($renderedLocation, '/belt-drive-vs-chain-drive-openers/') !== false,
+        $slug . ' did not render the helpful-resources block'
+    );
+    $expectedCostGuide = $record['metro'] === 'milwaukee'
+        ? '/wi/garage-door-cost-in-milwaukee-wi/'
+        : '/wi/garage-door-cost-in-madison-wi/';
+    $expect(
+        strpos($renderedLocation, 'href="' . $expectedCostGuide . '"') !== false,
+        $slug . ' did not link its metro cost guide'
+    );
+    if (isset($record['lat'], $record['lng'])) {
+        $expect(
+            substr_count($renderedLocation, '<script type="application/ld+json">') === 1,
+            $slug . ' did not emit its structured data exactly once'
+        );
+        $schemaMatch = [];
+        $expect(
+            preg_match('~<script type="application/ld\+json">(.*?)</script>~s', $renderedLocation, $schemaMatch) === 1,
+            $slug . ' structured data is unreadable'
+        );
+        $schemaGraph = json_decode($schemaMatch[1], true);
+        $expect(
+            is_array($schemaGraph) && isset($schemaGraph['@graph']) && count($schemaGraph['@graph']) === 3,
+            $slug . ' structured data graph drifted'
+        );
+        [$schemaBusiness, $schemaBreadcrumb, $schemaFaqPage] = $schemaGraph['@graph'];
+        $expect($schemaBusiness['@type'] === 'HomeAndConstructionBusiness', $slug . ' schema business type drifted');
+        $expect($schemaBusiness['geo']['latitude'] === $record['lat'] && $schemaBusiness['geo']['longitude'] === $record['lng'], $slug . ' schema coordinates drifted');
+        $expect($schemaBusiness['areaServed']['name'] === $record['label'], $slug . ' schema areaServed drifted');
+        $expect($schemaBreadcrumb['@type'] === 'BreadcrumbList' && count($schemaBreadcrumb['itemListElement']) === 4, $slug . ' schema breadcrumb drifted');
+        $expect($schemaFaqPage['@type'] === 'FAQPage' && count($schemaFaqPage['mainEntity']) === count($record['faq']), $slug . ' schema FAQPage does not mirror the rendered FAQs');
+        foreach ($schemaFaqPage['mainEntity'] as $faqIndex => $schemaQuestion) {
+            $expect(
+                $schemaQuestion['name'] === $record['faq'][$faqIndex]['q']
+                    && $schemaQuestion['acceptedAnswer']['text'] === $record['faq'][$faqIndex]['a'],
+                $slug . ' schema FAQPage question ' . $faqIndex . ' drifted'
+            );
+        }
     }
     foreach (['twins-location-hero', 'twins-location-trust', 'twins-location-services', 'twins-location-local-proof', 'twins-location-final-cta'] as $className) {
         $expect(strpos($renderedLocation, $className) !== false, $slug . ' omitted ' . $className);
@@ -661,7 +740,7 @@ foreach (['twins-location-system', 'twins-location-process', 'twins-location-bra
     $expect(strpos($rockfordLocation, $retiredClass) === false, 'Rockford retained ' . $retiredClass);
 }
 $expect(substr_count($rockfordLocation, 'Explore Garage Door Repair</a>') === 1, 'Rockford duplicated the repair destination');
-$expect(strpos($rockfordLocation, '5758 Elaine Dr Ste 110, Rockford, IL 61108') !== false, 'Rockford omitted its branch address');
+$expect(strpos($rockfordLocation, '5758 Elaine Dr, Rockford, IL 61108') !== false, 'Rockford omitted its branch address');
 foreach (['recently opened', 'new to this market', 'earn the local record'] as $prohibitedCopy) {
     $expect(stripos($rockfordLocation, $prohibitedCopy) === false, 'Rockford rendered prohibited copy: ' . $prohibitedCopy);
 }

@@ -59,15 +59,21 @@ test('services are limited to three concise choices and one character cameo', ()
   assert.match(template, /twins-location-service-card/);
 });
 
-test('all six location sections participate in one-time reveals, hero included', () => {
-  // r30 added the hero itself to the reveal set: six data-location-reveal
-  // sections total (hero, trust, services, local proof, FAQ, final CTA).
+test('all location sections participate in one-time reveals, hero included', () => {
+  // r30 added the hero itself to the reveal set; the city-page system adds four
+  // record-gated sections (reviews, map, neighbors, resources) for ten
+  // data-location-reveal sites in the template source. Pages without a
+  // location record still render the six r30 reveals only.
   assert.match(template, /<header class="twins-location-hero" aria-labelledby="twins-location-title" data-location-reveal>/);
-  assert.equal((template.match(/data-location-reveal/g) || []).length, 6);
+  assert.equal((template.match(/data-location-reveal/g) || []).length, 10);
   for (const className of [
     'twins-location-trust',
     'twins-location-services',
     'twins-location-local-proof',
+    'twins-location-reviews',
+    'twins-location-map-section',
+    'twins-location-neighbors',
+    'twins-location-resources',
     'twins-location-final-cta',
   ]) {
     assert.match(template, new RegExp(`class="[^"]*${className}[^"]*"[^>]*data-location-reveal`));
@@ -148,7 +154,8 @@ test('footer uses route context instead of a hard-coded Madison address', () => 
   assert.match(footer, /\$context\['metroAddress'\]/);
   assert.match(footer, /\$market\['address'\]/);
   assert.match(experience, /metroAddressForContext/);
-  assert.match(experience, /5758 Elaine Dr Ste 110, Rockford, IL 61108/);
+  assert.match(experience, /5758 Elaine Dr, Rockford, IL 61108/);
+  assert.doesNotMatch(experience, /5758 Elaine Dr Ste 110|2921 Landmark Pl #206/);
 });
 
 test('Rockford location fixture retains route-local contact data and the shared footer catalog', () => {
@@ -176,18 +183,52 @@ test('Rockford location fixture retains route-local contact data and the shared 
   assert.match(markets, /'il-preview'/);
   assert.match(fixture, /Rockford/);
   assert.match(fixture, /tel:\+18158002025/);
-  assert.match(fixture, /5758 Elaine Dr Ste 110, Rockford, IL 61108/);
-  assert.equal((fixture.match(/class="twins-location-service-card(?: twins-location-service-card--spotlight)?"/g) || []).length, 3);
-  assert.equal((fixture.match(/data-location-reveal/g) || []).length, 5);
-  assert.doesNotMatch(fixture, /<header class="twins-location-hero"[^>]*data-location-reveal/);
-  assert.equal((fixture.match(/class="twins-location-service-items"/g) || []).length, 3);
-  assert.equal((fixture.match(/class="twins-location-service-card twins-location-service-card--spotlight"/g) || []).length, 1);
+  assert.match(fixture, /5758 Elaine Dr, Rockford, IL 61108/);
+  assert.doesNotMatch(fixture, /5758 Elaine Dr Ste 110/);
+  assert.equal((fixture.match(/class="twins-location-service-card"/g) || []).length, 3);
+  // City-page system: ten reveals (hero, trust, services, local proof,
+  // reviews, map, neighbors, resources, FAQ, final CTA).
+  assert.equal((fixture.match(/data-location-reveal/g) || []).length, 10);
+  assert.match(fixture, /<header class="twins-location-hero"[^>]*data-location-reveal/);
+  assert.doesNotMatch(fixture, /twins-location-service-items|twins-location-service-card--spotlight/);
   assert.doesNotMatch(fixture, /twins-location-hero-stage|twins-location-orbit|Preventive maintenance/);
-  assert.doesNotMatch(fixture, /done today|same-day|\$0 service call|most repairs in one visit|recently opened/i);
-  assert.doesNotMatch(fixture, /newly opened|new to this market/i);
+  // The 2026-08-18 approved copy carries the $0-service-call-with-repair offer
+  // and the "same day, most days" framing, so only branch-positioning and
+  // invented-guarantee claims stay banned.
+  assert.doesNotMatch(fixture, /recently opened|newly opened|new to this market|guaranteed arrival|guaranteed response/i);
   assert.doesNotMatch(fixture, /Madison, Wisconsin|tel:\+16084202377/);
   assert.match(reviewSummary, /'displayCount'\s*=>\s*'699'/);
   assert.match(fixture, /699 customer reviews/);
+  // City-page blocks: three verbatim review quotes, the live map embed with
+  // the metro NAP, six neighbor links, and three helpful-resource guides.
+  assert.equal((fixture.match(/class="twins-location-review-card"/g) || []).length, 3);
+  assert.match(fixture, /<iframe class="twins-brand-location-map"[^>]*src="https:\/\/www\.google\.com\/maps[^"]*"/);
+  assert.doesNotMatch(fixture, /Open the .* map on Google Maps|twins-brand-location-map--link/);
+  const neighborNav = fixture.match(/<nav class="twins-brand-location-links" aria-label="Nearby areas we serve">([\s\S]*?)<\/nav>/);
+  assert.ok(neighborNav, 'neighbor links block is missing');
+  assert.equal((neighborNav[1].match(/<a\b/g) || []).length, 6);
+  const resourceNav = fixture.match(/<nav class="twins-brand-location-links twins-location-resource-links"[^>]*>([\s\S]*?)<\/nav>/);
+  assert.ok(resourceNav, 'helpful-resources block is missing');
+  assert.equal((resourceNav[1].match(/<a\b/g) || []).length, 3);
+  assert.match(resourceNav[1], /\/wi\/garage-door-cost-in-madison-wi\//);
+  assert.match(resourceNav[1], /\/is-it-cheaper-to-repair-or-replace-a-garage-door\//);
+  assert.match(resourceNav[1], /\/belt-drive-vs-chain-drive-openers\//);
+  // JSON-LD: one script carrying the approved schema stack whose FAQPage
+  // mirrors exactly the rendered FAQ accordion.
+  const schemaScripts = fixture.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g) || [];
+  assert.equal(schemaScripts.length, 1);
+  const schemaGraph = JSON.parse(schemaScripts[0].replace(/^<script[^>]*>/, '').replace(/<\/script>$/, ''));
+  const graphTypes = schemaGraph['@graph'].map((node) => node['@type']);
+  assert.deepEqual(graphTypes, ['HomeAndConstructionBusiness', 'BreadcrumbList', 'FAQPage']);
+  const renderedQuestions = [...fixture.matchAll(/<details><summary>([\s\S]*?)<\/summary>/g)].map((m) => m[1]);
+  const schemaQuestions = schemaGraph['@graph'][2].mainEntity.map((q) => q.name);
+  assert.equal(renderedQuestions.length, 5);
+  assert.deepEqual(
+    schemaQuestions,
+    renderedQuestions.map((q) => q
+      .replaceAll('&amp;', '&').replaceAll('&lt;', '<').replaceAll('&gt;', '>')
+      .replaceAll('&quot;', '"').replaceAll('&#039;', "'")),
+  );
   assert.equal((fixture.match(/>Get a Free Quote<\/a>/g) || []).length, 6);
   assert.equal((fixture.match(/>Book Online<\/button>/g) || []).length, 2);
   assert.equal((fixture.match(/data-twins-booking-dialog/g) || []).length, 1);
