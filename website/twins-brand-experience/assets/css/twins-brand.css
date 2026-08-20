@@ -2940,7 +2940,7 @@ body.twins-brand-experience .twins-brand-diagnostic-rail a { text-decoration: no
 .twins-brand-service-controls button { width: 48px; height: 48px; border: 2px solid currentColor; border-radius: 50%; background: var(--twins-cream); }
 
 .twins-brand-review-proof {
-  padding: clamp(76px, 6.5vw, 112px) var(--twins-story-gutter);
+  padding: clamp(48px, 6vw, 64px) var(--twins-story-gutter);
   color: var(--twins-cream);
   background-color: var(--twins-navy-950);
 }
@@ -3074,19 +3074,36 @@ body.twins-brand-experience .twins-brand-review-proof .twins-brand-kicker {
 }
 
 .twins-brand-service-journey {
-  padding: clamp(94px, 9vw, 148px) max(var(--twins-story-gutter), calc((100vw - var(--twins-story-max)) / 2));
+  padding: clamp(48px, 6vw, 64px) max(var(--twins-story-gutter), calc((100vw - var(--twins-story-max)) / 2)) 128px;
   color: var(--twins-navy-950);
   background-color: var(--twins-cream);
 }
-.twins-brand-service-journey > header { margin-bottom: 54px; }
+/* Ground stripe: the gold proof-ticker motif reused as the road under the
+   service truck, so the truck sits anchored at the scene's edge instead of
+   floating in whitespace. */
+.twins-brand-service-journey::after {
+  content: '';
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  bottom: 22px;
+  z-index: 0;
+  height: 38px;
+  background: var(--twins-gold);
+  border-block: 2px solid var(--twins-navy-950);
+  transform: rotate(-1deg);
+  pointer-events: none;
+}
+.twins-brand-service-journey > header { margin-bottom: 38px; }
 .twins-brand-service-journey ol { position: relative; display: grid; gap: 30px; margin: 0; padding: 0; list-style: none; }
-.twins-brand-journey-route { position: absolute; left: 50%; top: 210px; bottom: 130px; border-left: 4px dashed var(--twins-gold); }
-.twins-brand-journey-step { width: 54%; display: grid; grid-template-columns: 70px 1fr; gap: 20px; align-items: center; padding: 24px; background: var(--twins-card-surface); border: var(--twins-card-edge); border-radius: var(--twins-card-radius); box-shadow: var(--twins-card-lift); }
+.twins-brand-journey-route { position: absolute; left: 50%; top: 170px; bottom: 150px; border-left: 4px dashed var(--twins-gold); }
+.twins-brand-journey-step { width: 54%; display: grid; grid-template-columns: 70px 1fr; gap: 20px; align-items: center; padding: 24px; background: var(--twins-card-surface); border: var(--twins-card-edge); border-radius: var(--twins-card-radius); box-shadow: var(--twins-card-lift); transition: transform .14s cubic-bezier(.2, .8, .2, 1), box-shadow .14s ease; }
+.twins-brand-journey-step:hover { transform: translateY(-3px); box-shadow: 10px 11px 0 var(--twins-gold); }
 .twins-brand-journey-step:nth-child(even) { margin-left: auto; }
 .twins-brand-journey-step > span { font: 900 42px/1 var(--twins-home-display); color: var(--twins-gold-700); }
 .twins-brand-journey-step > picture { grid-column: 1 / -1; }
 .twins-brand-journey-photo { grid-column: 1 / -1; width: 100%; max-height: 310px; object-fit: cover; }
-.twins-brand-journey-truck { position: absolute; left: calc(50% - 76px); bottom: 72px; width: 152px; height: auto; }
+.twins-brand-journey-truck { position: absolute; right: calc(max(var(--twins-story-gutter), calc((100vw - var(--twins-story-max)) / 2)) + 46px); bottom: 42px; z-index: 1; width: clamp(180px, 18vw, 232px); height: auto; }
 
 @media (min-width: 1025px) {
   .twins-brand-why-scene > .twins-brand-why-copy { grid-row: 1 / span 2; }
@@ -3103,9 +3120,16 @@ body.twins-brand-experience .twins-brand-review-proof .twins-brand-kicker {
   display: grid;
   grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
   gap: clamp(42px, 6vw, 88px);
-  padding: clamp(106px, 9vw, 154px) max(var(--twins-story-gutter), calc((100vw - var(--twins-story-max)) / 2));
+  padding: clamp(48px, 6vw, 64px) max(var(--twins-story-gutter), calc((100vw - var(--twins-story-max)) / 2));
   color: var(--twins-cream);
   background-color: var(--twins-navy-950);
+}
+/* Same diagonal texture the location services band carries, so the team navy
+   is never a flat stretch. Scoped under .twins-brand-home so the opacity wins
+   over the shared [data-home-scene]::before base. */
+.twins-brand-home .twins-brand-why-scene::before {
+  opacity: 1;
+  background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.05) 0 2px, transparent 2px 18px);
 }
 .twins-brand-why-copy ol { display: grid; gap: 12px; margin: 34px 0; padding: 0; list-style: none; }
 .twins-brand-why-copy li { display: grid; grid-template-columns: minmax(180px, .7fr) 1fr; gap: 20px; padding: 15px 0; border-top: 1px solid rgba(255,255,255,.18); }
@@ -3153,7 +3177,9 @@ body.twins-brand-experience .twins-brand-review-proof .twins-brand-kicker {
   border-radius: 90px 90px var(--twins-card-radius) var(--twins-card-radius);
   box-shadow: var(--twins-card-lift);
   scroll-snap-align: start;
+  transition: transform .14s cubic-bezier(.2, .8, .2, 1), box-shadow .14s ease;
 }
+.twins-brand-home-team-person:hover { transform: translateY(-3px); box-shadow: 10px 11px 0 var(--twins-gold); }
 .twins-brand-home-team-media {
   flex: 0 0 232px;
   height: 232px;
@@ -3188,7 +3214,7 @@ body.twins-brand-experience .twins-brand-review-proof .twins-brand-kicker {
 .twins-brand-door-scene {
   display: grid;
   grid-template-columns: minmax(0, 1.08fr) minmax(320px, .92fr);
-  padding: clamp(88px, 8vw, 132px) max(var(--twins-story-gutter), calc((100vw - var(--twins-story-max)) / 2));
+  padding: clamp(48px, 6vw, 64px) max(var(--twins-story-gutter), calc((100vw - var(--twins-story-max)) / 2));
   background-color: var(--twins-cream);
 }
 .twins-brand-door-media { min-height: 560px; }
@@ -3207,7 +3233,7 @@ body.twins-brand-experience .twins-brand-review-proof .twins-brand-kicker {
   display: grid;
   grid-template-columns: minmax(0, 1.3fr) minmax(300px, .7fr);
   gap: 28px;
-  padding: clamp(86px, 8vw, 126px) max(var(--twins-story-gutter), calc((100vw - var(--twins-story-max)) / 2));
+  padding: clamp(48px, 6vw, 64px) max(var(--twins-story-gutter), calc((100vw - var(--twins-story-max)) / 2));
   color: var(--twins-navy-950);
   background-color: var(--twins-gold);
 }
@@ -3218,7 +3244,6 @@ body.twins-brand-experience .twins-brand-review-proof .twins-brand-kicker {
 
 .twins-brand-company-story,
 .twins-brand-service-showcase,
-.twins-brand-why-scene,
 .twins-brand-closing-scene,
 .twins-brand-review-proof {
   background-image: repeating-linear-gradient(180deg, rgba(255, 255, 255, .028) 0 1px, transparent 1px 44px);
@@ -3258,7 +3283,7 @@ body.twins-brand-experience .twins-brand-review-proof .twins-brand-kicker {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 32px;
-  padding: clamp(102px, 9vw, 150px) max(var(--twins-story-gutter), calc((100vw - var(--twins-story-max)) / 2));
+  padding: clamp(56px, 7vw, 72px) max(var(--twins-story-gutter), calc((100vw - var(--twins-story-max)) / 2));
   overflow: hidden;
   color: var(--twins-cream);
   background-color: var(--twins-navy-950);
@@ -3514,6 +3539,8 @@ body.twins-brand-experience :is(
     flex-basis: 100%;
     padding: 22px;
   }
+  .twins-brand-service-journey { padding-bottom: 96px; }
+  .twins-brand-service-journey::after { bottom: 18px; height: 30px; }
   .twins-brand-journey-route { left: 30px; top: 190px; bottom: 110px; }
   .twins-brand-journey-step,
   .twins-brand-journey-step:nth-child(even) { width: calc(100% - 54px); margin-left: 54px; }

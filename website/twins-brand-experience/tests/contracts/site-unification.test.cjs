@@ -64,7 +64,7 @@ test('brand assets use independently derived bounded SHA-256 versions and fail c
   };
 
   assert.deepEqual(versions, {
-    css: 'dc7ccb17d30fc3f1',
+    css: 'caeb1f505da2cdd3',
     familyCss: 'e2a8420a2dea99ba',
     js: 'b21b85f795c111a7',
     builderJs: '4d73645e78a5b931',
