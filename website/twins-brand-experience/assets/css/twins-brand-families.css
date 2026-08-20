@@ -677,6 +677,18 @@ body.twins-brand-route-builder .twins-overhaul-eyebrow {
   color: #dbe8f8;
 }
 
+/* Same reason, opposite ground. .twins-cost-climate is a full-bleed gold band,
+   and the shared lede colour is slate #546277: pixel-sampled on the rendered
+   Madison guide that pair is 3.95:1 at 16.6px, which fails AA for body copy.
+   The section's own heading and its 01-04 numerals are already navy on this
+   gold, so the lede joins them at 10.88:1 rather than inventing a colour. */
+:is(
+  body.twins-brand-route-cost-madison,
+  body.twins-brand-route-cost-milwaukee
+) .twins-cost-climate > .twins-overhaul-shell > .twins-cost-section-lede {
+  color: var(--twins-navy-950);
+}
+
 :is(
   body.twins-brand-route-cost-madison,
   body.twins-brand-route-cost-milwaukee
