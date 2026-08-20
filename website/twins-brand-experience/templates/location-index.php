@@ -54,11 +54,11 @@ $cityLinks = array_values(array_filter(
   <?php if ($marketKey === 'main'): ?>
     <section class="twins-brand-market-selector" aria-labelledby="twins-brand-location-index-areas-title">
       <div class="twins-brand-section-heading">
-        <span class="twins-brand-kicker">Wisconsin, Illinois, and Kentucky</span>
+        <span class="twins-brand-kicker">Wisconsin and Illinois</span>
         <h2 id="twins-brand-location-index-areas-title"><?= htmlspecialchars($copy['areasTitle'], ENT_QUOTES, 'UTF-8') ?></h2>
       </div>
       <div class="twins-brand-market-grid">
-        <?php foreach ($experience->markets()->all($environment) as $availableMarketKey => $availableMarket): ?>
+        <?php foreach ($experience->markets()->selectable($environment) as $availableMarketKey => $availableMarket): ?>
           <?php if ($availableMarketKey === 'main') continue; ?>
           <a class="twins-brand-market-card<?= $availableMarket['preview'] === true ? ' twins-brand-market-card--preview' : '' ?>" href="<?= htmlspecialchars($experience->route($availableMarketKey, $marketKey), ENT_QUOTES, 'UTF-8') ?>">
             <strong><?= htmlspecialchars($availableMarket['label'], ENT_QUOTES, 'UTF-8') ?></strong>

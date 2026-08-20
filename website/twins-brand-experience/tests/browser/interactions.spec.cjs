@@ -9,7 +9,6 @@ const marketMenuFixture = `
   <summary>Choose your service area</summary>
   <div class="twins-brand-market-menu-panel">
     <a href="#markets"><strong>Wisconsin</strong><span>(608) 420-2377</span></a>
-    <a href="#markets"><strong>Kentucky</strong><span>(833) 833-2010</span></a>
     <a href="#markets"><strong>Illinois preview</strong><span>(815) 800-2025</span><small>Private staging preview</small></a>
   </div>
 </details>`;

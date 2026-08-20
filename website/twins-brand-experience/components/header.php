@@ -61,7 +61,8 @@ body:has(.twins-brand-header) :where(
     <details class="twins-brand-market-menu">
       <summary>Choose Your Service Area</summary>
       <div class="twins-brand-market-menu-panel">
-        <?php foreach ($experience->markets()->all($environment) as $availableKey => $availableMarket): ?>
+        <?php // selectable(), never all(): a retired market must never be offered to a visitor. ?>
+        <?php foreach ($experience->markets()->selectable($environment) as $availableKey => $availableMarket): ?>
           <?php if ($availableKey === 'main') continue; ?>
           <?php $availableRows = $availableMarket['metroLines'] ?? [['label' => $availableMarket['label'], 'phoneDisplay' => $availableMarket['phoneDisplay']]]; ?>
           <?php foreach ($availableRows as $availableRow): ?>

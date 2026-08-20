@@ -57,7 +57,7 @@ if ($environment === 'staging') {
     <span class="twins-brand-kicker">Service areas</span>
     <h2 id="twins-brand-contact-markets-title">Choose your local Twins team</h2>
     <div class="twins-brand-contact-market-grid">
-      <?php foreach ($experience->markets()->all($environment) as $availableMarketKey => $availableMarket): ?>
+      <?php foreach ($experience->markets()->selectable($environment) as $availableMarketKey => $availableMarket): ?>
         <?php if ($availableMarketKey === 'main') continue; ?>
         <article>
           <h3><?= htmlspecialchars($availableMarket['label'], ENT_QUOTES, 'UTF-8') ?></h3>

@@ -491,9 +491,15 @@ $expect(substr_count($footer, 'Request a Quote') >= 1, 'footer must carry the ex
 $expect(strpos($footer, 'Call Now') !== false, 'footer is missing the call action');
 $expect(strpos($footer, 'https://twinsgaragedoors.com') === false, 'footer hard-coded the production host');
 $expect(strpos($footer, 'danielj140.sg-host.com') === false, 'footer hard-coded the staging host');
-foreach (['/garage-door-services/', '/garage-door-repair/', '/garage-door-installation/', '/garage-door-spring-repair/', '/wi/', '/ky/'] as $route) {
+// Kentucky retired (Brand Toolkit v1.0). The footer Service Area column enumerates
+// MarketRegistry::selectable(), so /ky/ is gone and /il/ takes its place. The
+// stronger pin is the negative one below: a retired market must not be advertised
+// anywhere in the shared chrome, which is a better guarantee than "KY is listed".
+foreach (['/garage-door-services/', '/garage-door-repair/', '/garage-door-installation/', '/garage-door-spring-repair/', '/wi/', '/il/'] as $route) {
     $expect(strpos($footer, $route) !== false, 'footer omitted internal route ' . $route);
 }
+$expect(strpos($footer, '/ky/') === false, 'footer advertised the retired Kentucky market');
+$expect(stripos($footer, 'Kentucky') === false, 'footer named the retired Kentucky market');
 $rockfordFooter = $stagingExperience->renderFooter([
     'environment' => 'staging',
     'market' => 'il-preview',
@@ -509,12 +515,15 @@ $expect(substr_count($rockfordFooter, 'Get a Free Quote') >= 1, 'location footer
 $rockfordFooterGroups = [];
 preg_match_all('~<div class="twins-brand-footer-group">([\s\S]*?)</div>~', $rockfordFooter, $rockfordFooterGroups);
 $expect(count($rockfordFooterGroups[1] ?? []) === 3, 'Rockford footer must render the three compact il-preview groups');
-foreach ([4, 3, 4] as $index => $expectedLinkCount) {
+// Group 1 is Service Area: Wisconsin + Illinois. It was 3 while retired Kentucky
+// was still enumerated by MarketRegistry::all().
+foreach ([4, 2, 4] as $index => $expectedLinkCount) {
     $expect(
         substr_count($rockfordFooterGroups[1][$index] ?? '', '<a ') === $expectedLinkCount,
         'Rockford footer group ' . $index . ' did not match the il-preview link count'
     );
 }
+$expect(stripos($rockfordFooter, 'Kentucky') === false, 'Rockford footer named the retired Kentucky market');
 $expect(strpos($rockfordFooter, '>Spring Repair</a>') === false, 'Rockford footer exposed an unsupported service link');
 $expect(strpos($rockfordFooter, '>Wisconsin Garage Door Cost Guide</a>') === false, 'Rockford footer exposed the Wisconsin-only cost guide');
 

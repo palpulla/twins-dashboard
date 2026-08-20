@@ -2096,7 +2096,7 @@ function twins_overhaul_location_index_metadata(string $path): ?array {
         '/locations/' => array(
             'title' => 'Garage Door Service Areas',
             'heading' => 'Garage Door Service Areas',
-            'description' => 'Find Twins Garage Doors service areas in Wisconsin, Illinois, and Kentucky, then choose your local team for repair, opener, and installation help.',
+            'description' => 'Find Twins Garage Doors service areas in Wisconsin and Illinois, then choose your local team for repair, opener, and installation help.',
         ),
         '/wi/service-area/' => array(
             'title' => 'Wisconsin Garage Door Service Areas',

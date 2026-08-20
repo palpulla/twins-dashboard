@@ -87,9 +87,10 @@ $twinsNavCityLinks = [
         ['Wauwatosa', 'city-wauwatosa'],
         ['Windsor', 'city-windsor'],
     ],
-    'ky' => [
-        ['Lexington', 'city-lexington'],
-    ],
+    // No 'ky' entry: Kentucky is retired (Brand Toolkit v1.0) and every front-end
+    // /ky/ request is 301'd by twins_overhaul_redirect_retired_ky_market() (r33),
+    // so a 'city-lexington' nav link would be the one genuinely dead link on the
+    // site. The archived blog-3 legacy nav in the host package still carries it.
     'il-preview' => [
         ['Illinois Service Areas', 'service-area'],
         ['Rockford', 'city-rockford'],
@@ -111,7 +112,8 @@ $serviceAreasCompact = [];
 if ($marketKey === 'main') {
     $serviceAreasCompact[] = ['All Service Areas', 'service-area'];
 }
-foreach ($experience->markets()->all($environment) as $twinsNavMarketKey => $twinsNavMarket) {
+// selectable(), never all(): a retired market must never be offered to a visitor.
+foreach ($experience->markets()->selectable($environment) as $twinsNavMarketKey => $twinsNavMarket) {
     if ($twinsNavMarketKey === 'main') continue;
     $serviceAreasCompact[] = [$twinsNavMarket['label'], $twinsNavMarketKey];
 }

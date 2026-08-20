@@ -46,7 +46,7 @@
     <details class="twins-brand-home-market-choice">
       <summary>Choose Your Service Area</summary>
       <div>
-        <?php foreach ($experience->markets()->all($environment) as $availableKey => $availableMarket): ?>
+        <?php foreach ($experience->markets()->selectable($environment) as $availableKey => $availableMarket): ?>
           <?php if ($availableKey === 'main') continue; ?>
           <?php $availableRows = $availableMarket['metroLines'] ?? [['label' => $availableMarket['label']]]; ?>
           <?php foreach ($availableRows as $availableRow): ?>

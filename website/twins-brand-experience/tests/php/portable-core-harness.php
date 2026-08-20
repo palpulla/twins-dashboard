@@ -130,13 +130,26 @@ try {
     $registry = new Twins\BrandExperience\MarketRegistry(require dirname($argv[1]) . '/config/markets.php');
     $staging = array_keys($registry->all('staging'));
     $production = array_keys($registry->all('production'));
+    // all() is the RESOLUTION surface and still returns retired Kentucky in
+    // staging: the archived blog-3 subsite and the Kentucky isolation harnesses
+    // resolve through it. selectable() is the VISITOR surface and never does.
     $expect($staging === ['main', 'wi', 'ky', 'il-preview'], 'unexpected staging markets: ' . json_encode($staging));
-    $expect($production === ['main', 'wi', 'ky'], 'production exposed Illinois: ' . json_encode($production));
+    $expect($production === ['main', 'wi'], 'unexpected production markets: ' . json_encode($production));
     $expect($registry->resolve('wi', 'staging')['key'] === 'wi', 'resolved market key is missing');
 
+    $selectableStaging = array_keys($registry->selectable('staging'));
+    $selectableProduction = array_keys($registry->selectable('production'));
+    $expect($selectableStaging === ['main', 'wi', 'il-preview'], 'a retired market was offered to a staging visitor: ' . json_encode($selectableStaging));
+    $expect($selectableProduction === ['main', 'wi'], 'a retired market was offered to a production visitor: ' . json_encode($selectableProduction));
+
     $closed = false;
-    try { $registry->resolve('il-preview', 'production'); } catch (DomainException $expected) { $closed = true; }
-    $expect($closed, 'production Illinois did not fail closed');
+    try { $registry->resolve('ky', 'production'); } catch (DomainException $expected) { $closed = true; }
+    $expect($closed, 'production Kentucky did not fail closed');
+    $closed = false;
+    $unflaggedMarkets = require dirname($argv[1]) . '/config/markets.php';
+    unset($unflaggedMarkets['wi']['retired']);
+    try { new Twins\BrandExperience\MarketRegistry($unflaggedMarkets); } catch (InvalidArgumentException $expected) { $closed = true; }
+    $expect($closed, 'registry accepted a market with no retired flag');
     $closed = false;
     try { $registry->all('preview'); } catch (DomainException $expected) { $closed = true; }
     $expect($closed, 'unknown environment did not fail closed');

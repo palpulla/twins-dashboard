@@ -246,7 +246,11 @@ function twins_overhaul_navigation(string $region): array {
             twins_overhaul_navigation_item('All Service Areas', '/locations/'),
             twins_overhaul_navigation_item('Wisconsin', '/wi/'),
             twins_overhaul_navigation_item('Illinois', '/il/'),
-            twins_overhaul_navigation_item('Kentucky', '/ky/'),
+            // Kentucky retired (Brand Toolkit v1.0). This legacy nav renders on
+            // campaign-preserve classifications, where twins_overhaul_uses_brand_chrome()
+            // is false, so it IS reachable and had to lose the /ky/ item. The
+            // $service_areas['ky'] group below stays: it belongs to the archived
+            // blog-3 subsite, which r33 redirects before any render hook fires.
         ),
         'wi' => array(
             twins_overhaul_navigation_item('Wisconsin Service Areas', '/wi/service-area/'),

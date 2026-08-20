@@ -167,7 +167,9 @@ test('Rockford location fixture retains route-local contact data and the shared 
   const expectedGroups = [
     ['Services', 5, 'Garage Door Installation'],
     ['Garage Doors', 3, 'Garage Door Collections'],
-    ['Service Areas', 3, 'Illinois'],
+    // Kentucky retired (Brand Toolkit v1.0): the footer Service Areas column is
+    // Wisconsin + Illinois, sourced from MarketRegistry::selectable().
+    ['Service Areas', 2, 'Illinois'],
     ['Resources', 5, 'Frequently Asked Questions'],
     ['About', 4, 'Contact Us'],
   ];
