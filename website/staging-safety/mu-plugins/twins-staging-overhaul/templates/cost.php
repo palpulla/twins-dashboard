@@ -78,21 +78,26 @@ function twins_overhaul_l10_stat(array $card, bool $lead = false): string {
  * @return string
  */
 function twins_overhaul_l10_meta(string $line): string {
-    $parts = array();
-    foreach (explode('·', $line) as $part) {
-        $part = trim($part);
-        if ($part !== '') {
-            $parts[] = $part;
-        }
-    }
-    if ($parts === array()) {
+    $line = trim($line);
+    if ($line === '') {
         return '';
     }
-    $markup = '<p class="twins-cost-source-line twins-l10-meta">';
-    foreach ($parts as $part) {
-        $markup .= '<span>' . esc_html($part) . '</span>';
-    }
-    return $markup . '</p>';
+
+    // ONE span, and the approved sentence inside it unaltered.
+    //
+    // This helper used to explode the line on its middot and emit a span per
+    // half, which read well as the deck's two-ended source rule but silently
+    // rewrote sanctioned copy: the separator was dropped and the sentence was
+    // split across two DOM nodes. staging-safety's cost harness asserts that
+    // 'Pricing data generated August 18, 2026 · Completed Twins Garage Doors
+    // jobs from August 2024 through August 2026.' appears in the markup exactly
+    // once, contiguously, and it does so because provenance is this page's whole
+    // argument -- a crawler, an answer engine or a reader quoting the line must
+    // get the generated-on date and the window as one statement, not two
+    // fragments that can be lifted apart. The L7 treatment survives intact: the
+    // hairline, the slate, the .8rem and the top padding all come from
+    // .twins-l10-meta, and :only-child already lays a lone span full width.
+    return '<p class="twins-cost-source-line twins-l10-meta"><span>' . esc_html($line) . '</span></p>';
 }
 
 /**
