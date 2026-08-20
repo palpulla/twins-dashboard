@@ -298,7 +298,7 @@ function twins_overhaul_render_cost_page(string $market, array $context): string
         $markup .= '<details' . $open . '><summary>' . esc_html($faq['question']) . '</summary>';
         // L4: only the answers whose first sentence turns on a figure.
         if (twins_overhaul_l10_hinges($faq['answer'])) {
-            $markup .= '<p class="twins-l10-callout twins-l10-callout__body">' . esc_html($faq['answer']) . '</p>';
+            $markup .= '<p class="twins-l10-callout">' . esc_html($faq['answer']) . '</p>';
         } else {
             $markup .= '<p>' . esc_html($faq['answer']) . '</p>';
         }

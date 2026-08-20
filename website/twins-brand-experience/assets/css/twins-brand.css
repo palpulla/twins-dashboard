@@ -4910,11 +4910,9 @@ body.twins-brand-experience .twins-l10-stats--inline li:not(.twins-l10-stat--lea
   body.twins-brand-experience .twins-l10-bar { flex-direction: column; }
   body.twins-brand-experience .twins-l10-bar__segment {
     flex: 1 1 auto;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: baseline;
+    align-items: flex-start;
     justify-content: flex-start;
-    gap: 4px 12px;
+    gap: 4px;
     padding: 14px 16px;
     text-align: left;
   }
