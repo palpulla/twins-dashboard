@@ -257,7 +257,18 @@ foreach ($experience->markets()->selectable($environment) as $twinsNavMarketKey 
 }
 
 // Panel-foot hub link, shown only when the panel has no metro columns (main).
-$twinsNavAreaHub = ['All service areas', 'service-area'];
+//
+// Gated on the markets whose route tables actually own a 'service-area' key.
+// The route adapters are fail-closed by design -- route() throws on an unknown
+// key rather than emitting a dead href -- so offering a hub a market does not
+// have is a fatal, not a broken link. Retired Kentucky has neither a metro nor
+// a hub route, and its archived subsite must keep composing its chrome, so it
+// gets the market cards alone. Same shape as $twinsNavServiceAvailability
+// above: a per-market statement of what its route table carries.
+$twinsNavAreaHubMarkets = ['main', 'wi', 'il-preview'];
+$twinsNavAreaHub = in_array($marketKey, $twinsNavAreaHubMarkets, true)
+    ? ['All service areas', 'service-area']
+    : null;
 
 $resourceItems = [
     ['Reviews', 'reviews'],

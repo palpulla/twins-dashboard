@@ -16,7 +16,6 @@
   --twins-soft: #eef3f8;
   --twins-yellow-soft: #fff5c7;
   --twins-line: #c9d4df;
-  --twins-max: 1240px;
 }
 
 :is(
@@ -29,13 +28,17 @@
   overflow: clip;
 }
 
+/* The shell's gutter is the shared contract in twins-brand.css
+   (`padding-inline: var(--twins-content-shell)`), so this family no longer
+   carries its own 1240px maximum or its own 56/28/20px mobile widths. Keeping
+   them here is what made the cost and builder pages start their copy 40px
+   inboard of every other page at 1920px and 14px from the edge at 390px. */
 :is(
   body.twins-brand-route-cost-madison,
   body.twins-brand-route-cost-milwaukee,
   body.twins-brand-route-builder
 ) .twins-overhaul-shell {
-  width: min(calc(100% - 56px), var(--twins-max));
-  margin-inline: auto;
+  width: 100%;
 }
 
 :is(
@@ -1112,9 +1115,12 @@ body.twins-brand-route-builder .twins-builder-hero p:last-child {
   font-weight: 700;
 }
 
+/* Inside the shell, so the page gutter is already spent: these cap the measure
+   only, they do not re-gutter. */
 body.twins-brand-route-builder .twins-builder__truth,
 body.twins-brand-route-builder .twins-builder__fallback {
-  width: min(calc(100% - 56px), 920px);
+  width: 100%;
+  max-width: 920px;
   margin: 0 auto 22px;
 }
 
@@ -1144,7 +1150,7 @@ body.twins-brand-route-builder .twins-builder__fallback a {
 }
 
 body.twins-brand-route-builder .twins-builder__app {
-  width: min(calc(100% - 56px), var(--twins-max));
+  width: 100%;
   min-height: 520px;
   margin: 0 auto clamp(56px, 8vw, 110px);
   padding: clamp(24px, 4vw, 52px);
@@ -1820,7 +1826,11 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-preview-notice {
   :is(
     body.twins-brand-route-cost-madison,
     body.twins-brand-route-cost-milwaukee
-  ) :where(.twins-cost-hero__grid, .twins-cost-answer__grid, .twins-cost-service-area__grid) {
+  /* `:is()` not `:where()`: the base rules for these three grids are (0,2,1),
+     so a zero-specificity `:where()` list never overrode them and the
+     `minmax(330px, …)` / `minmax(360px, …)` columns survived down to 390px,
+     pushing the method card and the hero art past the right edge. */
+  ) :is(.twins-cost-hero__grid, .twins-cost-answer__grid, .twins-cost-service-area__grid) {
     grid-template-columns: 1fr;
   }
 
@@ -1894,14 +1904,6 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-preview-notice {
 @media (max-width: 680px) {
   :is(
     body.twins-brand-route-cost-madison,
-    body.twins-brand-route-cost-milwaukee,
-    body.twins-brand-route-builder
-  ) .twins-overhaul-shell {
-    width: min(calc(100% - 28px), var(--twins-max));
-  }
-
-  :is(
-    body.twins-brand-route-cost-madison,
     body.twins-brand-route-cost-milwaukee
   ) .twins-cost-hero__actions {
     align-items: stretch;
@@ -1918,7 +1920,7 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-preview-notice {
   :is(
     body.twins-brand-route-cost-madison,
     body.twins-brand-route-cost-milwaukee
-  ) :where(
+  ) :is(
     .twins-cost-promise ul,
     .twins-cost-samples,
     .twins-cost-factor-grid,
@@ -1954,12 +1956,7 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-preview-notice {
     width: 100%;
   }
 
-  body.twins-brand-route-builder :where(.twins-builder__truth, .twins-builder__fallback) {
-    width: calc(100% - 28px);
-  }
-
   body.twins-brand-route-builder .twins-builder__app {
-    width: calc(100% - 28px);
     min-height: 0;
     padding: 22px 16px;
   }
@@ -2031,23 +2028,6 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-preview-notice {
 }
 
 @media (max-width: 320px) {
-  :is(
-    body.twins-brand-route-cost-madison,
-    body.twins-brand-route-cost-milwaukee,
-    body.twins-brand-route-builder
-  ) .twins-overhaul-shell {
-    width: calc(100% - 20px);
-  }
-
-  body.twins-brand-route-builder :where(
-    .twins-builder__truth,
-    .twins-builder__fallback,
-    .twins-builder__app
-  ) {
-    width: calc(100% - 20px);
-    max-width: 100%;
-  }
-
   body.twins-brand-route-builder :where(.twins-builder__collection-grid, .twins-builder__option-grid) {
     grid-template-columns: 1fr;
   }

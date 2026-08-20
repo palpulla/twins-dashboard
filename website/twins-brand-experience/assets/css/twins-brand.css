@@ -49,7 +49,33 @@
 html { scroll-behavior: smooth; }
 body.twins-brand-experience {
   --twins-header-height: 118px;
-  --twins-content-shell: max(28px, calc((100vw - 1320px) / 2));
+
+  /* THE container contract. Nothing else defines a page gutter.
+     A top-level section is full-bleed (it owns its own background) and carries
+     its gutter as `padding-inline: var(--twins-content-shell)`. No top-level
+     section may centre itself with `width` + `margin-inline: auto` — that is
+     what the `.twins-brand-page` reset below punished on the catalog family.
+     Inner prose blocks cap themselves with `max-width: var(--twins-measure)`
+     and `margin-inline: auto`; they are grandchildren, so the reset never
+     reaches them. Every formula is written against `100vw` so the two halves
+     of the site can agree pixel-for-pixel when a classic scrollbar is present. */
+  --twins-shell-max: 1320px;
+  --twins-shell-gutter: 28px;
+  --twins-content-shell: max(
+    var(--twins-shell-gutter),
+    calc((100vw - var(--twins-shell-max)) / 2)
+  );
+
+  /* Deliberately wider, named, and used only by the two full-width strips. */
+  --twins-shell-max-wide: 1450px;
+  --twins-content-shell-wide: max(
+    var(--twins-shell-gutter),
+    calc((100vw - var(--twins-shell-max-wide)) / 2)
+  );
+
+  /* Prose measure. One value for every body-copy block. */
+  --twins-measure: 68ch;
+
   margin: 0;
 }
 body.twins-brand-experience :where(
@@ -413,15 +439,28 @@ body.twins-brand-experience .twins-brand-market-menu-panel small {
 .twins-brand-nav-panel--wide { min-width: 520px; grid-template-columns: repeat(2, minmax(210px, 1fr)); column-gap: 8px; }
 
 /* ---- Service Area panel shell ------------------------------------------- */
-/* The generic panel is left:50% / translate(-50%). A wide panel on the last
-   trigger would run off the right edge, so anchor right. Both the closed and
-   the open transform must be overridden, and the open override must out-specify
+/* The generic panel is left:50% / translate(-50%), anchored to its own nav
+   group. That works for a 520px panel and fails for this one: the Service Area
+   group's right edge sits at x=699 on a 1201px laptop and x=873 on a 1440, so
+   right:0 on a 940px panel put its left edge at -241px / -67px. Negative left
+   does not create page scroll, so the whole first column of Madison towns was
+   simply unreachable. Measured before the fix: 241px clipped at 1201, 165 at
+   1280, 81 at 1366, 67 at 1440, 62 from 1600 up.
+   The fix is to stop anchoring to a 151px trigger. The group goes static, which
+   makes the sticky header (full viewport width) the containing block, and the
+   panel hangs off the header's own gutter. It therefore clears the market strip
+   instead of overlapping it -- the other three panels are narrow enough to keep
+   their tighter drop, and a 940px panel reads better as a full-header sheet.
+   Both the closed and the open transform must be overridden, and the open
+   override must out-specify
    .twins-brand-nav-trigger[aria-expanded="true"] + .twins-brand-nav-panel (0,2,1)
    -- prefixing with the group class gives 0,3,1. */
+.twins-brand-nav-group--areas { position: static; }
 .twins-brand-nav-group--areas .twins-brand-nav-panel--areas {
+  top: calc(100% + 4px);
   left: auto;
-  right: 0;
-  width: min(940px, calc(100vw - 40px));
+  right: clamp(16px, 3vw, 48px);   /* the mainbar's own padding-inline */
+  width: min(940px, calc(100vw - 2 * clamp(16px, 3vw, 48px)));
   padding: 16px 20px 18px;
   transform: translate(0, -8px);
 }
@@ -436,7 +475,7 @@ body.twins-brand-experience .twins-brand-market-menu-panel small {
   scrollbar-gutter: stable;
 }
 .twins-brand-nav-panel--areas.twins-brand-nav-panel--cards-only {
-  width: min(620px, calc(100vw - 40px));
+  width: min(620px, calc(100vw - 2 * clamp(16px, 3vw, 48px)));
 }
 
 .twins-brand-area-columns {
@@ -529,8 +568,16 @@ body.twins-brand-experience .twins-brand-market-menu-panel small {
   background: var(--twins-navy-950);
   border-color: var(--twins-gold);
 }
+/* A gold ring on the gold pill fill is no indicator at all, but the navy-950
+   ring this first shipped with was worse: outline-offset puts the ring on the
+   panel, and navy-950 on navy-900 is 1.23:1, invisible. Invert the pill to its
+   hover colours instead -- 10.88:1 of changed pixels -- and the gold ring then
+   sits on navy at 8.82:1. Same technique as the town links above. */
 .twins-brand-nav-panel--areas :is(.twins-brand-area-hub, .twins-brand-area-jump):focus-visible {
-  outline: 3px solid var(--twins-navy-950);
+  color: var(--twins-gold);
+  background: var(--twins-navy-950);
+  border-color: var(--twins-gold);
+  outline: 3px solid var(--twins-gold);
   outline-offset: 2px;
 }
 .twins-brand-area-card {
@@ -1688,6 +1735,86 @@ body.twins-brand-experience .twins-location-reviews .twins-brand-kicker { color:
 .twins-brand-article-services {
   padding: var(--twins-section-space) var(--twins-content-shell);
   background: #f4ead6;
+}
+
+/* The legacy `.twins-overhaul-shell` container family, brought onto the same
+   contract as the brand templates.
+
+   Three classifications still emit this markup: `legal-preserve` (privacy
+   policy, terms, ADA standards, thank-you, per region — ~17 URLs, rendered by
+   the host's templates/article.php), `cost-madison` / `cost-milwaukee`, and
+   `builder`. All three pass twins_overhaul_uses_brand_chrome(), so all three
+   load this stylesheet — but only cost and builder also load
+   twins-brand-families.css, which is where the shell's width used to live.
+   `legal-preserve` fell through every gate in renderers.php and so rendered an
+   unstyled <div>: zero gutter on both sides at every width, and a
+   188-character line at 1920px.
+
+   The container is defined here rather than added to the enqueue list because
+   this is the one stylesheet all three routes already load, because widening
+   the enqueue would also pull the legacy chrome that the brand header
+   replaces, and because the contract then comes from the same tokens as every
+   other template instead of a second, divergent one.
+
+   The shell owns the gutter (not the section) because two of the container
+   families wrap shells in sections that are not `.twins-overhaul-section` —
+   `.twins-cost-hero`, `.twins-cost-promise`, `.twins-builder-hero`. Putting the
+   gutter on the shell covers every one of them with a single rule. */
+body.twins-brand-experience .twins-overhaul-main {
+  width: 100%;
+  overflow-x: clip;
+  color: var(--twins-ink);
+  background: var(--twins-cream);
+}
+body.twins-brand-experience .twins-overhaul-section {
+  width: 100%;
+  padding-block: clamp(56px, 7vw, 96px);
+}
+body.twins-brand-experience .twins-overhaul-shell {
+  width: 100%;
+  min-width: 0;
+  margin-inline: 0;
+  padding-inline: var(--twins-content-shell);
+}
+body.twins-brand-experience .twins-overhaul-editorial__header {
+  padding-block: clamp(64px, 8vw, 118px);
+  color: var(--twins-white);
+  background-color: var(--twins-navy-900);
+  background-image: radial-gradient(circle at 88% 18%, rgba(255, 200, 61, .18), transparent 31%), repeating-linear-gradient(0deg, transparent 0 78px, rgba(255, 255, 255, .05) 79px 83px);
+}
+body.twins-brand-experience .twins-overhaul-eyebrow {
+  margin: 0 0 14px;
+  color: var(--twins-gold);
+  font-size: .82rem;
+  font-weight: 1000;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+body.twins-brand-experience .twins-overhaul-title {
+  max-width: 20ch;
+  margin: 0;
+  color: var(--twins-white);
+  font-family: 'Lilita One', Impact, sans-serif;
+  font-weight: 400;
+  font-size: clamp(2.6rem, 5.4vw, 5.4rem);
+  line-height: 1.03;
+  letter-spacing: .01em;
+  text-transform: uppercase;
+}
+body.twins-brand-experience .twins-overhaul-original-content { max-width: var(--twins-measure); }
+body.twins-brand-experience .twins-overhaul-original-content :where(h2, h3) {
+  margin: 1.8em 0 .5em;
+  color: var(--twins-navy-950);
+}
+body.twins-brand-experience .twins-overhaul-original-content :where(h2) { font-size: clamp(1.7rem, 3vw, 2.3rem); }
+body.twins-brand-experience .twins-overhaul-original-content :where(p, li) { line-height: 1.8; }
+body.twins-brand-experience .twins-overhaul-original-content :where(img, iframe, video) { max-width: 100%; height: auto; }
+body.twins-brand-experience .twins-overhaul-original-content :where(pre) { max-width: 100%; overflow-x: auto; }
+body.twins-brand-experience .twins-overhaul-original-content :where(table) {
+  max-width: 100%;
+  display: block;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
 }
 
 /* Blog index: branded hero, illustrated card grid, and pill pagination. */

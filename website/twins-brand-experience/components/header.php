@@ -86,7 +86,7 @@ body:has(.twins-brand-header) :where(
                 </div>
               <?php endforeach; ?>
             </div>
-            <?php if ($twinsNavAreaMetros === []): ?>
+            <?php if ($twinsNavAreaMetros === [] && $twinsNavAreaHub !== null): ?>
               <?php [$twinsNavAreaHubLabel, $twinsNavAreaHubRoute] = $twinsNavAreaHub; ?>
               <div class="twins-brand-area-foot">
                 <a class="twins-brand-area-hub" href="<?= htmlspecialchars($experience->route($twinsNavAreaHubRoute, $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($twinsNavAreaHubLabel, ENT_QUOTES, 'UTF-8') ?></a>
@@ -176,7 +176,7 @@ body:has(.twins-brand-header) :where(
           <?php foreach ($twinsNavAreaMarkets as $twinsNavAreaMarket): ?>
             <a class="twins-brand-drawer-jump" href="<?= htmlspecialchars($experience->route($twinsNavAreaMarket['key'], $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($twinsNavAreaMarket['label'], ENT_QUOTES, 'UTF-8') ?></a>
           <?php endforeach; ?>
-          <?php if ($twinsNavAreaMetros === []): ?>
+          <?php if ($twinsNavAreaMetros === [] && $twinsNavAreaHub !== null): ?>
             <?php [$twinsNavAreaHubLabel, $twinsNavAreaHubRoute] = $twinsNavAreaHub; ?>
             <a class="twins-brand-drawer-hub" href="<?= htmlspecialchars($experience->route($twinsNavAreaHubRoute, $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($twinsNavAreaHubLabel, ENT_QUOTES, 'UTF-8') ?></a>
           <?php endif; ?>
