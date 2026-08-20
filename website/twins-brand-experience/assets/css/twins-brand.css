@@ -1268,7 +1268,7 @@ body.twins-brand-experience .twins-brand-careers-hero a.twins-brand-cta {
   text-transform: uppercase;
 }
 .twins-brand-service-cost-range span { color: var(--twins-gold-strong); font-size: .5em; }
-.twins-brand-service-cost-copy { max-width: 880px; display: grid; gap: 14px; margin-top: 24px; }
+.twins-brand-service-cost-copy { max-width: var(--twins-measure); display: grid; gap: 14px; margin-top: 24px; }
 .twins-brand-service-cost-copy p { color: var(--twins-ink); font-size: 1.08rem; }
 .twins-brand-service-safety-section { background: var(--twins-navy-950); }
 .twins-brand-service-reviews { background: var(--twins-white); border-top: 1px solid rgba(7, 29, 59, .12); }

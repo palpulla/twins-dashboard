@@ -510,11 +510,22 @@ body.twins-brand-route-builder .twins-overhaul-eyebrow {
   font-weight: 850;
 }
 
+/* One measure for running copy on the cost guide too. `ch` is font-relative, so
+   each block gets 68 of its own characters; this only ever narrows a block that
+   was already wider than that. The financing paragraph was 97ch and the
+   full disclaimer 169ch at 1920px. */
+:is(
+  body.twins-brand-route-cost-madison,
+  body.twins-brand-route-cost-milwaukee
+) .twins-overhaul-shell :where(p, li, dd) {
+  max-width: var(--twins-measure);
+}
+
 :is(
   body.twins-brand-route-cost-madison,
   body.twins-brand-route-cost-milwaukee
 ) .twins-cost-section-lede {
-  max-width: 820px;
+  max-width: var(--twins-measure);
   margin: 18px 0 0;
   color: var(--twins-muted);
   font-size: 1.04rem;
