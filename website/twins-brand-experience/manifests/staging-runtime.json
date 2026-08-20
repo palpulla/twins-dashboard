@@ -15,8 +15,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/assets/css/twins-brand.css",
       "destination": "twins-brand-experience/assets/css/twins-brand.css",
-      "size": 153982,
-      "sha256": "caeb1f505da2cdd31c21ada32cd020c29ea0bded8075a2ed9f142e82dc279f26"
+      "size": 166904,
+      "sha256": "9dbb056dd8152389a3612a44f171c1754ae7a54827cfbefd94a71df189962a6e"
     },
     {
       "role": "deploy",
@@ -337,8 +337,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/components/home/closing.php",
       "destination": "twins-brand-experience/components/home/closing.php",
-      "size": 4547,
-      "sha256": "7c431ae2b0ab90bddb0ea3a47e2d045eca4acd60873d9bb691a3b3c08e3e079f"
+      "size": 4671,
+      "sha256": "754454f84c13c48c7f2d4bb844b1bdea4a183b70951a6d72a4c8b29da38e64b9"
     },
     {
       "role": "deploy",
@@ -351,8 +351,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/components/home/service-journey.php",
       "destination": "twins-brand-experience/components/home/service-journey.php",
-      "size": 1699,
-      "sha256": "7b1bdbf00c6eff7701eb61ce98ad52ec33d762b98c0453e73bfa38e4f002510a"
+      "size": 2536,
+      "sha256": "6f27c15169e187a2e23b99b734d46ba951a93521ce04fdecde6089ab3ebaaf64"
     },
     {
       "role": "deploy",
@@ -372,8 +372,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/components/home/why-doors.php",
       "destination": "twins-brand-experience/components/home/why-doors.php",
-      "size": 5232,
-      "sha256": "b7f5ba1aa50081042670e3eae8e1386b65283b3deb802f504fc3b9457ee8169d"
+      "size": 5249,
+      "sha256": "ba1f9b2ecd82d60054ac222291211de12b59b4bd4acc0eca4c45ad033848f819"
     },
     {
       "role": "deploy",
