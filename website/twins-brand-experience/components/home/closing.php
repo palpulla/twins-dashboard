@@ -1,4 +1,4 @@
-<?php declare(strict_types=1); ?>
+<?php declare(strict_types=1); require_once dirname(__DIR__) . '/door-art.php'; ?>
 <section class="twins-brand-membership-scene" data-home-scene="membership" aria-labelledby="twins-brand-membership-title" data-home-reveal>
   <div>
     <span class="twins-brand-kicker">Plan ahead</span>
@@ -13,6 +13,7 @@
     <a class="twins-brand-cta" href="<?= htmlspecialchars($homeRoutes['maintenance-plans'], ENT_QUOTES, 'UTF-8') ?>">See Plan Details</a>
   </div>
   <aside>
+    <?= twins_brand_door_art('roller', 'twins-brand-membership-roller') ?>
     <span>New door now. Payments monthly.</span>
     <p>A new insulated door is a real purchase, and you should not have to wait for the perfect month to make it. We offer financing through GoodLeap, with monthly payments available on new doors. Ask about it when you book, or when your tech quotes the job.</p>
     <a href="<?= htmlspecialchars($homeRoutes['financing'], ENT_QUOTES, 'UTF-8') ?>">View Financing</a>

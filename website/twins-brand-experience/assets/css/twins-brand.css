@@ -3355,6 +3355,30 @@ body.twins-brand-experience .twins-brand-review-proof .twins-brand-kicker {
     linear-gradient(180deg, transparent 0, rgba(7,28,56,.07) 100%);
 }
 
+/* T0 + T4 — the gold band gets the torsion spring a maintenance plan tightens. */
+.twins-brand-membership-scene {
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat;
+  background-position: 0 0, 0 0, 0 0, 0 0, 0 0;
+  background-size: 100% 6px, 100% 24px, 100% 88px, 100% 100%, var(--twins-stile) 100%;
+  background-image:
+    var(--twins-seam),
+    linear-gradient(180deg, transparent 0 9px, rgba(7,28,56,.30) 9px 15px, transparent 15px),
+    repeating-linear-gradient(74deg, transparent 0 6px, rgba(7,28,56,.26) 6px 9px,
+      rgba(7,28,56,.09) 9px 12px, transparent 12px 18px),
+    linear-gradient(180deg, #ffd066 0, var(--twins-gold) 40%, #f0b120 100%),
+    linear-gradient(90deg, rgba(7,28,56,.09) 0 1px, rgba(255,255,255,.40) 1px 3px, transparent 3px);
+}
+/* Kills the dead gold rectangle above the financing card by geometry rather
+   than by covering it, and puts the roller in the space that opens. */
+.twins-brand-membership-scene > aside {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 14px;
+}
+.twins-brand-membership-roller { width: clamp(120px, 40%, 168px); height: auto; margin: 0 0 auto auto; opacity: .9; }
+
 .twins-brand-company-story,
 .twins-brand-service-showcase,
 .twins-brand-closing-scene,
@@ -3705,6 +3729,8 @@ body.twins-brand-experience :is(
   }
   .twins-brand-closing-actions { grid-template-columns: 1fr 1fr; }
   .twins-brand-closing-actions h2 { grid-column: 1 / -1; }
+  .twins-brand-membership-scene > aside { justify-content: flex-start; }
+  .twins-brand-membership-roller { margin: 0 0 8px; }
 }
 
 @media (max-width: 480px) {
