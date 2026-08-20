@@ -335,7 +335,9 @@ test('location sections keep a compact vertical rhythm without dead bands', () =
   assert.match(css, /\.twins-location-services\s*\{[^}]*padding-block:\s*clamp\(48px, 6vw, 64px\)/);
   assert.match(css, /\.twins-location-local-proof\s*\{[^}]*padding-block:\s*clamp\(48px, 6vw, 64px\)/);
   assert.match(css, /\.twins-location-page :is\(\.twins-location-reviews, \.twins-location-map-section, \.twins-location-neighbors, \.twins-location-resources, \.twins-brand-faq\)\s*\{[^}]*padding-block:\s*clamp\(48px, 6vw, 64px\)/);
-  assert.match(css, /\.twins-location-final-cta\s*\{[^}]*padding:\s*72px clamp\(140px, 13vw, 210px\)/);
+  // The closing CTA used to run its own gutter scale (210 / 187 / 140 / 96 /
+  // 20px). It is on the shared container contract now, so the pin follows it.
+  assert.match(css, /\.twins-location-final-cta\s*\{[^}]*padding:\s*72px var\(--twins-content-shell\)/);
   assert.match(css, /\.twins-location-map-frame\s*\{[\s\S]{0,400}?border:\s*2px solid var\(--twins-navy-950\)/);
   assert.match(css, /\.twins-location-map-frame::before\s*\{[\s\S]{0,400}?repeating-linear-gradient/);
   assert.match(template, /<div class="twins-location-map-frame">\s*<iframe class="twins-brand-location-map"/);
@@ -352,7 +354,10 @@ test('service cards expose one visible touch-sized link without nested controls'
 });
 
 test('recovery CSS locks alignment and contained image proportions', () => {
-  assert.match(css, /--twins-location-max:\s*1180px/);
+  // The location family's 1180px maximum was one of five competing maxima; it
+  // is re-pointed at the single contract token, so the two consumers below now
+  // resolve to exactly var(--twins-content-shell).
+  assert.match(css, /--twins-location-max:\s*var\(--twins-shell-max\)/);
   assert.match(css, /padding-inline:\s*max\(var\(--twins-location-gutter\),\s*calc\(\(100vw - var\(--twins-location-max\)\)\s*\/\s*2\)\)/);
   assert.match(css, /\.twins-location-hero\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1\.15fr\) minmax\(320px,\s*\.85fr\)/);
   assert.match(css, /\.twins-location-hero-media\s*\{[^}]*max-height:\s*460px/);
@@ -425,14 +430,14 @@ test('responsive character zones clear service links and final CTA controls', ()
   const mobile = mediaRules(768);
   assert.match(mobile, /\.twins-location-services\s*\{[^}]*padding-bottom:\s*128px/);
   assert.match(mobile, /\.twins-location-twin--services\s*\{[^}]*bottom:\s*14px[^}]*width:\s*56px/);
-  assert.match(mobile, /\.twins-location-final-cta\s*\{[^}]*padding:\s*60px 96px 170px/);
+  assert.match(mobile, /\.twins-location-final-cta\s*\{[^}]*padding:\s*60px var\(--twins-content-shell\) 170px/);
   assert.match(mobile, /\.twins-location-twin--final-left\s*\{[^}]*bottom:\s*0[^}]*width:\s*56px/);
   assert.match(mobile, /\.twins-location-twin--final-right\s*\{[^}]*bottom:\s*0[^}]*width:\s*60px/);
 
   const compact = mediaRules(480);
   assert.match(compact, /\.twins-location-services\s*\{[^}]*padding-bottom:\s*56px/);
   assert.match(compact, /\.twins-location-page \.twins-location-twin--services\s*\{[^}]*display:\s*none/);
-  assert.match(compact, /\.twins-location-final-cta\s*\{[^}]*padding:\s*54px 20px 150px/);
+  assert.match(compact, /\.twins-location-final-cta\s*\{[^}]*padding:\s*54px var\(--twins-content-shell\) 150px/);
   assert.match(compact, /\.twins-location-twin--final-left\s*\{[^}]*bottom:\s*0[^}]*width:\s*48px/);
   assert.match(compact, /\.twins-location-twin--final-right\s*\{[^}]*bottom:\s*0[^}]*width:\s*54px/);
 

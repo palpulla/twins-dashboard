@@ -116,7 +116,7 @@ $escape = static function (string $value): string {
         <h2 id="twins-catalog-compare">Which collection fits your home?</h2>
         <p>Option counts come straight from each manufacturer record. Open a collection or the door designer to see every choice.</p>
       </div>
-      <div class="twins-brand-catalog-compare-scroll">
+      <div class="twins-brand-catalog-compare-scroll" role="region" aria-labelledby="twins-catalog-compare" tabindex="0">
         <table class="twins-brand-catalog-compare">
           <thead>
             <tr><th scope="col">Collection</th><th scope="col">Panels and designs</th><th scope="col">Colors</th><th scope="col">Windows</th><th scope="col">Glass</th><th scope="col">Hardware</th></tr>

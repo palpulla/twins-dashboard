@@ -568,6 +568,30 @@ function twins_overhaul_prepare_family_content(string $content): string {
  * The existing factual body is reduced to inert structural content, then
  * inserted once beneath the rebuilt document H1.
  *
+ * ---------------------------------------------------------------------------
+ * DEAD CODE. DO NOT RE-ENABLE WITHOUT READING THIS FIRST.
+ *
+ * This is the site's third container system. It emits `.twins-family-*` inside
+ * `.twins-overhaul-shell`, and it is reachable only from
+ * templates/{service,location,trust}.php, none of which
+ * twins_overhaul_render_classified_content() calls any more -- `service`,
+ * `location` and `trust` all go to the portable renderer now.
+ *
+ * It is left in place rather than deleted because the three template shims are
+ * still on disk and deleting the function under them would fatal if anything
+ * ever included one directly. It is NOT neutralised: calling it still returns
+ * markup.
+ *
+ * The gutter hazard it used to carry is gone. `.twins-overhaul-shell` now has a
+ * container contract in twins-brand-experience/assets/css/twins-brand.css
+ * ("The legacy `.twins-overhaul-shell` container family"), which every route
+ * that passes twins_overhaul_uses_brand_chrome() loads -- so if this function
+ * were re-enabled it would inherit the canonical 1320/28 rail instead of the
+ * zero-gutter, 188-character-line body that `legal-preserve` used to render.
+ * What it would still lack is the brand chrome's own section rhythm, so any
+ * re-enablement should route through the portable renderer instead.
+ * ---------------------------------------------------------------------------
+ *
  * @param string $family Fixed family key.
  * @param array  $context Proven request context.
  * @param string $content Original rendered WordPress content.
