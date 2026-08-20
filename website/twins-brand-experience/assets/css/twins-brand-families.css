@@ -1858,17 +1858,25 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-preview-notice {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  /* :is(), not :where(), in the next two rules. A zero-specificity :where() lost
+     to the desktop rules above -- (0,1,1) against (0,3,2) and (0,2,1) -- so the
+     span-2/span-3 placement and the 4-column climate grid survived every
+     breakpoint. Measured: at 320px the factor grid computed `228px 0px 0px`,
+     giving the five cards two different right edges (46px and 28px) against a
+     28px gutter, and the climate grid stayed four 166px columns at 768px. :is()
+     takes the specificity of its most specific argument, which ties the desktop
+     rule and wins on source order. */
   :is(
     body.twins-brand-route-cost-madison,
     body.twins-brand-route-cost-milwaukee
-  ) .twins-cost-factor-grid :where(article, article:nth-last-child(-n+2)) {
+  ) .twins-cost-factor-grid :is(article, article:nth-last-child(-n+2)) {
     grid-column: auto;
   }
 
   :is(
     body.twins-brand-route-cost-madison,
     body.twins-brand-route-cost-milwaukee
-  ) :where(.twins-cost-climate-grid, .twins-cost-decision__grid) {
+  ) :is(.twins-cost-climate-grid, .twins-cost-decision__grid) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -1898,7 +1906,10 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-preview-notice {
     max-height: 520px;
   }
 
-  body.twins-brand-route-catalog-preserve :where(
+  /* :is(), not :where(). See the note on the 680px block below: at (0,1,1) this
+     never beat the (0,2,1) desktop rule, so the collection grid stayed three
+     columns all the way down. */
+  body.twins-brand-route-catalog-preserve :is(
     .twins-brand-catalog-grid,
     .twins-brand-catalog-gallery
   ) {
@@ -2021,7 +2032,16 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-preview-notice {
     width: 100%;
   }
 
-  body.twins-brand-route-catalog-preserve :where(
+  /* :is(), not :where(). `body.twins-brand-route-catalog-preserve :where(...)`
+     is (0,1,1); the desktop rule that sets `repeat(3, minmax(0, 1fr))` is
+     (0,2,1), so it won at every width regardless of source order and the phone
+     never got its one-column catalog. Measured before the change: at 320px the
+     collection grid computed three 72px tracks inside a 264px content box, cards
+     two and three landing at x=240 and beyond the viewport, their titles clipped
+     by the page's overflow clip; the product gallery computed three 76px tracks.
+     :is() takes the specificity of its most specific argument, so this now ties
+     the desktop rule and wins on source order, which is what was intended. */
+  body.twins-brand-route-catalog-preserve :is(
     .twins-brand-catalog-grid,
     .twins-brand-catalog-gallery,
     .twins-brand-catalog-facts--large,
