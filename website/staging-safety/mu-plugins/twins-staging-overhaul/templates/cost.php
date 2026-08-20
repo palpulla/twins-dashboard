@@ -254,7 +254,7 @@ function twins_overhaul_render_cost_page(string $market, array $context): string
     $markup .= '</div></div></section>';
 
     $markup .= '<section class="twins-overhaul-section twins-cost-decision"><div class="twins-overhaul-shell">';
-    $markup .= '<p class="twins-overhaul-eyebrow">' . esc_html($data['decisionEyebrow']) . '</p><h2>' . esc_html($data['decisionHeading']) . '</h2><p class="twins-cost-section-lede">' . esc_html($data['decisionLede']) . '</p><div class="twins-cost-decision__grid">';
+    $markup .= '<p class="twins-overhaul-eyebrow twins-l10-kicker">' . esc_html($data['decisionEyebrow']) . '</p><h2>' . esc_html($data['decisionHeading']) . '</h2><p class="twins-cost-section-lede">' . esc_html($data['decisionLede']) . '</p><div class="twins-cost-decision__grid">';
     foreach ($data['decisionCards'] as $index => $card) {
         $class = $index === 1 ? ' twins-cost-decision-card--replace' : '';
         $markup .= '<article class="twins-overhaul-card twins-cost-decision-card' . $class . '"><span class="twins-cost-decision-tag">' . esc_html($card['tag']) . '</span><h3>' . esc_html($card['title']) . '</h3><ul>';
@@ -266,7 +266,7 @@ function twins_overhaul_render_cost_page(string $market, array $context): string
     $markup .= '</div></div></section>';
 
     $markup .= '<section class="twins-overhaul-section twins-cost-climate"><div class="twins-overhaul-shell">';
-    $markup .= '<p class="twins-overhaul-eyebrow">' . esc_html($data['climateEyebrow']) . '</p><h2>' . esc_html($data['climateHeading']) . '</h2><p class="twins-cost-section-lede">' . esc_html($data['climateLede']) . '</p><div class="twins-cost-climate-grid">';
+    $markup .= '<p class="twins-overhaul-eyebrow twins-l10-kicker">' . esc_html($data['climateEyebrow']) . '</p><h2>' . esc_html($data['climateHeading']) . '</h2><p class="twins-cost-section-lede">' . esc_html($data['climateLede']) . '</p><div class="twins-cost-climate-grid">';
     foreach ($data['climateCards'] as $index => $card) {
         $markup .= '<article class="twins-cost-climate-card"><strong>' . esc_html(str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT)) . '</strong><h3>' . esc_html($card['title']) . '</h3><p>' . esc_html($card['copy']) . '</p></article>';
     }
@@ -308,7 +308,7 @@ function twins_overhaul_render_cost_page(string $market, array $context): string
 
     $markup .= '<section class="twins-overhaul-section twins-cost-service-area" id="twins-cost-coverage"><div class="twins-overhaul-shell twins-cost-service-area__grid">';
     $markup .= '<div class="twins-cost-zip" data-twins-overhaul-zip>';
-    $markup .= '<p class="twins-overhaul-eyebrow">' . esc_html($data['coverageEyebrow']) . '</p><h2>Do we serve your ZIP code?</h2>';
+    $markup .= '<p class="twins-overhaul-eyebrow twins-l10-kicker">' . esc_html($data['coverageEyebrow']) . '</p><h2>Do we serve your ZIP code?</h2>';
     $markup .= '<p>Enter your ZIP and we will point you toward the right Twins service area.</p>';
     $markup .= '<label for="twins-cost-zip-' . esc_attr($data['key']) . '">ZIP code</label>';
     $markup .= '<div class="twins-cost-zip__controls"><input id="twins-cost-zip-' . esc_attr($data['key']) . '" data-twins-zip-input inputmode="numeric" autocomplete="postal-code" maxlength="5" pattern="[0-9]{5}"><button type="button" data-twins-zip-route>Check My ZIP</button></div>';

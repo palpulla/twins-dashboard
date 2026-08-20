@@ -4185,7 +4185,15 @@ body.twins-brand-experience :is(
   .twins-brand-journey-truck { display: none; }
   .twins-brand-home-team-person { flex-basis: 168px; height: 322px; min-height: 322px; }
   .twins-brand-home-team-media { flex-basis: 210px; height: 210px; }
-  .twins-brand-character-stage { left: auto; right: 20px; bottom: 26px; width: 64px; }
+  /* The mascot shrinks on a phone; the stage does not. This rule used to carry
+     left/right/bottom/width, left over from when .twins-brand-character-stage WAS
+     the absolutely positioned character. The stage is now `position: relative;
+     display: inline-grid` wrapping the "Meet the Team" button, so `right: 20px`
+     dragged that button 20px left of the gutter -- to x=8 at both 768px and
+     320px, against a 28px rail -- and `width: 64px` squeezed a 230px button into
+     64px, so the label rendered as "Meet the / eam" with the T clipped by the
+     scene's overflow clip. Only the character is sized here now. */
+  .twins-brand-character-stage img { width: 64px; }
   .twins-brand-door-media { min-height: 360px; }
   .twins-brand-door-photo { border-radius: 24px 24px 0 0; }
   .twins-brand-door-copy { border-radius: 0 0 24px 24px; }
@@ -4436,6 +4444,11 @@ body.twins-brand-experience {
   --twins-l10-slate: #546277;
   --twins-l10-radius: 10px;
   --twins-l10-pad: clamp(20px, 2.1vw, 24px);
+  /* The deck sets its card and callout copy at ~1.4. That is presentation
+     density; on a page it reads cramped, so this lands between the deck and
+     the site's own 1.6 and, unlike before, is one value for all three
+     components instead of 1.62 here and 1.68 there. */
+  --twins-l10-leading: 1.55;
 }
 
 /* L2 - stat card row. The primary card is inverted: navy ground, gold
@@ -4443,7 +4456,7 @@ body.twins-brand-experience {
 body.twins-brand-experience .twins-l10-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(232px, 1fr));
-  gap: 18px;
+  gap: 24px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -4497,7 +4510,7 @@ body.twins-brand-experience .twins-l10-stat .twins-l10-stat__body {
   color: var(--twins-l10-slate);
   font-size: .97rem;
   font-weight: 400;
-  line-height: 1.62;
+  line-height: var(--twins-l10-leading);
   text-transform: none;
   letter-spacing: normal;
 }
@@ -4574,7 +4587,11 @@ body.twins-brand-experience .twins-l10-bar__segment {
   background: var(--twins-white);
   text-align: center;
 }
-body.twins-brand-experience .twins-l10-bar__segment--1 { color: var(--twins-gold); background: var(--twins-navy-950); }
+/* Deck p.7 sets the navy segment WHITE, not gold, and that is not a detail:
+   gold Lilita is the lead stat card's signature, and a gold numeral in the bar
+   directly under a gold numeral in the card row makes the page argue with
+   itself about which number leads. White here, gold only up there. */
+body.twins-brand-experience .twins-l10-bar__segment--1 { color: var(--twins-white); background: var(--twins-navy-950); }
 body.twins-brand-experience .twins-l10-bar__segment--2 { background: var(--twins-gold); }
 body.twins-brand-experience .twins-l10-bar__segment--3 { background: var(--twins-l10-gold-deep); }
 body.twins-brand-experience .twins-l10-bar__segment--4 { background: var(--twins-white); box-shadow: inset 1px 0 0 var(--twins-l10-hairline); }
@@ -4603,7 +4620,7 @@ body.twins-brand-experience .twins-l10-bar__notes {
   padding: 0;
   color: var(--twins-l10-slate);
   font-size: .8rem;
-  font-weight: 700;
+  font-weight: 400;
   list-style: none;
   text-align: right;
 }
@@ -4614,7 +4631,7 @@ body.twins-brand-experience .twins-l10-callouts {
   /* The deck deploys callouts in pairs, so the track floor is wide enough
      that a third one wraps to the next row instead of squeezing the pair. */
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr));
-  gap: 18px;
+  gap: 28px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -4648,7 +4665,7 @@ body.twins-brand-experience .twins-l10-callout .twins-l10-callout__body {
   margin: 0;
   color: var(--twins-l10-slate);
   font-size: .97rem;
-  line-height: 1.68;
+  line-height: var(--twins-l10-leading);
 }
 body.twins-brand-experience .twins-l10-callout .twins-l10-callout__body + .twins-l10-callout__body { margin-top: .8em; }
 
@@ -4666,7 +4683,7 @@ body.twins-brand-experience .twins-l10-cue {
   border-radius: 0;
   box-shadow: none;
   font-size: .97rem;
-  line-height: 1.68;
+  line-height: var(--twins-l10-leading);
 }
 body.twins-brand-experience .twins-l10-cue .twins-l10-cue__label {
   margin-right: 10px;
@@ -4716,16 +4733,22 @@ body.twins-brand-experience .twins-l10-meta > span:only-child { flex: 1 1 100%; 
 /* L1 - heading stack: gold kicker, navy Lilita display, muted deck line.
    Tighter than the site default: the kicker sits close to the display. */
 body.twins-brand-experience .twins-l10-head { max-width: 100%; }
-body.twins-brand-experience .twins-l10-head .twins-l10-kicker {
+/* Metrics ride on the class alone so a kicker on a dark full-bleed section can
+   join the stack without being wrapped: two of those sections reach their own
+   eyebrow with a direct-child selector, and wrapping them would break it the
+   way the factors head was broken. Colour stays with the stack, so a dark
+   section keeps the gold its own family rule already gives it. */
+body.twins-brand-experience .twins-l10-head .twins-l10-kicker,
+body.twins-brand-experience .twins-overhaul-eyebrow.twins-l10-kicker {
   display: block;
   margin: 0 0 8px;
-  color: var(--twins-l10-ochre);
   font-size: .8rem;
   font-weight: 800;
   line-height: 1.3;
   letter-spacing: .14em;
   text-transform: uppercase;
 }
+body.twins-brand-experience .twins-l10-head .twins-l10-kicker { color: var(--twins-l10-ochre); }
 body.twins-brand-experience .twins-l10-head .twins-l10-deck {
   max-width: var(--twins-measure);
   margin: 14px 0 0;
@@ -4747,6 +4770,19 @@ body.twins-brand-experience .twins-l10-head--onDark .twins-l10-deck { color: #e8
    after this file and would otherwise draw a second card ground, a second
    padding or a cast shadow under an L10 component.
    -------------------------------------------------------------------------- */
+
+/* The factors section head is the one place the family stylesheet reaches it
+   with a direct-child selector (`.twins-cost-factors > .twins-overhaul-shell >
+   h2`), so wrapping it in the L1 stack dropped it out of the display tier and
+   left one section head at 25px while its six siblings stayed at 53px. Restore
+   the tier through the wrapper; the declarations are the family rule's own. */
+body.twins-brand-experience .twins-cost-factors > .twins-overhaul-shell > .twins-l10-head > h2 {
+  margin: 0;
+  color: var(--twins-navy);
+  font-size: clamp(2rem, 4vw, 3.3rem);
+  line-height: 1.05;
+  text-wrap: balance;
+}
 
 body.twins-brand-experience .twins-l10-stats--span {
   grid-column: 1 / -1;
@@ -4799,6 +4835,24 @@ body.twins-brand-experience .twins-cost-faq__aside.twins-l10-stat {
 }
 body.twins-brand-experience .twins-cost-faq__aside.twins-l10-stat h3 { margin: 0 0 10px; }
 body.twins-brand-experience .twins-cost-faq__aside.twins-l10-stat .twins-l10-stat__figure { margin-bottom: 4px; }
+/* The heading beside the numeral is the card's micro-label, and it was
+   rendering as a second gold Lilita line under a gold Lilita numeral: two
+   display sizes of the same colour, no label tier, and a wrap mid-phrase. The
+   deck puts a small gold caps label ABOVE the figure, so this does that. The
+   figure sits after the heading in the DOM, which reads correctly aloud, so
+   only the visual order is swapped. Gated on the figure existing: Milwaukee
+   has no count and its heading must stay a heading. */
+body.twins-brand-experience .twins-cost-faq__aside.twins-l10-stat:has(.twins-l10-stat__figure) h3 {
+  order: -1;
+  margin: 0 0 10px;
+  color: var(--twins-gold);
+  font-family: inherit;
+  font-size: .78rem;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
 
 body.twins-brand-experience .twins-cost-faq details p.twins-l10-callout {
   max-width: var(--twins-measure);
@@ -4864,7 +4918,7 @@ body.twins-brand-experience .twins-brand-service-safety.twins-l10-callout p {
   max-width: var(--twins-measure);
   color: var(--twins-l10-slate);
   font-size: 1rem;
-  line-height: 1.68;
+  line-height: var(--twins-l10-leading);
 }
 
 body.twins-brand-experience .twins-brand-service-faq .twins-l10-callout,
@@ -4921,4 +4975,43 @@ body.twins-brand-experience .twins-l10-stats--inline li:not(.twins-l10-stat--lea
 
   body.twins-brand-experience .twins-l10-callouts { grid-template-columns: 1fr; }
   body.twins-brand-experience .twins-l10-meta { justify-content: flex-start; }
+}
+
+/* ---------------------------------------------------------------------------
+   Verification pass: two corrections the container contract could not make on
+   its own. Both are presentation-only and neither changes a word of copy.
+   --------------------------------------------------------------------------- */
+
+/* 1. Decorative layers already carry aria-hidden; these five had no
+   pointer-events:none, so an invisible-to-AT graphic could still swallow a
+   click or a text selection. Measured on the rendered pages, not assumed:
+   .twins-brand-work-order (371x68 on the home story), the home offer's $0
+   glyph, .twins-brand-journey-truck (232x136), the team avatars and the door
+   art on the closing CTA. Scoped to the art itself so no aria-hidden wrapper
+   that legitimately contains interactive content is affected. */
+body.twins-brand-experience :is(
+  .twins-brand-work-order,
+  .twins-brand-journey-truck,
+  .twins-brand-door-art,
+  .twins-brand-door-avatar
+)[aria-hidden="true"],
+body.twins-brand-experience .twins-brand-home-offer > span[aria-hidden="true"] {
+  pointer-events: none;
+}
+
+/* 2. At 320px the content box is 264px, and a handful of Lilita One display
+   words are wider than that on their own: "HOMEOWNERS." in the location proof
+   heading measured 285.2px of min-content, which forced its grid track past the
+   rail and pushed the whole column's right edge to 6.8px from the screen; the
+   reviews H1, the service-area H2, the catalog H1 and the catalog product H2
+   each spilled 5 to 32px past their own box. A word that already fits is
+   untouched -- overflow-wrap only breaks a word that would otherwise overflow --
+   so this is a floor, not a restyle, and hyphens:auto gives the break a hyphen
+   wherever the document declares a language. Held at 360px so no ordinary
+   phone width (375, 390, 393, 414) is affected. */
+@media (max-width: 360px) {
+  body.twins-brand-experience :is(h1, h2, h3, .twins-brand-hero-proof, .twins-location-proof-list li span) {
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
 }
