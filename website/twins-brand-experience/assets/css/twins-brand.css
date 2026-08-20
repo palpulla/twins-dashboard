@@ -5008,10 +5008,80 @@ body.twins-brand-experience .twins-brand-home-offer > span[aria-hidden="true"] {
    untouched -- overflow-wrap only breaks a word that would otherwise overflow --
    so this is a floor, not a restyle, and hyphens:auto gives the break a hyphen
    wherever the document declares a language. Held at 360px so no ordinary
-   phone width (375, 390, 393, 414) is affected. */
+   phone width (375, 390, 393, 414) is affected.
+
+   `anywhere`, not `break-word`, and the difference is the whole fix here. Both
+   break the same words at paint time, but only `anywhere` feeds the shorter
+   result back into the element's min-content contribution. Every one of these
+   headings sits in a grid, and a grid track cannot size below its item's
+   min-content: with `break-word` the location proof track still measured
+   285.2px and the reviews hero track 283.1px inside a 264px content box, so the
+   whole column stayed off the rail even though the word itself no longer
+   spilled. */
 @media (max-width: 360px) {
   body.twins-brand-experience :is(h1, h2, h3, .twins-brand-hero-proof, .twins-location-proof-list li span) {
-    overflow-wrap: break-word;
+    overflow-wrap: anywhere;
     hyphens: auto;
   }
 }
+
+/* 3. Two colour pairs that were never readable, both caused by a rule losing the
+   cascade to a later one that was never meant to reach them. Measured from
+   rendered pixels, not from the palette. */
+
+/* 3a. The service page reuses the LOCATION page's review card markup, and the
+   location card is painted for a navy ground: quote #e8f1fb, reviewer name pure
+   white, date #b9c9dd, hairlines rgba(255,255,255,.18). .twins-brand-service-
+   reviews is white. Pixel-sampled on /garage-door-spring-repair/: the quote read
+   1.14:1 and the reviewer's name 1:1 -- white on white -- so a real customer
+   review was invisible on the page that quotes it. Same card, light ground. */
+.twins-brand-service-page .twins-brand-service-reviews .twins-location-review-card blockquote {
+  color: var(--twins-ink);
+}
+.twins-brand-service-page .twins-brand-service-reviews .twins-location-review-card strong {
+  color: var(--twins-navy-950);
+}
+.twins-brand-service-page .twins-brand-service-reviews .twins-location-review-card time {
+  color: var(--twins-muted);
+}
+.twins-brand-service-page .twins-brand-service-reviews .twins-location-review-grid,
+.twins-brand-service-page .twins-brand-service-reviews .twins-location-review-card {
+  border-color: rgba(7, 29, 59, .14);
+}
+
+/* 3b. .twins-brand-service-guarantee is a navy-900 card with a gold border, and
+   its own rule asks for a gold heading. It sits inside a section that also
+   matches `.twins-brand-service-process h2`, which is the same specificity
+   (0,1,1) and later in the file, so the generic navy-950 heading colour won and
+   the guarantee headline rendered navy on navy at 1.23:1 -- a 66px display line
+   nobody can read. Restoring the colour only: gold on navy-900 is 8.82:1. The
+   generic rule ALSO overrode the guarantee's `font-size: 2.2rem` with its
+   clamp(2.2rem, 4.6vw, 4.4rem), which is a design call, not a defect, so the
+   current scale is left alone. */
+.twins-brand-service-page .twins-brand-service-guarantee h2 { color: var(--twins-gold); }
+
+/* 4. Five places set gold TEXT on a white card. Brand law is explicit -- gold
+   never sits on white or cream -- and the measurement agrees: #ffc641 on #ffffff
+   is 1.57:1, which fails even the 3:1 large-text floor, and two of these are
+   54px and 36px display. Pixel-sampled grounds, all five #ffffff:
+
+     .twins-brand-person-role                   team page role labels
+     .twins-brand-service-steps li::marker      service page step numerals
+     .twins-brand-catalog-card > a::after       the catalog card's arrow
+     .twins-brand-process-grid article > strong careers step numerals, 54.4px
+     .twins-brand-service-cost-range span       the "to" in "$575 to $1,225", 36px
+
+   --twins-gold-strong is not the problem: it resolves to #ffc641 and is correct
+   everywhere it paints a background, a border or a shadow. Only these five use it
+   as ink on a light ground. The site already carries the right token for that --
+   --twins-l10-ochre, #8a5a00, 5.93:1 on white -- introduced with the L10 language
+   for exactly this case, so the gold family keeps reading as gold and passes. */
+body.twins-brand-experience :is(
+  .twins-brand-person-role,
+  .twins-brand-process-grid article > strong,
+  .twins-brand-service-cost-range span
+) {
+  color: var(--twins-l10-ochre);
+}
+body.twins-brand-experience .twins-brand-service-steps li::marker { color: var(--twins-l10-ochre); }
+body.twins-brand-route-catalog-preserve .twins-brand-catalog-card > a::after { color: var(--twins-l10-ochre); }
