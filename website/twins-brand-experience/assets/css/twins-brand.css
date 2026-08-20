@@ -4397,3 +4397,530 @@ body.twins-brand-experience :is(
   .twins-brand-service-hero-art *,
   .twins-brand-opener-card { animation: none !important; }
 }
+
+/* ==========================================================================
+   L10 data language
+   --------------------------------------------------------------------------
+   A port of the Twins L10 Financial Review deck (Lilita One + Nunito, cream
+   ground) onto the informational surfaces of the site: the Madison and
+   Milwaukee cost guides, the service-page direct answer and safety module,
+   the location local-proof stat, and the one leading homepage trust number.
+   Spec: docs/marketing/website-rebuild/l10-design-language.md.
+
+   The deck earns authority by being quiet, so this block is deliberately
+   flat: hairline borders instead of shadows, 10px radius, 20-24px padding,
+   no gradients and no texture. It is scoped to its own `.twins-l10-*`
+   namespace and repurposes no existing selector; where it has to specialise
+   an existing element it does so through a compound selector that only
+   matches once the element opts in by carrying an L10 class.
+
+   Contrast (measured, sRGB):
+     gold  #ffc641 on navy   #071c38  10.88:1   (numerals, lead card only)
+     white #ffffff on navy   #071c38  17.04:1   (lead card body)
+     navy  #071c38 on white  #ffffff  17.04:1   (sibling numerals)
+     ochre #8a5a00 on white  #ffffff   5.93:1   (sibling micro-labels)
+     slate #546277 on white  #ffffff   6.19:1   (sibling body)
+     navy  #071c38 on #fff3d6         15.45:1   (callout + cue titles)
+     slate #546277 on #fff3d6          5.62:1   (callout body)
+     navy  #071c38 on gold   #ffc641  10.88:1   (bar segment 2)
+     navy  #071c38 on deep   #e8a200   7.79:1   (bar segment 3)
+   Gold text never lands on white or cream (1.57:1 / 1.49:1); the deck's own
+   gold "SPEAKER CUE:" label is rendered navy here for exactly that reason.
+   ========================================================================== */
+
+body.twins-brand-experience {
+  --twins-l10-hairline: #e6dfcc;
+  --twins-l10-callout: #fff3d6;
+  --twins-l10-ochre: #8a5a00;
+  --twins-l10-gold-deep: #e8a200;
+  --twins-l10-slate: #546277;
+  --twins-l10-radius: 10px;
+  --twins-l10-pad: clamp(20px, 2.1vw, 24px);
+}
+
+/* L2 - stat card row. The primary card is inverted: navy ground, gold
+   numeral, white body. Siblings are white, hairline-bordered, navy numeral. */
+body.twins-brand-experience .twins-l10-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(232px, 1fr));
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+body.twins-brand-experience .twins-l10-stats__title {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+body.twins-brand-experience .twins-l10-stat {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  margin: 0;
+  padding: var(--twins-l10-pad);
+  color: var(--twins-l10-slate);
+  background: var(--twins-white);
+  border: 1px solid var(--twins-l10-hairline);
+  border-radius: var(--twins-l10-radius);
+  box-shadow: none;
+}
+
+body.twins-brand-experience .twins-l10-stat .twins-l10-stat__label {
+  display: block;
+  margin: 0 0 10px;
+  color: var(--twins-l10-ochre);
+  font-family: inherit;
+  font-size: .78rem;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+body.twins-brand-experience .twins-l10-stat .twins-l10-stat__figure {
+  display: block;
+  margin: 0 0 10px;
+  color: var(--twins-navy-950);
+  font-family: var(--twins-font-home-display);
+  font-weight: 400;
+  font-size: clamp(2.05rem, 3vw, 2.85rem);
+  line-height: 1.02;
+  letter-spacing: .012em;
+}
+
+body.twins-brand-experience .twins-l10-stat .twins-l10-stat__body {
+  display: block;
+  max-width: 44ch;
+  margin: 0;
+  color: var(--twins-l10-slate);
+  font-size: .97rem;
+  font-weight: 400;
+  line-height: 1.62;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+body.twins-brand-experience .twins-l10-stat > p:has(> .twins-l10-badge) {
+  margin: auto 0 0;
+  padding-top: 16px;
+}
+
+/* The card ground is bound to the compound selector so the modifier can also
+   be used on its own, as the inversion cue for an existing scene element that
+   must not turn into a card (the homepage trust row). */
+body.twins-brand-experience .twins-l10-stat.twins-l10-stat--lead {
+  color: var(--twins-white);
+  background: var(--twins-navy-950);
+  border-color: var(--twins-navy-950);
+}
+body.twins-brand-experience .twins-l10-stat--lead .twins-l10-stat__label { color: var(--twins-gold); }
+body.twins-brand-experience .twins-l10-stat--lead .twins-l10-stat__figure { color: var(--twins-gold); }
+body.twins-brand-experience .twins-l10-stat--lead .twins-l10-stat__body { color: var(--twins-white); }
+body.twins-brand-experience .twins-l10-stat--lead .twins-l10-badge {
+  color: var(--twins-gold);
+  border-color: var(--twins-gold);
+}
+
+/* The deck sets a gold ">" between cards only where the sequence carries
+   logic (p.5: net income > cash from ops > actual cash). It is defined here
+   as part of the L2 contract but is not deployed on any current surface:
+   none of the sanctioned rows is a descending magnitude chain, and putting
+   the glyph on the repair -> opener -> new door ladder would assert a
+   greater-than that is false. Decorative, so hidden from assistive tech and
+   removed on narrow screens, where the row is a stack and the glyph lies. */
+body.twins-brand-experience .twins-l10-stats--linked { position: relative; }
+body.twins-brand-experience .twins-l10-stats--linked .twins-l10-stat + .twins-l10-stat { position: relative; }
+body.twins-brand-experience .twins-l10-stats--linked .twins-l10-stat + .twins-l10-stat::before {
+  content: '>';
+  position: absolute;
+  top: 50%;
+  left: -18px;
+  width: 18px;
+  color: var(--twins-l10-ochre);
+  font-family: var(--twins-font-home-display);
+  font-size: 1.6rem;
+  line-height: 1;
+  text-align: center;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* L3 - proportion bar. One full-width segmented bar, value in Lilita inside
+   each segment with its label under it, and an annotation line under any
+   segment too narrow to carry its own label. */
+body.twins-brand-experience .twins-l10-bar {
+  display: flex;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--twins-l10-hairline);
+  border-radius: var(--twins-l10-radius);
+  list-style: none;
+}
+
+body.twins-brand-experience .twins-l10-bar__segment {
+  display: flex;
+  min-width: 0;
+  flex: 0 0 var(--twins-l10-share, auto);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 22px 10px;
+  color: var(--twins-navy-950);
+  background: var(--twins-white);
+  text-align: center;
+}
+body.twins-brand-experience .twins-l10-bar__segment--1 { color: var(--twins-gold); background: var(--twins-navy-950); }
+body.twins-brand-experience .twins-l10-bar__segment--2 { background: var(--twins-gold); }
+body.twins-brand-experience .twins-l10-bar__segment--3 { background: var(--twins-l10-gold-deep); }
+body.twins-brand-experience .twins-l10-bar__segment--4 { background: var(--twins-white); box-shadow: inset 1px 0 0 var(--twins-l10-hairline); }
+
+body.twins-brand-experience .twins-l10-bar__value {
+  font-family: var(--twins-font-home-display);
+  font-weight: 400;
+  font-size: clamp(1.3rem, 1.9vw, 1.85rem);
+  line-height: 1;
+  letter-spacing: .01em;
+}
+body.twins-brand-experience .twins-l10-bar__label {
+  font-size: .8rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+body.twins-brand-experience .twins-l10-bar__segment--tight .twins-l10-bar__value { font-size: clamp(1.05rem, 1.4vw, 1.35rem); }
+body.twins-brand-experience .twins-l10-bar__segment--tight .twins-l10-bar__label { display: none; }
+
+body.twins-brand-experience .twins-l10-bar__notes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px 16px;
+  margin: 10px 0 0;
+  padding: 0;
+  color: var(--twins-l10-slate);
+  font-size: .8rem;
+  font-weight: 700;
+  list-style: none;
+  text-align: right;
+}
+
+/* L4 - gold-rule callout, deployed in pairs. */
+body.twins-brand-experience .twins-l10-callouts {
+  display: grid;
+  /* The deck deploys callouts in pairs, so the track floor is wide enough
+     that a third one wraps to the next row instead of squeezing the pair. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr));
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+body.twins-brand-experience .twins-l10-callout {
+  margin: 0;
+  padding: var(--twins-l10-pad) var(--twins-l10-pad) var(--twins-l10-pad) calc(var(--twins-l10-pad) - 1px);
+  color: var(--twins-l10-slate);
+  background: var(--twins-l10-callout);
+  border: 0;
+  border-left: 5px solid var(--twins-gold);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.twins-brand-experience .twins-l10-callout .twins-l10-callout__title {
+  display: block;
+  margin: 0 0 8px;
+  color: var(--twins-navy-950);
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+body.twins-brand-experience .twins-l10-callout .twins-l10-callout__body {
+  max-width: var(--twins-measure);
+  margin: 0;
+  color: var(--twins-l10-slate);
+  font-size: .97rem;
+  line-height: 1.68;
+}
+body.twins-brand-experience .twins-l10-callout .twins-l10-callout__body + .twins-l10-callout__body { margin-top: .8em; }
+
+/* L5 - cue strip: full-width pale gold band, gold rule, inline label, one
+   statement. The deck's label is gold; on this ground gold reads 1.6:1, so
+   the label is navy here. */
+body.twins-brand-experience .twins-l10-cue {
+  display: block;
+  margin: 0;
+  padding: 18px var(--twins-l10-pad) 18px calc(var(--twins-l10-pad) - 1px);
+  color: var(--twins-l10-slate);
+  background: var(--twins-l10-callout);
+  border: 0;
+  border-left: 5px solid var(--twins-gold);
+  border-radius: 0;
+  box-shadow: none;
+  font-size: .97rem;
+  line-height: 1.68;
+}
+body.twins-brand-experience .twins-l10-cue .twins-l10-cue__label {
+  margin-right: 10px;
+  color: var(--twins-navy-950);
+  font-size: .82rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+body.twins-brand-experience .twins-l10-cue .twins-l10-cue__body {
+  max-width: var(--twins-measure);
+  margin: 0;
+  color: var(--twins-l10-slate);
+}
+
+/* L6 - pill badge: data provenance, never decoration. */
+body.twins-brand-experience .twins-l10-badge {
+  display: inline-block;
+  padding: 5px 12px;
+  color: var(--twins-navy-950);
+  background: transparent;
+  border: 2px solid var(--twins-gold);
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: .02em;
+  white-space: normal;
+}
+
+/* L7 - meta rule: thin muted row, one part per source segment. */
+body.twins-brand-experience .twins-l10-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px 24px;
+  margin: 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--twins-l10-hairline);
+  color: var(--twins-l10-slate);
+  font-size: .8rem;
+  line-height: 1.5;
+}
+body.twins-brand-experience .twins-l10-meta > span { margin: 0; }
+body.twins-brand-experience .twins-l10-meta > span:only-child { flex: 1 1 100%; }
+
+/* L1 - heading stack: gold kicker, navy Lilita display, muted deck line.
+   Tighter than the site default: the kicker sits close to the display. */
+body.twins-brand-experience .twins-l10-head { max-width: 100%; }
+body.twins-brand-experience .twins-l10-head .twins-l10-kicker {
+  display: block;
+  margin: 0 0 8px;
+  color: var(--twins-l10-ochre);
+  font-size: .8rem;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+body.twins-brand-experience .twins-l10-head .twins-l10-deck {
+  max-width: var(--twins-measure);
+  margin: 14px 0 0;
+  color: var(--twins-l10-slate);
+  font-size: 1.05rem;
+  line-height: 1.62;
+}
+
+/* Cost-guide sections that sit on navy or gold grounds keep their own
+   kicker colour; only the light sections take the ochre. */
+body.twins-brand-experience .twins-l10-head--onDark .twins-l10-kicker { color: var(--twins-gold); }
+body.twins-brand-experience .twins-l10-head--onDark .twins-l10-deck { color: #e8f1fb; }
+
+/* --------------------------------------------------------------------------
+   L10 opt-in specialisations.
+   Every selector below is compound: it matches only once an existing element
+   carries an L10 class, so no existing rule changes meaning for any element
+   that has not opted in. They exist because the cost family stylesheet loads
+   after this file and would otherwise draw a second card ground, a second
+   padding or a cast shadow under an L10 component.
+   -------------------------------------------------------------------------- */
+
+body.twins-brand-experience .twins-l10-stats--span {
+  grid-column: 1 / -1;
+  margin-top: clamp(30px, 3.4vw, 48px);
+}
+
+body.twins-brand-experience .twins-cost-sample-bar { margin-top: clamp(24px, 2.6vw, 34px); }
+
+body.twins-brand-experience .twins-cost-table-wrap td span.twins-l10-badge {
+  display: inline-block;
+  margin-top: 10px;
+  white-space: nowrap;
+  color: var(--twins-navy-950);
+  font-size: .72rem;
+  font-weight: 800;
+}
+
+body.twins-brand-experience .twins-cost-source-line.twins-l10-meta {
+  max-width: 100%;
+  margin-top: 16px;
+  color: var(--twins-l10-slate);
+  font-size: .8rem;
+}
+
+body.twins-brand-experience .twins-cost-spring-note.twins-l10-callouts {
+  max-width: 100%;
+  margin-top: clamp(28px, 3vw, 40px);
+  padding: 0;
+  background: none;
+  border: 0;
+}
+
+body.twins-brand-experience .twins-l10-callouts > h3 {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--twins-navy-950);
+}
+
+body.twins-brand-experience .twins-cost-full-disclaimer.twins-l10-cue {
+  max-width: 100%;
+  margin-top: clamp(22px, 2.4vw, 30px);
+  font-size: .97rem;
+}
+
+body.twins-brand-experience .twins-cost-faq__aside.twins-l10-stat {
+  align-self: start;
+  padding: var(--twins-l10-pad);
+  border-radius: var(--twins-l10-radius);
+  box-shadow: none;
+}
+body.twins-brand-experience .twins-cost-faq__aside.twins-l10-stat h3 { margin: 0 0 10px; }
+body.twins-brand-experience .twins-cost-faq__aside.twins-l10-stat .twins-l10-stat__figure { margin-bottom: 4px; }
+
+body.twins-brand-experience .twins-cost-faq details p.twins-l10-callout {
+  max-width: var(--twins-measure);
+  margin: 0 20px 20px;
+  padding: 16px 18px 16px 17px;
+}
+
+body.twins-brand-experience .twins-l10-head--span { grid-column: 1 / -1; }
+
+body.twins-brand-experience .twins-brand-faq details p.twins-l10-callout {
+  max-width: var(--twins-measure);
+  margin: 0 20px 20px;
+  padding: 16px 18px 16px 17px;
+}
+
+/* Service pages: the direct answer's fact list becomes the L2 card row and
+   the aside stops being a card of its own. */
+body.twins-brand-experience .twins-brand-service-facts.twins-l10-stats-shell {
+  grid-column: 1 / -1;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+body.twins-brand-experience .twins-brand-service-facts.twins-l10-stats-shell > .twins-l10-stats { margin-top: 22px; }
+/* The direct-answer section is already navy, so a navy lead card would have
+   no edge at all. On this ground the primary card steps UP to navy-900 and
+   takes the gold rule the aside used to carry; the inverted relationship to
+   its white siblings is unchanged, and gold on navy-900 still reads 8.8:1. */
+body.twins-brand-experience .twins-brand-service-facts .twins-l10-stat--lead {
+  background: var(--twins-navy-900);
+  border: 2px solid var(--twins-gold);
+}
+body.twins-brand-experience .twins-brand-service-facts .twins-l10-stat .twins-l10-stat__label { color: var(--twins-l10-ochre); }
+body.twins-brand-experience .twins-brand-service-facts .twins-l10-stat--lead .twins-l10-stat__label { color: var(--twins-gold); }
+body.twins-brand-experience .twins-brand-service-facts .twins-l10-stat .twins-l10-stat__body {
+  color: var(--twins-l10-slate);
+  font-weight: 400;
+}
+body.twins-brand-experience .twins-brand-service-facts .twins-l10-stat--lead .twins-l10-stat__body { color: var(--twins-white); }
+
+body.twins-brand-experience .twins-brand-service-safety.twins-l10-callout {
+  max-width: min(100%, 820px);
+  padding: clamp(22px, 2.6vw, 30px) clamp(24px, 3vw, 34px) clamp(22px, 2.6vw, 30px) calc(clamp(24px, 3vw, 34px) - 1px);
+  color: var(--twins-l10-slate);
+  background: var(--twins-l10-callout);
+  border: 0;
+  border-left: 5px solid var(--twins-gold);
+  border-radius: 0;
+  box-shadow: none;
+}
+body.twins-brand-experience .twins-brand-service-safety.twins-l10-callout h2 {
+  margin: 0 0 10px;
+  color: var(--twins-navy-950);
+  font-family: inherit;
+  font-size: clamp(1.15rem, 1.7vw, 1.35rem);
+  font-weight: 800;
+  letter-spacing: normal;
+  text-transform: none;
+}
+body.twins-brand-experience .twins-brand-service-safety.twins-l10-callout p {
+  max-width: var(--twins-measure);
+  color: var(--twins-l10-slate);
+  font-size: 1rem;
+  line-height: 1.68;
+}
+
+body.twins-brand-experience .twins-brand-service-faq .twins-l10-callout,
+body.twins-brand-experience .twins-brand-faq .twins-l10-callout { margin-top: 4px; }
+
+/* Location pages: one job-count stat card in the local-proof rail. */
+body.twins-brand-experience .twins-location-local-proof-rail .twins-l10-stat { margin-bottom: 18px; }
+
+/* Homepage: adopt the inversion only. The scene, its ground texture and the
+   gold rules above each figure are left exactly as they are; the lead figure
+   takes the deck's scale and the two siblings step down to cream so that one
+   number, and only one, is gold. */
+body.twins-brand-experience .twins-l10-stats--inline .twins-l10-stat--lead strong {
+  color: var(--twins-gold);
+  font-family: var(--twins-font-home-display);
+  font-weight: 400;
+  font-size: clamp(34px, 3.4vw, 48px);
+  line-height: 1;
+  letter-spacing: .012em;
+}
+/* The live-count element is a <span> inside the <strong>, so the row's own
+   `span { display: block; font-size: 14px }` label rule was shrinking the very
+   number that is supposed to lead. Inside the lead figure it is the figure. */
+body.twins-brand-experience .twins-l10-stats--inline .twins-l10-stat--lead strong span {
+  display: inline;
+  margin-top: 0;
+  font-size: inherit;
+}
+
+body.twins-brand-experience .twins-l10-stats--inline li:not(.twins-l10-stat--lead) strong {
+  color: var(--twins-cream);
+  font-size: 22px;
+}
+
+@media (max-width: 720px) {
+  /* The stat row collapses to one column and the ">" connectors go: they
+     imply a horizontal sequence that no longer exists. */
+  body.twins-brand-experience .twins-l10-stats { grid-template-columns: 1fr; }
+  body.twins-brand-experience .twins-l10-stats--linked .twins-l10-stat + .twins-l10-stat::before { content: none; }
+
+  /* The proportion bar keeps its segments; every label moves below its
+     value inside the segment, and the desktop annotation line is dropped. */
+  body.twins-brand-experience .twins-l10-bar { flex-direction: column; }
+  body.twins-brand-experience .twins-l10-bar__segment {
+    flex: 1 1 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: flex-start;
+    gap: 4px 12px;
+    padding: 14px 16px;
+    text-align: left;
+  }
+  body.twins-brand-experience .twins-l10-bar__segment--tight .twins-l10-bar__label { display: block; }
+  body.twins-brand-experience .twins-l10-bar__notes { display: none; }
+
+  body.twins-brand-experience .twins-l10-callouts { grid-template-columns: 1fr; }
+  body.twins-brand-experience .twins-l10-meta { justify-content: flex-start; }
+}
