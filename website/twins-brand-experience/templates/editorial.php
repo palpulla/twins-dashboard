@@ -358,6 +358,23 @@ if ($isLocation && $locationRecord !== null && isset($locationRecord['lat'], $lo
         $locationJsonLd = $locationJsonLdCandidate;
     }
 }
+// L10 L2 gate for the local-proof stat. `completedJobs` is a 24-month count,
+// while some approved city paragraphs cite an all-time figure instead. Showing
+// the card only when this page's own copy already prints the same number keeps
+// the rail and the prose from stating two different job counts for one city,
+// and satisfies the rule that every rendered figure is already on the page.
+$locationJobCount = '';
+if ($isLocation && $locationRecord !== null && is_int($locationRecord['completedJobs']) && $locationRecord['completedJobs'] > 0) {
+    $locationJobProse = $locationRecord['intro'] . ' ' . implode(' ', $locationRecord['localNotes']);
+    foreach ($locationRecord['faq'] as $locationJobFaq) {
+        $locationJobProse .= ' ' . $locationJobFaq['a'];
+    }
+    $locationJobCandidate = number_format($locationRecord['completedJobs']);
+    if (preg_match('/(?<![\d,])' . preg_quote($locationJobCandidate, '/') . '(?![\d,])/', $locationJobProse) === 1) {
+        $locationJobCount = $locationJobCandidate;
+    }
+}
+
 $locationNearbyKicker = $locationNavMarketKey === 'ky' ? 'Kentucky garage door services' : 'Nearby service areas';
 $locationNearbyTitle = $locationNavMarketKey === 'ky'
     ? 'Explore repair, installation, and opener service'
@@ -436,6 +453,18 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
         <?php endforeach; endif; ?>
       </div>
       <aside class="twins-location-local-proof-rail" aria-label="Local service details">
+        <?php if ($locationJobCount !== ''): ?>
+          <?php // L10 L2: the local job count, which today only appears inside a
+                // paragraph, as the deck's inverted primary stat. Rendered only
+                // when this page's own approved copy already prints the same
+                // number, so the card can never disagree with the prose beside
+                // it. Spec: docs/marketing/website-rebuild/l10-design-language.md ?>
+          <div class="twins-l10-stat twins-l10-stat--lead">
+            <p class="twins-l10-stat__label"><?= htmlspecialchars($locationLabel, ENT_QUOTES, 'UTF-8') ?></p>
+            <p class="twins-l10-stat__figure"><?= htmlspecialchars($locationJobCount, ENT_QUOTES, 'UTF-8') ?></p>
+            <p class="twins-l10-stat__body">completed jobs in the last two years</p>
+          </div>
+        <?php endif; ?>
         <?php if ($napAddress !== ''): ?><p class="twins-location-address"><?= htmlspecialchars($napAddress, ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?>
         <figure class="twins-location-local-proof-media">
           <?php

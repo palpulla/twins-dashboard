@@ -5,8 +5,12 @@
     <h2 id="twins-brand-company-title">A Madison family company.</h2>
     <p>Twins Garage Doors is a Madison family company, with techs your neighbors already know by name.</p>
     <a class="twins-brand-cta" href="<?= htmlspecialchars($homeRoutes['team'], ENT_QUOTES, 'UTF-8') ?>">Meet the Team</a>
-    <ul class="twins-brand-company-proof" aria-label="Why homeowners call Twins">
-      <li><strong><span data-twins-live-count><?= htmlspecialchars($reviewSummary['displayCount'], ENT_QUOTES, 'UTF-8') ?></span>+</strong><span>Google reviews</span></li>
+    <?php // L10 L2, inversion only. The scene, its ground texture and the gold
+          // rule over each figure stay exactly as they are; the review count
+          // takes the deck's lead scale so one number leads instead of three
+          // competing. Spec: docs/marketing/website-rebuild/l10-design-language.md ?>
+    <ul class="twins-brand-company-proof twins-l10-stats--inline" aria-label="Why homeowners call Twins">
+      <li class="twins-l10-stat--lead"><strong><span data-twins-live-count><?= htmlspecialchars($reviewSummary['displayCount'], ENT_QUOTES, 'UTF-8') ?></span>+</strong><span>Google reviews</span></li>
       <li><strong data-twins-live-rating><?= htmlspecialchars(number_format($reviewSummary['ratingValue'], 1), ENT_QUOTES, 'UTF-8') ?></strong><span>star average on Google</span></li>
       <li><strong>Flat price</strong><span>approved before any work starts</span></li>
     </ul>

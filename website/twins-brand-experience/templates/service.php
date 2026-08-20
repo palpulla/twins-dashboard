@@ -21,6 +21,19 @@ $servicePlans = $pageContent['plans'];
 $serviceGuarantee = 'Done Right, or We Make It Right.';
 $serviceGuaranteeDetail = 'If something about our work is not right, we come back and fix it. No arguing, no fine print.';
 
+// L10 L4 gate: an answer earns the gold-rule callout only when its own first
+// sentence turns on a dollar figure. Mentioning a price later in the answer
+// is not the same as the answer hinging on one, and the deck reserves the
+// callout for the second case. Spec:
+// docs/marketing/website-rebuild/l10-design-language.md
+$serviceAnswerHingesOnFigure = static function (string $answer): bool {
+    $first = $answer;
+    if (preg_match('/^(.+?[.!?])(?:\s|$)/su', $answer, $matches) === 1) {
+        $first = $matches[1];
+    }
+    return preg_match('/\$\s?\d/u', $first) === 1;
+};
+
 // Verbatim Google review quotes: the service-tagged pool from the city-page
 // system, filtered to this record's tag first and rotated deterministically
 // per path so pages differ without relabeling any quote.
@@ -186,22 +199,34 @@ if ($serviceNap !== null && $servicePath !== '') {
   </section>
 
   <section class="twins-brand-direct-answer" aria-labelledby="twins-brand-direct-answer-title">
-    <div>
+    <div class="twins-l10-head twins-l10-head--onDark twins-l10-head--span">
       <span class="twins-brand-kicker">Direct answer</span>
       <h2 id="twins-brand-direct-answer-title">What to know first</h2>
       <p><?= htmlspecialchars($pageContent['directAnswer'], ENT_QUOTES, 'UTF-8') ?></p>
       <p class="twins-brand-service-guarantee-line"><strong><?= htmlspecialchars($serviceGuarantee, ENT_QUOTES, 'UTF-8') ?></strong> <?= htmlspecialchars($serviceGuaranteeDetail, ENT_QUOTES, 'UTF-8') ?></p>
     </div>
-    <aside class="twins-brand-service-facts" aria-labelledby="twins-brand-service-facts-title">
+    <?php
+      // L10 L2: cost / timing / when-to-call as the deck's card row, with the
+      // first fact on the inverted primary card so one answer leads. The
+      // strings, the order and the description-list semantics are unchanged.
+      $serviceFactRow = [];
+      if ($serviceFacts['cost'] !== null) {
+        $serviceFactRow[] = ['Typical cost', $serviceFacts['cost']];
+      }
+      if ($serviceFacts['timing'] !== null) {
+        $serviceFactRow[] = ['Timing', $serviceFacts['timing']];
+      }
+      $serviceFactRow[] = ['When to call', $serviceFacts['call']];
+    ?>
+    <aside class="twins-brand-service-facts twins-l10-stats-shell twins-l10-head--span" aria-labelledby="twins-brand-service-facts-title">
       <h2 id="twins-brand-service-facts-title">The short version</h2>
-      <dl>
-        <?php if ($serviceFacts['cost'] !== null): ?>
-          <div><dt>Typical cost</dt><dd><?= htmlspecialchars($serviceFacts['cost'], ENT_QUOTES, 'UTF-8') ?></dd></div>
-        <?php endif; ?>
-        <?php if ($serviceFacts['timing'] !== null): ?>
-          <div><dt>Timing</dt><dd><?= htmlspecialchars($serviceFacts['timing'], ENT_QUOTES, 'UTF-8') ?></dd></div>
-        <?php endif; ?>
-        <div><dt>When to call</dt><dd><?= htmlspecialchars($serviceFacts['call'], ENT_QUOTES, 'UTF-8') ?></dd></div>
+      <dl class="twins-l10-stats">
+        <?php foreach ($serviceFactRow as $serviceFactIndex => $serviceFact): ?>
+          <div class="twins-l10-stat<?= $serviceFactIndex === 0 ? ' twins-l10-stat--lead' : '' ?>">
+            <dt class="twins-l10-stat__label"><?= htmlspecialchars($serviceFact[0], ENT_QUOTES, 'UTF-8') ?></dt>
+            <dd class="twins-l10-stat__body"><?= htmlspecialchars($serviceFact[1], ENT_QUOTES, 'UTF-8') ?></dd>
+          </div>
+        <?php endforeach; ?>
       </dl>
     </aside>
   </section>
@@ -255,8 +280,8 @@ if ($serviceNap !== null && $servicePath !== '') {
 
   <?php if ($serviceSafety !== null): ?>
     <section class="twins-brand-service-safety-section" aria-labelledby="twins-brand-service-safety-title">
-      <div class="twins-brand-service-safety">
-        <h2 id="twins-brand-service-safety-title">Do not DIY this one. Seriously.</h2>
+      <div class="twins-brand-service-safety twins-l10-callout">
+        <h2 id="twins-brand-service-safety-title" class="twins-l10-callout__title">Do not DIY this one. Seriously.</h2>
         <p><?= htmlspecialchars($serviceSafety, ENT_QUOTES, 'UTF-8') ?></p>
       </div>
     </section>
@@ -345,7 +370,8 @@ if ($serviceNap !== null && $servicePath !== '') {
       <?php foreach ($pageContent['faqs'] as $faq): ?>
         <details>
           <summary><?= htmlspecialchars($faq['question'], ENT_QUOTES, 'UTF-8') ?></summary>
-          <p><?= htmlspecialchars($faq['answer'], ENT_QUOTES, 'UTF-8') ?></p>
+          <?php // L10 L4: only the answers whose first sentence turns on a figure. ?>
+          <p<?= $serviceAnswerHingesOnFigure($faq['answer']) ? ' class="twins-l10-callout"' : '' ?>><?= htmlspecialchars($faq['answer'], ENT_QUOTES, 'UTF-8') ?></p>
         </details>
       <?php endforeach; ?>
     </div>
