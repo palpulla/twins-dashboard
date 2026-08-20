@@ -62,7 +62,7 @@ $homeTeamMembers = [
   </div>
 </section>
 
-<section class="twins-brand-door-scene" data-home-scene="doors-and-brands" aria-labelledby="twins-brand-doors-title" data-home-reveal>
+<section class="twins-brand-door-scene" data-home-scene="doors-and-brands" aria-labelledby="twins-brand-doors-title" data-home-reveal data-home-motion>
   <div class="twins-brand-door-media">
     <?php
     $logicalKey = 'door-builder-before-after';

@@ -3355,6 +3355,23 @@ body.twins-brand-experience .twins-brand-review-proof .twins-brand-kicker {
     linear-gradient(180deg, transparent 0, rgba(7,28,56,.07) 100%);
 }
 
+/* T3 — TRACK GUTTER. The useless 100px cream margin beside the door-scene photo
+   becomes a vertical J-channel with a roller every 236px, so the photo slab
+   finally reads as a door in an opening. 733-byte inline tile, no request. */
+.twins-brand-home .twins-brand-door-scene::before {
+  inset: 0 auto 0 clamp(8px,
+    calc(max(var(--twins-story-gutter), (100vw - var(--twins-story-max)) / 2) - 54px), 66px);
+  width: 22px;
+  opacity: .55;
+  background-repeat: repeat-y;
+  background-size: 22px 236px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='236'%3E%3Crect x='6' width='10' height='236' fill='%23071c38' opacity='.14'/%3E%3Crect x='6' width='2' height='236' fill='%23071c38' opacity='.34'/%3E%3Crect x='14' width='1' height='236' fill='%23fff' opacity='.7'/%3E%3Crect x='2' y='114' width='18' height='2' fill='%23071c38' opacity='.22'/%3E%3Cg transform='translate(11 118)'%3E%3Ccircle r='7' fill='none' stroke='%23071c38' stroke-opacity='.34' stroke-width='2'/%3E%3Ccircle r='2.5' fill='%23ffc641'/%3E%3C/g%3E%3C/svg%3E");
+}
+/* The door creeps one roller pitch in its track. Gated like every other loop. */
+.twins-brand-home [data-home-motion][data-motion-active="true"].twins-brand-door-scene::before {
+  animation: twins-brand-track-creep 24s linear infinite;
+}
+
 /* T0 + T4 — the gold band gets the torsion spring a maintenance plan tightens. */
 .twins-brand-membership-scene {
   background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat;
@@ -3419,6 +3436,23 @@ body.twins-brand-experience .twins-brand-review-proof .twins-brand-kicker {
     var(--twins-stile-dark),
     repeating-linear-gradient(180deg, rgba(255,255,255,.028) 0 1px, transparent 1px 44px);
 }
+/* T4 — HARDWARE COURSE. A gold torsion coil on a shaft line across the top of
+   review-proof: the only gold-on-navy texture on the page, and the thing that
+   breaks the 2,359px navy trench where it needed breaking. The existing
+   drifting 56px grid on ::before is untouched. */
+.twins-brand-review-proof {
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat, repeat;
+  background-size: 100% 6px, 100% 76px, 100% 76px, 100% 100%, var(--twins-stile) 100%, 100% 44px;
+  background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
+  background-image:
+    var(--twins-seam-dark),
+    repeating-linear-gradient(74deg, transparent 0 5px, rgba(255,198,65,.26) 5px 7px,
+      rgba(255,198,65,.09) 7px 9px, transparent 9px 14px),
+    linear-gradient(180deg, transparent 0 36px, rgba(255,198,65,.20) 36px 40px, transparent 40px),
+    linear-gradient(180deg, var(--twins-steel-lo) 0, var(--twins-navy-950) 34%, var(--twins-steel-hi) 100%),
+    var(--twins-stile-dark),
+    repeating-linear-gradient(180deg, rgba(255,255,255,.028) 0 1px, transparent 1px 44px);
+}
 .twins-brand-closing-scene {          /* darkest, with light leaking under a shut door */
   background-repeat: no-repeat, no-repeat, no-repeat, repeat, repeat;
   background-size: 100% 6px, 100% 4px, 100% 100%, var(--twins-stile) 100%, 100% 44px;
@@ -3471,15 +3505,19 @@ body.twins-brand-experience .twins-brand-review-proof .twins-brand-kicker {
   background-color: var(--twins-navy-950);
   isolation: isolate;
 }
+/* The page's most characterful owned asset used to sit at .18 behind grayscale,
+   directly behind the right-hand area column: an 86KB webp nobody could see.
+   Cream body copy over it at .26 is 9.34:1, so composition is the constraint
+   here, not contrast. */
 .twins-brand-closing-backdrop {
   position: absolute;
-  right: -4%;
-  bottom: 2%;
+  right: -2%;
+  bottom: 6%;
   z-index: -1;
-  width: min(760px, 58vw);
+  width: min(560px, 42vw);
   height: auto;
-  opacity: .18;
-  filter: grayscale(.28) saturate(.72);
+  opacity: .26;
+  filter: grayscale(.12) saturate(.92);
   transform: rotate(-3deg);
   pointer-events: none;
 }
@@ -3647,6 +3685,10 @@ body.twins-brand-experience :is(
 .twins-brand-home [data-home-motion][data-motion-active="true"] .twins-brand-why-action:is(:hover, :focus-visible)::after,
 .twins-brand-home [data-home-motion][data-motion-active="true"] .twins-brand-character-stage:is(:hover, :focus-within) img {
   animation-play-state: paused;
+}
+@keyframes twins-brand-track-creep {
+  from { background-position: 0 0; }
+  to { background-position: 0 236px; }
 }
 @keyframes twins-brand-curtain-settle {
   from { background-position: 0 calc(var(--twins-course) * -1), 0 0; }
