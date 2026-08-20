@@ -67,9 +67,14 @@ body.twins-brand-experience :where(
    as a 1250px card floating on the body background instead of a full-bleed
    band. The homepage escapes it; the other branded templates did not. Sections
    own their own inner gutters, so releasing the outer cap is safe. */
+/* margin-inline is deliberately NOT reset here. Releasing the theme's max-width
+   is what this rule is for; zeroing the margin also destroyed the
+   `margin-inline: auto` that the catalog family uses to centre its sections,
+   pinning all 23 /clopay-*/ pages to x=0 with no left gutter (owner-reported
+   2026-08-20). A width:auto block already computes margin-inline:auto to 0, so
+   the reset was redundant as well as harmful. */
 body.twins-brand-experience :where(.twins-brand-page) > * {
   max-width: none !important;
-  margin-inline: 0 !important;
 }
 
 body.twins-brand-experience :where(.entry-header, .page-header, .ast-article-post > .entry-title) {

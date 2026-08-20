@@ -228,8 +228,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/assets/css/twins-brand.css",
-      "size": 166904,
-      "sha256": "9dbb056dd8152389a3612a44f171c1754ae7a54827cfbefd94a71df189962a6e"
+      "size": 167307,
+      "sha256": "097385de80b0815eaf7fffdf2c9b198edd504170bfc5f30f7e083ec9c5050479"
     },
     {
       "role": "verify",
@@ -379,7 +379,7 @@
       "role": "verify",
       "source": "twins-brand-experience/manifests/staging-runtime.json",
       "size": 370540,
-      "sha256": "28ed58caf87f88ade72f7d4182c359cd283b9cb9b6e01eaa2e39422b4ecd7dd7"
+      "sha256": "430520da94e748fdff510258ec8292a070dfe62cedc25ebee839a9f8eeaa9cbe"
     },
     {
       "role": "verify",
