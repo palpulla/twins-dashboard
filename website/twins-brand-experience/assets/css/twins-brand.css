@@ -3442,13 +3442,13 @@ body.twins-brand-experience .twins-brand-review-proof .twins-brand-kicker {
    drifting 56px grid on ::before is untouched. */
 .twins-brand-home .twins-brand-review-proof {
   background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat, repeat;
-  background-size: 100% 6px, 100% 76px, 100% 76px, 100% 100%, var(--twins-stile) 100%, 100% 44px;
+  background-size: 100% 6px, 100% 52px, 100% 52px, 100% 100%, var(--twins-stile) 100%, 100% 44px;
   background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
   background-image:
     var(--twins-seam-dark),
     repeating-linear-gradient(74deg, transparent 0 5px, rgba(255,198,65,.26) 5px 7px,
       rgba(255,198,65,.09) 7px 9px, transparent 9px 14px),
-    linear-gradient(180deg, transparent 0 36px, rgba(255,198,65,.20) 36px 40px, transparent 40px),
+    linear-gradient(180deg, transparent 0 24px, rgba(255,198,65,.20) 24px 28px, transparent 28px),
     linear-gradient(180deg, var(--twins-steel-lo) 0, var(--twins-navy-950) 34%, var(--twins-steel-hi) 100%),
     var(--twins-stile-dark),
     repeating-linear-gradient(180deg, rgba(255,255,255,.028) 0 1px, transparent 1px 44px);
