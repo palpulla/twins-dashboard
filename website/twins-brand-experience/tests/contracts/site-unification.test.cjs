@@ -97,3 +97,44 @@ test('portable asset isolation registers after every MU plugin has loaded', () =
   assert.match(lateRegistration, /add_action\(\s*['"]wp_enqueue_scripts['"]\s*,\s*['"]twins_overhaul_enqueue_assets['"]\s*,\s*PHP_INT_MAX/);
   assert.doesNotMatch(initialRegistration, /add_action\(\s*['"]wp_enqueue_scripts['"]/);
 });
+
+test('one container contract owns every page gutter in both stylesheets', () => {
+  // The site once ran five container maxima (980 / 1180 / 1240 / 1320 / 1450)
+  // and six mobile gutters (0 / 15 / 16 / 18 / 20 / 24 / 28 / 32), which put
+  // seven different left gutters on one 1920px screen and left the legal /
+  // thank-you family with no gutter at all. The browser spec asserts the token
+  // against a synthetic probe, which is exactly why that could happen without a
+  // test going red. These assertions bind the stylesheets themselves.
+  const brand = source('website/twins-brand-experience/assets/css/twins-brand.css');
+  const families = source('website/twins-brand-experience/assets/css/twins-brand-families.css');
+
+  assert.match(brand, /--twins-shell-max:\s*1320px;/);
+  assert.match(brand, /--twins-shell-gutter:\s*28px;/);
+  assert.match(brand, /--twins-content-shell:\s*max\(\s*var\(--twins-shell-gutter\),\s*calc\(\(100vw - var\(--twins-shell-max\)\) \/ 2\)\s*\);/s);
+  assert.match(brand, /--twins-measure:\s*68ch;/);
+
+  // No second maximum, anywhere, in any form.
+  const competingGutter = /max\(\s*\d+px,\s*calc\(\((?:100vw|100%) - \d+px\)\s*\/\s*2\)\s*\)/;
+  assert.doesNotMatch(brand, competingGutter, 'twins-brand.css reintroduced a hard-coded page gutter');
+  assert.doesNotMatch(families, competingGutter, 'twins-brand-families.css reintroduced a hard-coded page gutter');
+
+  // The two named families point at the contract instead of their own numbers,
+  // and no breakpoint may override either back to a literal.
+  assert.match(brand, /--twins-location-max:\s*var\(--twins-shell-max\);/);
+  assert.match(brand, /--twins-location-gutter:\s*var\(--twins-shell-gutter\);/);
+  assert.match(brand, /--twins-story-max:\s*var\(--twins-shell-max\);/);
+  assert.match(brand, /--twins-story-gutter:\s*var\(--twins-shell-gutter\);/);
+  assert.doesNotMatch(brand, /--twins-(?:location|story)-(?:max|gutter):\s*\d/);
+
+  // The legacy shell family (legal-preserve, cost, builder) gets its container
+  // from the one stylesheet all three routes load.
+  assert.match(brand, /\.twins-overhaul-shell\s*\{[^}]*padding-inline:\s*var\(--twins-content-shell\)/);
+
+  // The proof ticker's scale(1.02) must not be held in by body-level clipping
+  // alone; the page wrapper carries its own clip.
+  assert.match(brand, /\.twins-brand-home\s*\{[^}]*overflow-x:\s*clip/);
+
+  // No top-level catalog section may go back to width + margin-inline: auto,
+  // the pattern the .twins-brand-page reset punished.
+  assert.doesNotMatch(families, /\.twins-brand-catalog-section\s*\{[^}]*margin-inline:\s*auto/);
+});
