@@ -134,13 +134,13 @@ try {
     // staging: the archived blog-3 subsite and the Kentucky isolation harnesses
     // resolve through it. selectable() is the VISITOR surface and never does.
     $expect($staging === ['main', 'wi', 'ky', 'il-preview'], 'unexpected staging markets: ' . json_encode($staging));
-    $expect($production === ['main', 'wi'], 'unexpected production markets: ' . json_encode($production));
+    $expect($production === ['main', 'wi', 'il-preview'], 'unexpected production markets: ' . json_encode($production));
     $expect($registry->resolve('wi', 'staging')['key'] === 'wi', 'resolved market key is missing');
 
     $selectableStaging = array_keys($registry->selectable('staging'));
     $selectableProduction = array_keys($registry->selectable('production'));
     $expect($selectableStaging === ['main', 'wi', 'il-preview'], 'a retired market was offered to a staging visitor: ' . json_encode($selectableStaging));
-    $expect($selectableProduction === ['main', 'wi'], 'a retired market was offered to a production visitor: ' . json_encode($selectableProduction));
+    $expect($selectableProduction === ['main', 'wi', 'il-preview'], 'a retired market was offered to a production visitor: ' . json_encode($selectableProduction));
 
     $closed = false;
     try { $registry->resolve('ky', 'production'); } catch (DomainException $expected) { $closed = true; }

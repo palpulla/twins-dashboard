@@ -69,7 +69,6 @@ body:has(.twins-brand-header) :where(
             <a href="<?= htmlspecialchars($experience->route($availableKey, $marketKey), ENT_QUOTES, 'UTF-8') ?>">
               <strong><?= htmlspecialchars($availableRow['label'], ENT_QUOTES, 'UTF-8') ?></strong>
               <span><?= htmlspecialchars($availableRow['phoneDisplay'], ENT_QUOTES, 'UTF-8') ?></span>
-              <?php if ($availableMarket['preview'] === true): ?><small>Private staging preview</small><?php endif; ?>
             </a>
           <?php endforeach; ?>
         <?php endforeach; ?>

@@ -49,15 +49,28 @@ return [
         'preview' => false,
         'retired' => true,
     ],
+    // The key is historical. 'il-preview' is baked into four fail-closed boundary
+    // literals (MarketRegistry.php:12, Experience.php, the production adapters)
+    // and into the portable<->staging byte-match test, which deliberately maps
+    // portable 'il-preview' <-> staging 'il'. It is never rendered: the route
+    // prefix is /il/ and the visitor-facing string is 'label' => 'Illinois'.
+    // Renaming it is a separate change with a four-file fail-closed blast radius
+    // and zero visitor benefit.
+    //
+    // Illinois stopped being a preview on 2026-08-18: real NAP, real phone, a
+    // Rockford city page and 11 provisioned ring towns.
     'il-preview' => [
         'label' => 'Illinois',
         'phoneDisplay' => '(815) 800-2025',
         'phoneHref' => 'tel:+18158002025',
+        'metroLines' => [
+            ['label' => 'Rockford', 'phoneDisplay' => '(815) 800-2025', 'phoneHref' => 'tel:+18158002025'],
+        ],
         'routePrefix' => '/il/',
         'address' => '5758 Elaine Dr, Rockford, IL 61108',
         'stagingEnabled' => true,
-        'productionEnabled' => false,
-        'preview' => true,
+        'productionEnabled' => true,
+        'preview' => false,
         'retired' => false,
     ],
 ];

@@ -64,7 +64,6 @@ if ($environment === 'staging') {
           <a href="<?= htmlspecialchars($availableMarket['phoneHref'], ENT_QUOTES, 'UTF-8') ?>">
             <?= htmlspecialchars($availableMarket['phoneDisplay'], ENT_QUOTES, 'UTF-8') ?>
           </a>
-          <?php if ($availableMarket['preview'] === true): ?><small>Private staging preview</small><?php endif; ?>
           <a href="<?= htmlspecialchars($experience->route($availableMarketKey, $marketKey), ENT_QUOTES, 'UTF-8') ?>">View service area</a>
         </article>
       <?php endforeach; ?>

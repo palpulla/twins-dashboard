@@ -408,7 +408,11 @@ $expect(substr_count($header, 'data-twins-booking-open') === 3, 'dialog mode mus
 $expect(substr_count($header, '<button type="button" class="twins-brand-cta twins-brand-cta--book" data-twins-booking-open>Book Garage Door Service</button>') === 1, 'dialog mode rendered a non-button booking action');
 $expect(substr_count($header, 'id="booking-dialog-fixture"') === 1, 'dialog experience must render exactly once');
 $expect(strpos($header, 'Illinois') !== false, 'staging header omitted Illinois');
-$expect(strpos($header, 'Private staging preview') !== false, 'staging header omitted the Illinois preview marker');
+// Illinois left preview on 2026-08-18 (real NAP, real phone, a Rockford city
+// page). The market disclosure is a phone chooser and nothing else; a preview
+// sub-label must not come back on any market.
+$expect(strpos($header, 'Private staging preview') === false, 'staging header still advertises Illinois as a preview');
+$expect(strpos($header, 'Rockford') !== false, 'staging header omitted the Rockford metro row');
 
 $locationHeader = $stagingExperience->renderHeader([
     'environment' => 'staging',
@@ -442,7 +446,7 @@ $expect(substr_count($productionHeader, RendererHarnessBookingAdapter::EXTERNAL_
 $expect(substr_count($productionHeader, 'target="_blank" rel="noopener noreferrer"') === 3, 'external booking actions must emit exact safe target and rel values');
 $expect(substr_count($productionHeader, 'data-twins-booking-open') === 0, 'external booking mode rendered dialog triggers');
 $expect(strpos($productionHeader, 'booking-dialog-fixture') === false, 'external booking mode rendered dialog HTML');
-$expect(strpos($productionHeader, 'Illinois') === false, 'production header exposed Illinois');
+$expect(strpos($productionHeader, 'Illinois') !== false, 'production header omitted the promoted Illinois market');
 $expect(strpos($productionHeader, 'Private staging preview') === false, 'production header exposed the staging preview marker');
 
 $productionLocationHeader = $productionExperience->renderHeader([
@@ -1109,10 +1113,15 @@ foreach ($homeMarkers as $marker) {
     $expect($next !== false && $next > $homeCursor, 'home section missing or out of order: ' . $marker);
     $homeCursor = $next;
 }
-$expect(strpos($home, 'Illinois') !== false, 'staging home omitted Illinois');
-// r30 home no longer carries the inline preview marker; the header market menu owns it.
+// The home closing market chooser renders metroLines when a market has them, so
+// Illinois now reads as its metro name, Rockford, exactly like Wisconsin reads as
+// Madison / Milwaukee. Illinois left preview on 2026-08-18 and is a production
+// market, so the chooser carries it in BOTH environments.
+$expect(strpos($home, 'Rockford') !== false, 'staging home omitted the Illinois metro row');
+$expect(stripos($home, 'Kentucky') === false, 'staging home named the retired Kentucky market');
 $productionHome = $productionExperience->renderHome(['environment' => 'production', 'market' => 'main']);
-$expect(strpos($productionHome, 'Illinois') === false, 'production home exposed Illinois');
+$expect(strpos($productionHome, 'Rockford') !== false, 'production home omitted the promoted Illinois metro row');
+$expect(stripos($productionHome, 'Kentucky') === false, 'production home named the retired Kentucky market');
 $expect(strpos($productionHome, 'Private staging preview') === false, 'production home exposed the staging preview marker');
 $expect(strpos($productionHome, 'Private staging preview') === false, 'production home exposed staging-only preview copy');
 $productionCareers = $productionExperience->renderCareers(['environment' => 'production', 'market' => 'main']);
