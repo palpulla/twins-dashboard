@@ -732,7 +732,10 @@ body.twins-brand-experience .twins-brand-market-menu-panel small {
 .twins-brand-location-map--link:is(:hover, :focus-visible) { outline: 3px solid var(--twins-gold); }
 .twins-brand-location-map-note { margin: 10px 0 0; color: rgba(17, 24, 39, .6); font-size: .9rem; }
 .twins-brand-team-crew-members { padding: 56px var(--twins-content-shell); background: var(--twins-cream); }
-.twins-brand-crew-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 28px; margin-top: 34px; }
+/* min(320px, 100%): a bare 320px track never collapses, so at a 320px viewport
+   the crew cards were 28px wider than the rail and the team page was the one
+   remaining document with scrollWidth > clientWidth. */
+.twins-brand-crew-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 28px; margin-top: 34px; }
 .twins-brand-crew-grid .twins-brand-person-card { display: flex; flex-direction: column; margin: 0; padding: 0; color: var(--twins-ink); background: var(--twins-white); border: 3px solid var(--twins-navy-950); border-radius: 14px; box-shadow: 8px 9px 0 var(--twins-gold); overflow: hidden; }
 .twins-brand-person-media { position: relative; aspect-ratio: 4 / 5; background: var(--twins-navy-900); }
 .twins-brand-person-media img,
