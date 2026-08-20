@@ -36,13 +36,18 @@
   <div class="twins-brand-closing-area">
     <span class="twins-brand-kicker"><?= htmlspecialchars($market['label'], ENT_QUOTES, 'UTF-8') ?></span>
     <h2>Garage door service near you.</h2>
-    <?php if ($homeAreaLinks !== []): ?>
-      <ul>
-        <?php foreach ($homeAreaLinks as [$label, $routeKey]): ?>
+    <?php // Real <h3>s here: on a page, a metro name IS a document section. In site
+          // chrome it is not, which is why the header menu uses <p id> + aria-labelledby. ?>
+    <?php foreach ($homeAreaGroups as $homeAreaGroup): ?>
+      <?php $homeAreaGroupId = 'twins-brand-closing-area-' . preg_replace('/[^a-z0-9]+/', '-', strtolower($homeAreaGroup['label'])); ?>
+      <h3 class="twins-brand-closing-area-metro" id="<?= htmlspecialchars($homeAreaGroupId, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($homeAreaGroup['label'], ENT_QUOTES, 'UTF-8') ?></h3>
+      <ul aria-labelledby="<?= htmlspecialchars($homeAreaGroupId, ENT_QUOTES, 'UTF-8') ?>">
+        <?php foreach ($homeAreaGroup['towns'] as [$label, $routeKey]): ?>
           <li><a href="<?= htmlspecialchars($experience->route($routeKey, $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($label, ENT_QUOTES, 'UTF-8') ?></a></li>
         <?php endforeach; ?>
       </ul>
-    <?php endif; ?>
+      <a class="twins-brand-closing-area-hub" href="<?= htmlspecialchars($homeAreaGroup['hubHref'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($homeAreaGroup['hubLabel'], ENT_QUOTES, 'UTF-8') ?></a>
+    <?php endforeach; ?>
     <details class="twins-brand-home-market-choice">
       <summary>Choose Your Service Area</summary>
       <div>

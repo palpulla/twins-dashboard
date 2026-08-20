@@ -87,10 +87,11 @@ $twinsNavCityLinks = [
         ['Wauwatosa', 'city-wauwatosa'],
         ['Windsor', 'city-windsor'],
     ],
-    // No 'ky' entry: Kentucky is retired (Brand Toolkit v1.0) and every front-end
+    // No 'ky' entry. Kentucky is retired (Brand Toolkit v1.0) and every front-end
     // /ky/ request is 301'd by twins_overhaul_redirect_retired_ky_market() (r33),
-    // so a 'city-lexington' nav link would be the one genuinely dead link on the
-    // site. The archived blog-3 legacy nav in the host package still carries it.
+    // so its city link was the one genuinely dead link on the site. The archived
+    // blog-3 legacy nav in the host package still carries it, behind that
+    // redirect. tests/contracts/service-area-tree.test.cjs pins its absence here.
     'il-preview' => [
         ['Illinois Service Areas', 'service-area'],
         ['Rockford', 'city-rockford'],
@@ -118,7 +119,145 @@ foreach ($experience->markets()->selectable($environment) as $twinsNavMarketKey 
     $serviceAreasCompact[] = [$twinsNavMarket['label'], $twinsNavMarketKey];
 }
 $marketCityLinks = $twinsNavCityLinks[$marketKey] ?? [];
-$serviceAreas = array_merge($serviceAreasCompact, $marketCityLinks);
+
+/**
+ * Service-area tree. One entry per metro Twins actually staffs.
+ *
+ * ONE RULE GENERATES THIS WHOLE STRUCTURE:
+ *   a town appears in the header menu if and only if it has a record in
+ *   config/location-content.php, filed under that record's own 'metro' field.
+ *   Every other provisioned town lives on the metro hub page, which every metro
+ *   group links to. 35 records: 27 madison, 7 milwaukee, 1 rockford. The old
+ *   flat menu carried 60 entries with markets, hubs and villages at one level.
+ *
+ *   'label'      customer-facing metro name (Lilita One caps in the panel).
+ *   'market'     the market key whose route table owns this metro's city routes.
+ *                A metro renders expanded only when this equals $marketKey:
+ *                city-* routes are market-scoped, so route('city-rockford','wi')
+ *                throws. Other markets degrade to a card. The unglamorous real
+ *                fix is cross-market city-* routes in four route tables; that is
+ *                out of scope for this release.
+ *   'hubLabel'   the "see everything" row for this metro.
+ *   'hubAnchor'  fragment appended to the market's service-area route.
+ *   'towns'      [$label, $routeKey] pairs in DISPLAY order: metro hub city
+ *                first, then strict alphabetical. A first-time visitor hunting
+ *                "Stoughton" in 27 items needs A-Z, not position memory.
+ *                Destructuring MUST stay [$label, $routeKey] -- the variable
+ *                names are inside a pinned regex.
+ *   'featured'   route keys the homepage closing block shows. Madison's six are
+ *                exactly the records with completedJobs >= 50 in
+ *                config/location-content.php (Madison 588, Verona 151,
+ *                Fitchburg 132, Middleton 93, Sun Prairie 83, Janesville 53 --
+ *                the next town is Pardeeville at 39, the largest gap in the
+ *                distribution). Milwaukee and Rockford carry completedJobs =>
+ *                null on every record, so their featured sets are hand-placed
+ *                (hub city plus alphabetical), stated here rather than dressed
+ *                up as data.
+ *
+ * INVARIANT: the union of every 'towns' routeKey equals exactly the key set of
+ * config/location-content.php, and each town's metro equals that record's own
+ * 'metro' field. Enforced by tests/contracts/service-area-tree.test.cjs.
+ * Provisioned-but-unwritten towns belong on the hub page, never in the menu.
+ */
+$twinsNavMetroTree = [
+    'madison' => [
+        'label' => 'Madison Metro',
+        'market' => 'wi',
+        'hubLabel' => 'All Madison-area towns',
+        'hubAnchor' => '#madison-metro',
+        'featured' => ['city-madison', 'city-verona', 'city-fitchburg', 'city-middleton', 'city-sun-prairie', 'city-janesville'],
+        'towns' => [
+            ['Madison', 'city-madison'],
+            ['Baraboo', 'city-baraboo'],
+            ['Belleville', 'city-belleville'],
+            ['Cottage Grove', 'city-cottage-grove'],
+            ['Cross Plains', 'city-cross-plains'],
+            ['Deerfield', 'city-deerfield'],
+            ['DeForest', 'city-deforest'],
+            ['Edgerton', 'city-edgerton'],
+            ['Evansville', 'city-evansville'],
+            ['Fitchburg', 'city-fitchburg'],
+            ['Fort Atkinson', 'city-fort-atkinson'],
+            ['Janesville', 'city-janesville'],
+            ['Marshall', 'city-marshall'],
+            ['McFarland', 'city-mcfarland'],
+            ['Middleton', 'city-middleton'],
+            ['Milton', 'city-milton'],
+            ['Monona', 'city-monona'],
+            ['Mount Horeb', 'city-mount-horeb'],
+            ['Oregon', 'city-oregon'],
+            ['Pardeeville', 'city-pardeeville'],
+            ['Portage', 'city-portage'],
+            ['Prairie du Sac', 'city-prairie-du-sac'],
+            ['Reedsburg', 'city-reedsburg'],
+            ['Stoughton', 'city-stoughton'],
+            ['Sun Prairie', 'city-sun-prairie'],
+            ['Verona', 'city-verona'],
+            ['Waunakee', 'city-waunakee'],
+        ],
+    ],
+    'milwaukee' => [
+        'label' => 'Milwaukee Metro',
+        'market' => 'wi',
+        'hubLabel' => 'All Milwaukee-area towns',
+        'hubAnchor' => '#milwaukee-metro',
+        'featured' => ['city-milwaukee', 'city-brookfield', 'city-greenfield', 'city-new-berlin', 'city-oak-creek', 'city-waukesha'],
+        'towns' => [
+            ['Milwaukee', 'city-milwaukee'],
+            ['Brookfield', 'city-brookfield'],
+            ['Greenfield', 'city-greenfield'],
+            ['New Berlin', 'city-new-berlin'],
+            ['Oak Creek', 'city-oak-creek'],
+            ['Waukesha', 'city-waukesha'],
+            ['Wauwatosa', 'city-wauwatosa'],
+        ],
+    ],
+    'rockford' => [
+        'label' => 'Northern Illinois',
+        'market' => 'il-preview',
+        'hubLabel' => 'All northern Illinois towns',
+        'hubAnchor' => '#rockford-metro',
+        'featured' => ['city-rockford'],
+        'towns' => [
+            ['Rockford', 'city-rockford'],
+        ],
+    ],
+];
+
+/** Shown for a market that is NOT the current one. No counts that can drift silently. */
+$twinsNavMarketBlurbs = [
+    'wi' => 'Madison, Milwaukee and the rest of south-central Wisconsin.',
+    'il-preview' => 'Serving Rockford and nearby communities.',
+];
+$twinsNavMarketMenuLabels = [
+    'wi' => 'Wisconsin',
+    'il-preview' => 'Northern Illinois',
+];
+
+/* ---- derived ---- */
+
+// Metros the current market can actually link into.
+$twinsNavAreaMetros = [];
+foreach ($twinsNavMetroTree as $twinsNavMetroKey => $twinsNavMetro) {
+    if ($twinsNavMetro['market'] !== $marketKey) continue;
+    $twinsNavMetro['key'] = $twinsNavMetroKey;
+    $twinsNavMetro['townCount'] = count($twinsNavMetro['towns']);
+    $twinsNavAreaMetros[] = $twinsNavMetro;
+}
+
+// Other selectable markets, reachable only at their front door.
+$twinsNavAreaMarkets = [];
+foreach ($experience->markets()->selectable($environment) as $twinsNavMarketKey => $twinsNavMarket) {
+    if ($twinsNavMarketKey === 'main' || $twinsNavMarketKey === $marketKey) continue;
+    $twinsNavAreaMarkets[] = [
+        'key' => $twinsNavMarketKey,
+        'label' => $twinsNavMarketMenuLabels[$twinsNavMarketKey] ?? $twinsNavMarket['label'],
+        'blurb' => $twinsNavMarketBlurbs[$twinsNavMarketKey] ?? '',
+    ];
+}
+
+// Panel-foot hub link, shown only when the panel has no metro columns (main).
+$twinsNavAreaHub = ['All service areas', 'service-area'];
 
 $resourceItems = [
     ['Reviews', 'reviews'],

@@ -33,6 +33,36 @@ test('header exposes the approved complete navigation and CTA copy', () => {
   assert.match(html, /===\s*['"]dialog['"]/);
 });
 
+test('the service-area menu is a metro tree, not a flat alphabetical dump', () => {
+  // The owner's complaint: 40+ entries with markets, hubs and villages at one
+  // visual level. It is now two levels, metro -> town, in both the desktop
+  // panel and the mobile drawer.
+  const html = source('header.php') + source('nav-data.php');
+  for (const label of ['Madison Metro', 'Milwaukee Metro', 'Northern Illinois', 'All Madison-area towns']) {
+    assert.match(html, new RegExp(label.replace(/ /g, '\\s+')));
+  }
+  // List semantics with an accessible name, NOT headings: a heading in site
+  // chrome pollutes the document heading outline of every page on the site.
+  assert.match(html, /class="twins-brand-area-towns[^"]*"[^>]*aria-labelledby=/);
+  assert.match(html, /<p class="twins-brand-area-metro-title" id=/);
+  assert.doesNotMatch(html, /twins-brand-area-metro-title">\s*<h[1-6]/);
+  // The drawer collapses each metro so the phone opens at four rows, not 51.
+  assert.match(html, /<details class="twins-brand-drawer-metro">/);
+  assert.match(html, /twins-brand-drawer-metro-body[\s\S]*?aria-labelledby=/);
+  // These are links in a disclosure, not an application menu.
+  assert.doesNotMatch(html, /role="menu"|role="menuitem"|aria-haspopup/);
+  // A retired market must never be offered as a destination. (The word survives
+  // in the comment that explains why the 'ky' city block was removed, so this
+  // pins link syntax, not prose.)
+  assert.doesNotMatch(html, /'Kentucky'|>Kentucky<|city-lexington/);
+  // Every trigger names the panel it controls, the areas panel included.
+  assert.match(html, /\$twinsNavAreasId = 'twins-brand-nav-service-area';/);
+  assert.equal((html.match(/aria-controls="<\?= htmlspecialchars\(\$twinsNav(?:PanelId|AreasId)/g) || []).length, 2);
+  // The drawer has one consistent heading level across all four groups.
+  assert.match(html, /<h2 class="twins-brand-drawer-group-title">/);
+  assert.doesNotMatch(html, /class="twins-brand-drawer-group">\s*<strong>/);
+});
+
 test('location classification keeps the familiar shared header', () => {
   // r30 removed the location-specific header quote label; the header is one
   // shared chrome (shell + mainbar + market strip) for every classification.

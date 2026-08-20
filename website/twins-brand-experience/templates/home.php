@@ -37,7 +37,29 @@ if (in_array($marketKey, ['main', 'wi'], true)) {
     $homeRoutes['cost-guide'] = $experience->route('cost-guide', $marketKey);
 }
 
-$homeAreaLinks = array_slice($marketCityLinks, 0, 12);
+// Was array_slice($marketCityLinks, 0, 12), which printed "Wisconsin Service
+// Areas, Madison, Milwaukee, Baraboo, Barneveld, Belleville, Beloit,
+// Brookfield, Brooklyn, Cambridge, Columbus, Cottage Grove" -- the same
+// alphabetical village dump as the old header menu, on the homepage.
+//
+// Featured towns per metro instead. Madison's six are the towns with
+// completedJobs >= 50 in config/location-content.php (1,100 of 1,403 recorded
+// Madison-metro jobs); Milwaukee's and Rockford's are hand-placed, because
+// every record in those metros carries completedJobs => null.
+$homeAreaGroups = [];
+foreach ($twinsNavAreaMetros as $twinsNavMetro) {
+    $featuredTowns = array_values(array_filter(
+        $twinsNavMetro['towns'],
+        static fn(array $town): bool => in_array($town[1], $twinsNavMetro['featured'], true)
+    ));
+    if ($featuredTowns === []) continue;
+    $homeAreaGroups[] = [
+        'label' => $twinsNavMetro['label'],
+        'towns' => $featuredTowns,
+        'hubLabel' => $twinsNavMetro['hubLabel'],
+        'hubHref' => $experience->route('service-area', $marketKey) . $twinsNavMetro['hubAnchor'],
+    ];
+}
 
 // Five cost-intent-first questions from the approved 2026-08-18 homepage copy.
 // Every dollar figure traces to docs/marketing/website-rebuild/data/price-ranges.json

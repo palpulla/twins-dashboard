@@ -35,6 +35,38 @@ $cityLinks = array_values(array_filter(
     $marketCityLinks,
     static fn(array $item): bool => isset($item[1]) && is_string($item[1]) && strpos($item[1], 'city-') === 0
 ));
+
+// The long tail lives here now, so this page has to earn the click. Every metro
+// group in the header links to an anchor below, and the towns the header does
+// NOT carry -- provisioned WP pages with no approved copy record -- are linked
+// exactly once, from here, as "Nearby communities we also serve". That single
+// link is what keeps 24 indexed pages from being orphaned; a sitewide header
+// link would spend crawl budget on generic pages and tell Google they rank as
+// peers of Madison.
+//
+// Deliberately NOT an A-Z rail: at this size an alphabet index costs 26 targets
+// to save at most one screen of scanning, and alphabetical order inside each
+// metro already does that job. The threshold where a letter rail earns its
+// place is roughly 150+ entries.
+$metroSections = [];
+$featuredRouteKeys = [];
+foreach ($twinsNavAreaMetros as $twinsNavMetro) {
+    $metroTowns = [];
+    foreach ($twinsNavMetro['towns'] as [$townLabel, $townRoute]) {
+        $featuredRouteKeys[] = $townRoute;
+        $metroTowns[] = [$townLabel, $townRoute];
+    }
+    // Anchor ids match $twinsNavMetroTree['hubAnchor'] exactly.
+    $metroSections[] = [
+        'id' => ltrim($twinsNavMetro['hubAnchor'], '#'),
+        'label' => $twinsNavMetro['label'],
+        'towns' => $metroTowns,
+    ];
+}
+$nearbyLinks = array_values(array_filter(
+    $cityLinks,
+    static fn(array $item): bool => !in_array($item[1], $featuredRouteKeys, true)
+));
 ?>
 <div id="twins-overhaul-main" class="twins-brand-page twins-brand-editorial-page twins-brand-location-index">
   <header class="twins-brand-editorial-hero" aria-labelledby="twins-brand-location-index-title">
@@ -73,11 +105,37 @@ $cityLinks = array_values(array_filter(
         <span class="twins-brand-kicker">Where we work</span>
         <h2 id="twins-brand-location-index-areas-title"><?= htmlspecialchars($copy['areasTitle'], ENT_QUOTES, 'UTF-8') ?></h2>
       </div>
-      <nav class="twins-brand-location-links" aria-label="<?= htmlspecialchars($copy['areasTitle'], ENT_QUOTES, 'UTF-8') ?>">
-        <?php foreach ($cityLinks as [$cityLabel, $cityRoute]): ?>
-          <a href="<?= htmlspecialchars($experience->route($cityRoute, $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($cityLabel, ENT_QUOTES, 'UTF-8') ?></a>
-        <?php endforeach; ?>
-      </nav>
+      <?php if (count($metroSections) > 1): ?>
+        <nav class="twins-brand-location-jump" aria-label="Jump to a metro">
+          <span>Jump to:</span>
+          <?php foreach ($metroSections as $metroSection): ?>
+            <a href="#<?= htmlspecialchars($metroSection['id'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($metroSection['label'], ENT_QUOTES, 'UTF-8') ?></a>
+          <?php endforeach; ?>
+        </nav>
+      <?php endif; ?>
+      <?php foreach ($metroSections as $metroSection): ?>
+        <?php $metroHeadingId = 'twins-brand-metro-' . $metroSection['id']; ?>
+        <section class="twins-brand-location-metro" id="<?= htmlspecialchars($metroSection['id'], ENT_QUOTES, 'UTF-8') ?>" aria-labelledby="<?= htmlspecialchars($metroHeadingId, ENT_QUOTES, 'UTF-8') ?>">
+          <h3 id="<?= htmlspecialchars($metroHeadingId, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($metroSection['label'], ENT_QUOTES, 'UTF-8') ?></h3>
+          <?php $metroTownCount = count($metroSection['towns']); ?>
+          <p class="twins-brand-location-metro-count"><?= htmlspecialchars((string) $metroTownCount, ENT_QUOTES, 'UTF-8') ?> <?= $metroTownCount === 1 ? 'community' : 'communities' ?> with a local page</p>
+          <nav class="twins-brand-location-links" aria-label="<?= htmlspecialchars($metroSection['label'], ENT_QUOTES, 'UTF-8') ?> communities">
+            <?php foreach ($metroSection['towns'] as [$cityLabel, $cityRoute]): ?>
+              <a href="<?= htmlspecialchars($experience->route($cityRoute, $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($cityLabel, ENT_QUOTES, 'UTF-8') ?></a>
+            <?php endforeach; ?>
+          </nav>
+        </section>
+      <?php endforeach; ?>
+      <?php if ($nearbyLinks !== []): ?>
+        <section class="twins-brand-location-nearby" aria-labelledby="twins-brand-location-index-nearby-title">
+          <h3 id="twins-brand-location-index-nearby-title">Nearby communities we also serve</h3>
+          <nav class="twins-brand-location-links twins-brand-location-links--secondary" aria-label="Nearby communities we also serve">
+            <?php foreach ($nearbyLinks as [$cityLabel, $cityRoute]): ?>
+              <a href="<?= htmlspecialchars($experience->route($cityRoute, $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($cityLabel, ENT_QUOTES, 'UTF-8') ?></a>
+            <?php endforeach; ?>
+          </nav>
+        </section>
+      <?php endif; ?>
     </section>
   <?php endif; ?>
 

@@ -3,12 +3,17 @@ declare(strict_types=1);
 
 require __DIR__ . '/nav-data.php';
 
+// Three generic groups. Service Area is rendered explicitly after this loop
+// (desktop) and after the drawer loop (mobile), so the other three panels keep
+// today's exact markup: the owner complained about one menu, not four.
 $nav = [
     'Repair Services' => $serviceItems,
     'Garage Doors' => $garageDoorItems,
     'Why Twins' => array_merge($aboutItems, $resourceItems),
-    'Service Area' => $serviceAreas,
 ];
+$twinsNavGroupId = static fn(string $group): string =>
+    'twins-brand-nav-' . preg_replace('/[^a-z0-9]+/', '-', strtolower($group));
+$twinsNavAreasId = 'twins-brand-nav-service-area';
 $bookingMode = $booking['mode'] ?? null;
 ?>
 <style id="twins-brand-critical-chrome">
@@ -29,15 +34,66 @@ body:has(.twins-brand-header) :where(
       </a>
       <nav class="twins-brand-primary-nav" aria-label="Primary navigation">
         <?php foreach ($nav as $group => $items): ?>
+          <?php $twinsNavPanelId = $twinsNavGroupId($group); ?>
           <div class="twins-brand-nav-group">
-            <button type="button" class="twins-brand-nav-trigger" aria-expanded="false"><?= htmlspecialchars($group, ENT_QUOTES, 'UTF-8') ?></button>
-            <div class="twins-brand-nav-panel<?= count($items) > 8 ? ' twins-brand-nav-panel--wide' : '' ?>">
+            <button type="button" class="twins-brand-nav-trigger" aria-expanded="false" aria-controls="<?= htmlspecialchars($twinsNavPanelId, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($group, ENT_QUOTES, 'UTF-8') ?></button>
+            <div class="twins-brand-nav-panel<?= count($items) > 8 ? ' twins-brand-nav-panel--wide' : '' ?>" id="<?= htmlspecialchars($twinsNavPanelId, ENT_QUOTES, 'UTF-8') ?>">
               <?php foreach ($items as [$label, $routeKey]): ?>
                 <a href="<?= htmlspecialchars($experience->route($routeKey, $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($experience->contextualRouteLabel($routeKey, $marketKey, $label), ENT_QUOTES, 'UTF-8') ?></a>
               <?php endforeach; ?>
             </div>
           </div>
         <?php endforeach; ?>
+        <?php
+        // Service Area: a real two-level tree, metro -> town. The old whole-panel
+        // "more than 8 items means two alphabetical columns" heuristic is what
+        // produced the flat 51-row dump; this panel never uses it.
+        //
+        // <p id> + <ul aria-labelledby>, NOT <h2>/<h3>: a heading inside site
+        // chrome injects "Madison Metro" into the heading outline of every page
+        // on the site, where it competes with real page headings in H-key
+        // navigation. aria-labelledby buys the whole win -- screen readers
+        // announce "Madison Metro, list, 27 items" on entry -- at no outline
+        // cost. On the hub page, where the groups genuinely are document
+        // sections, they ARE real headings.
+        //
+        // No phone numbers anywhere in here. Per-metro phones are the market
+        // disclosure's exclusive job: the disclosure answers "who serves me and
+        // what is their number", this menu answers "where is my town".
+        ?>
+        <div class="twins-brand-nav-group twins-brand-nav-group--areas">
+          <button type="button" class="twins-brand-nav-trigger" aria-expanded="false" aria-controls="<?= htmlspecialchars($twinsNavAreasId, ENT_QUOTES, 'UTF-8') ?>">Service Area</button>
+          <div class="twins-brand-nav-panel twins-brand-nav-panel--areas<?= $twinsNavAreaMetros === [] ? ' twins-brand-nav-panel--cards-only' : '' ?>" id="<?= htmlspecialchars($twinsNavAreasId, ENT_QUOTES, 'UTF-8') ?>">
+            <div class="twins-brand-area-columns">
+              <?php foreach ($twinsNavAreaMetros as $twinsNavMetro): ?>
+                <?php $twinsNavMetroId = 'twins-area-' . $twinsNavMetro['key']; ?>
+                <div class="twins-brand-area-metro">
+                  <p class="twins-brand-area-metro-title" id="<?= htmlspecialchars($twinsNavMetroId, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($twinsNavMetro['label'], ENT_QUOTES, 'UTF-8') ?></p>
+                  <ul class="twins-brand-area-towns<?= $twinsNavMetro['townCount'] > 10 ? ' twins-brand-area-towns--split' : '' ?>" aria-labelledby="<?= htmlspecialchars($twinsNavMetroId, ENT_QUOTES, 'UTF-8') ?>">
+                    <?php foreach ($twinsNavMetro['towns'] as [$label, $routeKey]): ?>
+                      <li><a href="<?= htmlspecialchars($experience->route($routeKey, $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($experience->contextualRouteLabel($routeKey, $marketKey, $label), ENT_QUOTES, 'UTF-8') ?></a></li>
+                    <?php endforeach; ?>
+                  </ul>
+                  <a class="twins-brand-area-hub" href="<?= htmlspecialchars($experience->route('service-area', $marketKey) . $twinsNavMetro['hubAnchor'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($twinsNavMetro['hubLabel'], ENT_QUOTES, 'UTF-8') ?></a>
+                </div>
+              <?php endforeach; ?>
+              <?php foreach ($twinsNavAreaMarkets as $twinsNavAreaMarket): ?>
+                <?php $twinsNavMarketCardId = 'twins-area-market-' . $twinsNavAreaMarket['key']; ?>
+                <div class="twins-brand-area-card">
+                  <p class="twins-brand-area-metro-title" id="<?= htmlspecialchars($twinsNavMarketCardId, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($twinsNavAreaMarket['label'], ENT_QUOTES, 'UTF-8') ?></p>
+                  <p class="twins-brand-area-blurb"><?= htmlspecialchars($twinsNavAreaMarket['blurb'], ENT_QUOTES, 'UTF-8') ?></p>
+                  <a class="twins-brand-area-jump" href="<?= htmlspecialchars($experience->route($twinsNavAreaMarket['key'], $marketKey), ENT_QUOTES, 'UTF-8') ?>">Visit the <?= htmlspecialchars($twinsNavAreaMarket['label'], ENT_QUOTES, 'UTF-8') ?> site</a>
+                </div>
+              <?php endforeach; ?>
+            </div>
+            <?php if ($twinsNavAreaMetros === []): ?>
+              <?php [$twinsNavAreaHubLabel, $twinsNavAreaHubRoute] = $twinsNavAreaHub; ?>
+              <div class="twins-brand-area-foot">
+                <a class="twins-brand-area-hub" href="<?= htmlspecialchars($experience->route($twinsNavAreaHubRoute, $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($twinsNavAreaHubLabel, ENT_QUOTES, 'UTF-8') ?></a>
+              </div>
+            <?php endif; ?>
+          </div>
+        </div>
       </nav>
       <div class="twins-brand-header-actions">
         <a class="twins-brand-phone" href="<?= htmlspecialchars($phoneHref, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></a>
@@ -82,12 +138,49 @@ body:has(.twins-brand-header) :where(
       <nav aria-label="Mobile navigation">
         <?php foreach ($nav as $group => $items): ?>
           <div class="twins-brand-drawer-group">
-            <strong><?= htmlspecialchars($group, ENT_QUOTES, 'UTF-8') ?></strong>
+            <h2 class="twins-brand-drawer-group-title"><?= htmlspecialchars($group, ENT_QUOTES, 'UTF-8') ?></h2>
             <?php foreach ($items as [$label, $routeKey]): ?>
               <a href="<?= htmlspecialchars($experience->route($routeKey, $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($experience->contextualRouteLabel($routeKey, $marketKey, $label), ENT_QUOTES, 'UTF-8') ?></a>
             <?php endforeach; ?>
           </div>
         <?php endforeach; ?>
+        <?php
+        // Below 1200px the mega-menu does not exist, so this drawer IS the phone
+        // and most-laptops experience. It used to emit 51 identical 44px rows
+        // under one heading, about 2,250px of scroll for one group. One closed
+        // <details> per metro collapses that to four rows. Every anchor is still
+        // in the DOM on every page -- crawlers read the rendered DOM, so a closed
+        // disclosure costs nothing in link equity while costing nothing in
+        // scroll either. Ids are prefixed "drawer-" because the drawer and the
+        // desktop panel both render on every page.
+        ?>
+        <div class="twins-brand-drawer-group twins-brand-drawer-group--areas">
+          <h2 class="twins-brand-drawer-group-title">Service Area</h2>
+          <?php foreach ($twinsNavAreaMetros as $twinsNavMetro): ?>
+            <?php $twinsNavDrawerMetroId = 'drawer-metro-' . $twinsNavMetro['key']; ?>
+            <details class="twins-brand-drawer-metro">
+              <summary>
+                <span class="twins-brand-drawer-metro-name" id="<?= htmlspecialchars($twinsNavDrawerMetroId, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($twinsNavMetro['label'], ENT_QUOTES, 'UTF-8') ?></span>
+                <span class="twins-brand-drawer-metro-count"><?= htmlspecialchars((string) $twinsNavMetro['townCount'], ENT_QUOTES, 'UTF-8') ?> <?= $twinsNavMetro['townCount'] === 1 ? 'town' : 'towns' ?></span>
+              </summary>
+              <div class="twins-brand-drawer-metro-body">
+                <ul aria-labelledby="<?= htmlspecialchars($twinsNavDrawerMetroId, ENT_QUOTES, 'UTF-8') ?>">
+                  <?php foreach ($twinsNavMetro['towns'] as [$label, $routeKey]): ?>
+                    <li><a href="<?= htmlspecialchars($experience->route($routeKey, $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($experience->contextualRouteLabel($routeKey, $marketKey, $label), ENT_QUOTES, 'UTF-8') ?></a></li>
+                  <?php endforeach; ?>
+                </ul>
+                <a class="twins-brand-drawer-hub" href="<?= htmlspecialchars($experience->route('service-area', $marketKey) . $twinsNavMetro['hubAnchor'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($twinsNavMetro['hubLabel'], ENT_QUOTES, 'UTF-8') ?></a>
+              </div>
+            </details>
+          <?php endforeach; ?>
+          <?php foreach ($twinsNavAreaMarkets as $twinsNavAreaMarket): ?>
+            <a class="twins-brand-drawer-jump" href="<?= htmlspecialchars($experience->route($twinsNavAreaMarket['key'], $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($twinsNavAreaMarket['label'], ENT_QUOTES, 'UTF-8') ?></a>
+          <?php endforeach; ?>
+          <?php if ($twinsNavAreaMetros === []): ?>
+            <?php [$twinsNavAreaHubLabel, $twinsNavAreaHubRoute] = $twinsNavAreaHub; ?>
+            <a class="twins-brand-drawer-hub" href="<?= htmlspecialchars($experience->route($twinsNavAreaHubRoute, $marketKey), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($twinsNavAreaHubLabel, ENT_QUOTES, 'UTF-8') ?></a>
+          <?php endif; ?>
+        </div>
       </nav>
       <?php if ($bookingMode === 'dialog'): ?>
         <button type="button" class="twins-brand-cta twins-brand-cta--book" data-twins-booking-open>Book Garage Door Service</button>

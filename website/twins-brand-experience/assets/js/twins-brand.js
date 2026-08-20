@@ -7,7 +7,12 @@
     '532': '/wi/garage-door-cost-in-milwaukee-wi/',
   });
   const ZIP_FALLBACK = '/wi/contact-us/';
-  const focusables = root => [...root.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')]
+  // `summary` is focusable and tabbable. Its omission was latent until the
+  // drawer started carrying one <details> per metro: the drawer is
+  // role="dialog" aria-modal="true" with a Tab trap that computes first/last
+  // from this list, and without `summary` the trap computes the wrong
+  // boundaries and Tab escapes the modal.
+  const focusables = root => [...root.querySelectorAll('a[href],button:not([disabled]),summary,input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')]
     .filter(element => !element.closest('[hidden]'));
   const setExpanded = (button, value) => button.setAttribute('aria-expanded', String(value));
 
@@ -557,6 +562,9 @@
         if (event.key === 'Escape') { event.preventDefault(); close(true); }
         if (event.key === 'ArrowDown' && index >= 0) { event.preventDefault(); links[(index + 1) % links.length]?.focus(); }
         if (event.key === 'ArrowUp' && index >= 0) { event.preventDefault(); links[(index - 1 + links.length) % links.length]?.focus(); }
+        // With 35 town links in the Service Area panel, arrow-walking alone is cruel.
+        if (event.key === 'Home' && index >= 0) { event.preventDefault(); links[0]?.focus(); }
+        if (event.key === 'End' && index >= 0) { event.preventDefault(); links[links.length - 1]?.focus(); }
       });
     });
     document.addEventListener('pointerdown', event => {
