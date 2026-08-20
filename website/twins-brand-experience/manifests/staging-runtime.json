@@ -8,8 +8,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/assets/css/twins-brand-families.css",
       "destination": "twins-brand-experience/assets/css/twins-brand-families.css",
-      "size": 52422,
-      "sha256": "1916db9d3c6f3a4292c4d4b809a025fb9e579e289791569e574fb250fcea2b25"
+      "size": 53007,
+      "sha256": "19d59ac9d33cd82f7e0a84f40acdcdf4456edec7dacdb4ad8ffe4009811e3b0d"
     },
     {
       "role": "deploy",

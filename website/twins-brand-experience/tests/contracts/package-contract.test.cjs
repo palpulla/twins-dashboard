@@ -60,7 +60,7 @@ test('host verification manifest is separate, closed, and non-deployable', () =>
   const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifests/host-verification.json'), 'utf8'));
   assert.equal(manifest.schemaVersion, 1);
   assert.equal(manifest.productionWriteAuthority, false);
-  assert.equal(manifest.remoteDirectory, '/home/customer/staging-safety/staging-remediation-r37-20260820/verification/');
+  assert.equal(manifest.remoteDirectory, '/home/customer/staging-safety/staging-remediation-r38-20260820/verification/');
   assert.equal(manifest.files.some(file => file.source.endsWith('private-staging-deploy-harness.php')), true);
   assert.equal(manifest.files.some(file => file.source.endsWith('private-staging-deploy.php')), true);
   for (const required of [
