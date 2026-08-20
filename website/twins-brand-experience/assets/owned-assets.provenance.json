@@ -115,6 +115,47 @@
   ],
   "assets": [
     {
+      "logicalName": "truck-cutout",
+      "importLocator": "website/staging-safety/mu-plugins/twins-staging-assets/twins-service-truck-cutout.png",
+      "sourceEvidence": "r30 adapters reference 320w/880w derivatives that never existed; generated 2026-08-20",
+      "original": {
+        "path": "assets/images/brand/twins-service-truck-cutout.png",
+        "sha256": "ecd200b41f69334cf97c73bc9d85a3b59288b8174f2e9aae5c30fd27d9940bf3",
+        "mime": "image/png",
+        "width": 1398,
+        "height": 821
+      },
+      "approvedAlt": "Twins Garage Doors branded service truck",
+      "allowedUse": [
+        "home",
+        "careers",
+        "team"
+      ],
+      "derivatives": [
+        {
+          "path": "assets/images/brand/twins-service-truck-cutout-320w.webp",
+          "sha256": "44d7d62e521da5302548d1b9008c0bf0211732c8961026f82544e516d6902592",
+          "mime": "image/webp",
+          "width": 320,
+          "height": 188
+        },
+        {
+          "path": "assets/images/brand/twins-service-truck-cutout-880w.webp",
+          "sha256": "c7a1225f36d803d4548aa8b0bda73fa4dc9a6c7b115c548edf79fe4dc63c852c",
+          "mime": "image/webp",
+          "width": 880,
+          "height": 517
+        },
+        {
+          "path": "assets/images/brand/twins-service-truck-cutout-1280w.webp",
+          "sha256": "7d465a59567103792d2b4c59a9b45feb519953ba5736815717a850f105842594",
+          "mime": "image/webp",
+          "width": 1280,
+          "height": 752
+        }
+      ]
+    },
+    {
       "logicalName": "crew-fleet",
       "importLocator": "videos/twins-garage-doors-reel/capture/assets/best-garage-door-repair-installation-nea.jpeg",
       "sourceEvidence": "videos/twins-garage-doors-reel/capture/extracted/tokens.json:701-705",

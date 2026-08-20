@@ -15,8 +15,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/assets/css/twins-brand.css",
       "destination": "twins-brand-experience/assets/css/twins-brand.css",
-      "size": 152552,
-      "sha256": "dc7ccb17d30fc3f1c559cad99db972b1ca1ef540b89c857f8266dc91d5447ccb"
+      "size": 153982,
+      "sha256": "caeb1f505da2cdd31c21ada32cd020c29ea0bded8075a2ed9f142e82dc279f26"
     },
     {
       "role": "deploy",
@@ -52,6 +52,27 @@
       "destination": "twins-brand-experience/assets/images/brand/twins-logo.png",
       "size": 50959,
       "sha256": "cc63412115076e387953b81e9d936a3d40559afa2edc314b912a66b79d0bc0f0"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/assets/images/brand/twins-service-truck-cutout-1280w.webp",
+      "destination": "twins-brand-experience/assets/images/brand/twins-service-truck-cutout-1280w.webp",
+      "size": 143938,
+      "sha256": "7d465a59567103792d2b4c59a9b45feb519953ba5736815717a850f105842594"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/assets/images/brand/twins-service-truck-cutout-320w.webp",
+      "destination": "twins-brand-experience/assets/images/brand/twins-service-truck-cutout-320w.webp",
+      "size": 19570,
+      "sha256": "44d7d62e521da5302548d1b9008c0bf0211732c8961026f82544e516d6902592"
+    },
+    {
+      "role": "deploy",
+      "source": "twins-brand-experience/assets/images/brand/twins-service-truck-cutout-880w.webp",
+      "destination": "twins-brand-experience/assets/images/brand/twins-service-truck-cutout-880w.webp",
+      "size": 86094,
+      "sha256": "c7a1225f36d803d4548aa8b0bda73fa4dc9a6c7b115c548edf79fe4dc63c852c"
     },
     {
       "role": "deploy",
