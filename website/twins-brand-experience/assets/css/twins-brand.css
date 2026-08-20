@@ -3379,11 +3379,56 @@ body.twins-brand-experience .twins-brand-review-proof .twins-brand-kicker {
 }
 .twins-brand-membership-roller { width: clamp(120px, 40%, 168px); height: auto; margin: 0 0 auto auto; opacity: .9; }
 
+/* T0 + T2 — STEEL FIELD (the five navy scenes). The .028 hairline that used to
+   be a standalone shared rule here is now the last layer of every stack below;
+   left standing on its own it would win the cascade and eat every seam. Light
+   lands in a different place per scene, so two navy scenes in a row read as two
+   sections of a door instead of one slab. */
 .twins-brand-company-story,
 .twins-brand-service-showcase,
-.twins-brand-closing-scene,
-.twins-brand-review-proof {
-  background-image: repeating-linear-gradient(180deg, rgba(255, 255, 255, .028) 0 1px, transparent 1px 44px);
+.twins-brand-review-proof,
+.twins-brand-why-scene,
+.twins-brand-closing-scene {
+  background-repeat: no-repeat, no-repeat, repeat, repeat;
+  background-size: 100% 6px, 100% 100%, var(--twins-stile) 100%, 100% 44px;
+  background-position: 0 0, 0 0, 0 0, 0 0;
+  background-image:
+    var(--twins-seam-dark),
+    linear-gradient(180deg, var(--twins-steel-lo) 0, var(--twins-navy-950) 30%, var(--twins-steel-hi) 100%),
+    var(--twins-stile-dark),
+    repeating-linear-gradient(180deg, rgba(255,255,255,.028) 0 1px, transparent 1px 44px);
+}
+.twins-brand-company-story {          /* light high, behind the headline */
+  background-image:
+    var(--twins-seam-dark),
+    linear-gradient(180deg, var(--twins-steel-lo) 0, var(--twins-navy-950) 20%, var(--twins-steel-hi) 100%),
+    var(--twins-stile-dark),
+    repeating-linear-gradient(180deg, rgba(255,255,255,.028) 0 1px, transparent 1px 44px);
+}
+.twins-brand-service-showcase {       /* inverted: lit top, dark bottom */
+  background-image:
+    var(--twins-seam-dark),
+    linear-gradient(180deg, #06203c 0, var(--twins-navy-900) 44%, var(--twins-steel-lo) 100%),
+    var(--twins-stile-dark),
+    repeating-linear-gradient(180deg, rgba(255,255,255,.028) 0 1px, transparent 1px 44px);
+}
+.twins-brand-why-scene {              /* light mid, behind the roster cards */
+  background-image:
+    var(--twins-seam-dark),
+    linear-gradient(180deg, var(--twins-navy-950) 0, var(--twins-steel-hi) 52%, var(--twins-steel-lo) 100%),
+    var(--twins-stile-dark),
+    repeating-linear-gradient(180deg, rgba(255,255,255,.028) 0 1px, transparent 1px 44px);
+}
+.twins-brand-closing-scene {          /* darkest, with light leaking under a shut door */
+  background-repeat: no-repeat, no-repeat, no-repeat, repeat, repeat;
+  background-size: 100% 6px, 100% 4px, 100% 100%, var(--twins-stile) 100%, 100% 44px;
+  background-position: 0 0, 0 100%, 0 0, 0 0, 0 0;
+  background-image:
+    var(--twins-seam-dark),
+    linear-gradient(180deg, rgba(255,198,65,.16) 0 2px, rgba(255,198,65,.06) 2px 4px),
+    linear-gradient(180deg, var(--twins-steel-lo) 0, var(--twins-navy-950) 62%, #061a33 100%),
+    var(--twins-stile-dark),
+    repeating-linear-gradient(180deg, rgba(255,255,255,.028) 0 1px, transparent 1px 44px);
 }
 
 /* Layered brand mark behind the two largest navy bands. Good Golly gets its
