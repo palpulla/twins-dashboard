@@ -130,6 +130,21 @@ assert(twins_overhaul_classify_request(1, '/careers/', 'page', 7341) === 'career
 assert(twins_overhaul_classify_request(5, '/il/location/rockford/', 'location', 0) === 'location');
 assert(twins_overhaul_should_render_chrome('campaign-preserve') === false);
 assert(twins_overhaul_should_render_chrome('cost-madison') === true);
+// Email-capture popup route gate: every chrome-eligible brand route except the
+// contact page, the legal/thank-you family, and the door builder.
+assert(twins_overhaul_should_render_popup('home-brand') === true);
+assert(twins_overhaul_should_render_popup('service') === true);
+assert(twins_overhaul_should_render_popup('location') === true);
+assert(twins_overhaul_should_render_popup('trust') === true);
+assert(twins_overhaul_should_render_popup('article') === true);
+assert(twins_overhaul_should_render_popup('blog-index') === true);
+assert(twins_overhaul_should_render_popup('catalog-preserve') === true);
+assert(twins_overhaul_should_render_popup('cost-madison') === true);
+assert(twins_overhaul_should_render_popup('contact-brand') === false);
+assert(twins_overhaul_should_render_popup('legal-preserve') === false);
+assert(twins_overhaul_should_render_popup('builder') === false);
+assert(twins_overhaul_should_render_popup('campaign-preserve') === false);
+assert(twins_overhaul_should_render_popup('not-a-classification') === false);
 assert(count(twins_overhaul_illinois_manifest()['cities']) === 12);
 
 $interface_arity = [
@@ -138,6 +153,7 @@ $interface_arity = [
     'twins_overhaul_illinois_manifest' => 0,
     'twins_overhaul_classify_request' => 4,
     'twins_overhaul_should_render_chrome' => 1,
+    'twins_overhaul_should_render_popup' => 1,
     'twins_overhaul_render_header' => 1,
     'twins_overhaul_render_footer' => 1,
     'twins_overhaul_render_cost_page' => 2,

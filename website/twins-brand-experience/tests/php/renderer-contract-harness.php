@@ -1105,6 +1105,55 @@ foreach ($unsafeBookingFragments as $scenario => $unsafeFragment) {
     $expect($unsafeRejected, 'unsafe booking composition was not rejected: ' . $scenario);
 }
 
+// Email-capture popup: template-owned chrome. Enabled by default, inert on
+// staging (the full composition scan above applies), suppressed on the fixed
+// route families, and endpoint-gated on production: without the server-side
+// TWINS_POPUP_LEAD_ENDPOINT declaration the popup must not render at all.
+$popup = $stagingExperience->renderEmailCapture([
+    'environment' => 'staging',
+    'market' => 'main',
+    'classification' => 'home-brand',
+]);
+$expect(substr_count($popup, 'data-twins-popup') === 1, 'staging popup did not render exactly one wrapper');
+$expect(strpos($popup, 'FIRST DIBS ON TUNE-UP SEASON') !== false, 'popup lost the approved headline');
+$expect(strpos($popup, 'One useful email when it matters.') !== false, 'popup lost the approved body copy');
+$expect(strpos($popup, 'SIGN ME UP') !== false, 'popup lost the approved button label');
+$expect(strpos($popup, 'No thanks') !== false, 'popup lost the approved decline label');
+$expect(strpos($popup, 'We send a handful of emails a year. Unsubscribe with one click.') !== false, 'popup lost the approved fine print');
+$expect(strpos($popup, 'This private staging preview does not submit or store lead information.') !== false, 'staging popup lost the standing private-preview notice');
+$expect(strpos($popup, 'role="dialog"') !== false && strpos($popup, 'aria-modal="true"') !== false, 'popup dialog semantics drifted');
+$expect(strpos($popup, 'aria-hidden="true"') !== false, 'popup mascot panel is not decorative');
+$expect(preg_match('/data-popup-rendered-at="\d+"/', $popup) === 1, 'popup lost its rendered timestamp');
+$expect(strpos($popup, 'data-popup-endpoint') === false, 'staging popup declared a submission endpoint');
+$expect(strpos($popup, 'data-preview-finalize') !== false && strpos($popup, 'data-preview-status') !== false, 'staging popup left the guarded preview-status pattern');
+$assertInertComposition($header . $stagingBodies['renderHome'] . $footer . $popup, 'home + popup composition');
+
+foreach (['campaign-preserve', 'legal-preserve', 'contact-brand', 'builder'] as $suppressedClassification) {
+    $suppressedPopup = $stagingExperience->renderEmailCapture([
+        'environment' => 'staging',
+        'market' => 'main',
+        'classification' => $suppressedClassification,
+    ]);
+    $expect($suppressedPopup === '', 'popup rendered on suppressed route family: ' . $suppressedClassification);
+}
+
+$productionPopupWithoutEndpoint = $productionExperience->renderEmailCapture([
+    'environment' => 'production',
+    'market' => 'main',
+    'classification' => 'home-brand',
+]);
+$expect($productionPopupWithoutEndpoint === '', 'production popup rendered without a server-declared endpoint');
+define('TWINS_POPUP_LEAD_ENDPOINT', 'https://jwrpjuqaynownxaoeayi.supabase.co/functions/v1/lp-lead-intake');
+$productionPopup = $productionExperience->renderEmailCapture([
+    'environment' => 'production',
+    'market' => 'main',
+    'classification' => 'home-brand',
+]);
+$expect(strpos($productionPopup, 'data-popup-endpoint="https://jwrpjuqaynownxaoeayi.supabase.co/functions/v1/lp-lead-intake"') !== false, 'production popup lost the declared endpoint');
+$expect(stripos($productionPopup, '<form') !== false, 'production popup lost its live form');
+$expect(strpos($productionPopup, 'name="website"') !== false, 'production popup lost its honeypot field');
+$expect(strpos($productionPopup, 'This private staging preview') === false, 'production popup exposed staging preview copy');
+
 $home = $stagingBodies['renderHome'];
 $homeMarkers = ['twins-brand-hero', 'twins-brand-company-story', 'twins-brand-service-showcase', 'twins-brand-review-proof', 'twins-brand-service-journey', 'twins-brand-why-scene', 'twins-brand-door-scene', 'twins-brand-membership-scene', 'twins-brand-closing-scene'];
 $homeCursor = -1;

@@ -836,6 +836,7 @@ if ($scenario === 'blog-index') {
     twins_overhaul_output_footer();
     $footer = (string) ob_get_clean();
     twins_overhaul_renderer_assert(substr_count($footer, '<footer class="twins-brand-footer"') === 1, 'posts index portable footer once guard failed');
+    twins_overhaul_renderer_assert(substr_count($footer, 'data-twins-popup') === 1, 'posts index footer hook did not render exactly one email popup');
 
     $expectedTemplate = realpath(dirname($argv[1]) . '/twins-staging-overhaul/templates/blog-index.php');
     $switchedTemplate = twins_overhaul_filter_branded_template('/legacy-theme/index.php');
@@ -1217,6 +1218,19 @@ if ($scenario === 'home-brand') {
     twins_overhaul_renderer_assert(substr_count($body, 'id="twins-overhaul-main"') === 1, 'home lacks one portable main landmark');
     twins_overhaul_renderer_assert(strpos($body, 'OBSOLETE-HOME-BYTES') === false, 'obsolete homepage body survived replacement');
     twins_overhaul_renderer_assert(stripos($output, '<form') === false, 'home retained form authority');
+
+    // The email-capture popup rides the footer hook on popup-eligible routes,
+    // renders exactly once, and stays inert on staging.
+    ob_start();
+    twins_overhaul_output_footer();
+    twins_overhaul_output_footer();
+    $footerOutput = (string) ob_get_clean();
+    twins_overhaul_renderer_assert(substr_count($footerOutput, '<footer class="twins-brand-footer"') === 1, 'home portable footer once guard failed');
+    twins_overhaul_renderer_assert(substr_count($footerOutput, 'data-twins-popup') === 1, 'home footer hook did not render exactly one email popup');
+    twins_overhaul_renderer_assert(strpos($footerOutput, 'FIRST DIBS ON TUNE-UP SEASON') !== false, 'home email popup lost its approved headline');
+    twins_overhaul_renderer_assert(strpos($footerOutput, 'This private staging preview does not submit or store lead information.') !== false, 'home email popup lost the standing staging notice');
+    twins_overhaul_renderer_assert(stripos($footerOutput, '<form') === false, 'home email popup carried form authority on staging');
+    twins_overhaul_renderer_assert(strpos($footerOutput, 'data-popup-endpoint') === false, 'home email popup declared an endpoint on staging');
 }
 
 if (in_array($scenario, ['team-brand', 'careers-brand', 'reviews-brand', 'contact-brand'], true)) {
@@ -1242,6 +1256,19 @@ if (in_array($scenario, ['team-brand', 'careers-brand', 'reviews-brand', 'contac
     twins_overhaul_renderer_assert(strpos($body, $marker) !== false, $scenario . ' portable body marker is missing');
     twins_overhaul_renderer_assert(strpos($body, 'LEGACY-BRAND-BODY') === false, $scenario . ' retained its legacy body');
     twins_overhaul_renderer_assert(stripos($body, '<form') === false, $scenario . ' retained form authority');
+
+    // The contact page owns the primary lead capture, so the email popup is
+    // suppressed there by the route classifier; the other brand routes carry
+    // exactly one popup through the footer hook.
+    ob_start();
+    twins_overhaul_output_footer();
+    $footerOutput = (string) ob_get_clean();
+    twins_overhaul_renderer_assert(substr_count($footerOutput, '<footer class="twins-brand-footer"') === 1, $scenario . ' portable footer is missing');
+    if ($scenario === 'contact-brand') {
+        twins_overhaul_renderer_assert(strpos($footerOutput, 'data-twins-popup') === false, 'contact footer hook rendered the suppressed email popup');
+    } else {
+        twins_overhaul_renderer_assert(substr_count($footerOutput, 'data-twins-popup') === 1, $scenario . ' footer hook did not render exactly one email popup');
+    }
 }
 
 if ($scenario === 'elementor-theme-content') {
