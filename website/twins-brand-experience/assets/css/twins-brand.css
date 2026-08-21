@@ -5227,11 +5227,26 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-card > a::after { c
     max-width: none;
     max-height: 40vh;
     overflow-y: auto;
+    background: var(--twins-cream);
     border-bottom: 0;
     border-radius: 10px 10px 0 0;
   }
-  .twins-popup-art { display: none; }
-  .twins-popup-body { gap: 8px; padding: 14px 16px 16px; }
+  /* The mascot survives on the sheet as a faint watermark pinned to the
+     bottom-right, behind the form (owner request 2026-08-21). Low opacity
+     keeps every text pair on the cream ground at its measured ratio. */
+  .twins-popup-art {
+    position: absolute;
+    inset: auto 0 0 auto;
+    justify-content: flex-end;
+    padding: 0;
+    background: none;
+    border-right: 0;
+    opacity: .14;
+    z-index: 0;
+  }
+  .twins-popup-art img { max-width: 150px; }
+  .twins-popup-body { position: relative; z-index: 1; gap: 8px; padding: 14px 16px 16px; }
+  .twins-popup-field input { background: var(--twins-white); }
   .twins-popup-title { font-size: 1.3rem; }
   .twins-popup-copy { font-size: .86rem; }
   .twins-popup-field input,
