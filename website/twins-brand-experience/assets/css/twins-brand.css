@@ -570,6 +570,9 @@ body.twins-brand-experience .twins-brand-market-menu-panel small {
   text-decoration: none;
 }
 .twins-brand-nav-panel--areas :is(.twins-brand-area-hub, .twins-brand-area-jump)::after { content: '\2192'; }
+/* "All Milwaukee-area towns" wrapped to two lines in its 221px column while
+   the Madison hub beside it stayed on one. */
+.twins-brand-nav-panel--areas .twins-brand-area-hub { padding: 8px 12px; font-size: .8rem; white-space: nowrap; }
 .twins-brand-nav-panel--areas :is(.twins-brand-area-hub, .twins-brand-area-jump):hover {
   color: var(--twins-gold);
   background: var(--twins-navy-950);
@@ -757,7 +760,10 @@ body.twins-brand-experience .twins-brand-market-menu-panel small {
 .twins-brand-cta {
   position: relative;
   min-width: 44px;
-  min-height: 48px;
+  /* 64px is what the quote/book variant already measures (28px padding +
+     the 1.75rem arrow). Text-only CTAs came out 50px, so "Call Twins" sat
+     visibly shorter beside "Request a Quote" in every paired row. */
+  min-height: 64px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1106,7 +1112,11 @@ body.twins-brand-experience a.twins-brand-market-card--preview:is(:hover, :focus
 .twins-brand-team-crew { display: grid; grid-template-columns: 1.25fr .75fr; align-items: center; gap: clamp(38px, 7vw, 100px); }
 .twins-brand-team-crew-image img,
 .twins-brand-careers-hero-image img,
-.twins-brand-careers-work-image img { display: block; width: 100%; object-fit: cover; border: 5px solid var(--twins-navy-950); box-shadow: 14px 15px 0 var(--twins-gold); }
+/* height: auto is load-bearing: the <img> carries width/height attributes,
+   and width: 100% alone left the 1372px height attribute in force, so the
+   2560x1372 crew photo rendered as a 763x1372 portrait crop of tree tops on
+   the team and careers pages at every width. */
+.twins-brand-careers-work-image img { display: block; width: 100%; height: auto; object-fit: cover; border: 5px solid var(--twins-navy-950); box-shadow: 14px 15px 0 var(--twins-gold); }
 .twins-brand-team-crew-image img { aspect-ratio: 16 / 9; }
 .twins-brand-team-crew-copy h2,
 .twins-brand-team-values h2,
@@ -1456,6 +1466,7 @@ body.twins-brand-experience .twins-brand-service-phone { color: var(--twins-whit
   background: #f4ead6;
 }
 .twins-brand-editorial-answer p { max-width: 760px; }
+.twins-brand-editorial-answer > .twins-brand-cta { justify-self: start; }   /* was a 530px-wide pill filling its column */
 .twins-brand-editorial-body { background: var(--twins-white); }
 .twins-brand-editorial-content {
   max-width: var(--twins-measure);
@@ -1547,6 +1558,11 @@ body.twins-brand-experience .twins-location-hero .twins-brand-kicker { color: va
   position: relative;
   isolation: isolate;
   padding-block: clamp(48px, 6vw, 64px);
+  /* The peeking twin is ~183px tall and anchored 14px off the bottom; with
+     only 64px of bottom padding its hat sat on the third card's last lines
+     ("window, and finish choices.") at 1440. Same idea as the 144px the
+     tablet rule already reserves, sized for the desktop twin. */
+  padding-bottom: 112px;
   overflow: hidden;
   color: var(--twins-cream);
   background-color: var(--twins-navy-900);
@@ -1678,7 +1694,9 @@ body.twins-brand-experience .twins-location-reviews .twins-brand-kicker { color:
 }
 @media (max-width: 900px) {
   .twins-location-local-proof { grid-template-columns: 1fr; }
-  .twins-location-local-proof-rail { justify-items: start; }
+  /* Stacked under the copy, the stat card, address, photo and list had four
+     different widths (290 / 712 / 408 / 560 at 768). One 408px column. */
+  .twins-location-local-proof-rail { max-width: 408px; justify-items: stretch; }
   .twins-location-local-proof-rail .twins-location-address { justify-self: stretch; }
   .twins-location-local-proof-media { width: min(100%, 408px); }
 }
@@ -1931,7 +1949,25 @@ body.twins-brand-experience .twins-brand-blog-page-link:is(:hover, :focus-visibl
 .twins-brand-reviews-collection .twins-brand-section-heading p { color: #dbe8f8; }
 .twins-brand-reviews-collection .twins-brand-reviews > a { min-height: 44px; display: inline-flex; align-items: center; margin: 24px 20px 0 0; color: var(--twins-gold); font-weight: 900; }
 .twins-brand-reviews-next { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; background: #f4ead6; }
-.twins-brand-reviews-next a { min-height: 50px; display: inline-flex; align-items: center; padding: 10px 20px; color: var(--twins-navy-950); background: var(--twins-gold); border: 3px solid var(--twins-navy-950); border-radius: 999px; box-shadow: 4px 5px 0 rgba(3, 18, 43, .45); font-weight: 1000; }
+/* These three were the only buttons on the site with a 3px border, a hard
+   offset shadow, an underline and the body face. Same pill as .twins-brand-cta. */
+.twins-brand-reviews-next a {
+  min-height: 64px;
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 26px;
+  color: var(--twins-navy-950);
+  background: var(--twins-gold);
+  border: 2px solid rgba(7, 28, 56, .85);
+  border-radius: 999px;
+  box-shadow: 0 3px 0 rgba(3, 18, 43, .38), 0 12px 24px -10px rgba(3, 18, 43, .65);
+  font-family: 'Lilita One', Impact, sans-serif;
+  font-weight: 1000;
+  font-size: 1.02rem;
+  letter-spacing: .045em;
+  line-height: 1.1;
+  text-decoration: none;
+}
 
 .twins-brand-final-cta { padding: clamp(74px, 10vw, 140px) var(--twins-content-shell); color: var(--twins-white); background: var(--twins-navy-950); text-align: center; }
 .twins-brand-final-cta h2 { max-width: 900px; margin-inline: auto; color: var(--twins-white); }
@@ -2015,6 +2051,19 @@ body.twins-brand-experience .twins-brand-blog-page-link:is(:hover, :focus-visibl
 .twins-brand-cta--book,
 .twins-brand-cta--quote { animation: twins-brand-cta-pulse 8s ease-in-out 3; }
 .twins-brand-cta:is(:hover, :focus-visible, :active) { animation-play-state: paused; }
+/* Laptop band (1201 to 1380px): the four nav labels wrapped onto two lines
+   inside their pills ("Repair / Services") because the row needs ~673px of
+   nav and the column only offers 489 to 654 here. Tighter type and gutters
+   keep every label on one line; the pills stay 44px and the book link 48px. */
+@media (min-width: 1201px) and (max-width: 1380px) {
+  .twins-brand-mainbar { gap: 14px; grid-template-columns: auto minmax(0, 1fr) auto; }
+  .twins-brand-primary-nav { gap: 4px; }
+  .twins-brand-nav-trigger { padding: 9px 9px; font-size: .85rem; white-space: nowrap; }
+  .twins-brand-nav-trigger::after { margin-left: 4px; }
+  .twins-brand-header-actions { gap: 8px; }
+  .twins-brand-phone { padding: 6px 11px; font-size: .92rem; }
+  .twins-brand-header-actions .twins-brand-book-link { padding-inline: 14px; font-size: .92rem; }
+}
 @media (max-width: 1200px) {
   .twins-brand-primary-nav,
   .twins-brand-header-actions { display: none; }
@@ -2110,6 +2159,10 @@ body.twins-brand-experience .twins-brand-blog-page-link:is(:hover, :focus-visibl
 @media (max-width: 768px) {
   body.twins-brand-experience { --twins-header-height: 88px; }
   .twins-brand-mainbar { min-height: 58px; padding-inline: var(--twins-content-shell); }
+  .twins-brand-cta { min-height: 60px; }   /* the 1.45rem mobile arrow makes the quote pill 59px; text-only pills match it */
+  /* The direct-answer call pill stretched to its grid column (712px at 768);
+     it only goes full width on phones, with the stacked hero actions. */
+  .twins-brand-editorial-answer > .twins-brand-cta { justify-self: start; }
   .twins-brand-logo { width: 120px; min-width: 120px; }
   .twins-brand-market-strip { min-height: 30px; padding-inline: var(--twins-content-shell); }
   .twins-brand-market-menu > summary::before {
@@ -2176,6 +2229,11 @@ body.twins-brand-experience .twins-brand-blog-page-link:is(:hover, :focus-visibl
   .twins-brand-market-menu-panel { width: min(360px, calc(100vw - 16px)); }
   .twins-brand-hero-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .twins-brand-hero-actions .twins-brand-cta { min-width: 0; padding-inline: 10px; }
+  /* Long labels ("Call (608) 420-2377") broke onto two lines inside the
+     two-column final-CTA row at 390; stack them like the location page does. */
+  .twins-brand-final-cta .twins-brand-hero-actions { grid-template-columns: 1fr; }
+  .twins-brand-service-hero-actions .twins-brand-cta { flex: 1 1 100%; }
+  .twins-brand-editorial-answer > .twins-brand-cta { justify-self: stretch; }
   .twins-brand-cta--book::after,
   .twins-brand-cta--quote::after { width: 1.45rem; height: 1.45rem; flex-basis: 1.45rem; }
   .twins-brand-review-slider {
@@ -3649,13 +3707,15 @@ body.twins-brand-experience .twins-brand-review-proof .twins-brand-kicker {
 .twins-brand-home-team-track {
   width: max-content;
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;   /* every card in the row shares the tallest card's height */
   gap: 12px;
   padding: 6px 34px 12px 6px;
 }
 .twins-brand-home-team-person {
   flex: 0 0 clamp(150px, 18vw, 190px);
-  height: 342px;
+  /* min-height, not height: a fixed 342px clipped three-line roles
+     ("Field Operations Manager", "Senior Technician") mid-glyph at 768px. */
+  min-height: 342px;
   display: flex;
   flex-direction: column;
   padding: 10px 10px 16px;
@@ -3925,6 +3985,9 @@ body.twins-brand-experience .twins-brand-review-proof .twins-brand-kicker {
 /* "Quick answers." sat directly ON the first row's hairline (0px gap, probed);
    every other heading in the scene gets breathing room before its content. */
 .twins-brand-closing-faq h2 { margin-bottom: 14px; }
+/* `.twins-brand-home [data-home-scene] h2 { margin: 0 }` outranks the rule
+   above, so "Quick answers." still sat on the first FAQ hairline. */
+.twins-brand-home [data-home-scene] .twins-brand-closing-faq h2 { margin-bottom: 14px; }
 .twins-brand-closing-faq details { border-top: 1px solid rgba(255,255,255,.22); }
 .twins-brand-closing-faq summary { min-height: 52px; display: flex; align-items: center; cursor: pointer; }
 .twins-brand-closing-faq > a,
@@ -4218,7 +4281,7 @@ body.twins-brand-experience :is(
   .twins-brand-journey-photo { height: 220px; }
   .twins-brand-journey-twin { width: 128px; }
   .twins-brand-journey-truck { display: none; }
-  .twins-brand-home-team-person { flex-basis: 168px; height: 322px; min-height: 322px; }
+  .twins-brand-home-team-person { flex-basis: 168px; min-height: 322px; }
   .twins-brand-home-team-media { flex-basis: 210px; height: 210px; }
   /* The mascot shrinks on a phone; the stage does not. This rule used to carry
      left/right/bottom/width, left over from when .twins-brand-character-stage WAS
@@ -4297,6 +4360,23 @@ body.twins-brand-experience :is(
 .twins-brand-service-hero-art svg [class^="twins-art-"],
 .twins-brand-service-hero-art svg g { transform-box: fill-box; }
 .twins-brand-service-hero--with-art .twins-brand-service-hero-actions { position: relative; z-index: 1; }
+/* With artwork in the hero the actions used to sit in the right-hand grid
+   column, which is exactly where the absolutely positioned part lives: at
+   1440 "Call Twins" covered the spring's bottom coil and its lettering.
+   Above the 1100px art breakpoint the copy column now owns the whole hero and
+   reserves the art's footprint (its right offset plus its width) on the
+   right, so the actions sit under the lede the way the home and location
+   heroes place theirs. The openers variant is wider and reserves more. */
+@media (min-width: 1101px) {
+  .twins-brand-service-hero--with-art {
+    grid-template-columns: minmax(0, 1fr);
+    padding-right: calc(var(--twins-content-shell) + clamp(260px, 27vw, 470px));
+  }
+  .twins-brand-service-hero--with-art:has(.twins-brand-service-hero-art--openers) {
+    padding-right: calc(var(--twins-content-shell) + clamp(340px, 36vw, 570px));
+  }
+  .twins-brand-service-hero--with-art .twins-brand-service-hero-actions { justify-content: flex-start; }
+}
 
 .twins-art-spring { transform-origin: center bottom; animation: twinsSpringFlex 3.4s ease-in-out infinite; }
 .twins-art-spring--b { animation-delay: 1.1s; animation-duration: 4.1s; }
@@ -5287,6 +5367,10 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-card > a::after { c
   }
   .twins-popup-art img { max-width: 150px; }
   .twins-popup-body { position: relative; z-index: 1; gap: 8px; padding: 14px 16px 16px; }
+  /* A one-line title (768px) ended 8px above the 44px close button, so the
+     copy's first line ran underneath it. The title row now always clears the
+     button; two-line titles (390px) are already taller than this floor. */
+  .twins-popup .twins-popup-title { min-height: 40px; padding-right: 52px; display: flex; align-items: center; }
   .twins-popup-field input { background: var(--twins-white); }
   .twins-popup-title { font-size: 1.3rem; }
   .twins-popup-copy { font-size: .86rem; }
