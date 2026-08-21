@@ -69,6 +69,9 @@
         email: email,
         source: 'website-popup',
         path: window.location.pathname,
+        // Full href so the intake function can recover UTM parameters the
+        // same way it does for LP forms; `path` stays for the lead ledger.
+        page: window.location.href,
         website: honeypot,
         rendered_at: renderedAt,
         elapsed_ms: renderedAt > 0 ? Math.max(0, Date.now() - renderedAt * 1000) : 0,
