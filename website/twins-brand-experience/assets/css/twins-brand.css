@@ -5085,3 +5085,159 @@ body.twins-brand-experience :is(
 }
 body.twins-brand-experience .twins-brand-service-steps li::marker { color: var(--twins-l10-ochre); }
 body.twins-brand-route-catalog-preserve .twins-brand-catalog-card > a::after { color: var(--twins-l10-ochre); }
+
+/* --------------------------------------------------------------------------
+   Email-capture popup (.twins-popup-*). Template-owned chrome, one per page,
+   hidden until twins-brand.js opens it (20s dwell or desktop exit intent).
+   The overlay dims the page; the dialog is the single bold element: white
+   card, hairline navy border, 10px radius, gold action with navy ink
+   (8.8:1). Gold is never text on white or cream here. Desktop is a centered
+   two-panel modal (cream mascot panel left, form right); mobile is a bottom
+   sheet capped at 40vh with a thumb-reachable close. The entrance animation
+   only exists under prefers-reduced-motion: no-preference, and the global
+   reduced-motion block also zeroes it.
+   -------------------------------------------------------------------------- */
+.twins-popup[hidden] { display: none !important; pointer-events: none; }
+.twins-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 1600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(3, 18, 43, .64);
+  backdrop-filter: blur(4px);
+}
+@keyframes twins-popup-enter {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.twins-popup-dialog {
+  position: relative;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  width: min(100%, 660px);
+  max-height: calc(100vh - 48px);
+  overflow: hidden auto;
+  background: var(--twins-white);
+  border: 1px solid rgba(7, 28, 56, .42);
+  border-radius: 10px;
+  box-shadow: 0 26px 60px -18px rgba(3, 18, 43, .6);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .twins-popup-dialog { animation: twins-popup-enter .28s cubic-bezier(.2, .8, .2, 1); }
+}
+.twins-popup-art {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  padding: 22px 10px 0;
+  background: var(--twins-cream);
+  border-right: 1px solid rgba(7, 28, 56, .14);
+  pointer-events: none;
+}
+.twins-popup-art img { width: 100%; max-width: 168px; height: auto; }
+.twins-popup-body { display: grid; gap: 12px; align-content: start; padding: clamp(22px, 4vw, 30px); }
+/* Two classes so the home page's `.twins-brand-home :is(h1, h2, h3)` display
+   restyle cannot reach into the popup: the dialog reads the same on every
+   route. */
+.twins-popup .twins-popup-title {
+  margin: 0;
+  padding-right: 40px;
+  color: var(--twins-navy-950);
+  font-family: 'Lilita One', Impact, sans-serif;
+  font-size: clamp(1.55rem, 3.2vw, 2.05rem);
+  font-weight: 400;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+.twins-popup-copy { margin: 0; color: var(--twins-ink); font-size: .96rem; font-weight: 650; line-height: 1.5; }
+.twins-popup-form { display: grid; gap: 10px; }
+.twins-popup-field { display: grid; gap: 6px; color: var(--twins-navy-950); font-size: .9rem; font-weight: 900; }
+.twins-popup-field input {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 12px;
+  color: var(--twins-ink);
+  background: var(--twins-white);
+  border: 1px solid rgba(7, 28, 56, .5);
+  border-radius: 10px;
+  font-size: 1rem;
+}
+.twins-popup-field input:focus-visible { outline: 3px solid var(--twins-gold); outline-offset: 1px; }
+.twins-popup-field input[aria-invalid="true"] { border-color: #b3261e; box-shadow: 0 0 0 3px rgba(179, 38, 30, .22); }
+.twins-popup-submit {
+  min-height: 48px;
+  padding: 10px 18px;
+  color: var(--twins-navy-950);
+  background: var(--twins-gold);
+  border: 1px solid var(--twins-navy-950);
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 1000;
+  letter-spacing: .04em;
+  cursor: pointer;
+}
+.twins-popup-submit:is(:hover, :focus-visible) { background: var(--twins-gold-soft); }
+.twins-popup-submit:focus-visible { outline: 3px solid var(--twins-navy-950); outline-offset: 2px; }
+.twins-popup-status { margin: 0; padding: 10px 14px; color: var(--twins-navy-950); background: var(--twins-gold); border-radius: 10px; font-size: .92rem; font-weight: 900; }
+.twins-popup-decline {
+  justify-self: start;
+  min-height: 44px;
+  padding: 4px 2px;
+  color: var(--twins-muted);
+  background: none;
+  border: 0;
+  font-size: .92rem;
+  font-weight: 800;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.twins-popup-decline:is(:hover, :focus-visible) { color: var(--twins-navy-950); }
+.twins-popup-fineprint { margin: 0; color: var(--twins-muted); font-size: .8rem; }
+.twins-popup-staging-note { margin: 0; color: var(--twins-muted); font-size: .8rem; font-style: italic; }
+.twins-popup-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--twins-navy-950);
+  background: var(--twins-white);
+  border: 1px solid rgba(7, 28, 56, .42);
+  border-radius: 999px;
+  font-size: 1.4rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+}
+.twins-popup-close:is(:hover, :focus-visible) { background: var(--twins-cream); }
+.twins-popup-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+@media (max-width: 768px) {
+  .twins-popup { align-items: flex-end; padding: 0; }
+  .twins-popup-dialog {
+    grid-template-columns: 1fr;
+    width: 100%;
+    max-width: none;
+    max-height: 40vh;
+    overflow-y: auto;
+    border-bottom: 0;
+    border-radius: 10px 10px 0 0;
+  }
+  .twins-popup-art { display: none; }
+  .twins-popup-body { gap: 8px; padding: 14px 16px 16px; }
+  .twins-popup-title { font-size: 1.3rem; }
+  .twins-popup-copy { font-size: .86rem; }
+  .twins-popup-field input,
+  .twins-popup-submit { min-height: 44px; }
+  .twins-popup-decline { min-height: 40px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .twins-popup-dialog { animation: none !important; }
+}

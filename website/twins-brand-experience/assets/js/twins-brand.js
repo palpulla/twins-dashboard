@@ -580,7 +580,7 @@
       });
     });
 
-    document.querySelectorAll('.twins-brand-preview-form').forEach(preview => {
+    document.querySelectorAll('.twins-brand-preview-form, [data-popup-preview]').forEach(preview => {
       const fields = [...preview.querySelectorAll('input, select, textarea')];
       const final = preview.querySelector('[data-preview-finalize]');
       const status = preview.querySelector('[data-preview-status]');
@@ -638,6 +638,81 @@
         }
       }));
     });
+
+    // Email-capture popup: opens after 20 seconds on page OR on desktop exit
+    // intent, whichever comes first, once per visitor per 180 days
+    // (twins-popup-v1 in localStorage; dismissal and signup both count). The
+    // shared runtime owns only chrome behavior - open, close, focus trap, Esc,
+    // suppression. It carries no transport: on staging the finalize control
+    // reveals the standing private-preview notice through the shared preview
+    // handler above, and the production submission ships exclusively in the
+    // production-only script, which writes the same suppression key.
+    const popup = document.querySelector('[data-twins-popup]');
+    if (popup) {
+      const popupDialog = popup.querySelector('[data-popup-dialog]');
+      const popupClose = popup.querySelector('[data-popup-close]');
+      const POPUP_KEY = 'twins-popup-v1';
+      const POPUP_SUPPRESS_MS = 180 * 24 * 60 * 60 * 1000;
+      const popupSuppressed = () => {
+        try {
+          const raw = window.localStorage.getItem(POPUP_KEY);
+          if (!raw) return false;
+          const at = Number(raw);
+          return !Number.isFinite(at) || Date.now() - at < POPUP_SUPPRESS_MS;
+        } catch {
+          // Without storage the frequency cap cannot be honored, so the popup
+          // must never show: staying quiet beats nagging on every page view.
+          return true;
+        }
+      };
+      const popupRemember = () => {
+        try { window.localStorage.setItem(POPUP_KEY, String(Date.now())); } catch { /* best effort */ }
+      };
+      if (popupSuppressed()) {
+        popup.remove();
+      } else {
+        let popupShown = false;
+        let popupRestore = null;
+        let popupTimer = null;
+        const openPopup = () => {
+          if (popupShown || !popup.isConnected) return;
+          popupShown = true;
+          if (popupTimer !== null) window.clearTimeout(popupTimer);
+          popupRestore = document.activeElement;
+          popup.hidden = false;
+          lockScroll();
+          popupClose?.focus();
+        };
+        const closePopup = () => {
+          if (popup.hidden) return;
+          popup.hidden = true;
+          unlockScroll();
+          popupRemember();
+          if (popupRestore instanceof HTMLElement) popupRestore.focus();
+        };
+        popupTimer = window.setTimeout(openPopup, 20000);
+        document.addEventListener('mouseout', event => {
+          if (popupShown || event.relatedTarget) return;
+          if (event.clientY > 0) return;
+          if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+          openPopup();
+        });
+        popupClose?.addEventListener('click', () => closePopup());
+        popup.querySelector('[data-popup-decline]')?.addEventListener('click', () => closePopup());
+        popup.addEventListener('pointerdown', event => { if (event.target === popup) closePopup(); });
+        popup.addEventListener('keydown', event => {
+          if (event.key === 'Escape') { event.preventDefault(); closePopup(); return; }
+          trapTab(event, popupDialog || popup);
+        });
+        // Completing the staging preview flow counts as signup for the
+        // frequency cap. The shared preview handler registered above runs
+        // first, so previewState is already settled when this listener fires.
+        const popupPreviewStatus = popup.querySelector('[data-preview-status]');
+        popup.querySelector('[data-preview-finalize]')?.addEventListener('click', () => {
+          if (popupPreviewStatus?.dataset.previewState === 'complete') popupRemember();
+        });
+      }
+    }
 
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
     initLocationReveals(document, reducedMotion);

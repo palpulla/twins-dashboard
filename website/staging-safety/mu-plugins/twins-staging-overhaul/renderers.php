@@ -2435,7 +2435,15 @@ function twins_overhaul_output_footer(): void {
     }
 
     $rendered = true;
-    echo twins_overhaul_render_footer(twins_overhaul_current_context($classification));
+    $context = twins_overhaul_current_context($classification);
+    echo twins_overhaul_render_footer($context);
+    // Email-capture popup: template-owned chrome attached with the footer.
+    // Route suppression is the classifier's decision (never on contact,
+    // legal/thank-you, campaign-preserve, or the builder); the portable
+    // component re-checks the same list and its POPUP_ENABLED kill switch.
+    if (twins_overhaul_should_render_popup($classification) && twins_overhaul_uses_brand_chrome($classification)) {
+        echo twins_overhaul_brand_runtime()->renderEmailCapture($context);
+    }
 }
 
 /**

@@ -55,6 +55,16 @@ if (defined('TWINS_STAGING_SAFETY') && TWINS_STAGING_SAFETY === true) {
 
 require_once __DIR__ . '/twins-staging-overhaul/bootstrap.php';
 
+// Server-side declaration of the email popup's lead-intake endpoint. The popup
+// component (twins-brand-experience/components/email-capture.php) refuses to
+// render on production without this constant and validates the host, so the
+// client can never select a URL. Same edge function as the callback form
+// (ProductionQuoteAdapter::LEAD_INTAKE_URL); override in wp-config.php only to
+// point at another function on the same approved Supabase host.
+if (!defined('TWINS_POPUP_LEAD_ENDPOINT')) {
+    define('TWINS_POPUP_LEAD_ENDPOINT', 'https://jwrpjuqaynownxaoeayi.supabase.co/functions/v1/lp-lead-intake');
+}
+
 /**
  * Load the callback submission handler on top of the portable brand script.
  *
@@ -75,6 +85,16 @@ function twins_overhaul_production_enqueue_callback() {
     wp_enqueue_script(
         'twins-overhaul-callback',
         '/wp-content/mu-plugins/twins-staging-overhaul/production-callback.js',
+        array('twins-brand-experience'),
+        '0.1.0',
+        true
+    );
+    // The email popup's submission handler rides the same production-only
+    // seam: shared chrome behavior lives in twins-brand.js, the single POST
+    // lives here. See production-popup.js.
+    wp_enqueue_script(
+        'twins-overhaul-popup',
+        '/wp-content/mu-plugins/twins-staging-overhaul/production-popup.js',
         array('twins-brand-experience'),
         '0.1.0',
         true

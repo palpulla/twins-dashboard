@@ -163,6 +163,7 @@ final class Experience
 
     public function renderHeader(array $context): string { return $this->render('../components/header', $context); }
     public function renderFooter(array $context): string { return $this->render('../components/footer', $context); }
+    public function renderEmailCapture(array $context): string { return $this->render('../components/email-capture', $context); }
     public function renderHome(array $context): string { return $this->render('home', $context); }
     public function renderTeam(array $context): string { return $this->render('team', $context); }
     public function renderCareers(array $context): string { return $this->render('careers', $context); }

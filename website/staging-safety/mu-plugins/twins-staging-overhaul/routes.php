@@ -264,3 +264,24 @@ function twins_overhaul_classify_request(int $blogId, string $path, string $post
 function twins_overhaul_should_render_chrome(string $classification): bool {
     return twins_overhaul_is_known_classification($classification) && $classification !== 'campaign-preserve';
 }
+
+/**
+ * Determine whether the email-capture popup belongs on a classified route.
+ *
+ * Fixed allowlist by exclusion: every chrome-eligible brand route carries the
+ * popup EXCEPT the contact page (it already owns the primary lead capture),
+ * the legal-preserve family (privacy, terms, ADA, and every thank-you page),
+ * and the door builder (a mid-flow interruption kills conversions there).
+ * campaign-preserve never renders chrome at all, so it is excluded by the
+ * chrome gate. The portable component applies the same suppression list as
+ * defense in depth, plus the POPUP_ENABLED kill switch in its config.
+ *
+ * @param string $classification Fixed classifier outcome.
+ * @return bool
+ */
+function twins_overhaul_should_render_popup(string $classification): bool {
+    if (!twins_overhaul_should_render_chrome($classification)) {
+        return false;
+    }
+    return !in_array($classification, array('contact-brand', 'legal-preserve', 'builder'), true);
+}
