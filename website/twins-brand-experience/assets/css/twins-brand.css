@@ -131,6 +131,10 @@ body.twins-brand-experience :where(
   letter-spacing: .01em;
   line-height: 1.03;
 }
+/* Display headings never strand a single word on their last line ("SIGNS THIS
+   IS YOUR / DOOR"). Zero-specificity so any explicit text-wrap still wins;
+   browsers without balance simply ignore it. */
+.twins-brand-experience :where(h1, h2, h3) { text-wrap: balance; }
 .twins-brand-experience :where(img) { max-width: 100%; }
 .twins-brand-experience :where(a, button, input, select, textarea) { font: inherit; }
 .twins-brand-experience :where(a, button, input, select, textarea):focus-visible {
@@ -173,7 +177,11 @@ body:has(#twins-staging-banner) .twins-brand-header { top: var(--twins-staging-b
   grid-template-columns: 162px minmax(0, 1fr) auto;
   align-items: center;
   gap: 28px;
-  padding-inline: clamp(16px, 3vw, 48px);
+  /* The canonical container rail. The bar used to keep its own
+     clamp(16px, 3vw, 48px) gutter, which put the logo at x=43 while every
+     section's content sat at x=60 on a 1440 screen. One token, one left edge.
+     (A ≤360px escape hatch below trades the rail for fit on tiny screens.) */
+  padding-inline: var(--twins-content-shell);
   background: var(--twins-gold);
 }
 .twins-brand-market-strip {
@@ -183,7 +191,7 @@ body:has(#twins-staging-banner) .twins-brand-header { top: var(--twins-staging-b
   align-items: center;
   justify-content: center;
   gap: 34px;
-  padding-inline: clamp(16px, 3vw, 48px);
+  padding-inline: var(--twins-content-shell);  /* same rail as the mainbar */
   color: var(--twins-cream);
   background: var(--twins-navy-950);
   border-top: 0;
@@ -458,8 +466,8 @@ body.twins-brand-experience .twins-brand-market-menu-panel small {
 .twins-brand-nav-group--areas .twins-brand-nav-panel--areas {
   top: calc(100% + 4px);
   left: auto;
-  right: clamp(16px, 3vw, 48px);   /* the mainbar's own padding-inline */
-  width: min(940px, calc(100vw - 2 * clamp(16px, 3vw, 48px)));
+  right: var(--twins-content-shell);   /* the mainbar's rail gutter */
+  width: min(940px, calc(100vw - 2 * var(--twins-content-shell)));
   padding: 16px 20px 18px;
   transform: translate(0, -8px);
 }
@@ -474,7 +482,7 @@ body.twins-brand-experience .twins-brand-market-menu-panel small {
   scrollbar-gutter: stable;
 }
 .twins-brand-nav-panel--areas.twins-brand-nav-panel--cards-only {
-  width: min(620px, calc(100vw - 2 * clamp(16px, 3vw, 48px)));
+  width: min(620px, calc(100vw - 2 * var(--twins-content-shell)));
 }
 
 .twins-brand-area-columns {
@@ -1159,6 +1167,10 @@ body.twins-brand-experience .twins-brand-careers-hero a.twins-brand-cta {
 .twins-brand-contact-market-grid a { min-height: 44px; display: inline-flex; align-items: center; color: var(--twins-white); font-weight: 900; }
 .twins-brand-contact-market-grid small { color: #dbe8f8; font-weight: 900; }
 .twins-brand-contact-quote { background: var(--twins-white); }
+/* The quote adapter is host-supplied and may legitimately render nothing;
+   without this guard the section paints as an empty white band between two
+   navy scenes. Browsers without :has() ignore the rule, which is today. */
+.twins-brand-contact-quote:not(:has(*)) { display: none; }
 .twins-brand-contact-quote .twins-brand-preview-form { margin-top: 35px; }
 
 /* Answer-first service and inert editorial journeys. */
@@ -1913,6 +1925,10 @@ body.twins-brand-experience .twins-brand-blog-page-link:is(:hover, :focus-visibl
 .twins-brand-reviews-collection { color: var(--twins-white); background: var(--twins-navy-950); }
 .twins-brand-reviews-collection .twins-brand-reviews .twins-brand-section-heading h2 { color: var(--twins-white); font-size: clamp(2.4rem, 5vw, 4.7rem); text-transform: uppercase; }
 .twins-brand-reviews-collection .twins-brand-google-attribution { color: #dbe8f8; }
+/* The feed-down status line ("Reviews are temporarily unavailable.") inherited
+   the light-page muted slate: 2.2:1 on navy-950. Same ink the review-proof and
+   careers-process dark scenes already use for that element. */
+.twins-brand-reviews-collection .twins-brand-section-heading p { color: #dbe8f8; }
 .twins-brand-reviews-collection .twins-brand-reviews > a { min-height: 44px; display: inline-flex; align-items: center; margin: 24px 20px 0 0; color: var(--twins-gold); font-weight: 900; }
 .twins-brand-reviews-next { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; background: #f4ead6; }
 .twins-brand-reviews-next a { min-height: 50px; display: inline-flex; align-items: center; padding: 10px 20px; color: var(--twins-navy-950); background: var(--twins-gold); border: 3px solid var(--twins-navy-950); border-radius: 999px; box-shadow: 4px 5px 0 rgba(3, 18, 43, .45); font-weight: 1000; }
@@ -1970,7 +1986,9 @@ body.twins-brand-experience .twins-brand-blog-page-link:is(:hover, :focus-visibl
 .twins-brand-booking-dialog[hidden] { display: none !important; pointer-events: none; }
 .twins-brand-drawer,
 .twins-brand-booking-dialog { position: fixed; inset: 0; z-index: 1500; background: rgba(3, 18, 43, .76); backdrop-filter: blur(6px); }
-.twins-brand-drawer-panel { position: absolute; inset: 0 0 0 auto; width: min(92vw, 470px); height: 100%; padding: 24px; overflow-y: auto; color: var(--twins-white); background: var(--twins-navy-950); border-left: 4px solid var(--twins-gold); box-shadow: -18px 0 40px rgba(0, 0, 0, .35); }
+/* padding-inline rides the same rail token as the mainbar, so the drawer's
+   close button sits exactly where the hamburger that opened it was. */
+.twins-brand-drawer-panel { position: absolute; inset: 0 0 0 auto; width: min(92vw, 470px); height: 100%; padding: 24px var(--twins-content-shell); overflow-y: auto; color: var(--twins-white); background: var(--twins-navy-950); border-left: 4px solid var(--twins-gold); box-shadow: -18px 0 40px rgba(0, 0, 0, .35); }
 .twins-brand-drawer-close,
 [data-booking-close] { min-width: 48px; min-height: 48px; padding: 8px 14px; color: var(--twins-navy-950); background: var(--twins-gold); border: 2px solid var(--twins-navy-950); border-radius: 999px; font-weight: 1000; }
 .twins-brand-drawer-panel nav { display: grid; gap: 20px; margin-block: 28px; }
@@ -2091,9 +2109,9 @@ body.twins-brand-experience .twins-brand-blog-page-link:is(:hover, :focus-visibl
 
 @media (max-width: 768px) {
   body.twins-brand-experience { --twins-header-height: 88px; }
-  .twins-brand-mainbar { min-height: 58px; padding-inline: 16px; }
+  .twins-brand-mainbar { min-height: 58px; padding-inline: var(--twins-content-shell); }
   .twins-brand-logo { width: 120px; min-width: 120px; }
-  .twins-brand-market-strip { min-height: 30px; padding-inline: 14px; }
+  .twins-brand-market-strip { min-height: 30px; padding-inline: var(--twins-content-shell); }
   .twins-brand-market-menu > summary::before {
     content: '';
     position: absolute;
@@ -2111,7 +2129,10 @@ body.twins-brand-experience .twins-brand-blog-page-link:is(:hover, :focus-visibl
   .twins-brand-preview-form h3,
   .twins-brand-preview-form [role="status"] { grid-column: auto; }
   .twins-brand-footer-cta { align-items: flex-start; flex-direction: column; }
-  .twins-brand-footer-nav { grid-template-columns: 1fr 1fr; }
+  /* auto-fit instead of a fixed 1fr 1fr: three nav groups in two columns left
+     HELP & COMPANY wrapped alone beside a hole at exactly 768px. Widths that
+     fit three 200px columns keep one row; narrower ones wrap evenly. */
+  .twins-brand-footer-nav { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
   .twins-brand-mobile-actions {
     position: fixed;
     inset: auto 0 0;
@@ -2185,7 +2206,9 @@ body.twins-brand-experience .twins-brand-blog-page-link:is(:hover, :focus-visibl
 
 @media (max-width: 360px) {
   .twins-brand-logo { width: 100px; min-width: 100px; }
-  .twins-brand-mainbar { padding-inline: 10px; }
+  /* Escape hatch off the shared rail: at 320px the logo + Book + Menu row
+     needs every pixel, so the header alone narrows its gutter here. */
+  .twins-brand-mainbar { padding-inline: 16px; }
   .twins-brand-hero-actions { grid-template-columns: 1fr; }
 }
 
@@ -2482,9 +2505,12 @@ body.single-post main.twins-brand-page { width: 100% !important; max-width: 100%
   min-height: 470px;
 }
 
+/* The active panel stays IN FLOW. It used to be position:absolute inset:0,
+   which froze the stage at its 560px min-height; at 1440 the copy column needs
+   ~647px, so the panel overflowed the stage bottom and painted an empty gray
+   band over the gold pager controls. Inactive panels are display:none anyway
+   (see the :not([data-active]) rule), so absolute positioning bought nothing. */
 [data-twins-service-tabs][data-enhanced="true"] .twins-brand-service-panel {
-  position: absolute;
-  inset: 0;
   opacity: 0;
   visibility: hidden;
   transform: translateX(30px);
@@ -3041,15 +3067,15 @@ html.twins-home-motion-ready [data-home-reveal][data-home-visible="true"] {
     height: 70px;
     min-height: 70px;
     grid-template-columns: 120px minmax(0, 1fr);
-    padding: 7px 15px;
     padding-block: 7px;
+    padding-inline: var(--twins-content-shell);  /* rail, same as the sections */
   }
   .twins-brand-logo { width: 110px; min-width: 110px; }
   .twins-brand-market-strip {
     height: 40px;
     min-height: 40px;
     justify-content: flex-start;
-    padding-inline: 15px;
+    padding-inline: var(--twins-content-shell);
     padding-block: 5px;
     overflow: visible;
   }
@@ -3684,7 +3710,11 @@ body.twins-brand-experience .twins-brand-review-proof .twins-brand-kicker {
 .twins-brand-door-photo { width: 100%; height: 100%; }
 .twins-brand-door-media picture,
 .twins-brand-door-photo { display: block; }
-.twins-brand-door-photo { object-fit: cover; border-radius: 30px 0 0 30px; }
+/* The composite bakes its BEFORE / AFTER chips into the right side of the
+   frame and its logo chip into the left. The tall desktop column crops ~360px
+   of width, and the default 50% window sliced both chips in half. Anchoring
+   right keeps the labels whole; the sacrificed left strip is driveway. */
+.twins-brand-door-photo { object-fit: cover; object-position: 100% 50%; border-radius: 30px 0 0 30px; }
 .twins-brand-door-copy { display: flex; flex-direction: column; justify-content: center; gap: 18px; padding: clamp(38px, 5vw, 72px); color: var(--twins-cream); background: var(--twins-navy-950); border-radius: 0 30px 30px 0; }
 .twins-brand-door-copy > a:not(.twins-brand-cta),
 .twins-brand-door-copy > a:not(.twins-brand-cta):visited { min-height: 44px; display: inline-flex; align-items: center; color: var(--twins-cream); font-weight: 900; }
@@ -3892,10 +3922,15 @@ body.twins-brand-experience .twins-brand-review-proof .twins-brand-kicker {
   transform: rotate(-3deg);
   pointer-events: none;
 }
+/* "Quick answers." sat directly ON the first row's hairline (0px gap, probed);
+   every other heading in the scene gets breathing room before its content. */
+.twins-brand-closing-faq h2 { margin-bottom: 14px; }
 .twins-brand-closing-faq details { border-top: 1px solid rgba(255,255,255,.22); }
 .twins-brand-closing-faq summary { min-height: 52px; display: flex; align-items: center; cursor: pointer; }
 .twins-brand-closing-faq > a,
-.twins-brand-closing-faq > a:visited { min-height: 44px; display: inline-flex; align-items: center; color: var(--twins-gold); font-weight: 900; }
+.twins-brand-closing-faq > a:visited { min-height: 44px; display: inline-flex; align-items: center; margin-right: 26px; color: var(--twins-gold); font-weight: 900; }
+/* "Read All FAQs" and "See Real Madison Prices" were one space apart (4px
+   probed); the margin above separates the two underlined links. */
 .twins-brand-closing-area ul { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 16px; padding: 0; list-style: none; }
 .twins-brand-closing-area li a { min-height: 44px; display: inline-flex; align-items: center; padding: 8px 12px; color: var(--twins-navy-950); background: var(--twins-cream); border-radius: 999px; }
 .twins-brand-closing-area li a:visited { color: var(--twins-navy-950); }
@@ -5090,10 +5125,10 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-card > a::after { c
    Email-capture popup (.twins-popup-*). Template-owned chrome, one per page,
    hidden until twins-brand.js opens it (20s dwell or desktop exit intent).
    The overlay dims the page; the dialog is the single bold element: white
-   card, hairline navy border, 10px radius, gold action with navy ink
+   card, hairline navy border, 10px radius, gold pill action with navy ink
    (8.8:1). Gold is never text on white or cream here. Desktop is a centered
    two-panel modal (cream mascot panel left, form right); mobile is a bottom
-   sheet capped at 40vh with a thumb-reachable close. The entrance animation
+   sheet capped at min(76vh, 560px) with a thumb-reachable close. The entrance animation
    only exists under prefers-reduced-motion: no-preference, and the global
    reduced-motion block also zeroes it.
    -------------------------------------------------------------------------- */
@@ -5168,13 +5203,16 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-card > a::after { c
 }
 .twins-popup-field input:focus-visible { outline: 3px solid var(--twins-gold); outline-offset: 1px; }
 .twins-popup-field input[aria-invalid="true"] { border-color: #b3261e; box-shadow: 0 0 0 3px rgba(179, 38, 30, .22); }
+/* Pill like every other primary action on the site (.twins-brand-cta, the
+   header book link, the phone chip): the popup shipped the only rectangular
+   button in the whole experience. */
 .twins-popup-submit {
   min-height: 48px;
   padding: 10px 18px;
   color: var(--twins-navy-950);
   background: var(--twins-gold);
-  border: 1px solid var(--twins-navy-950);
-  border-radius: 10px;
+  border: 2px solid var(--twins-navy-950);
+  border-radius: 999px;
   font-size: 1rem;
   font-weight: 1000;
   letter-spacing: .04em;
@@ -5225,7 +5263,10 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-card > a::after { c
     grid-template-columns: 1fr;
     width: 100%;
     max-width: none;
-    max-height: 40vh;
+    /* Tall enough that "No thanks", the fineprint, and the staging notice are
+       all visible without scrolling (a 40vh cap cut the decline link in half
+       mid-glyph on a 390x844 phone); still bounded so landscape scrolls. */
+    max-height: min(76vh, 560px);
     overflow-y: auto;
     background: var(--twins-cream);
     border-bottom: 0;

@@ -160,9 +160,12 @@ test('email popup: storage-bounded chrome runtime, approved copy, production-onl
   assert.match(productionLoader, /twins-overhaul-popup/);
 
   // Stylesheet: namespaced .twins-popup-* family, one dim overlay, hairline
-  // 10px-radius dialog, gold action with navy ink, 40vh mobile bottom sheet,
-  // and an entrance animation that exists only under no-preference plus an
-  // explicit reduced-motion kill.
+  // 10px-radius dialog, gold pill action with navy ink, mobile bottom sheet
+  // capped at min(76vh, 560px) so the decline link, fineprint, and staging
+  // notice are visible without scrolling (the design-polish pass raised it
+  // from 40vh, which cut "No thanks" in half on a 390x844 phone), and an
+  // entrance animation that exists only under no-preference plus an explicit
+  // reduced-motion kill.
   for (const selector of [
     '.twins-popup[hidden]',
     '.twins-popup-dialog',
@@ -174,7 +177,7 @@ test('email popup: storage-bounded chrome runtime, approved copy, production-onl
   ]) assert.ok(css.includes(selector), selector);
   assert.match(css, /\.twins-popup-dialog \{[^}]*border-radius: 10px/s);
   assert.match(css, /\.twins-popup-submit \{[^}]*color: var\(--twins-navy-950\);\s*background: var\(--twins-gold\)/s);
-  assert.match(css, /max-height: 40vh/);
+  assert.match(css, /\.twins-popup-dialog \{[^}]*max-height: min\(76vh, 560px\)/s);
   assert.match(css, /@media \(prefers-reduced-motion: no-preference\) \{\s*\.twins-popup-dialog \{ animation: twins-popup-enter/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\.twins-popup-dialog \{ animation: none !important; \}/);
 });
