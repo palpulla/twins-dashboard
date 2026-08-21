@@ -15,6 +15,7 @@ Companion drafted artifacts (both inert, already in this directory):
 - `production-adapters.php` — the three production adapters (execution-proven by
   `production-adapters-harness.php`).
 - `production-callback.js` — the callback submission script.
+- `production-popup.js` — the email-capture popup submission script.
 - `production-overhaul-loader.php` — the production mu-plugin loader (below).
 
 ## 1. What the staging pipeline actually ships (measured)
@@ -44,9 +45,10 @@ The 84 staging deploy entries, unchanged, PLUS:
 |---|---|---|
 | `production-cutover/production-adapters.php` | `twins-staging-overhaul/adapters/production-adapters.php` | deploy |
 | `production-cutover/production-callback.js` | `twins-staging-overhaul/production-callback.js` | deploy |
+| `production-cutover/production-popup.js` | `twins-staging-overhaul/production-popup.js` | deploy |
 | `production-cutover/production-overhaul-loader.php` | `twins-overhaul.php` | deploy |
 
-The three production-cutover sources are the **only** files outside
+The four production-cutover sources are the **only** files outside
 `twins-brand-experience/` and `twins-staging-overhaul/` the production manifest
 may deploy — enforced by an exact allowlist (section 4).
 
@@ -80,6 +82,7 @@ Additive: a new `kind: 'production'` path. The staging scope guard (line 89) is
 const PRODUCTION_SOURCE_ALLOWLIST = new Set([
   'production-cutover/production-adapters.php',
   'production-cutover/production-callback.js',
+  'production-cutover/production-popup.js',
   'production-cutover/production-overhaul-loader.php',
 ]);
 ```

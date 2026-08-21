@@ -20,6 +20,7 @@ Same brand core + overhaul that staging deploys, with three deltas:
 | `twins-staging-overhaul/**` mu-plugin | identical **except** the two gated behaviors below |
 | `production-cutover/production-adapters.php` | → installed next to `brand-runtime.php`'s adapters dir |
 | `production-cutover/production-callback.js` | → production-only asset (staging JS contract bans `fetch`) |
+| `production-cutover/production-popup.js` | → production-only asset (email popup submission; same fetch ban) |
 
 | Exclude | Why |
 |---|---|
@@ -147,6 +148,9 @@ Staging's shared JS contract bans `fetch`; `production-callback.js` is a
 separate production-only file (already materialized). Wire it into the
 production asset enqueue only (mirror how the map iframe is production-only), and
 add it to `production-runtime.json` with its size+sha256 pin.
+`production-popup.js` (the email-capture popup submission) rides the identical
+seam: the loader already enqueues both, and both need their size+sha256 pins in
+`production-runtime.json`.
 
 ## Build sequence (once authorized)
 

@@ -45,6 +45,9 @@ that first; it hands off to `release-runbook.md` step 1.
   (execution-proven by `production-adapters-harness.php`).
 - `production-callback.js` — the callback-form submission script (production-only
   asset; staging JS forbids fetch).
+- `production-popup.js` — the email-capture popup submission script (same
+  production-only seam; posts to the endpoint the loader declares via
+  `TWINS_POPUP_LEAD_ENDPOINT`).
 - `production-overhaul-loader.php` — the production mu-plugin loader (boots the
   overhaul under `WP_ENVIRONMENT_TYPE=production`; the staging loader refuses
   non-staging boot and is never deployed).

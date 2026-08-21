@@ -32,8 +32,9 @@ and the build sequence. Summary:
 - Ship the brand core + overhaul MINUS `twins-staging-safety.php` and the
   staging loader `twins-staging-overhaul.php` (neither is deployed), PLUS
   `production-adapters.php` (wired into `brand-runtime.php` under
-  `WP_ENVIRONMENT_TYPE === 'production'`), `production-callback.js`
-  (production-only asset; staging JS contract bans fetch), and
+  `WP_ENVIRONMENT_TYPE === 'production'`), `production-callback.js` and
+  `production-popup.js`
+  (production-only assets; staging JS contract bans fetch), and
   `production-overhaul-loader.php` → `twins-overhaul.php` (production needs its
   own loader; the staging one refuses non-staging boot — see
   `blocker-a-build-unseal.md`).
