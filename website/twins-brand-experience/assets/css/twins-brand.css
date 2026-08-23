@@ -5386,8 +5386,11 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-card > a::after { c
   }
   .twins-popup-art::after { display: none; }
   /* The mascot survives on the sheet as a faint watermark pinned to the
-     bottom-right, behind the form (owner request 2026-08-21). Low opacity
-     keeps every text pair on the cream ground at its measured ratio. */
+     bottom-right, behind the form (owner request 2026-08-21). The opacity is
+     set by the slate fine print that sits on top of it: at .14 the twin's
+     navy shirt darkened the cream to rgb(218,218,212) under "We send a
+     handful of emails a year." and the staging note, 4.41:1 measured from
+     rendered pixels; .09 keeps the darkest pixel at 4.9:1 against slate. */
   .twins-popup-art {
     position: absolute;
     inset: auto 0 0 auto;
@@ -5395,7 +5398,7 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-card > a::after { c
     padding: 0;
     background: none;
     border-right: 0;
-    opacity: .14;
+    opacity: .09;
     z-index: 0;
   }
   .twins-popup-art img { max-width: 150px; }
