@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "remoteDirectory": "/home/customer/staging-safety/staging-remediation-r38-20260820/verification/",
+  "remoteDirectory": "/home/customer/staging-safety/staging-remediation-r39-20260822/verification/",
   "productionWriteAuthority": false,
   "files": [
     {
@@ -66,14 +66,14 @@
     {
       "role": "verify",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/renderers.php",
-      "size": 104250,
-      "sha256": "d43244cc68303a36aa8634aaba5b6c54719fc7b9769e49e03dfdf29a611199b9"
+      "size": 104770,
+      "sha256": "15e0bfff18c50d06ec12c0c28f6f6c2f745d374f30b17fb55bc4f54ef859f44b"
     },
     {
       "role": "verify",
       "source": "staging-safety/mu-plugins/twins-staging-overhaul/routes.php",
-      "size": 8559,
-      "sha256": "649def4b5cfb72bf3018858d758f0714141f64d8a6aaaa6d9922c3978f1659a8"
+      "size": 9525,
+      "sha256": "9803b49ee2f73208c70c4431395bebb06f3023a9d3398865f73beb839a882c30"
     },
     {
       "role": "verify",
@@ -192,14 +192,14 @@
     {
       "role": "verify",
       "source": "staging-safety/tests/staging-overhaul-harness.php",
-      "size": 9427,
-      "sha256": "8485952262acecebd6acc65df6fba1b7472d076a7f25503ba18def8b747a97e5"
+      "size": 10513,
+      "sha256": "7852c68d29e350a33235a1fe8c16506a02c97c74c5a9942d278823942b4e2586"
     },
     {
       "role": "verify",
       "source": "staging-safety/tests/staging-overhaul-renderers-harness.php",
-      "size": 96795,
-      "sha256": "d29af339a9928b05ba63021e82d51aeaacad7d7de2ec411b85e35621b6a41e46"
+      "size": 98968,
+      "sha256": "3c290c6269b152c14e96df58b4b372beeb20d0be7b34a1bbadb54518adf4a93e"
     },
     {
       "role": "verify",
@@ -222,20 +222,20 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/assets/css/twins-brand-families.css",
-      "size": 53007,
-      "sha256": "19d59ac9d33cd82f7e0a84f40acdcdf4456edec7dacdb4ad8ffe4009811e3b0d"
+      "size": 54071,
+      "sha256": "495e8ce535aa6e6ab28eb55739647c51ba00728bac14c1316f60914a2c33e343"
     },
     {
       "role": "verify",
       "source": "twins-brand-experience/assets/css/twins-brand.css",
-      "size": 212003,
-      "sha256": "0281e86460691ab96b7cb01b449abb15d1b25a64bde88baf3ebc0c1efe2fe1d8"
+      "size": 228673,
+      "sha256": "b0ca280c0c45fc9e50f3025022206e10446475c056262ec876fb1f2f41f4047c"
     },
     {
       "role": "verify",
       "source": "twins-brand-experience/assets/js/twins-brand.js",
-      "size": 31342,
-      "sha256": "3b6626219cf626f339077e38e9b11a8ddec38560a27b1ca70aa6cdf36afb9067"
+      "size": 36839,
+      "sha256": "eff080c0056df0531f8a60201fe88f0dbd19cb3c63c9c8387f474a1b067b9f4b"
     },
     {
       "role": "verify",
@@ -378,8 +378,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/manifests/staging-runtime.json",
-      "size": 370542,
-      "sha256": "93aa7625b50663d25f8440499e37946cb169598fd751c410000dc7cd17b11cb7"
+      "size": 371091,
+      "sha256": "39d117277c2e2f6e6ee13baaad454841523e3e011b3441abb65fa565cf82e097"
     },
     {
       "role": "verify",
@@ -390,8 +390,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/src/Experience.php",
-      "size": 24498,
-      "sha256": "176a9b01af73ab4162023f54fd51c75c4373a3ae3a1adb3ac38df465d5f3378e"
+      "size": 24628,
+      "sha256": "6ccb20a8749875fdff00140df7043af660eaa709906b9e5cd34964bfa387c6d2"
     },
     {
       "role": "verify",
@@ -558,8 +558,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/tests/php/renderer-contract-harness.php",
-      "size": 67841,
-      "sha256": "20cc0111ef53a915e26be49591ee0c63c38204ff5d00bd2513996021938355b2"
+      "size": 71322,
+      "sha256": "bb5b32ff9b5845f93cf18efecdf0160bd7d1aeae75fb7aa1ed31bb95a8138451"
     },
     {
       "role": "verify",
@@ -577,7 +577,7 @@
       "role": "verify",
       "source": "twins-brand-experience/tools/private-staging-deploy.php",
       "size": 69595,
-      "sha256": "52ec3cd175a0fd9c36194f5af73df95c28f318014b2598a53c378356c815249f"
+      "sha256": "eb656ffc6beea97fe8d8e2c501530e1cf17624fd1e4e1f67b353b28db1ebd4ee"
     }
   ]
 }

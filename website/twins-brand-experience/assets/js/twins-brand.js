@@ -640,37 +640,56 @@
     });
 
     // Email-capture popup: opens after 20 seconds on page OR on desktop exit
-    // intent, whichever comes first, once per visitor per 180 days
-    // (twins-popup-v1 in localStorage; dismissal and signup both count). The
-    // shared runtime owns only chrome behavior - open, close, focus trap, Esc,
-    // suppression. It carries no transport: on staging the finalize control
-    // reveals the standing private-preview notice through the shared preview
-    // handler above, and the production submission ships exclusively in the
-    // production-only script, which writes the same suppression key.
+    // intent, whichever comes first, once per visitor per 180 days (dismissal
+    // and signup both count). The shared runtime owns only chrome behavior -
+    // open, close, focus trap, Esc.
+    //
+    // It carries NO transport and NO client storage. The staging preview
+    // contract ("the preview has no production-domain or outbound submission
+    // authority", staging-safety/tests/recovered-live-overhaul.test.cjs) bans
+    // every browser persistence API from this file outright - the test greps
+    // for their names, so they must not appear here even in a comment. The
+    // frequency cap is therefore delegated to window.twinsPopupStore, which ONLY the
+    // production-only script defines (it owns the suppression key, next to
+    // the submission it already owns). With no store - i.e. on staging - the
+    // popup opens every load and remembers nothing, which is the honest
+    // preview behavior.
+    //
+    // The store is read when the popup is about to OPEN, never at init: the
+    // two scripts are independently deferred, so an init-time read could race
+    // the production script's definition, and an open-time read also catches a
+    // signup completed in another tab during this pageview.
     const popup = document.querySelector('[data-twins-popup]');
     if (popup) {
       const popupDialog = popup.querySelector('[data-popup-dialog]');
       const popupClose = popup.querySelector('[data-popup-close]');
-      const POPUP_KEY = 'twins-popup-v1';
       const POPUP_SUPPRESS_MS = 180 * 24 * 60 * 60 * 1000;
+      const popupStore = () => {
+        const store = window.twinsPopupStore;
+        return store && typeof store.get === 'function' && typeof store.set === 'function' ? store : null;
+      };
       const popupSuppressed = () => {
+        const store = popupStore();
+        // No store means no persistence layer is present (staging preview):
+        // show the popup and remember nothing.
+        if (!store) return false;
         try {
-          const raw = window.localStorage.getItem(POPUP_KEY);
+          const raw = store.get();
           if (!raw) return false;
           const at = Number(raw);
           return !Number.isFinite(at) || Date.now() - at < POPUP_SUPPRESS_MS;
         } catch {
-          // Without storage the frequency cap cannot be honored, so the popup
-          // must never show: staying quiet beats nagging on every page view.
+          // A store that exists but throws cannot honor the frequency cap, so
+          // the popup must stay quiet rather than nag on every page view.
           return true;
         }
       };
       const popupRemember = () => {
-        try { window.localStorage.setItem(POPUP_KEY, String(Date.now())); } catch { /* best effort */ }
+        const store = popupStore();
+        if (!store) return;
+        try { store.set(String(Date.now())); } catch { /* best effort */ }
       };
-      if (popupSuppressed()) {
-        popup.remove();
-      } else {
+      {
         let popupShown = false;
         let popupRestore = null;
         let popupTimer = null;
@@ -684,6 +703,9 @@
         const openPopup = () => {
           if (popupShown || !popup.isConnected) return;
           if (popupTimer !== null) window.clearTimeout(popupTimer);
+          // Frequency cap, checked here rather than at init - see the note
+          // above. A suppressed visitor loses the markup entirely.
+          if (popupSuppressed()) { popup.remove(); return; }
           if (popupBlockedByOverlay()) {
             popupTimer = window.setTimeout(openPopup, 20000);
             return;

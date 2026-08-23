@@ -107,8 +107,20 @@ test('email popup: storage-bounded chrome runtime, approved copy, production-onl
   // operations test above proves the popup added none.
   assert.match(js, /window\.setTimeout\(openPopup, 20000\)/);
   assert.doesNotMatch(js, /setTimeout\(openPopup, (?!20000)\d/);
-  assert.match(js, /POPUP_KEY = 'twins-popup-v1'/);
+  // The frequency cap is delegated, not implemented here: the staging preview
+  // contract (staging-safety/tests/recovered-live-overhaul.test.cjs) bans every
+  // browser persistence API from this file, so the key lives in the
+  // production-only script and reaches the shared runtime as window.twinsPopupStore.
+  // A store is required to suppress: with none present (staging) the popup opens
+  // and remembers nothing, and a store that throws suppresses rather than nags.
+  assert.doesNotMatch(js, /twins-popup-v1/);
+  assert.match(js, /const store = window\.twinsPopupStore;/);
+  assert.match(js, /typeof store\.get === 'function' && typeof store\.set === 'function'/);
+  assert.match(js, /if \(!store\) return false;/);
   assert.match(js, /180 \* 24 \* 60 \* 60 \* 1000/);
+  // Read at open time, never at init: the two scripts are independently
+  // deferred, so an init-time read could race the store's definition.
+  assert.match(js, /if \(popupSuppressed\(\)\) \{ popup\.remove\(\); return; \}/);
   assert.match(js, /trapTab\(event, popupDialog \|\| popup\)/);
   assert.match(js, /\(hover: hover\) and \(pointer: fine\)/);
   // Never stacks on the menu drawer or the quote dialog: the three share one
@@ -167,6 +179,11 @@ test('email popup: storage-bounded chrome runtime, approved copy, production-onl
   );
   assert.doesNotMatch(productionPopup, /console\.|retry/i);
   assert.match(productionPopup, /'twins-popup-v1'/);
+  // The production script OWNS the key and publishes exactly one bounded
+  // get/set store for the shared runtime - no other storage surface exposed.
+  assert.match(productionPopup, /window\.twinsPopupStore = \{/);
+  assert.match(productionPopup, /get: function \(\)/);
+  assert.match(productionPopup, /set: function \(value\)/);
   assert.match(productionPopup, /if \(honeypot !== ''\) \{/);
   assert.match(productionPopup, /typeof window\.gtag === 'function'/);
   assert.match(productionLoader, /TWINS_POPUP_LEAD_ENDPOINT/);

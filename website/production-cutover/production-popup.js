@@ -15,14 +15,32 @@
  * never logged. The visitor always reaches the thanks state; the spam gate at
  * the edge function decides what the submission is worth. A filled honeypot
  * short-circuits to the thanks state without sending anything at all.
- * Suppression: writes the same twins-popup-v1 localStorage key the shared
- * chrome runtime uses, so a signup suppresses the popup for 180 days.
+ * Suppression: this script OWNS the twins-popup-v1 localStorage key and
+ * publishes it as window.twinsPopupStore for the shared chrome runtime, which
+ * is contract-banned from client storage (the staging preview must persist
+ * nothing - staging-safety/tests/recovered-live-overhaul.test.cjs). The shared
+ * runtime reads the store when the popup is about to open, so this definition
+ * does not race it; where this script is absent, the popup simply opens every
+ * load and remembers nothing.
  */
 (function () {
   'use strict';
 
+  var POPUP_KEY = 'twins-popup-v1';
+
+  // Published for the shared chrome runtime's frequency cap. Bounded to one
+  // key; get/set only, no enumeration, no other storage surface exposed.
+  window.twinsPopupStore = {
+    get: function () {
+      try { return window.localStorage.getItem(POPUP_KEY); } catch (error) { return null; }
+    },
+    set: function (value) {
+      try { window.localStorage.setItem(POPUP_KEY, String(value)); } catch (error) { /* best effort */ }
+    },
+  };
+
   function remember() {
-    try { window.localStorage.setItem('twins-popup-v1', String(Date.now())); } catch (error) { /* best effort */ }
+    try { window.localStorage.setItem(POPUP_KEY, String(Date.now())); } catch (error) { /* best effort */ }
   }
 
   function bind() {
