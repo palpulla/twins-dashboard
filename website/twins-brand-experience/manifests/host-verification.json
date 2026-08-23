@@ -257,6 +257,12 @@
     },
     {
       "role": "verify",
+      "source": "twins-brand-experience/components/email-capture.php",
+      "size": 5339,
+      "sha256": "1bd268433171e4ba1ca4b3e55aeeae94e2a43bb8091dcb559f775dc938d2b6c1"
+    },
+    {
+      "role": "verify",
       "source": "twins-brand-experience/components/footer.php",
       "size": 4030,
       "sha256": "c9cc353e9727a07cb54578d7cefbf9718b015e5b75197a7caa0a67f671d98e87"
@@ -356,6 +362,12 @@
       "source": "twins-brand-experience/config/page-content.php",
       "size": 69786,
       "sha256": "0d8b0c90dc9b025a458df6bf4fb8cab9b644701d276145dc457d89d5e4063d63"
+    },
+    {
+      "role": "verify",
+      "source": "twins-brand-experience/config/popup.php",
+      "size": 515,
+      "sha256": "9458caf66a65200149fd2815552fe7399e26197723b904a78c01cfb1e576bb6a"
     },
     {
       "role": "verify",
@@ -546,8 +558,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/tests/php/portable-core-harness.php",
-      "size": 26003,
-      "sha256": "320460e1685b6c5bfeed45ff3ab0f4355722d2633afda9fb00ebe074adeb8ba5"
+      "size": 26025,
+      "sha256": "8d341a2fec4454ee8328af384bb31179201a7e85229868d12bf4fd2643160b05"
     },
     {
       "role": "verify",
