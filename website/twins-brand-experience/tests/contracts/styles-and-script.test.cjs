@@ -111,6 +111,12 @@ test('email popup: storage-bounded chrome runtime, approved copy, production-onl
   assert.match(js, /180 \* 24 \* 60 \* 60 \* 1000/);
   assert.match(js, /trapTab\(event, popupDialog \|\| popup\)/);
   assert.match(js, /\(hover: hover\) and \(pointer: fine\)/);
+  // Never stacks on the menu drawer or the quote dialog: the three share one
+  // scroll-lock slot, and a popup opened on top of either left the page
+  // scroll-locked after both closed. While one is open the popup waits out
+  // another full dwell (the same 20s, never a shorter timer).
+  assert.match(js, /const popupBlockedByOverlay = \(\) => Boolean\(\(drawer && !drawer\.hidden\) \|\| \(booking && !booking\.hidden\)\);/);
+  assert.match(js, /if \(popupBlockedByOverlay\(\)\) \{\s*popupTimer = window\.setTimeout\(openPopup, 20000\);\s*return;\s*\}\s*popupShown = true;/);
 
   // Component: approved copy byte-for-byte, dialog semantics, decorative art,
   // spam-gate fields, and NO URL of its own - the endpoint is a server-side
@@ -152,6 +158,13 @@ test('email popup: storage-bounded chrome runtime, approved copy, production-onl
   assert.match(productionPopup, /source: 'website-popup'/);
   assert.match(productionPopup, /path: window\.location\.pathname/);
   for (const key of ['email:', 'website:', 'rendered_at:', 'elapsed_ms:']) assert.ok(productionPopup.includes(key), `payload lost ${key}`);
+  // The payload is bounded: exactly these keys, in this order, nothing else.
+  const payloadLiteral = productionPopup.match(/var payload = \{([\s\S]*?)\n\s*\};/);
+  assert.ok(payloadLiteral, 'production popup lost its single payload literal');
+  assert.deepEqual(
+    [...payloadLiteral[1].matchAll(/^\s*([a-z_]+):/gm)].map(match => match[1]),
+    ['email', 'source', 'path', 'page', 'website', 'rendered_at', 'elapsed_ms'],
+  );
   assert.doesNotMatch(productionPopup, /console\.|retry/i);
   assert.match(productionPopup, /'twins-popup-v1'/);
   assert.match(productionPopup, /if \(honeypot !== ''\) \{/);

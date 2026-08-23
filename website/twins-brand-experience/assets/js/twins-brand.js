@@ -674,10 +674,21 @@
         let popupShown = false;
         let popupRestore = null;
         let popupTimer = null;
+        // The menu drawer and the quote dialog share one scroll-lock slot with
+        // the popup and never stack on each other (openBooking closes the
+        // drawer first). The popup must not stack either: opening on top of
+        // them interrupts a booking mid-flow and leaves the page scroll-locked
+        // once both close. While either owns the screen the popup waits out
+        // another full dwell instead.
+        const popupBlockedByOverlay = () => Boolean((drawer && !drawer.hidden) || (booking && !booking.hidden));
         const openPopup = () => {
           if (popupShown || !popup.isConnected) return;
-          popupShown = true;
           if (popupTimer !== null) window.clearTimeout(popupTimer);
+          if (popupBlockedByOverlay()) {
+            popupTimer = window.setTimeout(openPopup, 20000);
+            return;
+          }
+          popupShown = true;
           popupRestore = document.activeElement;
           popup.hidden = false;
           lockScroll();
