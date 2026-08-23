@@ -3089,6 +3089,9 @@ html.twins-home-motion-ready [data-home-reveal][data-home-visible="true"] {
   color: var(--twins-gold);
   letter-spacing: 2px;
 }
+/* The 2px tracking is for the star glyphs; the live count is a numeral and
+   was rendering as "7 1 5". */
+.twins-brand-home .twins-brand-hero-proof > span[data-twins-live-count] { letter-spacing: 0; }
 
 @keyframes twins-brand-hero-drift {
   from { transform: scale(1.001) translate3d(0, 0, 0); }
@@ -4263,11 +4266,15 @@ body.twins-brand-experience :is(
   .twins-brand-service-journey::after { bottom: 18px; height: 30px; }
   .twins-brand-home { --twins-course: 92px; }
   .twins-brand-journey-route { inset: 0 -6% -24px; }
+  /* margin-left: 54px was the indent beside the old dashed spine. The spine
+     is now the full-width curtain behind the steps, so the indent only left a
+     dead gutter and squeezed each card's copy into ~165px at 390px. The cards
+     ride the rail like every other stacked block. */
   .twins-brand-journey-step,
   .twins-brand-journey-step:nth-child(even) {
     grid-template-columns: 1fr;
     min-height: 0;
-    margin-left: 54px;
+    margin-left: 0;
   }
   .twins-brand-journey-stage,
   .twins-brand-journey-step:nth-child(even) .twins-brand-journey-stage {
@@ -4311,6 +4318,11 @@ body.twins-brand-experience :is(
 
 @media (max-width: 480px) {
   .twins-brand-home [data-home-scene] h2 { font-size: clamp(32px, 10vw, 42px); }
+  /* The proof line is a flex row of anonymous items, so on a phone the last
+     item broke inside itself ("715 + verified / reviews"). Inline flow with
+     the stars on their own line keeps "4.9 from 715+ verified reviews" whole. */
+  .twins-brand-home .twins-brand-hero-proof { display: block; }
+  .twins-brand-home .twins-brand-hero-proof > span[aria-hidden] { display: block; margin-bottom: 4px; }
   .twins-brand-home [data-home-scene] p { font-size: 17px; }
   .twins-brand-home-offer { padding: 18px; }
   .twins-brand-home-offer > span { font-size: 50px; }
@@ -5204,13 +5216,17 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-card > a::after { c
 /* --------------------------------------------------------------------------
    Email-capture popup (.twins-popup-*). Template-owned chrome, one per page,
    hidden until twins-brand.js opens it (20s dwell or desktop exit intent).
-   The overlay dims the page; the dialog is the single bold element: white
-   card, hairline navy border, 10px radius, gold pill action with navy ink
-   (8.8:1). Gold is never text on white or cream here. Desktop is a centered
-   two-panel modal (cream mascot panel left, form right); mobile is a bottom
-   sheet capped at min(76vh, 560px) with a thumb-reachable close. The entrance animation
-   only exists under prefers-reduced-motion: no-preference, and the global
-   reduced-motion block also zeroes it.
+   The overlay is the same dim-and-blur the drawer and quote dialog use; the
+   dialog is the single bold element and wears the site's own card anatomy
+   (2px navy edge, hard 8px gold lift, 10px radius, no blurred drop shadow),
+   with a gold pill action carrying navy ink (8.8:1). Gold is never text on
+   white or cream here. Desktop is a centered two-panel modal: the mascot
+   stands on a gold ground stripe in a cream panel (the service-journey road
+   motif), form right. Phones get a bottom sheet capped at min(76vh, 560px)
+   with a thumb-reachable close; tablets from 701px keep the composed modal
+   because it fits with room to spare. The entrance animation only exists
+   under prefers-reduced-motion: no-preference, and the global reduced-motion
+   block also zeroes it.
    -------------------------------------------------------------------------- */
 .twins-popup[hidden] { display: none !important; pointer-events: none; }
 .twins-popup {
@@ -5220,9 +5236,9 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-card > a::after { c
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
-  background: rgba(3, 18, 43, .64);
-  backdrop-filter: blur(4px);
+  padding: 24px 32px 32px 24px;
+  background: rgba(3, 18, 43, .76);
+  backdrop-filter: blur(6px);
 }
 @keyframes twins-popup-enter {
   from { opacity: 0; transform: translateY(16px); }
@@ -5233,27 +5249,42 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-card > a::after { c
   display: grid;
   grid-template-columns: 220px 1fr;
   width: min(100%, 660px);
-  max-height: calc(100vh - 48px);
+  max-height: calc(100vh - 56px);
   overflow: hidden auto;
   background: var(--twins-white);
-  border: 1px solid rgba(7, 28, 56, .42);
+  border: var(--twins-card-edge);
   border-radius: 10px;
-  box-shadow: 0 26px 60px -18px rgba(3, 18, 43, .6);
+  box-shadow: var(--twins-card-lift);
 }
 @media (prefers-reduced-motion: no-preference) {
   .twins-popup-dialog { animation: twins-popup-enter .28s cubic-bezier(.2, .8, .2, 1); }
 }
 .twins-popup-art {
+  position: relative;
   display: flex;
   align-items: flex-end;
   justify-content: center;
   overflow: hidden;
-  padding: 22px 10px 0;
+  padding: 22px 10px 30px;
   background: var(--twins-cream);
   border-right: 1px solid rgba(7, 28, 56, .14);
   pointer-events: none;
 }
-.twins-popup-art img { width: 100%; max-width: 168px; height: auto; }
+/* Ground stripe: the gold road from the home service journey, so the twin
+   stands on something instead of floating in a cream column. */
+.twins-popup-art::after {
+  content: '';
+  position: absolute;
+  left: -6px;
+  right: -6px;
+  bottom: 12px;
+  z-index: 0;
+  height: 20px;
+  background: var(--twins-gold);
+  border-block: 2px solid var(--twins-navy-950);
+  transform: rotate(-1.5deg);
+}
+.twins-popup-art img { position: relative; z-index: 1; width: 100%; max-width: 184px; height: auto; }
 .twins-popup-body { display: grid; gap: 12px; align-content: start; padding: clamp(22px, 4vw, 30px); }
 /* Two classes so the home page's `.twins-brand-home :is(h1, h2, h3)` display
    restyle cannot reach into the popup: the dialog reads the same on every
@@ -5337,7 +5368,7 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-card > a::after { c
 }
 .twins-popup-close:is(:hover, :focus-visible) { background: var(--twins-cream); }
 .twins-popup-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
-@media (max-width: 768px) {
+@media (max-width: 700px) {
   .twins-popup { align-items: flex-end; padding: 0; }
   .twins-popup-dialog {
     grid-template-columns: 1fr;
@@ -5349,9 +5380,11 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-card > a::after { c
     max-height: min(76vh, 560px);
     overflow-y: auto;
     background: var(--twins-cream);
-    border-bottom: 0;
+    border-width: 2px 0 0;
     border-radius: 10px 10px 0 0;
+    box-shadow: none;
   }
+  .twins-popup-art::after { display: none; }
   /* The mascot survives on the sheet as a faint watermark pinned to the
      bottom-right, behind the form (owner request 2026-08-21). Low opacity
      keeps every text pair on the cream ground at its measured ratio. */
