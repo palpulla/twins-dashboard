@@ -5501,12 +5501,27 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-card > a::after { c
    MOTION. Nothing here animates. The homepage owns the two moving grounds. */
 
 /* --- STEEL -------------------------------------------------------------- */
+/* The last two entries are the flat navy slabs the service and city pages had
+   left over: a navy band with no ground of its own, sitting between light
+   bands, reads as a black rectangle rather than as part of a door. They are
+   also what was leaving four plain bands in a row in the middle of both pages,
+   which is the stretch a reader spends the longest in.
+
+   `.twins-brand-contact-booking` is the one navy slab deliberately left plain.
+   Its "Schedule online" kicker is #1D4D7C on navy, which measures 1.95:1 from
+   rendered pixels BEFORE any ground is added -- already below the body-copy
+   floor. Every ground in this system darkens somewhere, so texturing that band
+   moves a failing pair further down (1.64:1 with STEEL, 1.51:1 with
+   STEEL-LIT). The kicker colour is the defect; until it is fixed the band
+   stays flat rather than take a third contrast regression on this project. */
 body.twins-brand-experience :is(
   .twins-brand-service-page .twins-brand-direct-answer,
   .twins-location-page .twins-location-services,
   .twins-brand-catalog-page .twins-brand-catalog-hero,
   .twins-brand-careers-page .twins-brand-careers-process,
-  .twins-brand-reviews-page .twins-brand-reviews-collection
+  .twins-brand-reviews-page .twins-brand-reviews-collection,
+  .twins-brand-service-page .twins-brand-service-safety-section,
+  .twins-location-page .twins-location-reviews
 ) {
   background-repeat: no-repeat, no-repeat, repeat, repeat;
   background-position: 0 0, 0 0, 0 0, 0 0;
@@ -5556,8 +5571,9 @@ body.twins-brand-experience .twins-brand-final-cta {
 body.twins-brand-experience :is(
   .twins-brand-service-page .twins-brand-service-signs,
   .twins-brand-service-page .twins-brand-service-related,
+  .twins-brand-article-page .twins-brand-article-services,
   .twins-location-page .twins-brand-faq,
-  .twins-brand-location-index .twins-brand-editorial-answer,
+  .twins-brand-editorial-page .twins-brand-editorial-answer,
   .twins-brand-team-page .twins-brand-team-crew-members,
   .twins-brand-careers-page .twins-brand-careers-roles,
   .twins-brand-contact-page .twins-brand-contact-markets
