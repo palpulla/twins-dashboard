@@ -120,8 +120,8 @@ body.twins-brand-experience {
   --twins-under-door:
     linear-gradient(180deg, rgba(255,198,65,.16) 0 2px, rgba(255,198,65,.06) 2px 4px);
   --twins-coil:
-    repeating-linear-gradient(74deg, transparent 0 6px, rgba(7,28,56,.16) 6px 9px,
-      rgba(7,28,56,.06) 9px 12px, transparent 12px 18px);
+    repeating-linear-gradient(74deg, transparent 0 6px, rgba(7,28,56,.30) 6px 9px,
+      rgba(7,28,56,.11) 9px 12px, transparent 12px 18px);
 
   margin: 0;
 }
@@ -5451,4 +5451,155 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-card > a::after { c
 }
 @media (prefers-reduced-motion: reduce) {
   .twins-popup-dialog { animation: none !important; }
+}
+
+/* ===== FAMILY GROUNDS — the rest of the door ================================
+   The homepage grounds are one garage door seen up close. Every other family
+   was eleven, seven or four flat rectangles beside it. This block cuts those
+   bands from the same door, using the vocabulary promoted to
+   `body.twins-brand-experience` above.
+
+   MECHANISM. Home hangs its extra pattern on `[data-home-scene]::before` and
+   paints its base door on the scene's own background. The families paint on
+   the element background only, deliberately:
+     - four family sections already own a ::before with real content
+       (.twins-location-hero, .twins-location-final-cta, .twins-location-services,
+       .twins-location-map-frame). A shared ::before hook would have had to
+       fight them.
+     - an element background cannot overflow its box, so no family ground can
+       introduce a horizontal scrollbar and none of them needs `overflow: clip`,
+       `isolation` or a negative z-index. That also keeps every ground out of
+       the stacking context the email-capture dialog lives in.
+   The hook is therefore the ground name itself: a section joins a ground by
+   being listed in that ground's `:is()` group. Four grounds, one accent:
+
+     STEEL      navy bands. Dark section seam, light falling down the band,
+                236px stiles, 44px hairline courses.
+     STEEL-LIT  the same anatomy with the light landing at the TOP instead, so
+                two navy bands in a row read as two sections of a door rather
+                than one slab. Home does exactly this between company-story and
+                service-showcase.
+     PANEL      cream bands. Light section seam, panel wash, 236px light
+                stiles, a shadow along the bottom edge where the next section
+                sits on this one.
+     LINEN      white bands. Section seam and the stile pitch only, at a third
+                of the panel alpha. This is the quiet one: it goes where long
+                copy and L10 data live, and reads as structure, not decoration.
+     COIL       the gold ribbons. The torsion spring a maintenance plan
+                tightens, on a 74deg pitch, plus the stile pitch.
+
+   RHYTHM, NOT WALLPAPER. Roughly half the bands on any page stay plain. A
+   textured band is always followed by a plain one somewhere in the next two,
+   and the white reading surfaces (service process/cost/reviews, article body,
+   careers application, contact quote, blog grid) are plain or linen so copy
+   never competes with the ground.
+
+   L10 STAYS QUIET. No ground is ever declared on or inside a .twins-l10-*
+   block; the stat cards, proportion bars, callouts and badges keep their own
+   flat opaque surfaces on top of whatever band they sit in.
+
+   MOTION. Nothing here animates. The homepage owns the two moving grounds. */
+
+/* --- STEEL -------------------------------------------------------------- */
+body.twins-brand-experience :is(
+  .twins-brand-service-page .twins-brand-direct-answer,
+  .twins-location-page .twins-location-services,
+  .twins-brand-catalog-page .twins-brand-catalog-hero,
+  .twins-brand-careers-page .twins-brand-careers-process,
+  .twins-brand-reviews-page .twins-brand-reviews-collection
+) {
+  background-repeat: no-repeat, no-repeat, repeat, repeat;
+  background-position: 0 0, 0 0, 0 0, 0 0;
+  background-size: 100% 6px, 100% 100%, var(--twins-stile) 100%, 100% var(--twins-course-fine);
+  background-image:
+    var(--twins-seam-dark),
+    var(--twins-steel-wash),
+    var(--twins-stile-dark),
+    repeating-linear-gradient(180deg, rgba(255,255,255,.028) 0 1px, transparent 1px var(--twins-course-fine));
+}
+
+/* --- STEEL-LIT ---------------------------------------------------------- */
+body.twins-brand-experience :is(
+  .twins-brand-service-page .twins-brand-service-area,
+  .twins-brand-team-page .twins-brand-team-careers,
+  .twins-brand-careers-page .twins-brand-careers-hero,
+  .twins-brand-catalog-page .twins-brand-catalog-section--closing
+) {
+  background-repeat: no-repeat, no-repeat, repeat, repeat;
+  background-position: 0 0, 0 0, 0 0, 0 0;
+  background-size: 100% 6px, 100% 100%, var(--twins-stile) 100%, 100% var(--twins-course-fine);
+  background-image:
+    var(--twins-seam-dark),
+    var(--twins-steel-wash-lit),
+    var(--twins-stile-dark),
+    repeating-linear-gradient(180deg, rgba(255,255,255,.028) 0 1px, transparent 1px var(--twins-course-fine));
+}
+
+/* --- CLOSING — the site-wide shut door ---------------------------------- */
+/* Every family except the homepage ends on .twins-brand-final-cta. It gets the
+   homepage closing-scene treatment: the darkest steel with daylight leaking in
+   under a shut door along the bottom edge. One rule, ten families, and the
+   last thing anybody sees on any page is a garage door closing. */
+body.twins-brand-experience .twins-brand-final-cta {
+  background-repeat: no-repeat, no-repeat, no-repeat, repeat, repeat;
+  background-position: 0 0, 0 100%, 0 0, 0 0, 0 0;
+  background-size: 100% 6px, 100% 4px, 100% 100%, var(--twins-stile) 100%, 100% var(--twins-course-fine);
+  background-image:
+    var(--twins-seam-dark),
+    var(--twins-under-door),
+    var(--twins-steel-wash),
+    var(--twins-stile-dark),
+    repeating-linear-gradient(180deg, rgba(255,255,255,.028) 0 1px, transparent 1px var(--twins-course-fine));
+}
+
+/* --- PANEL -------------------------------------------------------------- */
+body.twins-brand-experience :is(
+  .twins-brand-service-page .twins-brand-service-signs,
+  .twins-brand-service-page .twins-brand-service-related,
+  .twins-location-page .twins-brand-faq,
+  .twins-brand-location-index .twins-brand-editorial-answer,
+  .twins-brand-team-page .twins-brand-team-crew-members,
+  .twins-brand-careers-page .twins-brand-careers-roles,
+  .twins-brand-contact-page .twins-brand-contact-markets
+) {
+  background-repeat: no-repeat, no-repeat, repeat, no-repeat;
+  background-position: 0 0, 0 0, 0 0, 0 100%;
+  background-size: 100% 6px, 100% 100%, var(--twins-stile) 100%, 100% 30px;
+  background-image:
+    var(--twins-seam),
+    var(--twins-panel-wash),
+    var(--twins-stile-light),
+    linear-gradient(180deg, transparent 0, rgba(7,28,56,.07) 100%);
+}
+
+/* --- LINEN -------------------------------------------------------------- */
+body.twins-brand-experience :is(
+  .twins-location-page .twins-location-local-proof,
+  .twins-brand-catalog-page .twins-brand-catalog-section:not(
+    .twins-brand-catalog-section--dark, .twins-brand-catalog-section--closing)
+) {
+  background-repeat: no-repeat, repeat;
+  background-position: 0 0, 0 0;
+  background-size: 100% 4px, var(--twins-stile) 100%;
+  background-image:
+    var(--twins-seam),
+    var(--twins-stile-linen);
+}
+
+/* --- COIL --------------------------------------------------------------- */
+/* A first pass ran the coil across the whole ribbon and added the stile pitch
+   underneath it. Rendered, that was a field of diagonal stripes behind the
+   copy -- decoration competing with the words, which is the failure mode this
+   whole block is trying to avoid. It is also wrong anatomy: the torsion spring
+   does not live on the door face, it lives on a shaft ABOVE it. So the coil is
+   now a 14px course along the top edge only, and the rest of the ribbon is
+   clean gold with the navy copy on it. Same idea, one twentieth of the ink. */
+body.twins-brand-experience :is(
+  .twins-brand-team-page .twins-brand-trust-ribbon,
+  .twins-brand-careers-page .twins-brand-careers-ribbon
+) {
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: 100% 14px;
+  background-image: var(--twins-coil);
 }

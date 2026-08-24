@@ -2100,3 +2100,55 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-preview-notice {
   }
 
 }
+
+/* ===== COST-GUIDE GROUNDS ==================================================
+   The cost guides are reference documents: eleven bands, most of them long
+   reading surfaces or data tables. They take the smallest dose of the shared
+   door vocabulary in the site -- three bands out of eleven -- because on a page
+   somebody reads for five minutes, ground texture behind copy is a tax.
+   Tokens come from `body.twins-brand-experience` in twins-brand.css. */
+
+/* The gold promise strip gets the same torsion course the team and careers
+   ribbons carry, so the one gold rule on the page is a spring on its shaft. */
+:is(
+  body.twins-brand-route-cost-madison,
+  body.twins-brand-route-cost-milwaukee
+) .twins-cost-promise {
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: 100% 14px;
+  background-image: var(--twins-coil);
+}
+
+/* The Wisconsin-weather band is 675px of unbroken gold. It gets the coil
+   course and a panel wash, and deliberately NOT the stile pitch: 236px stripes
+   across a slab this size read as decoration, not as a door. */
+:is(
+  body.twins-brand-route-cost-madison,
+  body.twins-brand-route-cost-milwaukee
+) .twins-cost-climate {
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-position: 0 0, 0 0, 0 100%;
+  background-size: 100% 14px, 100% 100%, 100% 30px;
+  background-image:
+    var(--twins-coil),
+    linear-gradient(180deg, rgba(255,255,255,.20) 0, rgba(255,255,255,0) 18%,
+      rgba(7,28,56,.035) 82%, rgba(7,28,56,.06) 100%),
+    linear-gradient(180deg, transparent 0, rgba(7,28,56,.07) 100%);
+}
+
+/* The price tables are the tallest band on the page (2207px). LINEN: the
+   section seam and the stile pitch only, so the numbers sit on a door front
+   instead of on a slab of grey. Its sibling `.twins-cost-process` shares the
+   same base colour and stays plain, which is what keeps the page breathing. */
+:is(
+  body.twins-brand-route-cost-madison,
+  body.twins-brand-route-cost-milwaukee
+) .twins-cost-pricing {
+  background-repeat: no-repeat, repeat;
+  background-position: 0 0, 0 0;
+  background-size: 100% 4px, var(--twins-stile) 100%;
+  background-image:
+    var(--twins-seam),
+    var(--twins-stile-linen);
+}
