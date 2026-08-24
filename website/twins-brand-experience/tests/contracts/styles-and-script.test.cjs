@@ -105,8 +105,18 @@ test('email popup: storage-bounded chrome runtime, approved copy, production-onl
   // fixed suppression key with 180-day arithmetic, the shared focus trap, and
   // desktop-only exit intent. Transport stays impossible - the guarded-
   // operations test above proves the popup added none.
-  assert.match(js, /window\.setTimeout\(openPopup, 20000\)/);
-  assert.doesNotMatch(js, /setTimeout\(openPopup, (?!20000)\d/);
+  // Intent-triggered only (owner decision 2026-08-23): no dwell timer may open
+  // the popup on any device. Pointer devices use exit intent through the top
+  // edge; touch devices, which have no cursor, use 70% scroll depth so a phone
+  // visitor is not excluded entirely.
+  assert.doesNotMatch(js, /setTimeout\(openPopup/);
+  assert.match(js, /const POINTER_DEVICE = '\(hover: hover\) and \(pointer: fine\)'/);
+  assert.match(js, /if \(event\.clientY > 0\) return;/);
+  assert.match(js, /if \(!matchMedia\(POINTER_DEVICE\)\.matches\) return;/);
+  assert.match(js, /if \(!matchMedia\(POINTER_DEVICE\)\.matches\) \{/);
+  assert.match(js, /const SCROLL_TRIGGER = 0\.7;/);
+  assert.match(js, /window\.addEventListener\('scroll', onScroll, \{ passive: true \}\)/);
+  assert.match(js, /window\.removeEventListener\('scroll', onScroll\)/);
   // The frequency cap is delegated, not implemented here: the staging preview
   // contract (staging-safety/tests/recovered-live-overhaul.test.cjs) bans every
   // browser persistence API from this file, so the key lives in the
@@ -128,7 +138,10 @@ test('email popup: storage-bounded chrome runtime, approved copy, production-onl
   // scroll-locked after both closed. While one is open the popup waits out
   // another full dwell (the same 20s, never a shorter timer).
   assert.match(js, /const popupBlockedByOverlay = \(\) => Boolean\(\(drawer && !drawer\.hidden\) \|\| \(booking && !booking\.hidden\)\);/);
-  assert.match(js, /if \(popupBlockedByOverlay\(\)\) \{\s*popupTimer = window\.setTimeout\(openPopup, 20000\);\s*return;\s*\}\s*popupShown = true;/);
+  // Blocked by the drawer or quote dialog: stand down entirely rather than
+  // queue. The popup is intent-triggered now, so a deferred open would fire
+  // detached from the gesture that caused it.
+  assert.match(js, /if \(popupBlockedByOverlay\(\)\) return;\s*popupShown = true;/);
 
   // Component: approved copy byte-for-byte, dialog semantics, decorative art,
   // spam-gate fields, and NO URL of its own - the endpoint is a server-side

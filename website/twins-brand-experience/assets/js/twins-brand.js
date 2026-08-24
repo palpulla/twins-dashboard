@@ -639,10 +639,12 @@
       }));
     });
 
-    // Email-capture popup: opens after 20 seconds on page OR on desktop exit
-    // intent, whichever comes first, once per visitor per 180 days (dismissal
-    // and signup both count). The shared runtime owns only chrome behavior -
-    // open, close, focus trap, Esc.
+    // Email-capture popup: INTENT-TRIGGERED, never on a dwell timer (owner
+    // decision 2026-08-23 - a timed interruption reads as an ad). Pointer
+    // devices open it on exit intent; touch devices, which have no cursor, open
+    // it at 70% scroll depth. Once per visitor per 180 days (dismissal and
+    // signup both count). The shared runtime owns only chrome behavior - open,
+    // close, focus trap, Esc.
     //
     // It carries NO transport and NO client storage. The staging preview
     // contract ("the preview has no production-domain or outbound submission
@@ -692,24 +694,22 @@
       {
         let popupShown = false;
         let popupRestore = null;
-        let popupTimer = null;
         // The menu drawer and the quote dialog share one scroll-lock slot with
         // the popup and never stack on each other (openBooking closes the
         // drawer first). The popup must not stack either: opening on top of
         // them interrupts a booking mid-flow and leaves the page scroll-locked
         // once both close. While either owns the screen the popup waits out
         // another full dwell instead.
+        // While the drawer or the quote dialog owns the screen the popup stands
+        // down entirely rather than queueing: it is intent-triggered now, so a
+        // deferred open would fire detached from the gesture that caused it.
         const popupBlockedByOverlay = () => Boolean((drawer && !drawer.hidden) || (booking && !booking.hidden));
         const openPopup = () => {
           if (popupShown || !popup.isConnected) return;
-          if (popupTimer !== null) window.clearTimeout(popupTimer);
           // Frequency cap, checked here rather than at init - see the note
           // above. A suppressed visitor loses the markup entirely.
           if (popupSuppressed()) { popup.remove(); return; }
-          if (popupBlockedByOverlay()) {
-            popupTimer = window.setTimeout(openPopup, 20000);
-            return;
-          }
+          if (popupBlockedByOverlay()) return;
           popupShown = true;
           popupRestore = document.activeElement;
           popup.hidden = false;
@@ -723,13 +723,39 @@
           popupRemember();
           if (popupRestore instanceof HTMLElement) popupRestore.focus();
         };
-        popupTimer = window.setTimeout(openPopup, 20000);
+        // TRIGGERS - intent only, never a dwell timer (owner decision 2026-08-23).
+        //
+        // Pointer devices: exit intent. The cursor leaving through the TOP edge
+        // of the viewport (clientY <= 0 with no relatedTarget, i.e. it left the
+        // document rather than moving between elements) is the reliable signal
+        // for someone heading to the address bar, a tab, or the close button.
+        // Guarded on a real hover-capable pointer so a touch device that also
+        // reports mouse events cannot trip it.
+        const POINTER_DEVICE = '(hover: hover) and (pointer: fine)';
         document.addEventListener('mouseout', event => {
           if (popupShown || event.relatedTarget) return;
           if (event.clientY > 0) return;
-          if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+          if (!matchMedia(POINTER_DEVICE).matches) return;
           openPopup();
         });
+        // Touch devices have no cursor and therefore no exit intent, so without
+        // this a phone visitor would never see the popup at all. The closest
+        // honest equivalent is reaching the end of the content: someone who has
+        // scrolled 70% of the page has read it, and the alternative signals
+        // (back-button traps, blur, visibilitychange) are hostile or fire while
+        // the visitor is already gone. Passive listener, unbinds after firing.
+        if (!matchMedia(POINTER_DEVICE).matches) {
+          const SCROLL_TRIGGER = 0.7;
+          const onScroll = () => {
+            if (popupShown) { window.removeEventListener('scroll', onScroll); return; }
+            const scrolled = window.scrollY + window.innerHeight;
+            const height = document.documentElement.scrollHeight;
+            if (height <= window.innerHeight || scrolled / height < SCROLL_TRIGGER) return;
+            window.removeEventListener('scroll', onScroll);
+            openPopup();
+          };
+          window.addEventListener('scroll', onScroll, { passive: true });
+        }
         popupClose?.addEventListener('click', () => closePopup());
         popup.querySelector('[data-popup-decline]')?.addEventListener('click', () => closePopup());
         popup.addEventListener('pointerdown', event => { if (event.target === popup) closePopup(); });
