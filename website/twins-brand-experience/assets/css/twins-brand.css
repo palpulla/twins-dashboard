@@ -75,6 +75,54 @@ body.twins-brand-experience {
   /* Prose measure. One value for every body-copy block. */
   --twins-measure: 68ch;
 
+  /* ===== "THE DOOR ITSELF" — the shared ground vocabulary ==================
+     Promoted verbatim from `.twins-brand-home` (the owner-approved homepage
+     ground system) so every page family is a section of the same garage door
+     rather than a set of unrelated textures. Everything derives from one door:
+     stile pitch 236px, panel course 118px, steel hairline course 44px.
+     Home is a descendant of this element, so promoting these changes nothing
+     it renders; it only makes them reachable from the service, location,
+     catalog, team, careers, contact, reviews and cost-guide grounds. */
+  --twins-panel-hi: #fffdf6;
+  --twins-panel-mid: #fbf2e2;
+  --twins-panel-lo: #f3e6cd;
+  --twins-curtain-face: #f7ecd8;
+  --twins-steel-lo: #04142a;
+  --twins-steel-hi: #0b2745;
+  --twins-stile: clamp(148px, 16vw, 236px);
+  --twins-course: 118px;
+  --twins-seam:
+    linear-gradient(180deg, rgba(3,12,26,.38) 0 2px, rgba(3,12,26,.14) 2px 3px,
+      rgba(255,255,255,.16) 3px 4px, transparent 4px);
+  --twins-seam-dark:
+    linear-gradient(180deg, rgba(0,0,0,.52) 0 2px, rgba(255,255,255,.055) 2px 3px, transparent 3px);
+  --twins-stile-light:
+    linear-gradient(90deg, rgba(7,28,56,.07) 0 1px, rgba(255,255,255,.85) 1px 3px, transparent 3px);
+  --twins-stile-dark:
+    linear-gradient(90deg, rgba(0,0,0,.30) 0 1px, rgba(255,255,255,.045) 1px 3px, transparent 3px);
+
+  /* Family-only extensions of the same vocabulary. The home grounds paint an
+     opaque steel or panel gradient because each home scene owns its base
+     colour; the family bands keep the base colour they already have (navy-950,
+     navy-900, cream, cream-2, white, gold), so their light-fall and panel wash
+     are written as transparent overlays that sit on whatever that colour is.
+     That is the only difference between the two halves of the system. */
+  --twins-steel-wash:
+    linear-gradient(180deg, rgba(0,0,0,.20) 0, rgba(255,255,255,.042) 44%, rgba(0,0,0,.15) 100%);
+  --twins-steel-wash-lit:
+    linear-gradient(180deg, rgba(255,255,255,.055) 0, rgba(0,0,0,.10) 46%, rgba(0,0,0,.24) 100%);
+  --twins-panel-wash:
+    linear-gradient(180deg, rgba(255,255,255,.62) 0, rgba(255,255,255,0) 15%,
+      rgba(7,28,56,.030) 78%, rgba(7,28,56,.055) 100%);
+  --twins-course-fine: 44px;
+  --twins-stile-linen:
+    linear-gradient(90deg, rgba(7,28,56,.045) 0 1px, rgba(255,255,255,.55) 1px 3px, transparent 3px);
+  --twins-under-door:
+    linear-gradient(180deg, rgba(255,198,65,.16) 0 2px, rgba(255,198,65,.06) 2px 4px);
+  --twins-coil:
+    repeating-linear-gradient(74deg, transparent 0 6px, rgba(7,28,56,.16) 6px 9px,
+      rgba(7,28,56,.06) 9px 12px, transparent 12px 18px);
+
   margin: 0;
 }
 body.twins-brand-experience :where(
@@ -3172,26 +3220,13 @@ html.twins-home-motion-ready [data-home-reveal][data-home-visible="true"] {
   --twins-story-heading: clamp(40px, 4.8vw, 64px);
   --twins-navy-300: #5f6c7b;
   --twins-gold-700: #795300;
-  /* "The door itself": every homepage ground is one garage door seen up close.
-     Section courses, stiles, seams and hardware all derive from these. */
-  --twins-panel-hi: #fffdf6;
-  --twins-panel-mid: #fbf2e2;
-  --twins-panel-lo: #f3e6cd;
-  --twins-curtain-face: #f7ecd8;
-  --twins-steel-lo: #04142a;
-  --twins-steel-hi: #0b2745;
-  --twins-stile: clamp(148px, 16vw, 236px);
-  --twins-course: 118px;
+  /* The "door itself" vocabulary this page is built from is no longer declared
+     here. It moved verbatim to `body.twins-brand-experience` so the other page
+     families can be cut from the same door. Custom properties inherit and
+     `.twins-brand-home` is a div inside that body, so every value resolves
+     exactly as it did before the move (proved by a pixel diff of the rendered
+     homepage at 1440 and 390: zero differing pixels). */
   --twins-journey-lane: clamp(48px, 6vw, 84px);
-  --twins-seam:
-    linear-gradient(180deg, rgba(3,12,26,.38) 0 2px, rgba(3,12,26,.14) 2px 3px,
-      rgba(255,255,255,.16) 3px 4px, transparent 4px);
-  --twins-seam-dark:
-    linear-gradient(180deg, rgba(0,0,0,.52) 0 2px, rgba(255,255,255,.055) 2px 3px, transparent 3px);
-  --twins-stile-light:
-    linear-gradient(90deg, rgba(7,28,56,.07) 0 1px, rgba(255,255,255,.85) 1px 3px, transparent 3px);
-  --twins-stile-dark:
-    linear-gradient(90deg, rgba(0,0,0,.30) 0 1px, rgba(255,255,255,.045) 1px 3px, transparent 3px);
   background: var(--twins-cream);
 }
 
