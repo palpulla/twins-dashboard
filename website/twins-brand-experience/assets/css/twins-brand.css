@@ -952,6 +952,15 @@ body.twins-brand-experience .twins-brand-team-careers .twins-brand-kicker,
 body.twins-brand-experience .twins-brand-service-hero .twins-brand-kicker,
 body.twins-brand-experience .twins-brand-editorial-hero .twins-brand-kicker,
 body.twins-brand-experience .twins-brand-direct-answer .twins-brand-kicker,
+/* `.twins-brand-contact-booking` is a navy-950 band with white body copy, the
+   same as every other entry here, but it was missing from this list, so its
+   "Schedule online" kicker fell through to the light-band default (navy-800 on
+   navy-950). Measured from rendered pixels that is 1.95:1 -- unreadable, and
+   visibly so. It is the reason that band is the one navy slab in the site left
+   without a ground: every ground darkens somewhere, so texturing an already
+   failing pair only moved it further down. Joining the list it always belonged
+   in fixes the pair at 10.4:1 and matches its siblings. */
+body.twins-brand-experience .twins-brand-contact-booking .twins-brand-kicker,
 body.twins-brand-experience .twins-brand-service-area .twins-brand-kicker {
   color: var(--twins-gold);
 }
@@ -5507,13 +5516,13 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-card > a::after { c
    also what was leaving four plain bands in a row in the middle of both pages,
    which is the stretch a reader spends the longest in.
 
-   `.twins-brand-contact-booking` is the one navy slab deliberately left plain.
-   Its "Schedule online" kicker is #1D4D7C on navy, which measures 1.95:1 from
-   rendered pixels BEFORE any ground is added -- already below the body-copy
-   floor. Every ground in this system darkens somewhere, so texturing that band
-   moves a failing pair further down (1.64:1 with STEEL, 1.51:1 with
-   STEEL-LIT). The kicker colour is the defect; until it is fixed the band
-   stays flat rather than take a third contrast regression on this project. */
+   `.twins-brand-contact-booking` is the one navy slab still left plain, and it
+   now stays plain for RHYTHM rather than for contrast. (The kicker colour that
+   used to make it untexturable is fixed above.) Contact has only four bands:
+   hero, booking, markets, closing. Texturing booking would leave the page with
+   no plain band at all, which is the "busy" failure this block exists to
+   avoid. One flat navy slab between the hero and the cream markets band is
+   what lets the page breathe. */
 body.twins-brand-experience :is(
   .twins-brand-service-page .twins-brand-direct-answer,
   .twins-location-page .twins-location-services,
