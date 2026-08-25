@@ -115,13 +115,41 @@ body.twins-brand-experience {
     linear-gradient(180deg, rgba(255,255,255,.62) 0, rgba(255,255,255,0) 15%,
       rgba(7,28,56,.030) 78%, rgba(7,28,56,.055) 100%);
   --twins-course-fine: 44px;
+  /* THE CREAM PANEL COURSE. The approved homepage cream door
+     (`.twins-brand-journey-route`) leads with the 118px horizontal panel course
+     and lets the 236px stile recede behind it. The first family PANEL shipped
+     the stile WITHOUT the course, so every cream band read as six evenly spaced
+     vertical rules -- a column guide that does not line up with the content
+     grid, not a door. This restores the missing half of the pair.
+     LIGHT ONLY, deliberately. The homepage course can afford a dark lower lip
+     because its band carries no slate body copy. The family cream bands do, and
+     slate #5A6875 on cream-2 #F4EAD6 starts at 4.74:1 -- roughly a quarter stop
+     of headroom above the 4.5 floor. Any darkening layer that repeats every
+     118px would eventually cross a line of it. A highlight can only raise the
+     background luminance, so it can only move that pair away from the floor. */
+  --twins-panel-course:
+    linear-gradient(180deg, rgba(255,255,255,.60) 0 2px,
+      rgba(255,255,255,.19) 2px 13px, transparent 13px);
+  /* The stile the course sits behind. `--twins-stile-light` is the homepage
+     value, a 2px white .85 rule; alone on a cream band that is the brightest
+     mark on the page. At .45 the vertical recedes and the horizontal course
+     leads, which is the order the approved homepage door reads in. */
+  --twins-stile-panel:
+    linear-gradient(90deg, rgba(7,28,56,.05) 0 1px, rgba(255,255,255,.45) 1px 3px, transparent 3px);
   --twins-stile-linen:
     linear-gradient(90deg, rgba(7,28,56,.045) 0 1px, rgba(255,255,255,.55) 1px 3px, transparent 3px);
   --twins-under-door:
     linear-gradient(180deg, rgba(255,198,65,.16) 0 2px, rgba(255,198,65,.06) 2px 4px);
+  /* THE COIL. A first pass ran 6px marks on an 18px pitch at .30 alpha inside a
+     14px strip; rendered on a gold ribbon that is a serrated edge -- the band
+     reads as a torn coupon, not as a spring, and it is the loudest ink in the
+     whole ground system sitting on the loudest colour in the palette. Halved
+     alpha, pitch widened to 26px, and each mark now carries a light edge so it
+     reads as a round wire rather than a saw tooth. It is also no longer used on
+     the two gold ribbons or the cost promise strip: see the COIL rule below. */
   --twins-coil:
-    repeating-linear-gradient(74deg, transparent 0 6px, rgba(7,28,56,.30) 6px 9px,
-      rgba(7,28,56,.11) 9px 12px, transparent 12px 18px);
+    repeating-linear-gradient(76deg, transparent 0 12px, rgba(7,28,56,.15) 12px 14px,
+      rgba(255,255,255,.22) 14px 15px, transparent 15px 26px);
 
   margin: 0;
 }
@@ -5523,10 +5551,17 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-card > a::after { c
    no plain band at all, which is the "busy" failure this block exists to
    avoid. One flat navy slab between the hero and the cream markets band is
    what lets the page breathe. */
+/* `.twins-brand-catalog-page .twins-brand-catalog-hero` used to be listed here
+   and painted nothing. That hero is a two-column grid whose children --
+   `__copy` (its own opaque 115deg gradient) and `__image` (a full-bleed photo on
+   #dbe5ef) -- stretch to fill it exactly: 648px + 792px across 1440, both the
+   full 718px of the 726px box. The ground was computing correctly and was
+   covered by 100% of its own children. The catalog hero now takes its steel on
+   `__copy`, the half a reader can actually see, in twins-brand-families.css
+   beside the rule that owns that panel's base colour. */
 body.twins-brand-experience :is(
   .twins-brand-service-page .twins-brand-direct-answer,
   .twins-location-page .twins-location-services,
-  .twins-brand-catalog-page .twins-brand-catalog-hero,
   .twins-brand-careers-page .twins-brand-careers-process,
   .twins-brand-reviews-page .twins-brand-reviews-collection,
   .twins-brand-service-page .twins-brand-service-safety-section,
@@ -5540,6 +5575,22 @@ body.twins-brand-experience :is(
     var(--twins-steel-wash),
     var(--twins-stile-dark),
     repeating-linear-gradient(180deg, rgba(255,255,255,.028) 0 1px, transparent 1px var(--twins-course-fine));
+}
+
+/* THE ONE COLLISION IN THE SYSTEM. `.twins-location-services` already owned a
+   135deg hatch on an 18px pitch. Laying STEEL underneath it put three
+   directions on one band -- 236px verticals, 44px horizontals and an 18px
+   diagonal -- and on all 35 city pages that composited into plaid. It is the
+   only place in the pass where two patterns met, and it is the loudest band on
+   the page.
+   The diagonal is what goes. A 45-degree hatch is not door vocabulary; it is
+   the generic "textured panel" mark this whole exercise is replacing, and it is
+   the reason the city page did not look like the homepage before any of this
+   started. Dropping it leaves the section reading as one steel door, which is
+   the whole point. Nothing else about the section changes: the ::before still
+   exists, still sits at z-index -1, still paints nothing over the copy. */
+body.twins-brand-experience .twins-location-page .twins-location-services::before {
+  background-image: none;
 }
 
 /* --- STEEL-LIT ---------------------------------------------------------- */
@@ -5587,21 +5638,34 @@ body.twins-brand-experience :is(
   .twins-brand-careers-page .twins-brand-careers-roles,
   .twins-brand-contact-page .twins-brand-contact-markets
 ) {
-  background-repeat: no-repeat, no-repeat, repeat, no-repeat;
-  background-position: 0 0, 0 0, 0 0, 0 100%;
-  background-size: 100% 6px, 100% 100%, var(--twins-stile) 100%, 100% 30px;
+  background-repeat: no-repeat, no-repeat, repeat, repeat, no-repeat;
+  background-position: 0 0, 0 0, 0 0, 0 0, 0 100%;
+  background-size:
+    100% 6px, 100% 100%, 100% var(--twins-course), var(--twins-stile) 100%, 100% 30px;
   background-image:
     var(--twins-seam),
     var(--twins-panel-wash),
-    var(--twins-stile-light),
+    var(--twins-panel-course),
+    var(--twins-stile-panel),
     linear-gradient(180deg, transparent 0, rgba(7,28,56,.07) 100%);
 }
 
 /* --- LINEN -------------------------------------------------------------- */
+/* The catalog exclusion list grew by two. Every `.twins-brand-catalog-section`
+   shares one transparent base, so texturing all of them put three identical
+   LINEN bands in a row on the overview (featured, ordered, compare) and three
+   on the product page -- with the hero's ground invisible, the overview had no
+   plain band anywhere on it. That is wallpaper, not rhythm.
+   `--ordered` already marks its own boundary with a 2px #cbd5e1 top rule, and
+   `--gallery` is a wall of reference photographs. Both stay flat, so the
+   catalog now alternates: linen, plain, linen. */
 body.twins-brand-experience :is(
   .twins-location-page .twins-location-local-proof,
   .twins-brand-catalog-page .twins-brand-catalog-section:not(
-    .twins-brand-catalog-section--dark, .twins-brand-catalog-section--closing)
+    .twins-brand-catalog-section--dark,
+    .twins-brand-catalog-section--closing,
+    .twins-brand-catalog-section--ordered,
+    .twins-brand-catalog-section--gallery)
 ) {
   background-repeat: no-repeat, repeat;
   background-position: 0 0, 0 0;
@@ -5612,19 +5676,15 @@ body.twins-brand-experience :is(
 }
 
 /* --- COIL --------------------------------------------------------------- */
-/* A first pass ran the coil across the whole ribbon and added the stile pitch
-   underneath it. Rendered, that was a field of diagonal stripes behind the
-   copy -- decoration competing with the words, which is the failure mode this
-   whole block is trying to avoid. It is also wrong anatomy: the torsion spring
-   does not live on the door face, it lives on a shaft ABOVE it. So the coil is
-   now a 14px course along the top edge only, and the rest of the ribbon is
-   clean gold with the navy copy on it. Same idea, one twentieth of the ink. */
-body.twins-brand-experience :is(
-  .twins-brand-team-page .twins-brand-trust-ribbon,
-  .twins-brand-careers-page .twins-brand-careers-ribbon
-) {
-  background-repeat: no-repeat;
-  background-position: 0 0;
-  background-size: 100% 14px;
-  background-image: var(--twins-coil);
-}
+/* The gold ribbons carry NO ground, and that is the decision, not an omission.
+   `.twins-brand-trust-ribbon` is 124px tall and `.twins-brand-careers-ribbon`
+   is 69px; both are a solid #FBBD04 slab holding three short claims between two
+   2px navy rules. Gold is the loudest colour in the palette and the ribbon is
+   the loudest 70 pixels on its page. A 14px coil course along its top edge did
+   not read as a torsion spring at that scale -- it read as the perforated edge
+   of a torn coupon, directly under the ribbon's own top rule, so the band
+   looked like it had been ripped off the page. Measured at 390 it was the most
+   conspicuous mark in the entire ground pass. The accent IS the emphasis here;
+   texture on top of it is the "busy" failure this block exists to avoid.
+   The coil survives on `.twins-cost-climate` alone (twins-brand-families.css),
+   which is a 675px gold slab with the room to carry it. */
