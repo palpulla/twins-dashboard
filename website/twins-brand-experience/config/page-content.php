@@ -183,7 +183,7 @@ return [
         'links' => [
             ['label' => 'Garage Door Opener Repair', 'route' => 'opener-repair'],
             ['label' => 'Emergency Garage Door Service', 'route' => 'emergency-service'],
-            ['label' => 'Maintenance and Tune-Ups', 'route' => 'maintenance-plans'],
+            ['label' => 'TwinShield Protection Plan', 'route' => 'maintenance-plans'],
             ['label' => 'All Garage Door Services', 'route' => 'services'],
         ],
     ],
@@ -241,7 +241,7 @@ return [
         'links' => [
             ['label' => 'Garage Door Openers', 'route' => 'openers'],
             ['label' => 'Garage Door Spring Repair', 'route' => 'spring-repair'],
-            ['label' => 'Maintenance and Tune-Ups', 'route' => 'maintenance-plans'],
+            ['label' => 'TwinShield Protection Plan', 'route' => 'maintenance-plans'],
             ['label' => 'All Garage Door Services', 'route' => 'services'],
         ],
     ],
@@ -299,7 +299,7 @@ return [
         'links' => [
             ['label' => 'Garage Door Spring Repair', 'route' => 'spring-repair'],
             ['label' => 'Garage Door Opener Repair', 'route' => 'opener-repair'],
-            ['label' => 'Maintenance and Tune-Ups', 'route' => 'maintenance-plans'],
+            ['label' => 'TwinShield Protection Plan', 'route' => 'maintenance-plans'],
             ['label' => 'All Garage Door Services', 'route' => 'services'],
         ],
     ],
@@ -415,7 +415,7 @@ return [
         'links' => [
             ['label' => 'Garage Door Spring Repair', 'route' => 'spring-repair'],
             ['label' => 'Emergency Garage Door Service', 'route' => 'emergency-service'],
-            ['label' => 'Maintenance and Tune-Ups', 'route' => 'maintenance-plans'],
+            ['label' => 'TwinShield Protection Plan', 'route' => 'maintenance-plans'],
             ['label' => 'All Garage Door Services', 'route' => 'services'],
         ],
     ],
@@ -473,7 +473,7 @@ return [
         'links' => [
             ['label' => 'Garage Door Opener Repair', 'route' => 'opener-repair'],
             ['label' => 'Garage Door Installation', 'route' => 'installation'],
-            ['label' => 'Maintenance and Tune-Ups', 'route' => 'maintenance-plans'],
+            ['label' => 'TwinShield Protection Plan', 'route' => 'maintenance-plans'],
             ['label' => 'All Garage Door Services', 'route' => 'services'],
         ],
     ],
@@ -531,7 +531,7 @@ return [
         'links' => [
             ['label' => 'Garage Door Repair', 'route' => 'repair'],
             ['label' => 'Garage Door Installation', 'route' => 'installation'],
-            ['label' => 'Maintenance and Tune-Ups', 'route' => 'maintenance-plans'],
+            ['label' => 'TwinShield Protection Plan', 'route' => 'maintenance-plans'],
             ['label' => 'All Garage Door Services', 'route' => 'services'],
         ],
     ],
@@ -594,7 +594,7 @@ return [
         ],
     ],
     '/maintenance-plans/' => [
-        'h1' => 'Garage Door Maintenance',
+        'h1' => 'TwinShield Protection Plan',
         'directAnswer' => 'Our $49 tune-up is a full inspection and lubrication of your whole garage door system, and most maintenance visits run $50 to $100, based on 52 completed jobs over the last two years. TwinShield, our maintenance membership, puts that visit on a schedule so worn springs, fraying cables, and drying seals get caught before they become repair bills.',
         'answerFacts' => [
             'cost' => '$49 tune-up, most visits $50 to $100 all-in',

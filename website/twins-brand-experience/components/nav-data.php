@@ -14,7 +14,7 @@ $twinsNavServiceCatalog = [
     ['Opener Repair', 'opener-repair'],
     ['Cable Repair', 'cable-repair'],
     ['Weatherstripping Repair', 'weatherstripping'],
-    ['Maintenance Plans', 'maintenance-plans'],
+    ['Protection Plan', 'maintenance-plans'],
     ['Property Management', 'property-management'],
     ['Emergency Service', 'emergency-service'],
 ];
