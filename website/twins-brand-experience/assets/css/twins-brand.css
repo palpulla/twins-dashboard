@@ -140,16 +140,17 @@ body.twins-brand-experience {
     linear-gradient(90deg, rgba(7,28,56,.045) 0 1px, rgba(255,255,255,.55) 1px 3px, transparent 3px);
   --twins-under-door:
     linear-gradient(180deg, rgba(255,198,65,.16) 0 2px, rgba(255,198,65,.06) 2px 4px);
-  /* THE COIL. A first pass ran 6px marks on an 18px pitch at .30 alpha inside a
-     14px strip; rendered on a gold ribbon that is a serrated edge -- the band
-     reads as a torn coupon, not as a spring, and it is the loudest ink in the
-     whole ground system sitting on the loudest colour in the palette. Halved
-     alpha, pitch widened to 26px, and each mark now carries a light edge so it
-     reads as a round wire rather than a saw tooth. It is also no longer used on
-     the two gold ribbons or the cost promise strip: see the COIL rule below. */
-  --twins-coil:
-    repeating-linear-gradient(76deg, transparent 0 12px, rgba(7,28,56,.15) 12px 14px,
-      rgba(255,255,255,.22) 14px 15px, transparent 15px 26px);
+  /* There is no coil token any more, and that is the finding, not an oversight.
+     The torsion spring was the one motif in the vocabulary that is not a
+     surface: every other token here describes a face of the door (a seam, a
+     stile, a course, a light fall), and those composite into a ground. A coil
+     is an object, and drawn as a repeating gradient an object becomes a comb.
+     On the two gold ribbons and the cost promise strip it read as the
+     perforated edge of a torn coupon; retuned to half alpha on a wider pitch
+     and given room on the 675px climate slab it read as a fine comb instead.
+     Every gold band in the site is now flat gold, which is what an accent is
+     for. See the COIL note further down and .twins-cost-climate in
+     twins-brand-families.css. */
 
   margin: 0;
 }
@@ -5686,5 +5687,7 @@ body.twins-brand-experience :is(
    looked like it had been ripped off the page. Measured at 390 it was the most
    conspicuous mark in the entire ground pass. The accent IS the emphasis here;
    texture on top of it is the "busy" failure this block exists to avoid.
-   The coil survives on `.twins-cost-climate` alone (twins-brand-families.css),
-   which is a 675px gold slab with the room to carry it. */
+   The coil does not survive anywhere. `.twins-cost-climate` was the last band
+   holding it -- a 675px slab with room for a fine course -- and even there it
+   rendered as a comb, so that band keeps its panel wash and drops the marks.
+   Every gold surface in the site is now flat gold. */

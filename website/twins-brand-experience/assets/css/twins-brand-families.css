@@ -2137,21 +2137,25 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-preview-notice {
    The gold IS the emphasis on this strip; the page's dose of the door lands on
    the two bands below instead. */
 
-/* The Wisconsin-weather band is 675px of unbroken gold. It gets the coil
-   course and a panel wash, and deliberately NOT the stile pitch: 236px stripes
-   across a slab this size read as decoration, not as a door. This is the one
-   place in the site where the coil survives, because it is the only gold band
-   tall enough that a fine course along its top edge reads as a detail on a
-   large surface instead of as a serrated edge on a thin strip. */
+/* The Wisconsin-weather band is 675px of unbroken gold. It takes the panel wash
+   and the bottom shadow -- light landing at the top of the band, the next
+   section sitting on it -- and deliberately NOT the stile pitch: 236px stripes
+   across a slab this size read as decoration, not as a door.
+   It carried the coil course too, and it was the last band in the site that
+   did. Retuned to half alpha on a 26px pitch it still rendered as a fine comb
+   along the top edge: recognisably a repeating decorative mark rather than a
+   spring, and the only such mark left anywhere on the site once the ribbons
+   were cleared. One comb is worse than none, because one is conspicuous. The
+   wash alone is door vocabulary -- it is the same light fall every other band
+   in the system carries -- so the band keeps its ground and loses the comb. */
 :is(
   body.twins-brand-route-cost-madison,
   body.twins-brand-route-cost-milwaukee
 ) .twins-cost-climate {
-  background-repeat: no-repeat, no-repeat, no-repeat;
-  background-position: 0 0, 0 0, 0 100%;
-  background-size: 100% 14px, 100% 100%, 100% 30px;
+  background-repeat: no-repeat, no-repeat;
+  background-position: 0 0, 0 100%;
+  background-size: 100% 100%, 100% 30px;
   background-image:
-    var(--twins-coil),
     linear-gradient(180deg, rgba(255,255,255,.20) 0, rgba(255,255,255,0) 18%,
       rgba(7,28,56,.035) 82%, rgba(7,28,56,.06) 100%),
     linear-gradient(180deg, transparent 0, rgba(7,28,56,.07) 100%);
