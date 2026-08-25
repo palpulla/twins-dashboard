@@ -232,6 +232,13 @@ const scpOptions = [
   '-P', SSH_PORT,
   ...transportOptions,
 ];
+// The verification bundle is 100 files / ~3.9MB. On this shared host that upload was
+// measured at 206s on 2026-08-24 while the account was throttled, against the run()
+// default of 180s - so a healthy deploy failed as VERIFICATION_UPLOAD_FAILED purely on
+// the clock. Only the two bundle uploads get the longer allowance; run()'s default is
+// unchanged, and every other operation still fails fast.
+const UPLOAD_TIMEOUT_MS = 900000;
+
 const shellQuote = value => `'${String(value).replaceAll("'", "'\\\"'\\\"'")}'`;
 const rsyncRemoteShell = ['ssh', '-p', SSH_PORT, ...transportOptions].map(shellQuote).join(' ');
 const remoteRootGuard = `test -d '${TRANSACTION_PARENT}' && test ! -L '${TRANSACTION_PARENT}' && test -d '${TRANSACTION_ROOT}' && test ! -L '${TRANSACTION_ROOT}'`;
@@ -242,7 +249,7 @@ const remoteCommand = op => `${remoteRootGuard} && php '${remoteScript}' '${op}'
 if (operation === '--dry-run') {
   run('ssh', [...sshOptions, target, `test -d '${TRANSACTION_PARENT}' && test ! -L '${TRANSACTION_PARENT}' && test ! -e '${TRANSACTION_ROOT}' && test ! -L '${TRANSACTION_ROOT}' && mkdir '${TRANSACTION_ROOT}' && chmod 700 '${TRANSACTION_ROOT}'`], { failure: 'REMOTE_TRANSACTION_ALREADY_EXISTS_OR_PREFLIGHT_FAILED' });
   assertRemoteRoot();
-  run('scp', [...scpOptions, '-r', path.join(root, 'dist/host-verification'), `${target}:${TRANSACTION_ROOT}/verification.incoming`], { failure: 'VERIFICATION_UPLOAD_FAILED' });
+  run('scp', [...scpOptions, '-r', path.join(root, 'dist/host-verification'), `${target}:${TRANSACTION_ROOT}/verification.incoming`], { failure: 'VERIFICATION_UPLOAD_FAILED', timeout: UPLOAD_TIMEOUT_MS });
   assertRemoteRoot();
   const stdout = run('ssh', [...sshOptions, target, `${remoteRootGuard} && test -d '${TRANSACTION_ROOT}/verification.incoming' && test ! -L '${TRANSACTION_ROOT}/verification.incoming' && rm -rf '${TRANSACTION_ROOT}/verification' && mv '${TRANSACTION_ROOT}/verification.incoming' '${TRANSACTION_ROOT}/verification' && ${remoteCommand(operation)}`], { failure: 'REMOTE_DRY_RUN_FAILED' });
   const report = validateRemoteReport(stdout, 'PRIVATE_STAGING_DRY_RUN_PASSED', operation, identity);
@@ -267,7 +274,7 @@ if (operation === '--deploy') {
     `${target}:${TRANSACTION_ROOT}/candidate.incoming/`,
   ], { failure: 'CANDIDATE_UPLOAD_FAILED' });
   assertRemoteRoot();
-  run('scp', [...scpOptions, '-r', path.join(root, 'dist/host-verification'), `${target}:${TRANSACTION_ROOT}/verification.incoming`], { failure: 'VERIFICATION_UPLOAD_FAILED' });
+  run('scp', [...scpOptions, '-r', path.join(root, 'dist/host-verification'), `${target}:${TRANSACTION_ROOT}/verification.incoming`], { failure: 'VERIFICATION_UPLOAD_FAILED', timeout: UPLOAD_TIMEOUT_MS });
   const stdout = run('ssh', [...sshOptions, target, `${remoteRootGuard} && test -d '${TRANSACTION_ROOT}/candidate.incoming' && test ! -L '${TRANSACTION_ROOT}/candidate.incoming' && test -d '${TRANSACTION_ROOT}/verification.incoming' && test ! -L '${TRANSACTION_ROOT}/verification.incoming' && rm -rf '${TRANSACTION_ROOT}/candidate' '${TRANSACTION_ROOT}/verification' && mv '${TRANSACTION_ROOT}/candidate.incoming' '${TRANSACTION_ROOT}/candidate' && mv '${TRANSACTION_ROOT}/verification.incoming' '${TRANSACTION_ROOT}/verification' && ${remoteCommand(operation)}`], { failure: 'REMOTE_DEPLOY_FAILED' });
   const report = validateRemoteReport(stdout, 'PRIVATE_STAGING_DEPLOYED', operation, identity);
   finish('PRIVATE_STAGING_DEPLOYED', 0, report);
