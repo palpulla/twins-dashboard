@@ -20,10 +20,13 @@ declare(strict_types=1);
  *    and /il/ the way config/page-content.php does. Only the paths listed here
  *    render the program; every other service page is untouched.
  *  - 'benefits' are the tier's own benefits from the JSON MINUS the enrollment
- *    discount every tier shares, which is hoisted to 'sharedBenefit' and stated
- *    once above the row rather than three times inside it. The union of
- *    sharedBenefit and each tier's benefits is that tier's JSON benefit list,
- *    in order, byte for byte.
+ *    discount every tier shares, which is hoisted to 'sharedBenefit' and
+ *    rendered ONCE, in a cue strip above the row, rather than as the first
+ *    bullet of all three cards. Three identical opening bullets buried the
+ *    thing that actually separates the tiers (5%, 7.5%, 10%) one line down; now
+ *    each card's first bullet is its own discount. The union of sharedBenefit
+ *    and each tier's benefits is that tier's JSON benefit list, in order, byte
+ *    for byte, and the schema offers still publish the union.
  *  - 'compare' holds the same facts as short cells for the comparison table.
  *    'Not included' is the one string in this file that is not lifted from the
  *    JSON: it marks a tier that does not carry a benefit its siblings do, which
@@ -36,13 +39,13 @@ return [
     '/maintenance-plans/' => [
         'kicker' => 'TwinShield membership',
         'heading' => 'Three tiers, one 12-month term',
-        'deck' => 'Every tier is a 12-month membership and every tier takes 10% off the qualifying repair on the job where it is purchased. What changes between them is how many tune-up visits you get, how deep the repair discount runs, what happens to service-call fees, where you sit in the schedule, and how much equipment credit you build.',
+        'deck' => 'The choice comes down to two things: how often you want the door looked at, and how much you expect to spend on repairs this year.',
         'term' => '12-month membership',
-        'termBadge' => '12-month term',
+        'sharedLabel' => 'Every tier',
         'billingNote' => 'Monthly billing is a payment option for the full 12-month term, not a cancel-anytime membership.',
         'sharedBenefit' => '10% off the qualifying repair on the job where this new membership is purchased.',
         'creditHeading' => 'The equipment credit',
-        'creditDeck' => 'Every payment you make builds credit toward new equipment. The rate and the ceiling are what change between tiers.',
+        'creditDeck' => 'Every payment builds credit toward new garage-door or opener equipment. Each card above states what its tier earns over a full term.',
         'creditRules' => 'Credit applies toward qualifying new garage-door or opener equipment. Failed, reversed, refunded, or charged-back payments do not earn credit. Credit already used is deducted. The Twins Garage Doors office must verify the exact balance before it is promised or applied.',
         'limitsHeading' => 'What TwinShield is, and what it is not',
         'limitations' => [

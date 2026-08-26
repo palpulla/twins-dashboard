@@ -124,6 +124,9 @@ test('config/twinshield-program.php publishes the approved program and nothing e
   // The shared enrollment benefit is stated once, not once per tier.
   assert.equal(values.filter(value => value === sharedBenefit).length, 1);
   assert.ok(source.includes(billingNote), 'the 12-month term note is missing');
+  // The terms sentence on every card already reads "for 12 months"; the record
+  // no longer carries a pill that repeats those three words underneath it.
+  assert.doesNotMatch(source, /'termBadge'/);
   assert.ok(source.includes(creditRules), 'the equipment credit rules are missing');
 
   // The limitations list is the source string split at its own sentence
@@ -181,16 +184,22 @@ test('the TwinShield component is fail-closed and renders the whole offer', () =
   // No external literals: the schema node carries no vocabulary URL of its own.
   assert.doesNotMatch(component, /https?:\/\//i);
 
+  // The shared enrollment discount is rendered once, in the cue strip above
+  // the row, and never as a bullet inside a card: three identical opening
+  // bullets hid the 5%/7.5%/10% ladder that actually separates the tiers.
+  assert.doesNotMatch(component, /<li>' \. \$escape\(\$program\['sharedBenefit'\]\)/);
+  assert.ok(component.includes("$escape($program['sharedBenefit'])"), 'the shared benefit is never rendered');
+
   // The rendered block: L10 card row with one inverted lead card, the house
-  // scroll-rail on the comparison table, the credit callouts, the limits.
+  // scroll-rail on the comparison table, the credit on the card, the limits.
   for (const marker of [
     'twins-brand-twinshield-card--lead',
     'twins-brand-twinshield-compare-scroll',
     'role="region"',
     'tabindex="0"',
-    'twins-l10-callout',
-    'twins-l10-badge',
     'twins-l10-cue',
+    'twins-brand-twinshield-shared',
+    'twins-brand-twinshield-card__credit-example',
     'twins-brand-twinshield-limits',
     'scope="col"',
     'scope="row"',
@@ -242,6 +251,14 @@ test('the TwinShield block rides the container contract and never puts gold on a
   assert.match(block, /\.twins-brand-twinshield-compare-scroll:focus-visible \{[^}]*outline:/);
   assert.match(block, /\.twins-brand-twinshield-table \{[^}]*min-width: 700px/);
   assert.match(block, /@media \(max-width: 755px\)[\s\S]*twins-brand-twinshield-compare-hint \{ display: block; \}/);
-  // The row collapses to one column on a phone, as the deck's stat row does.
+  // The row collapses to one column on a phone, as the deck's stat row does,
+  // and the tier Twins recommends is the one a thumb reaches first.
   assert.match(block, /@media \(max-width: 900px\)[\s\S]*\.twins-brand-twinshield-tiers \{ grid-template-columns: 1fr; \}/);
+  assert.match(block, /@media \(max-width: 900px\)[\s\S]*\.twins-brand-twinshield-card--lead \{ order: -1; \}/);
+  // Below the fitting width the axis column pins to the left edge, so a
+  // scrolled figure always keeps the row it belongs to on screen.
+  assert.match(block, /@media \(max-width: 755px\)[\s\S]*thead th:first-child \{ width: 140px; \}/);
+  assert.match(block, /@media \(max-width: 755px\)[\s\S]*position: sticky;\s*\n\s*left: 0;/);
+  // Sticky only holds its borders in a separately-bordered table.
+  assert.match(block, /\.twins-brand-twinshield-table \{[^}]*border-collapse: separate/);
 });

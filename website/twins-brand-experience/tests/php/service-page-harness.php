@@ -151,8 +151,22 @@ foreach ([
 ] as $twinshieldFigure) {
     $expect(strpos($twinshieldPage, htmlspecialchars($twinshieldFigure, ENT_QUOTES, 'UTF-8')) !== false, 'the TwinShield page lost: ' . $twinshieldFigure);
 }
-// Three tier cards plus the three schema descriptions that mirror them.
-$expect(substr_count($twinshieldPage, '10% off the qualifying repair on the job where this new membership is purchased.') === 6, 'the shared enrollment discount belongs on every tier card and in every tier offer');
+// The enrollment discount every tier shares is stated ONCE on the page, in the
+// cue strip above the row, so the first bullet of each card is the figure that
+// separates the tiers. The three schema offers still publish the full benefit
+// list, so the rendered count is one plus three.
+$expect(substr_count($twinshieldPage, '10% off the qualifying repair on the job where this new membership is purchased.') === 4, 'the shared enrollment discount is said once above the row and once in each tier offer');
+$expect(substr_count($twinshieldPage, 'twins-brand-twinshield-shared') === 1, 'the shared enrollment discount lost its cue strip');
+$expect(strpos($twinshieldPage, 'twins-brand-twinshield-card__benefits"><li>5% off future qualifying repairs') !== false, 'the Core card must open on its own discount, not on the shared one');
+// The worked example rides with the rate on the card: the ceiling alone reads
+// as a promise of the ceiling.
+foreach (['38.97', '79.76', '149.94'] as $twinshieldEarned) {
+    $expect(substr_count($twinshieldPage, '$' . $twinshieldEarned) === 1, 'the worked example belongs on the card exactly once: $' . $twinshieldEarned);
+}
+$expect(substr_count($twinshieldPage, 'twins-brand-twinshield-card__credit-example') === 3, 'every tier card states what its credit earns over a full term');
+$expect(strpos($twinshieldPage, 'twins-brand-twinshield-credit-grid') === false, 'the credit callout row duplicated the cards and the table and is gone');
+$expect(strpos($twinshieldPage, 'twins-l10-callout__title') === false, 'the credit callout row duplicated the cards and the table and is gone');
+$expect(strpos($twinshieldPage, 'twins-l10-badge') === false, 'the term pill repeated the terms line directly above it');
 $expect(strpos($twinshieldPage, 'role="region" aria-labelledby="twins-brand-twinshield-compare-title" tabindex="0"') !== false, 'the comparison table lost the house scroll rail');
 $expect(substr_count($twinshieldPage, 'twins-brand-twinshield-table__lead') === 6, 'the featured column is marked in the header and all five rows');
 $expect(strpos($twinshieldPage, 'Ask about Priority') !== false, 'the TwinShield cards lost their tier CTA');

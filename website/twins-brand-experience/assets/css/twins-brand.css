@@ -5221,6 +5221,9 @@ body.twins-brand-experience .twins-brand-twinshield .twins-brand-section-heading
   line-height: var(--twins-l10-leading);
 }
 body.twins-brand-experience .twins-brand-twinshield > * + * { margin-top: clamp(34px, 3.6vw, 52px); }
+/* The shared-benefit cue and the row it frames are one unit, so they sit
+   closer to each other than the section's own rhythm. */
+body.twins-brand-experience .twins-brand-twinshield-shared + .twins-brand-twinshield-tiers { margin-top: clamp(18px, 1.9vw, 24px); }
 body.twins-brand-experience .twins-brand-twinshield :is(h3) {
   margin: 0 0 12px;
   color: var(--twins-navy-950);
@@ -5297,11 +5300,6 @@ body.twins-brand-experience .twins-brand-twinshield-card__terms {
   line-height: var(--twins-l10-leading);
 }
 body.twins-brand-experience .twins-brand-twinshield-card--lead .twins-brand-twinshield-card__terms { color: var(--twins-white); }
-body.twins-brand-experience .twins-brand-twinshield-card__badge { margin: 14px 0 0; }
-body.twins-brand-experience .twins-brand-twinshield-card--lead .twins-l10-badge {
-  color: var(--twins-gold);
-  border-color: var(--twins-gold);
-}
 body.twins-brand-experience .twins-brand-twinshield-card__benefits {
   margin: 18px 0 0;
   padding: 18px 0 0;
@@ -5335,22 +5333,33 @@ body.twins-brand-experience .twins-brand-twinshield-card__credit {
   /* The cards stretch to one height; the credit block and the CTA under it
      ride the bottom so the three rows line up whatever the benefit count. */
   margin: auto 0 0;
-  padding-top: 18px;
   padding: 14px 16px;
-  color: var(--twins-navy-950);
   background: var(--twins-l10-callout);
   border-radius: 8px;
-  font-size: .95rem;
-  font-weight: 700;
-  line-height: var(--twins-l10-leading);
 }
-body.twins-brand-experience .twins-brand-twinshield-card__credit span {
-  display: block;
+body.twins-brand-experience .twins-brand-twinshield-card__credit p { margin: 0; }
+body.twins-brand-experience .twins-brand-twinshield-card__credit-label {
   color: var(--twins-l10-ochre);
   font-size: .72rem;
   font-weight: 800;
   letter-spacing: .13em;
   text-transform: uppercase;
+}
+body.twins-brand-experience .twins-brand-twinshield-card__credit-line {
+  margin-top: 4px;
+  color: var(--twins-navy-950);
+  font-size: .95rem;
+  font-weight: 700;
+  line-height: var(--twins-l10-leading);
+}
+/* The rate and the ceiling read as a promise of the ceiling. The worked
+   example is what a full term actually earns, so it sits with them rather
+   than in a block the reader may never reach. Slate on #fff3d6 is 5.62:1. */
+body.twins-brand-experience .twins-brand-twinshield-card__credit-example {
+  margin-top: 6px;
+  color: var(--twins-l10-slate);
+  font-size: .88rem;
+  line-height: var(--twins-l10-leading);
 }
 body.twins-brand-experience .twins-brand-twinshield-card__cta { margin: 22px 0 0; align-self: stretch; }
 
@@ -5385,7 +5394,11 @@ body.twins-brand-experience .twins-brand-twinshield-table {
      table is scrolled on a phone: the first tier is legible the moment the
      reader arrives, and the rest is one swipe away. */
   table-layout: fixed;
-  border-collapse: collapse;
+  /* Separate borders, spacing zero: renders identically to a collapsed table
+     at this spacing, and it is the only mode in which the axis column can be
+     made sticky without Chrome dropping its borders mid-scroll. */
+  border-collapse: separate;
+  border-spacing: 0;
   background: var(--twins-white);
   border: 1px solid var(--twins-l10-hairline);
 }
@@ -5438,10 +5451,6 @@ body.twins-brand-experience .twins-brand-twinshield-credit-deck {
   font-size: 1.05rem;
   line-height: var(--twins-l10-leading);
 }
-body.twins-brand-experience .twins-l10-callouts.twins-brand-twinshield-credit-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(18px, 1.9vw, 24px);
-}
 body.twins-brand-experience .twins-brand-twinshield-credit-rules {
   max-width: var(--twins-measure);
   margin: 22px 0 0;
@@ -5485,7 +5494,14 @@ body.twins-brand-experience .twins-brand-twinshield-limits li strong { color: va
 
 @media (max-width: 900px) {
   body.twins-brand-experience .twins-brand-twinshield-tiers { grid-template-columns: 1fr; }
-  body.twins-brand-experience .twins-l10-callouts.twins-brand-twinshield-credit-grid { grid-template-columns: 1fr; }
+  /* One card on screen at a time. The row keeps the price ladder in the
+     document, which is the order a screen reader and the comparison table
+     both read, but the tier Twins recommends is put where a thumb arrives
+     first instead of two full screens down. The cards are self-contained
+     articles, so the visual reorder moves whole units, not fragments. */
+  body.twins-brand-experience .twins-brand-twinshield-card--lead { order: -1; }
+  /* A card that spans the whole rail turns a pill CTA into a slab. */
+  body.twins-brand-experience .twins-brand-twinshield-card__cta { align-self: flex-start; }
 }
 
 /* The 700px table stops fitting inside the two 28px rail gutters at 756px, so
@@ -5493,6 +5509,21 @@ body.twins-brand-experience .twins-brand-twinshield-limits li strong { color: va
    begins, and never claims a scroll that is not there. */
 @media (max-width: 755px) {
   body.twins-brand-experience .twins-brand-twinshield-compare-hint { display: block; }
+  /* Below the fitting width the axis column pins to the left edge, so the
+     reader always knows which row a figure belongs to. 140px leaves 194px of
+     rail at 390, and a tier column is 187px: one whole tier is legible on
+     arrival and the next is one swipe away, instead of the old 195px axis
+     column clipping the first tier mid-sentence. */
+  body.twins-brand-experience .twins-brand-twinshield-table thead th:first-child { width: 140px; }
+  body.twins-brand-experience .twins-brand-twinshield-table :is(thead th:first-child, tbody th) {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--twins-white);
+    border-right: 1px solid var(--twins-l10-hairline);
+  }
+  body.twins-brand-experience .twins-brand-twinshield-table :is(th, td) { padding: 13px 12px; }
+  body.twins-brand-experience .twins-brand-twinshield-table tbody th { font-size: .88rem; }
 }
 
 /* ---------------------------------------------------------------------------

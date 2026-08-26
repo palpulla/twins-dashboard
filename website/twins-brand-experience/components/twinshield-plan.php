@@ -67,7 +67,7 @@ function twins_brand_twinshield_program(string $path): ?array
 function twins_brand_twinshield_assert(array $program): void
 {
     $required = [
-        'kicker', 'heading', 'deck', 'term', 'termBadge', 'billingNote', 'sharedBenefit',
+        'kicker', 'heading', 'deck', 'term', 'sharedLabel', 'billingNote', 'sharedBenefit',
         'creditHeading', 'creditDeck', 'creditRules', 'limitsHeading', 'limitations',
         'compareHeading', 'compareAxes', 'tiers',
     ];
@@ -79,7 +79,7 @@ function twins_brand_twinshield_assert(array $program): void
         throw new DomainException('The TwinShield program record has an unknown shape.');
     }
     foreach ([
-        'kicker', 'heading', 'deck', 'term', 'termBadge', 'billingNote', 'sharedBenefit',
+        'kicker', 'heading', 'deck', 'term', 'sharedLabel', 'billingNote', 'sharedBenefit',
         'creditHeading', 'creditDeck', 'creditRules', 'limitsHeading', 'compareHeading',
     ] as $field) {
         if (!is_string($program[$field]) || trim($program[$field]) === '' || strlen($program[$field]) > 600) {
@@ -246,10 +246,23 @@ function twins_brand_twinshield_section(array $program, string $contactHref): st
     $markup .= '<p>' . $escape($program['deck']) . '</p>';
     $markup .= '</div>';
 
+    // The benefit every tier shares, said once. It used to open all three
+    // benefit lists, which meant the first line of every card was identical
+    // and the figure that actually separates the tiers (5%, 7.5%, 10%) sat one
+    // line down in every column. Hoisted here it frames the row instead of
+    // padding it.
+    $markup .= '<p class="twins-l10-cue twins-brand-twinshield-shared">';
+    $markup .= '<span class="twins-l10-cue__label">' . $escape($program['sharedLabel']) . '</span>';
+    $markup .= $escape($program['sharedBenefit']);
+    $markup .= '</p>';
+
     // The tier row, in the L10 deck's card language: the featured tier is the
     // inverted navy card with the gold numeral, its siblings are white cards
     // on a hairline. Order is the price ladder, so the row reads left to right
-    // the way the money does.
+    // the way the money does. On a phone, where only one card is on screen at
+    // a time, the featured tier is moved to the top of the stack in CSS: a
+    // recommendation the reader has to scroll past two screens to find is not
+    // a recommendation.
     $markup .= '<div class="twins-brand-twinshield-tiers">';
     foreach ($tiers as $tier) {
         $lead = $tier['featured'] === true;
@@ -260,17 +273,23 @@ function twins_brand_twinshield_section(array $program, string $contactHref): st
         $markup .= '<span class="twins-brand-twinshield-card__figure">' . $escape($tier['monthly']) . '</span>';
         $markup .= '<span class="twins-brand-twinshield-card__unit">a month</span>';
         $markup .= '</p>';
+        // The terms line already says "for 12 months"; a term pill directly
+        // under it repeated the same three words in a second shape.
         $markup .= '<p class="twins-brand-twinshield-card__terms">' . $escape($tier['terms']) . '</p>';
-        $markup .= '<p class="twins-brand-twinshield-card__badge"><span class="twins-l10-badge">' . $escape($program['termBadge']) . '</span></p>';
         $markup .= '<ul class="twins-brand-twinshield-card__benefits">';
-        $markup .= '<li>' . $escape($program['sharedBenefit']) . '</li>';
         foreach ($tier['benefits'] as $benefit) {
             $markup .= '<li>' . $escape((string) $benefit) . '</li>';
         }
         $markup .= '</ul>';
-        $markup .= '<p class="twins-brand-twinshield-card__credit">';
-        $markup .= '<span>Equipment credit</span> ' . $escape($tier['creditLine']);
-        $markup .= '</p>';
+        // The credit, where it is decided. The rate and the ceiling on their own
+        // read as a promise of $150 or $500; the worked example is the number
+        // the buyer actually earns over a full term, so it is stated here in
+        // the tier's own words rather than left to a block further down.
+        $markup .= '<div class="twins-brand-twinshield-card__credit">';
+        $markup .= '<p class="twins-brand-twinshield-card__credit-label">Equipment credit</p>';
+        $markup .= '<p class="twins-brand-twinshield-card__credit-line">' . $escape($tier['creditLine']) . '</p>';
+        $markup .= '<p class="twins-brand-twinshield-card__credit-example">' . $escape($tier['creditExample']) . '</p>';
+        $markup .= '</div>';
         $markup .= '<a class="twins-brand-cta twins-brand-cta--quote twins-brand-twinshield-card__cta" href="' . $escape($contactHref) . '">';
         $markup .= 'Ask about ' . $escape(twins_brand_twinshield_short_name($tier)) . '</a>';
         $markup .= '</article>';
@@ -311,19 +330,13 @@ function twins_brand_twinshield_section(array $program, string $contactHref): st
     $markup .= '</tbody></table>';
     $markup .= '</div></div>';
 
-    // L4 gold-rule callouts: the equipment credit, one worked example per
-    // tier, verbatim from the program.
+    // The credit rules. The rates, the ceilings and the worked examples are on
+    // the cards and in the comparison table; repeating all three a third time
+    // here as a callout row was the block's own filler. What only this block
+    // can say is what governs the credit, so that is all it says.
     $markup .= '<div class="twins-brand-twinshield-credit">';
     $markup .= '<h3 id="twins-brand-twinshield-credit-title">' . $escape($program['creditHeading']) . '</h3>';
     $markup .= '<p class="twins-brand-twinshield-credit-deck">' . $escape($program['creditDeck']) . '</p>';
-    $markup .= '<div class="twins-l10-callouts twins-brand-twinshield-credit-grid">';
-    foreach ($tiers as $tier) {
-        $markup .= '<div class="twins-l10-callout">';
-        $markup .= '<p class="twins-l10-callout__title">' . $escape(twins_brand_twinshield_short_name($tier)) . ': ' . $escape($tier['creditLine']) . '</p>';
-        $markup .= '<p class="twins-l10-callout__body">' . $escape($tier['creditExample']) . '</p>';
-        $markup .= '</div>';
-    }
-    $markup .= '</div>';
     $markup .= '<p class="twins-brand-twinshield-credit-rules">' . $escape($program['creditRules']) . '</p>';
     $markup .= '</div>';
 
