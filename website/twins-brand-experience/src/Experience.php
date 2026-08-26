@@ -260,12 +260,35 @@ final class Experience
             throw new \DomainException('Normalized contact context is incomplete.');
         }
 
-        $phone = $hasContextPhone
-            ? ($context['phone'] ?? $context['phoneDisplay'])
-            : ($market['phoneDisplay'] ?? null);
-        $phoneHref = $hasContextHref
-            ? ($context['phoneHref'] ?? ('tel:' . $context['tel']))
-            : ($market['phoneHref'] ?? null);
+        // THE METRO LINE WINS. A page filed under a metro (Wauwatosa, Brookfield,
+        // Waukesha, Greenfield, New Berlin, Oak Creek, Milwaukee) prints that
+        // metro's number in every call action on it, including the header and
+        // footer. Before this the whole Milwaukee ring rendered the Madison
+        // number in seven tel: links while its own body copy told the reader to
+        // call (414) 800-9271, so every clickable call on a Milwaukee page
+        // dialled the wrong branch.
+        //
+        // It has to outrank the caller-supplied pair, not fall in behind it:
+        // the staging host hands every page its market's phone up front and
+        // only patches Milwaukee back in for paths whose slug literally
+        // contains "milwaukee", which is six of the seven towns short. The
+        // metro is a fact about the page, so the page's own content decides it.
+        $metroLine = null;
+        $metroKey = $this->metroKeyForContext($context, (string) ($context['market'] ?? ''));
+        if ($metroKey !== null) {
+            $metroLine = $this->metroLine($metroKey, (string) $context['market'], $context);
+        }
+
+        $phone = $metroLine !== null
+            ? $metroLine['phoneDisplay']
+            : ($hasContextPhone
+                ? ($context['phone'] ?? $context['phoneDisplay'])
+                : ($market['phoneDisplay'] ?? null));
+        $phoneHref = $metroLine !== null
+            ? $metroLine['phoneHref']
+            : ($hasContextHref
+                ? ($context['phoneHref'] ?? ('tel:' . $context['tel']))
+                : ($market['phoneHref'] ?? null));
         if (
             !is_string($phone)
             || !is_string($phoneHref)
@@ -496,6 +519,72 @@ final class Experience
             $record['neighborLinks'] = $neighborLinks;
         }
         return $record;
+    }
+
+    /**
+     * The metro key this page belongs to, or null.
+     *
+     * One source of truth: the page's own location-content record
+     * (config/location-content.php 'metro'). A metro only counts when it is
+     * served from the market it lives in, exactly the rule the metro tree in
+     * components/nav-data.php states and the rule the staging host uses to
+     * pick a city's NAP. Without it a slug that exists in two states (Beloit,
+     * Caledonia) could inherit the other state's metro, and a /location/*
+     * route composed under the 'main' market would silently trade the
+     * permanent (833) line for a metro one.
+     */
+    private function metroKeyForContext(array $context, string $marketKey): ?string
+    {
+        $path = $context['path'] ?? null;
+        if (!is_string($path)) {
+            return null;
+        }
+        $location = $this->locationContent($path);
+        $metro = is_array($location) ? ($location['metro'] ?? null) : null;
+        if (!is_string($metro) || $metro === '') {
+            return null;
+        }
+        return $this->metroLine($metro, $marketKey, $context) === null ? null : $metro;
+    }
+
+    /**
+     * The registry line for one metro, but only from the market actually being
+     * served. Returns null when this market does not own that metro.
+     *
+     * Phones are never written here: the pair comes straight out of
+     * config/markets.php 'metroLines', which is the only place in the portable
+     * runtime a Twins number is allowed to exist.
+     */
+    private function metroLine(string $metroKey, string $marketKey, array $context): ?array
+    {
+        $environment = $context['environment'] ?? null;
+        if (!is_string($environment) || !in_array($environment, ['staging', 'production'], true)) {
+            return null;
+        }
+        // all(), not selectable(): this is resolution, not a visitor-facing
+        // list. A retired market still has to compose its own archived pages.
+        foreach ($this->markets->all($environment) as $registryKey => $registryMarket) {
+            if ($registryKey !== $marketKey) {
+                continue;
+            }
+            $lines = $registryMarket['metroLines'] ?? null;
+            if (!is_array($lines)) {
+                return null;
+            }
+            foreach ($lines as $line) {
+                if (
+                    is_array($line)
+                    && ($line['key'] ?? null) === $metroKey
+                    && isset($line['phoneDisplay'], $line['phoneHref'])
+                    && is_string($line['phoneDisplay'])
+                    && is_string($line['phoneHref'])
+                ) {
+                    return $line;
+                }
+            }
+            return null;
+        }
+        return null;
     }
 
     private function metroAddressForContext(array $context, array $market): string

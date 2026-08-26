@@ -6,6 +6,60 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
 }
 
 require_once dirname(__DIR__) . '/components/door-art.php';
+require dirname(__DIR__) . '/components/nav-data.php';
+
+// THE CHOOSER LISTS TEAMS, NOT STATES.
+//
+// It used to loop the market registry, so a Milwaukee homeowner reading
+// "Choose your local Twins team" was offered WISCONSIN and handed the Madison
+// number. Twins has three staffed metros, each with its own address and its own
+// line: Madison (608) 420-2377, Milwaukee/Wauwatosa (414) 800-9271 and
+// Rockford (815) 800-2025. Two of the three live inside one market, so a
+// market-level list can never show all three.
+//
+// The metro is already the unit this site navigates by: the header's service-
+// area menu lists metro rows, the service-area index is sectioned by metro, and
+// every city page takes its NAP from its metro. This block is the same tree,
+// read for its phones.
+//
+// Numbers come only from config/markets.php 'metroLines'; labels come only from
+// $twinsNavMetroTree. Nothing is written here.
+$contactMetroLabels = [];
+$contactMetroHubs = [];
+foreach ($twinsNavMetroTree as $contactMetroKey => $contactMetroNode) {
+    $contactMetroLabels[$contactMetroKey] = $contactMetroNode['label'];
+    // City routes are market-scoped, so a metro's own hub page is only
+    // reachable from inside its market. Elsewhere the card falls back to that
+    // market's front door, which is what the header market menu already does.
+    $contactMetroHubs[$contactMetroKey] = ($contactMetroNode['market'] === $marketKey && isset($contactMetroNode['towns'][0][1]))
+        ? $contactMetroNode['towns'][0][1]
+        : $contactMetroNode['market'];
+}
+
+$contactTeams = [];
+foreach ($experience->markets()->selectable($environment) as $contactMarketKey => $contactMarket) {
+    if ($contactMarketKey === 'main') {
+        continue;
+    }
+    $contactLines = $contactMarket['metroLines'] ?? [[
+        'key' => $contactMarketKey,
+        'label' => $contactMarket['label'],
+        'phoneDisplay' => $contactMarket['phoneDisplay'],
+        'phoneHref' => $contactMarket['phoneHref'],
+    ]];
+    foreach ($contactLines as $contactLine) {
+        $contactLineKey = (string) ($contactLine['key'] ?? $contactMarketKey);
+        $contactTeams[] = [
+            'label' => $contactMetroLabels[$contactLineKey] ?? $contactLine['label'],
+            'phoneDisplay' => $contactLine['phoneDisplay'],
+            'phoneHref' => $contactLine['phoneHref'],
+            'routeKey' => $contactMetroHubs[$contactLineKey] ?? $contactMarketKey,
+        ];
+    }
+}
+if ($contactTeams === []) {
+    throw new DomainException('Contact market chooser has no team to offer.');
+}
 
 $bookingMode = $booking['mode'] ?? null;
 if ($environment === 'staging') {
@@ -57,14 +111,13 @@ if ($environment === 'staging') {
     <span class="twins-brand-kicker">Service areas</span>
     <h2 id="twins-brand-contact-markets-title">Choose your local Twins team</h2>
     <div class="twins-brand-contact-market-grid">
-      <?php foreach ($experience->markets()->selectable($environment) as $availableMarketKey => $availableMarket): ?>
-        <?php if ($availableMarketKey === 'main') continue; ?>
+      <?php foreach ($contactTeams as $contactTeam): ?>
         <article>
-          <h3><?= htmlspecialchars($availableMarket['label'], ENT_QUOTES, 'UTF-8') ?></h3>
-          <a href="<?= htmlspecialchars($availableMarket['phoneHref'], ENT_QUOTES, 'UTF-8') ?>">
-            <?= htmlspecialchars($availableMarket['phoneDisplay'], ENT_QUOTES, 'UTF-8') ?>
+          <h3><?= htmlspecialchars($contactTeam['label'], ENT_QUOTES, 'UTF-8') ?></h3>
+          <a href="<?= htmlspecialchars($contactTeam['phoneHref'], ENT_QUOTES, 'UTF-8') ?>">
+            <?= htmlspecialchars($contactTeam['phoneDisplay'], ENT_QUOTES, 'UTF-8') ?>
           </a>
-          <a href="<?= htmlspecialchars($experience->route($availableMarketKey, $marketKey), ENT_QUOTES, 'UTF-8') ?>">View service area</a>
+          <a href="<?= htmlspecialchars($experience->route($contactTeam['routeKey'], $marketKey), ENT_QUOTES, 'UTF-8') ?>">View service area</a>
         </article>
       <?php endforeach; ?>
     </div>

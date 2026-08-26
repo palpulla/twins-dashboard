@@ -13,13 +13,26 @@ return [
         'preview' => false,
         'retired' => false,
     ],
+    // METRO LINES. 'key' joins a line to the metro its pages are filed under
+    // (config/location-content.php 'metro') and to the metro tree the header
+    // menu and the service-area index already navigate by
+    // (components/nav-data.php $twinsNavMetroTree). It is what lets a
+    // Milwaukee-metro page resolve the Milwaukee line instead of the
+    // market-wide Madison one, and what lets /contact-us/ offer three teams
+    // when only two markets exist. Every visitor-facing Twins number in the
+    // portable runtime is written here and nowhere else.
+    //
+    // The three literals below are kept between 'phoneHref' and 'routePrefix'
+    // with no comment in between on purpose: tests/contracts/portable-core.test.cjs
+    // byte-matches this file against the staging registry with a regex that
+    // walks that exact span.
     'wi' => [
         'label' => 'Wisconsin',
         'phoneDisplay' => '(608) 420-2377',
         'phoneHref' => 'tel:+16084202377',
         'metroLines' => [
-            ['label' => 'Madison', 'phoneDisplay' => '(608) 420-2377', 'phoneHref' => 'tel:+16084202377'],
-            ['label' => 'Milwaukee', 'phoneDisplay' => '(414) 800-9271', 'phoneHref' => 'tel:+14148009271'],
+            ['key' => 'madison', 'label' => 'Madison', 'phoneDisplay' => '(608) 420-2377', 'phoneHref' => 'tel:+16084202377'],
+            ['key' => 'milwaukee', 'label' => 'Milwaukee', 'phoneDisplay' => '(414) 800-9271', 'phoneHref' => 'tel:+14148009271'],
         ],
         'routePrefix' => '/wi/',
         'address' => '2921 Landmark Pl, Ste 206, Madison, WI 53713',
@@ -64,7 +77,7 @@ return [
         'phoneDisplay' => '(815) 800-2025',
         'phoneHref' => 'tel:+18158002025',
         'metroLines' => [
-            ['label' => 'Rockford', 'phoneDisplay' => '(815) 800-2025', 'phoneHref' => 'tel:+18158002025'],
+            ['key' => 'rockford', 'label' => 'Rockford', 'phoneDisplay' => '(815) 800-2025', 'phoneHref' => 'tel:+18158002025'],
         ],
         'routePrefix' => '/il/',
         'address' => '5758 Elaine Dr, Rockford, IL 61108',
