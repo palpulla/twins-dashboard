@@ -5190,16 +5190,21 @@ body.twins-brand-experience .twins-l10-stats--inline li:not(.twins-l10-stat--lea
    right the way the money does, and the inversion alone says which tier Twins
    recommends.
 
-   Contrast (measured from rendered pixels, sRGB):
-     gold  #ffc641 on navy   #071c38  10.88:1  (lead numeral, lead labels)
-     white #ffffff on navy   #071c38  17.04:1  (lead body, lead benefits)
-     navy  #071c38 on white  #ffffff  17.04:1  (sibling numerals, names)
+   Contrast, measured from the rendered pixels of /maintenance-plans/ at 1440,
+   not read off the palette. Every pair clears its threshold (4.5:1 body,
+   3:1 display):
+     gold  #ffc641 on navy   #071c38  10.88:1  (lead numeral, lead micro-labels)
+     white #ffffff on navy   #071c38  17.04:1  (lead name, body, benefits)
+     navy  #071c38 on white  #ffffff  17.04:1  (sibling names and numerals)
      ochre #8a5a00 on white  #ffffff   5.93:1  (sibling micro-labels)
      slate #546277 on white  #ffffff   6.19:1  (sibling body, table cells)
-     navy  #071c38 on #fff3d6         15.45:1  (credit callouts, lead column)
-     slate #546277 on #fff3d6          5.62:1  (callout body)
-     navy  #071c38 on cream  #fff9ec  15.87:1  (section headings and copy)
-   Gold never lands on the cream or white grounds (1.57:1 / 1.49:1): on light
+     navy  #071c38 on #fff3d6         15.45:1  (credit value, lead column)
+     ochre #8a5a00 on #fff3d6          5.37:1  (credit micro-label)
+     slate #546277 on #fff3d6          5.62:1  (callout body, cue body)
+     navy  #071c38 on cream  #fff9ec  16.24:1  (section and block headings)
+     slate #546277 on cream  #fff9ec   5.90:1  (deck lines, credit rules)
+     navy  #071c38 on gold   #ffc641  10.88:1  (tier CTA)
+   Gold never lands on the cream or white grounds (1.49:1 / 1.57:1): on light
    ground the micro-labels are ochre, exactly as the rest of the L10 port does.
    ========================================================================== */
 

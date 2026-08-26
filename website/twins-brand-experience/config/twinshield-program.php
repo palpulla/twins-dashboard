@@ -36,7 +36,7 @@ return [
     '/maintenance-plans/' => [
         'kicker' => 'TwinShield membership',
         'heading' => 'Three tiers, one 12-month term',
-        'deck' => 'Every tier is a 12-month membership and every tier takes 10% off the qualifying repair on the job where it is purchased. What changes between them is how many tune-up visits you get, how deep the repair discount runs, what happens to service-call fees, how fast you get scheduled, and how much equipment credit you build.',
+        'deck' => 'Every tier is a 12-month membership and every tier takes 10% off the qualifying repair on the job where it is purchased. What changes between them is how many tune-up visits you get, how deep the repair discount runs, what happens to service-call fees, where you sit in the schedule, and how much equipment credit you build.',
         'term' => '12-month membership',
         'termBadge' => '12-month term',
         'billingNote' => 'Monthly billing is a payment option for the full 12-month term, not a cancel-anytime membership.',
