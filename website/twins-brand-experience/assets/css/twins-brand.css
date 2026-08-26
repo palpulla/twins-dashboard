@@ -5301,7 +5301,11 @@ body.twins-brand-experience .twins-brand-twinshield-card__terms {
 }
 body.twins-brand-experience .twins-brand-twinshield-card--lead .twins-brand-twinshield-card__terms { color: var(--twins-white); }
 body.twins-brand-experience .twins-brand-twinshield-card__benefits {
-  margin: 18px 0 0;
+  /* The bottom margin is the guaranteed gap to the credit block. The credit
+     block's own top margin is auto, which absorbs a stretched card's free
+     space but collapses to nothing on the tier with the longest list and on
+     every card once the row is one column. */
+  margin: 18px 0 18px;
   padding: 18px 0 0;
   border-top: 1px solid var(--twins-l10-hairline);
   list-style: none;
