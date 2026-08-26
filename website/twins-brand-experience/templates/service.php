@@ -18,6 +18,13 @@ $serviceFacts = $pageContent['answerFacts'];
 $servicePriceRange = $pageContent['priceRange'];
 $serviceSafety = $pageContent['safety'];
 $servicePlans = $pageContent['plans'];
+
+// The TwinShield membership block. Only the paths registered in
+// config/twinshield-program.php carry it; every other service page renders
+// exactly as before. The component validates the program and throws on any
+// drift, so a mistyped rate never reaches a customer.
+require_once dirname(__DIR__) . '/components/twinshield-plan.php';
+$twinshieldProgram = twins_brand_twinshield_program($serviceNormalizedPath);
 $serviceGuarantee = 'Done Right, or We Make It Right.';
 $serviceGuaranteeDetail = 'If something about our work is not right, we come back and fix it. No arguing, no fine print.';
 
@@ -140,6 +147,9 @@ if ($serviceNap !== null && $servicePath !== '') {
                 'priceCurrency' => 'USD',
             ],
         ];
+    }
+    if ($twinshieldProgram !== null) {
+        $serviceSchemaService['hasOfferCatalog'] = twins_brand_twinshield_offer_catalog($twinshieldProgram);
     }
     $serviceBreadcrumbItems = [
         ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $serviceAbsoluteUrl('/')],
@@ -285,6 +295,10 @@ if ($serviceNap !== null && $servicePath !== '') {
         <p><?= htmlspecialchars($serviceSafety, ENT_QUOTES, 'UTF-8') ?></p>
       </div>
     </section>
+  <?php endif; ?>
+
+  <?php if ($twinshieldProgram !== null): ?>
+    <?= twins_brand_twinshield_section($twinshieldProgram, $experience->route('contact', $marketKey)) ?>
   <?php endif; ?>
 
   <?php if ($servicePlans !== null): ?>

@@ -5177,6 +5177,319 @@ body.twins-brand-experience .twins-l10-stats--inline li:not(.twins-l10-stat--lea
   body.twins-brand-experience .twins-l10-meta { justify-content: flex-start; }
 }
 
+
+/* ==========================================================================
+   TwinShield Protection Plan
+   --------------------------------------------------------------------------
+   The membership block on /maintenance-plans/, written in the L10 deck's card
+   language rather than the service page's shadowed card vocabulary: hairline
+   borders, 10px radius, no shadows, no gradients, no texture inside a card.
+   The featured tier is the deck's inverted primary card (navy ground, gold
+   Lilita numeral, white body); its two siblings are white cards on the
+   #e6dfcc hairline. The row keeps the price ladder order, so it reads left to
+   right the way the money does, and the inversion alone says which tier Twins
+   recommends.
+
+   Contrast (measured from rendered pixels, sRGB):
+     gold  #ffc641 on navy   #071c38  10.88:1  (lead numeral, lead labels)
+     white #ffffff on navy   #071c38  17.04:1  (lead body, lead benefits)
+     navy  #071c38 on white  #ffffff  17.04:1  (sibling numerals, names)
+     ochre #8a5a00 on white  #ffffff   5.93:1  (sibling micro-labels)
+     slate #546277 on white  #ffffff   6.19:1  (sibling body, table cells)
+     navy  #071c38 on #fff3d6         15.45:1  (credit callouts, lead column)
+     slate #546277 on #fff3d6          5.62:1  (callout body)
+     navy  #071c38 on cream  #fff9ec  15.87:1  (section headings and copy)
+   Gold never lands on the cream or white grounds (1.57:1 / 1.49:1): on light
+   ground the micro-labels are ochre, exactly as the rest of the L10 port does.
+   ========================================================================== */
+
+body.twins-brand-experience .twins-brand-twinshield {
+  padding: var(--twins-section-space) var(--twins-content-shell);
+  color: var(--twins-ink);
+  background: var(--twins-cream);
+}
+body.twins-brand-experience .twins-brand-twinshield .twins-brand-section-heading { max-width: var(--twins-measure); }
+body.twins-brand-experience .twins-brand-twinshield .twins-brand-section-heading h2 { color: var(--twins-navy-950); }
+body.twins-brand-experience .twins-brand-twinshield .twins-brand-section-heading p {
+  max-width: var(--twins-measure);
+  color: var(--twins-l10-slate);
+  line-height: var(--twins-l10-leading);
+}
+body.twins-brand-experience .twins-brand-twinshield > * + * { margin-top: clamp(34px, 3.6vw, 52px); }
+body.twins-brand-experience .twins-brand-twinshield :is(h3) {
+  margin: 0 0 12px;
+  color: var(--twins-navy-950);
+  font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+  text-transform: uppercase;
+}
+
+/* --- the tier row ------------------------------------------------------- */
+body.twins-brand-experience .twins-brand-twinshield-tiers {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(18px, 1.9vw, 24px);
+  align-items: stretch;
+}
+body.twins-brand-experience .twins-brand-twinshield-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: clamp(22px, 2.3vw, 28px);
+  color: var(--twins-l10-slate);
+  background: var(--twins-white);
+  border: 1px solid var(--twins-l10-hairline);
+  border-radius: var(--twins-l10-radius);
+  box-shadow: none;
+}
+body.twins-brand-experience .twins-brand-twinshield-card--lead {
+  color: var(--twins-white);
+  background: var(--twins-navy-950);
+  border-color: var(--twins-navy-950);
+}
+body.twins-brand-experience .twins-brand-twinshield-card__tag {
+  margin: 0 0 10px;
+  color: var(--twins-l10-ochre);
+  font-size: .78rem;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+body.twins-brand-experience .twins-brand-twinshield-card--lead .twins-brand-twinshield-card__tag { color: var(--twins-gold); }
+body.twins-brand-experience .twins-brand-twinshield-card__name {
+  margin: 0 0 14px;
+  color: var(--twins-navy-950);
+  font-size: clamp(1.35rem, 1.9vw, 1.7rem);
+  text-transform: uppercase;
+}
+body.twins-brand-experience .twins-brand-twinshield-card--lead .twins-brand-twinshield-card__name { color: var(--twins-white); }
+body.twins-brand-experience .twins-brand-twinshield-card__price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+}
+body.twins-brand-experience .twins-brand-twinshield-card__figure {
+  color: var(--twins-navy-950);
+  font-family: 'Lilita One', Impact, sans-serif;
+  font-size: clamp(2.4rem, 3.4vw, 3.2rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: .012em;
+}
+body.twins-brand-experience .twins-brand-twinshield-card--lead .twins-brand-twinshield-card__figure { color: var(--twins-gold); }
+body.twins-brand-experience .twins-brand-twinshield-card__unit {
+  color: var(--twins-l10-slate);
+  font-size: .95rem;
+  font-weight: 800;
+}
+body.twins-brand-experience .twins-brand-twinshield-card--lead .twins-brand-twinshield-card__unit { color: var(--twins-white); }
+body.twins-brand-experience .twins-brand-twinshield-card__terms {
+  margin: 12px 0 0;
+  color: var(--twins-l10-slate);
+  font-size: .95rem;
+  line-height: var(--twins-l10-leading);
+}
+body.twins-brand-experience .twins-brand-twinshield-card--lead .twins-brand-twinshield-card__terms { color: var(--twins-white); }
+body.twins-brand-experience .twins-brand-twinshield-card__badge { margin: 14px 0 0; }
+body.twins-brand-experience .twins-brand-twinshield-card--lead .twins-l10-badge {
+  color: var(--twins-gold);
+  border-color: var(--twins-gold);
+}
+body.twins-brand-experience .twins-brand-twinshield-card__benefits {
+  margin: 18px 0 0;
+  padding: 18px 0 0;
+  border-top: 1px solid var(--twins-l10-hairline);
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+body.twins-brand-experience .twins-brand-twinshield-card--lead .twins-brand-twinshield-card__benefits { border-top-color: rgba(255, 255, 255, .28); }
+body.twins-brand-experience .twins-brand-twinshield-card__benefits li {
+  position: relative;
+  padding-left: 22px;
+  color: var(--twins-l10-slate);
+  font-size: .95rem;
+  line-height: var(--twins-l10-leading);
+}
+body.twins-brand-experience .twins-brand-twinshield-card--lead .twins-brand-twinshield-card__benefits li { color: var(--twins-white); }
+body.twins-brand-experience .twins-brand-twinshield-card__benefits li::before {
+  content: '';
+  position: absolute;
+  top: .55em;
+  left: 0;
+  width: 12px;
+  height: 3px;
+  /* Deep gold on the white cards, flat gold on the inverted one. The mark is
+     decorative, but #ffc641 on white is 1.57:1 and reads as a smudge. */
+  background: var(--twins-l10-gold-deep);
+}
+body.twins-brand-experience .twins-brand-twinshield-card--lead .twins-brand-twinshield-card__benefits li::before { background: var(--twins-gold); }
+body.twins-brand-experience .twins-brand-twinshield-card__credit {
+  /* The cards stretch to one height; the credit block and the CTA under it
+     ride the bottom so the three rows line up whatever the benefit count. */
+  margin: auto 0 0;
+  padding-top: 18px;
+  padding: 14px 16px;
+  color: var(--twins-navy-950);
+  background: var(--twins-l10-callout);
+  border-radius: 8px;
+  font-size: .95rem;
+  font-weight: 700;
+  line-height: var(--twins-l10-leading);
+}
+body.twins-brand-experience .twins-brand-twinshield-card__credit span {
+  display: block;
+  color: var(--twins-l10-ochre);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+body.twins-brand-experience .twins-brand-twinshield-card__cta { margin: 22px 0 0; align-self: stretch; }
+
+/* --- the term, said out loud rather than in fine print ------------------- */
+body.twins-brand-experience .twins-brand-twinshield-term { max-width: 100%; }
+body.twins-brand-experience .twins-brand-twinshield-term .twins-l10-cue__label { display: inline; }
+
+/* --- what changes between tiers ----------------------------------------- */
+body.twins-brand-experience .twins-brand-twinshield-compare-hint {
+  display: none;
+  margin: 0 0 12px;
+  color: var(--twins-l10-slate);
+  font-size: .88rem;
+  font-weight: 700;
+}
+body.twins-brand-experience .twins-brand-twinshield-compare-scroll {
+  max-width: 100%;
+  padding-bottom: 8px;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--twins-navy-950) rgba(7, 28, 56, .16);
+}
+body.twins-brand-experience .twins-brand-twinshield-compare-scroll:focus-visible {
+  outline: 3px solid var(--twins-navy-950);
+  outline-offset: 3px;
+}
+body.twins-brand-experience .twins-brand-twinshield-table {
+  width: 100%;
+  min-width: 700px;
+  /* Fixed layout so the axis column cannot eat the tier columns when the
+     table is scrolled on a phone: the first tier is legible the moment the
+     reader arrives, and the rest is one swipe away. */
+  table-layout: fixed;
+  border-collapse: collapse;
+  background: var(--twins-white);
+  border: 1px solid var(--twins-l10-hairline);
+}
+body.twins-brand-experience .twins-brand-twinshield-table :is(th, td) {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--twins-l10-hairline);
+  text-align: left;
+  vertical-align: top;
+}
+body.twins-brand-experience .twins-brand-twinshield-table tbody tr:last-child :is(th, td) { border-bottom: 0; }
+body.twins-brand-experience .twins-brand-twinshield-table thead th:first-child { width: 28%; }
+body.twins-brand-experience .twins-brand-twinshield-table thead th {
+  color: var(--twins-navy-950);
+  border-bottom: 2px solid var(--twins-navy-950);
+  font-size: .82rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+body.twins-brand-experience .twins-brand-twinshield-table thead th span {
+  display: block;
+  margin-top: 5px;
+  color: var(--twins-l10-slate);
+  font-size: .88rem;
+  font-weight: 700;
+  letter-spacing: normal;
+  text-transform: none;
+}
+body.twins-brand-experience .twins-brand-twinshield-table tbody th {
+  color: var(--twins-navy-950);
+  font-size: .95rem;
+  font-weight: 800;
+}
+body.twins-brand-experience .twins-brand-twinshield-table tbody td {
+  color: var(--twins-l10-slate);
+  font-size: .95rem;
+  line-height: var(--twins-l10-leading);
+}
+body.twins-brand-experience .twins-brand-twinshield-table :is(th, td).twins-brand-twinshield-table__lead {
+  color: var(--twins-navy-950);
+  background: var(--twins-l10-callout);
+  font-weight: 800;
+}
+
+/* --- the equipment credit ----------------------------------------------- */
+body.twins-brand-experience .twins-brand-twinshield-credit-deck {
+  max-width: var(--twins-measure);
+  margin: 0 0 24px;
+  color: var(--twins-l10-slate);
+  font-size: 1.05rem;
+  line-height: var(--twins-l10-leading);
+}
+body.twins-brand-experience .twins-l10-callouts.twins-brand-twinshield-credit-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(18px, 1.9vw, 24px);
+}
+body.twins-brand-experience .twins-brand-twinshield-credit-rules {
+  max-width: var(--twins-measure);
+  margin: 22px 0 0;
+  color: var(--twins-l10-slate);
+  font-size: .95rem;
+  line-height: var(--twins-l10-leading);
+}
+
+/* --- limitations, in the open ------------------------------------------- */
+body.twins-brand-experience .twins-brand-twinshield-limits {
+  padding: clamp(22px, 2.3vw, 28px);
+  background: var(--twins-white);
+  border: 1px solid var(--twins-l10-hairline);
+  border-radius: var(--twins-l10-radius);
+}
+body.twins-brand-experience .twins-brand-twinshield-limits ul {
+  max-width: var(--twins-measure);
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+body.twins-brand-experience .twins-brand-twinshield-limits li {
+  position: relative;
+  padding-left: 22px;
+  color: var(--twins-l10-slate);
+  font-size: .97rem;
+  line-height: var(--twins-l10-leading);
+}
+body.twins-brand-experience .twins-brand-twinshield-limits li::before {
+  content: '';
+  position: absolute;
+  top: .55em;
+  left: 0;
+  width: 12px;
+  height: 3px;
+  background: var(--twins-l10-ochre);
+}
+body.twins-brand-experience .twins-brand-twinshield-limits li strong { color: var(--twins-navy-950); }
+
+@media (max-width: 900px) {
+  body.twins-brand-experience .twins-brand-twinshield-tiers { grid-template-columns: 1fr; }
+  body.twins-brand-experience .twins-l10-callouts.twins-brand-twinshield-credit-grid { grid-template-columns: 1fr; }
+}
+
+/* The 700px table stops fitting inside the two 28px rail gutters at 756px, so
+   the affordance appears at exactly the width where the scroll it describes
+   begins, and never claims a scroll that is not there. */
+@media (max-width: 755px) {
+  body.twins-brand-experience .twins-brand-twinshield-compare-hint { display: block; }
+}
+
 /* ---------------------------------------------------------------------------
    Verification pass: two corrections the container contract could not make on
    its own. Both are presentation-only and neither changes a word of copy.
