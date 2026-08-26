@@ -120,6 +120,47 @@ $expect(strpos($membershipService, 'twins-brand-membership-card--featured') !== 
 $expect(strpos($membershipService, '$12.99/mo or $149/yr') !== false, 'membership card lost the Core price line');
 $expect(strpos($membershipService, 'Ask about Core') !== false, 'membership card lost the tier CTA');
 $expect(strpos($membershipService, 'twins-brand-service-safety') === false, 'the safety module leaked onto the membership page');
+$expect(strpos($membershipService, 'twins-brand-twinshield') === false, 'the TwinShield program block leaked onto a page outside its own config');
+
+// The TwinShield Protection Plan page: the three tiers, both payment options,
+// the comparison table on the house scroll rail, the equipment credit worked
+// examples, the limitations, and the tier offers in the page schema. Figures
+// are asserted literally so a drifted rate fails here, not live.
+$twinshieldContext = ['environment' => 'staging', 'market' => 'main', 'path' => '/maintenance-plans/', 'title' => 'TwinShield Protection Plan'];
+$twinshieldPage = $make($twinshieldContext)->renderService($twinshieldContext);
+$expect(substr_count($twinshieldPage, 'twins-brand-twinshield-card"') + substr_count($twinshieldPage, 'twins-brand-twinshield-card twins-brand-twinshield-card--lead') === 3, 'the TwinShield page must render exactly three tier cards');
+$expect(substr_count($twinshieldPage, 'twins-brand-twinshield-card--lead') === 1, 'exactly one tier card is the inverted lead card');
+$expect(strpos($twinshieldPage, 'BEST VALUE') === false, 'the tagline is copy, not a shouted literal');
+$expect(strpos($twinshieldPage, 'Best Value') !== false, 'the featured tier lost the Housecall Pro tagline');
+foreach ([
+    '$12.99 a month for 12 months, $155.88 total, or $149 paid once.',
+    '$18.99 a month for 12 months, $227.88 total, or $199 paid once.',
+    '$24.99 a month for 12 months, $299.88 total, or $279 paid once.',
+    '12 successful monthly payments earn $38.97. One $149 annual payment earns $37.25.',
+    '12 successful monthly payments earn $79.76. One $199 annual payment earns $69.65.',
+    '12 successful monthly payments earn $149.94. One $279 annual payment earns $139.50.',
+    '25% of what you pay, up to $150.',
+    '35% of what you pay, up to $300.',
+    '50% of what you pay, up to $500.',
+    'Monthly billing is a payment option for the full 12-month term, not a cancel-anytime membership.',
+    'TwinShield is a maintenance-and-savings membership, not insurance or a repair/replacement warranty.',
+    'Unused visits do not roll over.',
+    'Discounts do not combine unless Twins approves otherwise in writing.',
+    'Plan applies to one residential service address and one garage-door system.',
+    'The Twins Garage Doors office must verify the exact balance before it is promised or applied.',
+] as $twinshieldFigure) {
+    $expect(strpos($twinshieldPage, htmlspecialchars($twinshieldFigure, ENT_QUOTES, 'UTF-8')) !== false, 'the TwinShield page lost: ' . $twinshieldFigure);
+}
+// Three tier cards plus the three schema descriptions that mirror them.
+$expect(substr_count($twinshieldPage, '10% off the qualifying repair on the job where this new membership is purchased.') === 6, 'the shared enrollment discount belongs on every tier card and in every tier offer');
+$expect(strpos($twinshieldPage, 'role="region" aria-labelledby="twins-brand-twinshield-compare-title" tabindex="0"') !== false, 'the comparison table lost the house scroll rail');
+$expect(substr_count($twinshieldPage, 'twins-brand-twinshield-table__lead') === 6, 'the featured column is marked in the header and all five rows');
+$expect(strpos($twinshieldPage, 'Ask about Priority') !== false, 'the TwinShield cards lost their tier CTA');
+$expect(strpos($twinshieldPage, '"hasOfferCatalog"') !== false, 'the TwinShield tiers are missing from the page schema');
+$expect(substr_count($twinshieldPage, '"@type":"UnitPriceSpecification"') === 6, 'every tier publishes both payment options in schema');
+$expect(strpos($twinshieldPage, '"price":12.99') !== false && strpos($twinshieldPage, '"price":149') !== false, 'the Core offer lost a price');
+$expect(strpos($twinshieldPage, 'twins-brand-membership-card') === false, 'the thin membership block must not double up on the TwinShield page');
+$expect(strpos($twinshieldPage, '$0.') === false, 'the TwinShield page abbreviated an amount');
 
 // Every record renders on every market it is routed to.
 foreach (['main', 'wi', 'ky', 'il-preview'] as $marketKey) {

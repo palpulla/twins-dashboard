@@ -616,7 +616,7 @@ return [
         ],
         'costParagraphs' => [
             'The tune-up is $49, and most maintenance visits run $50 to $100 all-in, based on 52 of our own completed jobs over the last two years.',
-            'TwinShield puts that visit on a schedule and adds member savings on repairs and equipment. Ask about the tiers when you call, or read the TwinShield page for the full program.',
+            'TwinShield puts that visit on a schedule and adds member savings on repairs and equipment. The three tiers, both payment options, the equipment credit and every limitation are set out below.',
             'Compare that to the jobs maintenance exists to prevent: most spring tickets land between $575 and $1,225, and cable repairs run $325 to $625.',
         ],
         'safety' => null,
