@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "remoteDirectory": "/home/customer/staging-safety/staging-remediation-r42-20260825/verification/",
+  "remoteDirectory": "/home/customer/staging-safety/staging-remediation-r43-20260826/verification/",
   "productionWriteAuthority": false,
   "files": [
     {
@@ -228,8 +228,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/assets/css/twins-brand.css",
-      "size": 259884,
-      "sha256": "6fe0aedd0a86a9039e9692a7c8e63ad6a4a1e49664683b0bfbc0b9501e695ddc"
+      "size": 259658,
+      "sha256": "718a84fbff12ee9f06a799a69f3dcf926ebdf67124821e5d01e0c5bd1a83b5bf"
     },
     {
       "role": "verify",
@@ -348,8 +348,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/components/twinshield-plan.php",
-      "size": 16864,
-      "sha256": "6e34e387e5ff1a06452248d2894a6773f1bf4eb9a8f4fc406ac97655c0f40c25"
+      "size": 16836,
+      "sha256": "231b9366ec6b2e7e6744c71cbefdf2808e7c59c5661751980ea9ee35ec902b9d"
     },
     {
       "role": "verify",
@@ -390,8 +390,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/config/twinshield-program.php",
-      "size": 8566,
-      "sha256": "4cf39538efa5fa813b9b28751e65fe02997fe82fb0ce2819075d70cfb528b921"
+      "size": 8406,
+      "sha256": "ad9eb95162c47f819837ed455dbdb8de6a383988378c57a0279522efeee83893"
     },
     {
       "role": "verify",
@@ -403,7 +403,7 @@
       "role": "verify",
       "source": "twins-brand-experience/manifests/staging-runtime.json",
       "size": 371672,
-      "sha256": "f724f6f7c57d8b172a92255e7a511ba8e21abd71d2255b511799a23f8e3ef7f8"
+      "sha256": "c6b66c9f3ae231d491b07f1f1957ef835cb7c95c50abd864f95cf1a91209d45c"
     },
     {
       "role": "verify",
@@ -601,7 +601,7 @@
       "role": "verify",
       "source": "twins-brand-experience/tools/private-staging-deploy.php",
       "size": 69595,
-      "sha256": "762430f660127fa70ede0b029db1af30baa1cce839326c590f343960641ee23c"
+      "sha256": "916e7c5b574a37a87be411c0a2bf63625b2b3bf56e64059187e37c7642833193"
     }
   ]
 }

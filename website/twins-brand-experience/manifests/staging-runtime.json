@@ -15,8 +15,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/assets/css/twins-brand.css",
       "destination": "twins-brand-experience/assets/css/twins-brand.css",
-      "size": 259884,
-      "sha256": "6fe0aedd0a86a9039e9692a7c8e63ad6a4a1e49664683b0bfbc0b9501e695ddc"
+      "size": 259658,
+      "sha256": "718a84fbff12ee9f06a799a69f3dcf926ebdf67124821e5d01e0c5bd1a83b5bf"
     },
     {
       "role": "deploy",
@@ -428,8 +428,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/components/twinshield-plan.php",
       "destination": "twins-brand-experience/components/twinshield-plan.php",
-      "size": 16864,
-      "sha256": "6e34e387e5ff1a06452248d2894a6773f1bf4eb9a8f4fc406ac97655c0f40c25"
+      "size": 16836,
+      "sha256": "231b9366ec6b2e7e6744c71cbefdf2808e7c59c5661751980ea9ee35ec902b9d"
     },
     {
       "role": "deploy",
@@ -477,8 +477,8 @@
       "role": "deploy",
       "source": "twins-brand-experience/config/twinshield-program.php",
       "destination": "twins-brand-experience/config/twinshield-program.php",
-      "size": 8566,
-      "sha256": "4cf39538efa5fa813b9b28751e65fe02997fe82fb0ce2819075d70cfb528b921"
+      "size": 8406,
+      "sha256": "ad9eb95162c47f819837ed455dbdb8de6a383988378c57a0279522efeee83893"
     },
     {
       "role": "deploy",
