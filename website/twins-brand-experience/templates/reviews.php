@@ -5,6 +5,7 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
     throw new DomainException('Quote action is unavailable.');
 }
 $context['classification'] = 'reviews-brand';
+require_once dirname(__DIR__) . '/components/door-art.php';
 ?>
 <div id="twins-overhaul-main" class="twins-brand-page twins-brand-reviews-page">
   <section class="twins-brand-page-hero" aria-labelledby="twins-brand-reviews-page-title">
@@ -14,6 +15,7 @@ $context['classification'] = 'reviews-brand';
     <p class="twins-brand-hero-proof"><span class="twins-brand-stars" aria-hidden="true">★★★★★</span> <span data-twins-live-rating><?= htmlspecialchars(number_format($reviewSummary['ratingValue'], 1), ENT_QUOTES, 'UTF-8') ?></span> on Google from <span data-twins-live-count><?= htmlspecialchars($reviewSummary['displayCount'], ENT_QUOTES, 'UTF-8') ?></span> reviews</p>
     <p>The newest reviews below come straight from our Google profile.</p>
     <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
+    <?= twins_brand_hero_art('twin', $experience, 'reviews') ?>
   </section>
 
   <section class="twins-brand-reviews-collection" aria-label="Customer review collection">

@@ -578,6 +578,13 @@ $twinCharacterComponent = dirname(__DIR__) . '/components/twin-character.php';
     <header class="twins-brand-editorial-hero<?= $isArticle ? ' twins-brand-article-hero' : '' ?>" aria-labelledby="twins-brand-editorial-title">
       <span class="twins-brand-kicker"><?= htmlspecialchars($editorial['kicker'], ENT_QUOTES, 'UTF-8') ?></span>
       <?= $editorialTitleMarkup ?>
+      <?php // An article already opens on its own hero photograph; a trust page
+            // opened on nothing at all. This header is the shortest hero in the
+            // site (a kicker and an H1, ~340px), which is why it takes the
+            // framed panel and not a figure: a Twin is drawn standing and needs
+            // a hero tall enough to stand in, and cropping one at the neck is
+            // worse than the empty field it replaced. ?>
+      <?= $isArticle ? '' : twins_brand_hero_art('door', $experience, 'editorial') ?>
     </header>
 
     <?php if (!$isArticle): ?>

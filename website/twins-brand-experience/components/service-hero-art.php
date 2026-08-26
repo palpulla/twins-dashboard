@@ -178,5 +178,120 @@ SVG . $svgClose;
             . '</div>';
     }
 
+    // --- The five service pages that had no part to draw --------------------
+    // Owner report 2026-08-26, "no pic at top". Eight of the thirteen service
+    // pages already opened on the part they are about; installation, the
+    // services index, the two plan pages and property management opened on an
+    // empty navy field. Each of these is the same fixed inline SVG in the same
+    // palette as the eight above, drawn from the same door vocabulary, and each
+    // shows the thing the page actually sells rather than a generic icon.
+
+    if ($path === '/garage-door-installation/') {
+        // A new section being set onto the two already hung.
+        return $svgOpen . <<<'SVG'
+<svg viewBox="0 0 320 340" focusable="false">
+  <rect x="14" y="26" width="292" height="12" rx="4" fill="#33507a"/>
+  <g class="twins-art-install-panel">
+    <rect x="46" y="52" width="228" height="62" rx="6" fill="#f8fafc" stroke="#c3ccd6" stroke-width="3"/>
+    <rect x="66" y="68" width="86" height="30" rx="3" fill="#c8dcee" stroke="#a9c3da" stroke-width="2"/>
+    <rect x="168" y="68" width="86" height="30" rx="3" fill="#c8dcee" stroke="#a9c3da" stroke-width="2"/>
+  </g>
+  <rect x="46" y="130" width="228" height="62" rx="6" fill="#eef1f5" stroke="#d3d9e0" stroke-width="3"/>
+  <rect x="66" y="146" width="86" height="30" rx="3" fill="#f8fafc" stroke="#d3d9e0" stroke-width="2"/>
+  <rect x="168" y="146" width="86" height="30" rx="3" fill="#f8fafc" stroke="#d3d9e0" stroke-width="2"/>
+  <rect x="46" y="200" width="228" height="62" rx="6" fill="#eef1f5" stroke="#d3d9e0" stroke-width="3"/>
+  <rect x="66" y="216" width="86" height="30" rx="3" fill="#f8fafc" stroke="#d3d9e0" stroke-width="2"/>
+  <rect x="168" y="216" width="86" height="30" rx="3" fill="#f8fafc" stroke="#d3d9e0" stroke-width="2"/>
+  <rect x="30" y="52" width="12" height="216" rx="4" fill="#8f9aa8"/>
+  <rect x="278" y="52" width="12" height="216" rx="4" fill="#8f9aa8"/>
+  <rect x="24" y="268" width="272" height="10" rx="4" fill="#33507a"/>
+  <ellipse cx="160" cy="330" rx="130" ry="6" fill="rgba(3,18,43,.4)"/>
+</svg>
+SVG . $svgClose;
+    }
+
+    if ($path === '/garage-door-services/') {
+        // The wrench that covers all of them, over a door face.
+        return $svgOpen . <<<'SVG'
+<svg viewBox="0 0 320 330" focusable="false">
+  <rect x="30" y="24" width="260" height="196" rx="8" fill="#eef1f5" stroke="#d3d9e0" stroke-width="3"/>
+  <rect x="30" y="90" width="260" height="3" fill="#d3d9e0"/>
+  <rect x="30" y="156" width="260" height="3" fill="#d3d9e0"/>
+  <rect x="52" y="40" width="94" height="36" rx="3" fill="#c8dcee" stroke="#a9c3da" stroke-width="2"/>
+  <rect x="174" y="40" width="94" height="36" rx="3" fill="#c8dcee" stroke="#a9c3da" stroke-width="2"/>
+  <!-- The static rotation lives on an OUTER g, because the animated class
+       carries a CSS transform and a CSS transform replaces the transform
+       attribute on the same element rather than composing with it. The inline
+       style is load-bearing too: the shared art rule sets `transform-box:
+       fill-box` on every g in here, which re-resolves this rotation about the
+       group's own bounding box on top of its explicit centre and slid the
+       wrench off the bottom of the door. view-box with a 0 0 origin is the
+       plain SVG behaviour this rotate() is written against. -->
+  <g transform="rotate(-34 160 118)" style="transform-box: view-box; transform-origin: 0 0;">
+    <g class="twins-art-wrench">
+      <path d="M132 20 h 20 v 26 h 16 v -26 h 20 v 58 a 12 12 0 0 1 -12 12 h -32 a 12 12 0 0 1 -12 -12 z" fill="#ffc641" stroke="#b98f16" stroke-width="4" stroke-linejoin="round"/>
+      <rect x="148" y="84" width="24" height="76" rx="10" fill="#ffc641" stroke="#b98f16" stroke-width="4"/>
+      <circle cx="160" cy="186" r="30" fill="#ffc641" stroke="#b98f16" stroke-width="4"/>
+      <circle cx="160" cy="186" r="14" fill="#eef1f5" stroke="#b98f16" stroke-width="4"/>
+    </g>
+  </g>
+  <rect x="16" y="222" width="288" height="10" rx="4" fill="#33507a"/>
+  <ellipse cx="160" cy="320" rx="132" ry="6" fill="rgba(3,18,43,.4)"/>
+</svg>
+SVG . $svgClose;
+    }
+
+    if ($path === '/maintenance-plans/' || $path === '/protection-plans/') {
+        // The TwinShield badge: a shield over the door it covers.
+        return $svgOpen . <<<'SVG'
+<svg viewBox="0 0 300 340" focusable="false">
+  <rect x="26" y="26" width="248" height="176" rx="8" fill="#eef1f5" stroke="#d3d9e0" stroke-width="3"/>
+  <rect x="26" y="90" width="248" height="3" fill="#d3d9e0"/>
+  <rect x="26" y="150" width="248" height="3" fill="#d3d9e0"/>
+  <rect x="46" y="42" width="90" height="34" rx="3" fill="#c8dcee" stroke="#a9c3da" stroke-width="2"/>
+  <rect x="164" y="42" width="90" height="34" rx="3" fill="#c8dcee" stroke="#a9c3da" stroke-width="2"/>
+  <rect x="12" y="204" width="276" height="10" rx="4" fill="#33507a"/>
+  <g class="twins-art-shield">
+    <path d="M150 92 l 74 26 v 62 q 0 62 -74 96 q -74 -34 -74 -96 v -62 z" fill="#ffc641" stroke="#b98f16" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M116 194 l 24 26 l 46 -58" fill="none" stroke="#071c38" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <ellipse cx="150" cy="330" rx="104" ry="6" fill="rgba(3,18,43,.4)"/>
+</svg>
+SVG . $svgClose;
+    }
+
+    if ($path === '/property-management-services/') {
+        // A row of bays, which is what a property portfolio actually looks like.
+        return $svgOpen . <<<'SVG'
+<svg viewBox="0 0 360 300" focusable="false">
+  <rect x="10" y="26" width="340" height="14" rx="5" fill="#33507a"/>
+  <g class="twins-art-bay twins-art-bay--a">
+    <rect x="22" y="52" width="96" height="176" rx="6" fill="#eef1f5" stroke="#d3d9e0" stroke-width="3"/>
+    <rect x="36" y="66" width="68" height="26" rx="3" fill="#c8dcee" stroke="#a9c3da" stroke-width="2"/>
+    <rect x="22" y="104" width="96" height="3" fill="#d3d9e0"/>
+    <rect x="22" y="148" width="96" height="3" fill="#d3d9e0"/>
+    <rect x="22" y="192" width="96" height="3" fill="#d3d9e0"/>
+  </g>
+  <g class="twins-art-bay twins-art-bay--b">
+    <rect x="132" y="52" width="96" height="122" rx="6" fill="#f8fafc" stroke="#c3ccd6" stroke-width="3"/>
+    <rect x="146" y="66" width="68" height="26" rx="3" fill="#c8dcee" stroke="#a9c3da" stroke-width="2"/>
+    <rect x="132" y="104" width="96" height="3" fill="#d3d9e0"/>
+    <rect x="132" y="148" width="96" height="3" fill="#d3d9e0"/>
+    <rect x="132" y="176" width="96" height="52" fill="#0b2745"/>
+    <rect x="146" y="196" width="68" height="6" rx="3" fill="rgba(255,198,65,.55)"/>
+  </g>
+  <g class="twins-art-bay twins-art-bay--c">
+    <rect x="242" y="52" width="96" height="176" rx="6" fill="#eef1f5" stroke="#d3d9e0" stroke-width="3"/>
+    <rect x="256" y="66" width="68" height="26" rx="3" fill="#c8dcee" stroke="#a9c3da" stroke-width="2"/>
+    <rect x="242" y="104" width="96" height="3" fill="#d3d9e0"/>
+    <rect x="242" y="148" width="96" height="3" fill="#d3d9e0"/>
+    <rect x="242" y="192" width="96" height="3" fill="#d3d9e0"/>
+  </g>
+  <rect x="10" y="228" width="340" height="10" rx="4" fill="#33507a"/>
+  <ellipse cx="180" cy="292" rx="160" ry="6" fill="rgba(3,18,43,.4)"/>
+</svg>
+SVG . $svgClose;
+    }
+
     return '';
 }

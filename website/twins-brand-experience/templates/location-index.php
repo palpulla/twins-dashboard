@@ -6,6 +6,7 @@ if (!isset($quote['href']) || !is_string($quote['href']) || $quote['href'] === '
 }
 
 require dirname(__DIR__) . '/components/nav-data.php';
+require_once dirname(__DIR__) . '/components/door-art.php';
 
 $copyByMarket = [
     'main' => [
@@ -72,6 +73,7 @@ $nearbyLinks = array_values(array_filter(
   <header class="twins-brand-editorial-hero" aria-labelledby="twins-brand-location-index-title">
     <span class="twins-brand-kicker"><?= htmlspecialchars($copy['kicker'], ENT_QUOTES, 'UTF-8') ?></span>
     <h1 id="twins-brand-location-index-title"><?= htmlspecialchars($copy['title'], ENT_QUOTES, 'UTF-8') ?></h1>
+    <?= twins_brand_hero_art('door', $experience, 'location-index') ?>
   </header>
 
   <section class="twins-brand-editorial-answer" aria-labelledby="twins-brand-location-index-answer-title">

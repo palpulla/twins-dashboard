@@ -6054,3 +6054,113 @@ body.twins-brand-experience :is(
    holding it -- a 675px slab with room for a fine course -- and even there it
    rendered as a comb, so that band keeps its panel wash and drops the marks.
    Every gold surface in the site is now flat gold. */
+
+/* ===== SHARED HERO ART — the right half of a bare hero ======================
+   Owner report 2026-08-26: "no pic at top", filed against /contact-us/ and a
+   service page and explicitly meant for the class. Eight families opened on a
+   navy field with the headline in the left 45% and nothing in the right half:
+   contact, reviews, team, trust, location-index, blog and the five service
+   pages with no part to draw.
+
+   The two heroes that were NOT reported are the reference. The home hero puts a
+   garage-door panel with the two Twins in front of it in the right half; the
+   careers hero puts a framed crew photograph there. This block is the home
+   hero's half of that language, reusable, so the bare families join the site
+   instead of each inventing something.
+
+   GEOMETRY. The art is absolute at >= 1101px and the hero reserves its
+   footprint as padding-right, which is exactly the mechanism
+   `.twins-brand-service-hero--with-art` already uses, so copy and art can never
+   overlap and the reserve never touches a gutter: `right` is the shell gutter
+   itself. Below 1101px the art returns to flow as the hero's last grid row,
+   centred and smaller, because at those widths there is no right half to fill.
+
+   CONTRAST. The art never sits under text at any width, so it composites with
+   nothing. The panel is its own light object on navy; the hero's copy keeps the
+   navy-900 ground it already passed on.
+
+   MOTION. None. The homepage owns the two moving heroes; these are still. */
+body.twins-brand-experience .twins-brand-hero-art {
+  position: relative;
+  z-index: 0;
+  width: min(100%, 360px);
+  margin: 10px auto 0;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+body.twins-brand-experience .twins-brand-hero-art__door {
+  display: block;
+  width: 100%;
+  height: auto;
+  opacity: .95;
+  filter: drop-shadow(0 14px 24px rgba(3, 18, 43, .35));
+}
+body.twins-brand-experience .twins-brand-hero-art__twin {
+  position: absolute;
+  bottom: 1%;
+  width: auto;
+  height: 112%;
+  filter: drop-shadow(0 16px 24px rgba(3, 18, 43, .45));
+}
+body.twins-brand-experience .twins-brand-hero-art__twin--right { right: 3%; }
+body.twins-brand-experience .twins-brand-hero-art__twin--left { right: 31%; height: 104%; }
+
+/* The door-only variant carries the card lift the rest of the site uses, so it
+   reads as a deliberate object rather than as a pale rectangle left on a navy
+   field. The figure variants do not take it: a Twin overhangs the panel, and a
+   hard gold edge behind a cut-out figure reads as a mistake. */
+body.twins-brand-experience .twins-brand-hero-art--door .twins-brand-hero-art__door {
+  border-radius: 14px;
+  box-shadow: 10px 11px 0 var(--twins-gold);
+}
+
+/* The owned truck cutout parks in front of the same door. It has no ground of
+   its own, so the panel behind it is what stops it floating. */
+body.twins-brand-experience .twins-brand-hero-art__truck {
+  position: absolute;
+  right: -4%;
+  bottom: -6%;
+  width: 104%;
+  height: auto;
+  filter: drop-shadow(0 18px 26px rgba(3, 18, 43, .45));
+}
+
+@media (min-width: 1101px) {
+  body.twins-brand-experience :is(
+    .twins-brand-page-hero,
+    .twins-brand-editorial-hero,
+    .twins-brand-blog-hero
+  ):has(> .twins-brand-hero-art) {
+    position: relative;
+    padding-right: calc(var(--twins-content-shell) + clamp(330px, 35vw, 540px));
+  }
+  body.twins-brand-experience .twins-brand-hero-art {
+    position: absolute;
+    right: var(--twins-content-shell);
+    bottom: clamp(30px, 4.2vw, 66px);
+    width: clamp(300px, 32vw, 500px);
+    margin: 0;
+  }
+  body.twins-brand-experience .twins-brand-hero-art--door {
+    bottom: clamp(20px, 3vw, 46px);
+    width: clamp(260px, 27vw, 420px);
+  }
+  body.twins-brand-experience .twins-brand-hero-art__twin { height: 122%; }
+  body.twins-brand-experience .twins-brand-hero-art__twin--left { height: 113%; }
+}
+
+/* --- Motion for the five new service hero parts -------------------------- */
+/* Same budget as the eight that shipped in r34: one slow, small, infinite loop
+   per drawing, nothing that moves more than a few pixels or a few degrees. The
+   global `prefers-reduced-motion: reduce` block above is `.twins-brand-experience *`
+   with `animation: none !important`, so every one of these is already covered. */
+.twins-art-install-panel { transform-origin: center bottom; animation: twinsInstallSettle 3.8s ease-in-out infinite; }
+.twins-art-wrench { transform-origin: 60% 40%; animation: twinsWrenchTurn 3.4s ease-in-out infinite; }
+.twins-art-shield { transform-origin: center; animation: twinsShieldGuard 4.2s ease-in-out infinite; }
+.twins-art-bay--b { transform-origin: center bottom; animation: twinsBayLift 5.2s ease-in-out infinite; }
+
+@keyframes twinsInstallSettle { 0%, 100% { transform: translateY(-7px); } 55% { transform: translateY(0); } }
+@keyframes twinsWrenchTurn { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(4deg); } }
+@keyframes twinsShieldGuard { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.035); } }
+@keyframes twinsBayLift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }

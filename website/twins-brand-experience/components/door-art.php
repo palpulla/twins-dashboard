@@ -170,3 +170,105 @@ if (!function_exists('twins_brand_door_avatar')) {
             . '</svg>';
     }
 }
+
+if (!function_exists('twins_brand_hero_art')) {
+    /**
+     * THE SHARED HERO ART.
+     *
+     * The owner's report on 2026-08-26 was "no pic at top", filed against
+     * /contact-us/ and a service page and explicitly meant for the class, not
+     * the two examples. Eight of the sixteen page families opened on a navy
+     * field with a headline in the left 45% and nothing at all in the right
+     * half: contact, reviews, team, the three editorial kinds, blog, and the
+     * five service pages with no part to draw.
+     *
+     * The two heroes he did not complain about are the reference. The home hero
+     * is a garage-door panel with the two Twins standing in front of it; the
+     * careers hero is a framed crew photograph. Both put a real object in the
+     * right half. This function is the home hero's half of that language, made
+     * reusable, so the artless families join the site instead of each inventing
+     * something.
+     *
+     * Assets: the inline door panel below, and twin-left / twin-right, the two
+     * owned brand mascots already used on the home hero and on every city page.
+     * No new raster asset, no photograph outside its provenance allowedUse, no
+     * remote request.
+     *
+     * Decorative only: aria-hidden, empty alt, pointer-events off in CSS. The
+     * heroes it goes into carry their meaning entirely in the h1 and the lede.
+     *
+     * @param string $variant crew (both twins) | twin (one twin) | door (framed panel) | truck (owned fleet photo, team only)
+     * @param object $experience Portable experience, for owned asset URLs.
+     * @param string $idSuffix Unique per page when two hero arts could co-exist.
+     */
+    function twins_brand_hero_art(string $variant, $experience, string $idSuffix = ''): string
+    {
+        if (!in_array($variant, ['crew', 'twin', 'door', 'truck'], true)) {
+            return '';
+        }
+        if (!is_object($experience) || !method_exists($experience, 'asset')) {
+            return '';
+        }
+        $suffix = preg_replace('/[^a-z0-9-]/', '', strtolower($idSuffix));
+        $gradientId = 'twins-hero-art-sky' . ($suffix === '' ? '' : '-' . $suffix);
+
+        // The panel: the home hero's door, redrawn on a 4x3 grid so it still
+        // reads as a door at the smaller widths these heroes give it.
+        $panel = '<svg class="twins-brand-hero-art__door" viewBox="0 0 520 330" aria-hidden="true" focusable="false">'
+            . '<defs><linearGradient id="' . $gradientId . '" x1="0" y1="0" x2="0" y2="1">'
+            . '<stop offset="0" stop-color="#e9eef4"/><stop offset="1" stop-color="#ccd6e2"/>'
+            . '</linearGradient></defs>'
+            . '<rect x="0" y="0" width="520" height="312" rx="10" fill="url(#' . $gradientId . ')"/>'
+            . '<rect x="11" y="11" width="498" height="290" rx="6" fill="#eff3f8"/>';
+        // Rows and columns are laid out inside the 11..509 x 11..301 inner face
+        // with an even 24px margin and even gaps, so no cell can overhang the
+        // door body the way an eyeballed grid did on the first pass.
+        foreach ([35, 130, 225] as $rowIndex => $rowY) {
+            foreach ([35, 151, 267, 383] as $columnX) {
+                $panel .= $rowIndex === 0
+                    ? '<rect x="' . $columnX . '" y="' . $rowY . '" width="102" height="52" rx="4" fill="#c8dcee" stroke="#a9c3da" stroke-width="2"/>'
+                    : '<rect x="' . $columnX . '" y="' . $rowY . '" width="102" height="52" rx="4" fill="#f8fafc" stroke="#d3d9e0" stroke-width="2"/>';
+            }
+        }
+        // The two courses the panel grid leaves between rows, so the door reads
+        // as sections rather than as a table.
+        $panel .= '<rect x="11" y="104" width="498" height="3" fill="rgba(3,18,43,.10)"/>'
+            . '<rect x="11" y="199" width="498" height="3" fill="rgba(3,18,43,.10)"/>'
+            . '<ellipse cx="260" cy="320" rx="240" ry="7" fill="rgba(3, 18, 43, .35)"/>'
+            . '</svg>';
+
+        if ($variant === 'door') {
+            return '<div class="twins-brand-hero-art twins-brand-hero-art--door" aria-hidden="true">' . $panel . '</div>';
+        }
+
+        if ($variant === 'truck') {
+            // The owned service-truck cutout, at the three widths
+            // tools/build-owned-images.mjs generated for it. Its provenance
+            // record allows home, careers and team; this variant is used on the
+            // team hero only, which is inside that allowance.
+            $src = static fn(string $key): string => htmlspecialchars($experience->asset($key), ENT_QUOTES, 'UTF-8');
+            return '<div class="twins-brand-hero-art twins-brand-hero-art--truck" aria-hidden="true">'
+                . $panel
+                . '<img class="twins-brand-hero-art__truck"'
+                . ' src="' . $src('truck-webp-880') . '"'
+                . ' srcset="' . $src('truck-webp-320') . ' 320w, ' . $src('truck-webp-880') . ' 880w"'
+                . ' sizes="(min-width: 1101px) 32vw, 360px"'
+                . ' width="880" height="517" alt="" aria-hidden="true" loading="lazy" decoding="async">'
+                . '</div>';
+        }
+
+        $twin = static function (string $key, string $side, int $width, int $height) use ($experience): string {
+            return '<img class="twins-brand-hero-art__twin twins-brand-hero-art__twin--' . $side . '"'
+                . ' src="' . htmlspecialchars($experience->asset($key), ENT_QUOTES, 'UTF-8') . '"'
+                . ' width="' . $width . '" height="' . $height . '"'
+                . ' alt="" aria-hidden="true" loading="lazy" decoding="async">';
+        };
+
+        $figures = $variant === 'crew'
+            ? $twin('twin-left', 'left', 196, 534) . $twin('twin-right', 'right', 297, 538)
+            : $twin('twin-right', 'right', 297, 538);
+
+        return '<div class="twins-brand-hero-art twins-brand-hero-art--' . $variant . '" aria-hidden="true">'
+            . $panel . $figures . '</div>';
+    }
+}

@@ -87,6 +87,7 @@ if ($environment === 'staging') {
     <h1 id="twins-brand-contact-title">Request a Quote</h1>
     <p>Tell us what is going on and we will call you right back, or call the number for your service area.</p>
     <a class="twins-brand-cta twins-brand-cta--call" href="<?= htmlspecialchars($market['phoneHref'], ENT_QUOTES, 'UTF-8') ?>">Call Twins at <?= htmlspecialchars($market['phoneDisplay'], ENT_QUOTES, 'UTF-8') ?></a>
+    <?= twins_brand_hero_art('crew', $experience, 'contact') ?>
   </section>
 
   <section class="twins-brand-contact-quote" aria-label="Request a call back">

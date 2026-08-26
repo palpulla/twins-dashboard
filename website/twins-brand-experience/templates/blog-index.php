@@ -15,6 +15,7 @@ $blogBasePath = $blogIndex['basePath'];
 $blogPagePath = static function (int $target) use ($blogBasePath): string {
     return $target <= 1 ? $blogBasePath : $blogBasePath . 'page/' . $target . '/';
 };
+require_once dirname(__DIR__) . '/components/door-art.php';
 ?>
 <main id="twins-overhaul-main" class="twins-brand-page twins-brand-blog-page">
   <header class="twins-brand-blog-hero" aria-labelledby="twins-brand-blog-title">
@@ -22,6 +23,7 @@ $blogPagePath = static function (int $target) use ($blogBasePath): string {
     <h1 id="twins-brand-blog-title">Garage door answers from the Twins crew</h1>
     <p>Straight answers on springs, openers, panels, and new doors, written by the crew that repairs and installs them every day. Use what applies to your door, and leave spring or cable work to trained professionals.</p>
     <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
+    <?= twins_brand_hero_art('twin', $experience, 'blog') ?>
   </header>
 
   <?php if ($blogPosts === []): ?>

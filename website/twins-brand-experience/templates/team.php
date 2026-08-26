@@ -93,6 +93,7 @@ $teamPromises = [
     <h1 id="twins-brand-team-title">Meet the Twins Crew</h1>
     <p>The people behind every garage door we install, repair, and stand behind.</p>
     <a class="twins-brand-cta twins-brand-cta--quote" href="<?= htmlspecialchars($quote['href'], ENT_QUOTES, 'UTF-8') ?>">Request a Quote</a>
+    <?= twins_brand_hero_art('truck', $experience, 'team') ?>
   </section>
 
   <section class="twins-brand-team-crew-members" aria-labelledby="twins-brand-crew-members-title">
