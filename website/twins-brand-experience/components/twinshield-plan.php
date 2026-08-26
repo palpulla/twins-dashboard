@@ -68,7 +68,7 @@ function twins_brand_twinshield_assert(array $program): void
 {
     $required = [
         'kicker', 'heading', 'deck', 'term', 'sharedLabel', 'billingNote', 'sharedBenefit',
-        'creditHeading', 'creditDeck', 'creditRules', 'limitsHeading', 'limitations',
+        'creditHeading', 'creditRules', 'limitsHeading', 'limitations',
         'compareHeading', 'compareAxes', 'tiers',
     ];
     $keys = array_keys($program);
@@ -80,7 +80,7 @@ function twins_brand_twinshield_assert(array $program): void
     }
     foreach ([
         'kicker', 'heading', 'deck', 'term', 'sharedLabel', 'billingNote', 'sharedBenefit',
-        'creditHeading', 'creditDeck', 'creditRules', 'limitsHeading', 'compareHeading',
+        'creditHeading', 'creditRules', 'limitsHeading', 'compareHeading',
     ] as $field) {
         if (!is_string($program[$field]) || trim($program[$field]) === '' || strlen($program[$field]) > 600) {
             throw new DomainException('A TwinShield program field is invalid: ' . $field);
@@ -330,13 +330,14 @@ function twins_brand_twinshield_section(array $program, string $contactHref): st
     $markup .= '</tbody></table>';
     $markup .= '</div></div>';
 
-    // The credit rules. The rates, the ceilings and the worked examples are on
-    // the cards and in the comparison table; repeating all three a third time
-    // here as a callout row was the block's own filler. What only this block
-    // can say is what governs the credit, so that is all it says.
+    // The credit rules. The rate, the ceiling and the worked example are on the
+    // card and in the comparison table; repeating all three a third time here
+    // as a callout row was this block's own filler, and a lead-in sentence
+    // about what the credit buys only restated the rules' own first sentence.
+    // What nothing else says is what governs the credit, so that is all this
+    // block says.
     $markup .= '<div class="twins-brand-twinshield-credit">';
     $markup .= '<h3 id="twins-brand-twinshield-credit-title">' . $escape($program['creditHeading']) . '</h3>';
-    $markup .= '<p class="twins-brand-twinshield-credit-deck">' . $escape($program['creditDeck']) . '</p>';
     $markup .= '<p class="twins-brand-twinshield-credit-rules">' . $escape($program['creditRules']) . '</p>';
     $markup .= '</div>';
 

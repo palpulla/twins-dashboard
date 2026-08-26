@@ -5448,16 +5448,9 @@ body.twins-brand-experience .twins-brand-twinshield-table :is(th, td).twins-bran
 }
 
 /* --- the equipment credit ----------------------------------------------- */
-body.twins-brand-experience .twins-brand-twinshield-credit-deck {
-  max-width: var(--twins-measure);
-  margin: 0 0 24px;
-  color: var(--twins-l10-slate);
-  font-size: 1.05rem;
-  line-height: var(--twins-l10-leading);
-}
 body.twins-brand-experience .twins-brand-twinshield-credit-rules {
   max-width: var(--twins-measure);
-  margin: 22px 0 0;
+  margin: 0;
   color: var(--twins-l10-slate);
   font-size: .95rem;
   line-height: var(--twins-l10-leading);

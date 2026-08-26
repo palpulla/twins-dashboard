@@ -45,7 +45,6 @@ return [
         'billingNote' => 'Monthly billing is a payment option for the full 12-month term, not a cancel-anytime membership.',
         'sharedBenefit' => '10% off the qualifying repair on the job where this new membership is purchased.',
         'creditHeading' => 'The equipment credit',
-        'creditDeck' => 'Every payment builds credit toward new garage-door or opener equipment. Each card above states what its tier earns over a full term.',
         'creditRules' => 'Credit applies toward qualifying new garage-door or opener equipment. Failed, reversed, refunded, or charged-back payments do not earn credit. Credit already used is deducted. The Twins Garage Doors office must verify the exact balance before it is promised or applied.',
         'limitsHeading' => 'What TwinShield is, and what it is not',
         'limitations' => [
