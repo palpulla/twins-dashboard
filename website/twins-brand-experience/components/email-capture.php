@@ -57,7 +57,7 @@ if ($environment === 'production') {
 ?>
 <div class="twins-popup" data-twins-popup data-popup-rendered-at="<?= (int) time() ?>"<?= $twinsPopupEndpoint !== null ? ' data-popup-endpoint="' . htmlspecialchars($twinsPopupEndpoint, ENT_QUOTES, 'UTF-8') . '"' : '' ?> hidden>
   <div class="twins-popup-dialog" role="dialog" aria-modal="true" aria-labelledby="twins-popup-title" data-popup-dialog>
-    <button type="button" class="twins-popup-close" data-popup-close aria-label="Close">&times;</button>
+    <button type="button" class="twins-popup-close" data-popup-close aria-label="Close"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M5 5 L19 19 M19 5 L5 19" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"/></svg></button>
     <div class="twins-popup-art" aria-hidden="true">
       <img src="<?= htmlspecialchars($experience->asset('twin-right'), ENT_QUOTES, 'UTF-8') ?>" width="297" height="538" alt="" loading="lazy" decoding="async">
     </div>

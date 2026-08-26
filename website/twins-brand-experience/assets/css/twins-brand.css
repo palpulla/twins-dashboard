@@ -5786,6 +5786,23 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-card > a::after { c
   cursor: pointer;
 }
 .twins-popup-close:is(:hover, :focus-visible) { background: var(--twins-cream); }
+/* The dialog is injected into a WordPress page whose theme also styles bare
+   <button>s, and on staging the close glyph rendered invisible (owner report
+   2026-08-26: "x should be in black to exit this popoup"). Two defences: the
+   glyph is an inline SVG stroked with currentColor rather than a font
+   character, and the colour is restated at body-scope specificity so a theme
+   rule cannot repaint it. Near-black rather than navy so it reads as a close
+   control, not as brand furniture. */
+body.twins-brand-experience .twins-popup-close {
+  color: #0B1220;
+  background: var(--twins-white);
+  border-color: rgba(7, 28, 56, .55);
+}
+body.twins-brand-experience .twins-popup-close svg { display: block; }
+body.twins-brand-experience .twins-popup-close:is(:hover, :focus-visible) {
+  color: #000;
+  background: var(--twins-cream);
+}
 .twins-popup-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 @media (max-width: 700px) {
   .twins-popup { align-items: flex-end; padding: 0; }
