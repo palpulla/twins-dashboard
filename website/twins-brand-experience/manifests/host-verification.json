@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "remoteDirectory": "/home/customer/staging-safety/staging-remediation-r41-20260824/verification/",
+  "remoteDirectory": "/home/customer/staging-safety/staging-remediation-r42-20260825/verification/",
   "productionWriteAuthority": false,
   "files": [
     {
@@ -228,8 +228,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/assets/css/twins-brand.css",
-      "size": 244864,
-      "sha256": "310523bd1279f37a4f99daef6a3b1c4d377b400f8f7ff3b5a1148a2d6ae1d704"
+      "size": 259605,
+      "sha256": "ff3f8eafba15f0c399173ee7e45ab6550541c4af13a90e73b170dbbaa0f3d9a3"
     },
     {
       "role": "verify",
@@ -312,8 +312,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/components/nav-data.php",
-      "size": 12778,
-      "sha256": "dd6cdf19f96e0db560fd6aa6f07cf700728e9a48228c267cfb1577362e4c9df5"
+      "size": 12776,
+      "sha256": "d76942a84060168ede4b62c08f06772dbbf1e0fb48319db647b536dcbc78fd88"
     },
     {
       "role": "verify",
@@ -347,6 +347,12 @@
     },
     {
       "role": "verify",
+      "source": "twins-brand-experience/components/twinshield-plan.php",
+      "size": 16864,
+      "sha256": "6e34e387e5ff1a06452248d2894a6773f1bf4eb9a8f4fc406ac97655c0f40c25"
+    },
+    {
+      "role": "verify",
       "source": "twins-brand-experience/config/location-content.php",
       "size": 144563,
       "sha256": "792de84e9e7a058e53e6688070c7421d09e987b8264671df02688d7390f01324"
@@ -360,8 +366,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/config/page-content.php",
-      "size": 69786,
-      "sha256": "0d8b0c90dc9b025a458df6bf4fb8cab9b644701d276145dc457d89d5e4063d63"
+      "size": 69816,
+      "sha256": "a7077dcde581f0b5d84b7728030db4a959777a742bb4ee73d45ec0537a65df9e"
     },
     {
       "role": "verify",
@@ -383,6 +389,12 @@
     },
     {
       "role": "verify",
+      "source": "twins-brand-experience/config/twinshield-program.php",
+      "size": 8566,
+      "sha256": "4cf39538efa5fa813b9b28751e65fe02997fe82fb0ce2819075d70cfb528b921"
+    },
+    {
+      "role": "verify",
       "source": "twins-brand-experience/data/reviews/google-business-reviews-collection-2178.json",
       "size": 46130,
       "sha256": "8bb2b08d284c876c4022a7e2cea8255a9e99b3bad1af965615ef829d4c67737d"
@@ -390,8 +402,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/manifests/staging-runtime.json",
-      "size": 371091,
-      "sha256": "4ff226df100c7f721f5fa312c7958f319cdbc2bc8940609bc2a75da1b25881ac"
+      "size": 371672,
+      "sha256": "c049d45b3b1787281ede0142dbdcce3b0fd685fb5dbcff8f00c1d86406709517"
     },
     {
       "role": "verify",
@@ -474,8 +486,8 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/templates/service.php",
-      "size": 21079,
-      "sha256": "9387427694125e04e599b9c034cdcb11f4ad35630c6c2bcff2dc2da0c76e2e95"
+      "size": 21819,
+      "sha256": "91ab91d39565025d9ea3702f07a75bf8bf04b808354f425f8d5e6ba786bda5e7"
     },
     {
       "role": "verify",
@@ -582,14 +594,14 @@
     {
       "role": "verify",
       "source": "twins-brand-experience/tests/php/service-page-harness.php",
-      "size": 9663,
-      "sha256": "215d2fef1d4b0559850663c07745f1f5e9a5ad63cdbabbd07f948b69bba2f73b"
+      "size": 15052,
+      "sha256": "0ec989c853337d9752d38495d1beb8125d1f182e861b9830052fa70655ad8ec8"
     },
     {
       "role": "verify",
       "source": "twins-brand-experience/tools/private-staging-deploy.php",
       "size": 69595,
-      "sha256": "d34d9e20d4ecb2a6b8b0b067bbba5aeda9ddd971fe3e37359b46d8b35536f569"
+      "sha256": "762430f660127fa70ede0b029db1af30baa1cce839326c590f343960641ee23c"
     }
   ]
 }
