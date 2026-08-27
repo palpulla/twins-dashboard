@@ -5756,6 +5756,36 @@ body.twins-brand-experience .twins-brand-home-offer > span[aria-hidden="true"] {
   body.twins-brand-experience .twins-brand-page .twins-brand-service-copy h3 {
     hyphens: manual;
   }
+
+  /* THE TWO UPPERCASE HEADINGS THIS RULE STILL BREAKS RAW. The note above is
+     right that `overflow-wrap: anywhere` only breaks a word that would
+     otherwise overflow, and right that Chrome will not hyphenate what
+     `text-transform: uppercase` produced. Put together, on an uppercase
+     heading whose longest word is wider than its column this rule can only
+     ever produce a raw mid-word split -- and the note's own reason for leaving
+     the location pages alone ("not renderable through the portable preview
+     harness") is why two of them shipped. Rendered at 320 through the full
+     family preview, the 264px column carried:
+
+       .twins-location-local-proof-copy h2   HOMEOWNER / S.      (35 city pages)
+       catalog gallery h2                    MANUFACTUR / ER
+
+     Both are the "WEATHERSTRI / PPING" defect exactly, on families the
+     2026-08-27 sweep did not render. The remedy is the same size step, with
+     the same derivation: column divided by the width in ems of the longest
+     word the scope actually sets, plus about 2% slack. "HOMEOWNERS." is 6.88em
+     and is fixed copy in that heading, so 7.02; "MANUFACTURER" is 7.28em and
+     is the longest word in any catalog section heading, so 7.43. Both are
+     min(), both are inside this 360px block because that is the only place
+     either word fails to fit -- at 360 the column is 304px and both already
+     fit, so no ordinary phone width moves. `overflow-wrap: anywhere` stays
+     underneath as the no-horizontal-scroll net. */
+  body.twins-brand-experience .twins-location-page .twins-location-local-proof-copy h2 {
+    font-size: min(2.55rem, calc((100vw - 2 * var(--twins-shell-gutter)) / 7.02));
+  }
+  body.twins-brand-experience .twins-brand-catalog-page .twins-brand-section-heading h2 {
+    font-size: min(2.5rem, calc((100vw - 2 * var(--twins-shell-gutter)) / 7.43));
+  }
 }
 
 /* 3. Two colour pairs that were never readable, both caused by a rule losing the

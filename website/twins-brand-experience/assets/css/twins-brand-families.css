@@ -2079,8 +2079,27 @@ body.twins-brand-route-catalog-preserve .twins-brand-catalog-preview-notice {
     padding: 52px var(--twins-content-shell);
   }
 
+  /* THE CATALOG HERO SPILLED ITS GUTTER, and no sweep had caught it because
+     the two product titles that do it were never rendered. The 14vw ramp is
+     sized for the overview heading ("COLLECTIONS", 5.99em of Lilita One
+     uppercase); the catalog also sets product titles, and "BRIDGEPORT™"
+     (6.50em) and "VERTISTACK®" (6.22em) are longer. This h1 declares
+     `overflow-wrap: normal; word-break: keep-all`, so the word cannot break:
+     measured on /clopay-bridgeport-steel/ it ran to 361px inside a 334px box
+     at 390, ending 12px from the screen edge with a 28px gutter declared. The
+     page did not scroll -- the spill lands in the hero's own padding -- so the
+     geometry sweep passed it, and it is a container-contract break all the
+     same. It overflows at every width from 320 to 520.
+
+     Same device as the service and page heroes further down twins-brand.css: a
+     min() cap whose denominator is the width, in ems, of the longest word the
+     family actually sets, plus about 2% of slack. 6.50em for "BRIDGEPORT™",
+     so 6.64. Hyphenated titles ("ULTRA-GRAIN®") are not counted: they have a
+     break opportunity and taking it is correct typography. min(), so the cap
+     can only shrink the heading, and only where the word does not fit; it
+     starts biting at 537px and every wider layout is byte-identical. */
   body.twins-brand-route-catalog-preserve .twins-brand-catalog-hero h1 {
-    font-size: clamp(2.6rem, 14vw, 4.4rem);
+    font-size: min(clamp(2.6rem, 14vw, 4.4rem), calc((100vw - 2 * var(--twins-shell-gutter)) / 6.64));
   }
 
   body.twins-brand-route-catalog-preserve .twins-brand-catalog-actions {
