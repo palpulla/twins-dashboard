@@ -2041,7 +2041,6 @@ function twins_overhaul_seo_service_descriptions(): array {
         '/garage-door-tune-up/' => 'The $49 garage door tune-up: a full inspection and lubrication of the whole system so small problems get caught before they strand you.',
         '/maintenance-plans/' => '$49 garage door tune-ups and TwinShield maintenance membership. Full inspection and lubrication on a schedule so small problems stay small.',
         '/property-management-services/' => 'Garage door repair and maintenance for property managers, HOAs, and landlords. One vendor, flat quotes to your approver, same-day emergency response.',
-        '/protection-plans/' => 'TwinShield is our 12-month garage door membership: tune-ups, repair savings, and equipment credit in three tiers. See the rates and what each tier includes.',
     );
 }
 
@@ -2472,6 +2471,7 @@ function twins_overhaul_register_frontend_hooks(): void {
     add_filter('template_include', 'twins_overhaul_filter_branded_template', PHP_INT_MAX, 1);
     add_filter('pre_get_document_title', 'twins_overhaul_filter_document_title', PHP_INT_MAX, 1);
     add_action('template_redirect', 'twins_overhaul_redirect_retired_ky_market', 0, 0);
+    add_action('template_redirect', 'twins_overhaul_redirect_retired_plan_page', 0, 0);
     add_action('wp_head', 'twins_overhaul_output_local_font_sentinel', 1, 0);
     add_action('wp_head', 'twins_overhaul_output_home_font_preloads', 2, 0);
     add_action('wp_head', 'twins_overhaul_output_home_hero_preload', 2, 0);
@@ -2497,5 +2497,86 @@ function twins_overhaul_redirect_retired_ky_market(): void {
     }
     $home = network_home_url('/');
     wp_safe_redirect($home, 301, 'twins-ky-retired');
+    exit;
+}
+
+/**
+ * /protection-plans/ is retired into /maintenance-plans/ (owner decision,
+ * 2026-08-27). Both pages were titled "TwinShield Protection Plan" and carried
+ * near-identical H2 sets; /maintenance-plans/ keeps its URL because
+ * "maintenance plans" is the phrase people search, and it is the page that
+ * carries the real program from config/twinshield-program.php. The retired
+ * page's own tier list was a paraphrase of a subset of the same figures, so
+ * nothing is lost by sending every one of its market copies here.
+ *
+ * This lives in the overhaul package, NOT in the legacy map in
+ * twins-staging-safety.php where the older, now-backwards mapping sits. That
+ * plugin is a deploy verify-prerequisite: the manifests carry it with role
+ * "verify-prerequisite" rather than "deploy", and ce035720 reverted an edit to
+ * it for exactly this reason ("the fail-closed safety plugin ships untouched,
+ * pipeline forbids it by design"). A retirement written there could not reach
+ * the host through a release. renderers.php is role "deploy", and this is
+ * where the site's other permanent retirement already lives.
+ *
+ * NO LOOPS, traced per market:
+ *   blog 1  /protection-plans/      -> /maintenance-plans/   (1 hop, same blog)
+ *   blog 4  /wi/protection-plans/   -> /maintenance-plans/   (1 hop, cross-blog
+ *           via network_home_url, which resolves against the main site)
+ *   blog 5  /il/protection-plans/   -> /maintenance-plans/   (1 hop, cross-blog)
+ *   blog 3  /ky/protection-plans/   -> not handled here on purpose. Kentucky is
+ *           retired and twins_overhaul_redirect_retired_ky_market() above sends
+ *           every blog-3 front-end request to '/'. Claiming the path here would
+ *           re-open a retired market's URL, so this function bails on blog 3
+ *           explicitly rather than relying on hook registration order.
+ * The destination /maintenance-plans/ is a real published page on blog 1 and is
+ * not a source of any redirect: not of this one, not of the legacy map in
+ * twins-staging-safety.php (whose only plan entry, '/wi/maintenance-plans/',
+ * is a source and not a target), and not of Rank Math (redirect-plan.md
+ * Finding 2: no Rank Math source equals a new-registry URL). So the target set
+ * is one element, disjoint from every source set, which is what makes a cycle
+ * impossible rather than merely unobserved.
+ *
+ * One pre-existing chain survives and is a cutover action, not a loop: the
+ * legacy map still resolves '/wi/maintenance-plans/' (a path that has never
+ * existed as a page) to '/wi/protection-plans/', which this function then
+ * resolves to '/maintenance-plans/'. Two hops, terminating on the canonical
+ * page. Collapsing it to one needs an edit to the host copy of the safety
+ * plugin, which the release pipeline forbids.
+ *
+ * Runs at template_redirect priority 0, ahead of WordPress core's
+ * redirect_canonical() at 10, so redirect_guess_404_permalink() never gets to
+ * guess a slug for a path whose backing page may or may not exist. The portable
+ * PageContentRegistry has already dropped the path from BESPOKE_PATHS and
+ * FALLBACK_TITLES, and routes.php no longer classifies the slug as a service,
+ * so nothing downstream can render it either.
+ *
+ * @return void
+ */
+function twins_overhaul_redirect_retired_plan_page(): void {
+    if (is_admin() || wp_doing_ajax() || (defined('REST_REQUEST') && REST_REQUEST)) {
+        return;
+    }
+    if (is_multisite() && get_current_blog_id() === 3) {
+        return;
+    }
+
+    $requestUri = isset($_SERVER['REQUEST_URI']) ? wp_unslash($_SERVER['REQUEST_URI']) : '';
+    $path = wp_parse_url($requestUri, PHP_URL_PATH);
+    if (!is_string($path) || $path === '') {
+        return;
+    }
+    $normalized = '/' . trim($path, '/') . '/';
+
+    $retired = array(
+        '/protection-plans/' => true,
+        '/wi/protection-plans/' => true,
+        '/il/protection-plans/' => true,
+    );
+    if (!isset($retired[$normalized])) {
+        return;
+    }
+
+    nocache_headers();
+    wp_safe_redirect(network_home_url('/maintenance-plans/'), 301, 'twins-plan-page-retired');
     exit;
 }

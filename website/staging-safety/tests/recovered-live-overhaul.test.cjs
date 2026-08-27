@@ -247,6 +247,65 @@ test('fixed routing preserves campaign work while branding Careers and retaining
   assert.equal((data.match(/twins_overhaul_navigation_item\(['"]Careers['"],\s*['"]\/careers\/['"]\)/g) || []).length, 4);
 });
 
+test('the retired plan page resolves to the canonical one on every market, in one hop, with no cycle', () => {
+  const safety = read(SAFETY);
+  const routes = read(`${PACKAGE}/routes.php`);
+  const renderers = read(`${PACKAGE}/renderers.php`);
+  const legacyMap = functionBody(safety, 'twins_staging_safety_legacy_redirect_path');
+  const classify = functionBody(routes, 'twins_overhaul_classify_request');
+  const retire = functionBody(renderers, 'twins_overhaul_redirect_retired_plan_page');
+
+  // Owner decision 2026-08-27: /maintenance-plans/ is canonical and keeps its
+  // URL; /protection-plans/ is retired into it.
+  //
+  // The redirect lives in the overhaul package, not in the legacy map in
+  // twins-staging-safety.php. That plugin carries manifest role
+  // "verify-prerequisite", not "deploy", and ce035720 reverted an edit to it on
+  // exactly that ground, so a retirement written there could never reach the
+  // host through a release. renderers.php is role "deploy" and already owns the
+  // site's other permanent retirement.
+  assert.ok(
+    !legacyMap.includes("'/protection-plans/' =>") && !legacyMap.includes("'/il/protection-plans/' =>"),
+    'the retirement was written into the plugin the release pipeline refuses to ship',
+  );
+
+  // Every market copy that can be reached resolves to the one canonical page.
+  for (const retired of ['/protection-plans/', '/wi/protection-plans/', '/il/protection-plans/']) {
+    assert.match(retire, new RegExp(`'${retired.replaceAll('/', '\\/')}'\\s*=>\\s*true`), `${retired} is not retired`);
+  }
+  assert.match(retire, /network_home_url\('\/maintenance-plans\/'\)/, 'the target must resolve against the main site, not the current blog');
+  assert.match(retire, /wp_safe_redirect\([\s\S]*?,\s*301,/, 'a retirement is permanent');
+  assert.match(renderers, /add_action\('template_redirect',\s*'twins_overhaul_redirect_retired_plan_page',\s*0,\s*0\)/);
+
+  // Kentucky is excluded on purpose: blog 3 is a retired market whose every
+  // front-end request already goes to '/'. Claiming a KY plan path here would
+  // re-open it, so the bail is explicit rather than dependent on hook order.
+  assert.match(retire, /get_current_blog_id\(\)\s*===\s*3/, 'the KY bail must not rely on hook registration order');
+  assert.ok(!retire.includes("'/ky/protection-plans/'"), 'KY plan paths belong to the retired-market redirect');
+
+  // NO CYCLE. The target set is a single element; prove it is a source of
+  // nothing, in either redirect mechanism.
+  const legacyPairs = [...legacyMap.matchAll(/'(\/[^']*)'\s*=>\s*'(\/[^']*)'/g)].map(m => [m[1], m[2]]);
+  assert.ok(legacyPairs.length >= 15, 'the legacy redirect table was not parsed');
+  const everySource = new Set([
+    ...legacyPairs.map(([from]) => from),
+    ...[...retire.matchAll(/'(\/[^']*)'\s*=>\s*true/g)].map(m => m[1]),
+  ]);
+  assert.ok(!everySource.has('/maintenance-plans/'), 'the canonical page is itself redirected, which is a cycle');
+  assert.ok(!'/maintenance-plans/'.startsWith('/madison/'), 'the canonical page would be caught by the Madison prefix rule');
+
+  // The one surviving chain is documented and terminates: /wi/maintenance-plans/
+  // has never existed as a page, the legacy map (which the pipeline forbids
+  // editing) still sends it to /wi/protection-plans/, and this retirement then
+  // sends that to the canonical page. Two hops, no loop.
+  assert.match(legacyMap, /['"]\/wi\/maintenance-plans\/['"]\s*=>\s*['"]\/wi\/protection-plans\/['"]/);
+  assert.ok(everySource.has('/wi/protection-plans/'), 'the surviving chain does not terminate on the canonical page');
+
+  // Nothing downstream can render the retired route either.
+  assert.doesNotMatch(classify, /^\s*'protection-plans',$/m, 'the classifier still treats the retired slug as a service route');
+  assert.match(classify, /^\s*'maintenance-plans',$/m, 'the canonical slug must still classify as a service route');
+});
+
 test('private staging brand bridge is fixed-origin, inert, and isolated behind the unchanged root gates', () => {
   const runtimePath = `${PACKAGE}/brand-runtime.php`;
   const adaptersPath = `${PACKAGE}/adapters/BrandStagingAdapters.php`;

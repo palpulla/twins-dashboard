@@ -239,8 +239,16 @@ function twins_overhaul_classify_request(int $blogId, string $path, string $post
         'garage-door-tune-up',
         'emergency-garage-services',
         'property-management-services',
+        // 'maintenance-plans' is the plan page. 'protection-plans' was retired
+        // into it on 2026-08-27 and is gone from here on purpose. The portable
+        // PageContentRegistry no longer carries that path at all, so leaving
+        // the slug here would classify a retired URL as 'service' and turn it
+        // into a fatal rather than a redirect. In practice the request never
+        // reaches this classifier: twins_overhaul_redirect_retired_plan_page()
+        // exits on template_redirect at priority 0, and classification happens
+        // later, on template_include. Dropping the slug is what makes that safe
+        // by construction instead of by hook order alone.
         'maintenance-plans',
-        'protection-plans',
     );
     foreach ($serviceSlugs as $slug) {
         if (twins_overhaul_matches_terminal_slug($blogId, $path, $slug)) {
