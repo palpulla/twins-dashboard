@@ -1314,12 +1314,20 @@ function twins_overhaul_output_home_font_preloads(): void {
     }
     $rendered = true;
     $base = rtrim(content_url('mu-plugins/twins-brand-experience/assets/fonts'), '/');
-    // Lilita One is the homepage heading face and must load first. Barlow
-    // Condensed remains the fallback and is still used outside the home story.
+    // Lilita One is the homepage heading face and must load first.
+    //
+    // BARLOW CONDENSED WAS PRELOADED AND DOES NOT EXIST. This loop used to
+    // preload barlow-condensed-extrabold.ttf and barlow-condensed-black.ttf
+    // from this same directory. manifests/staging-runtime.json ships exactly
+    // two font files -- lilita-one-regular.woff2 and nunito-variable.woff2 --
+    // and the package's assets/fonts directory holds those two and nothing
+    // else, so both preloads were a guaranteed 404 on every homepage view:
+    // two wasted round trips and two console errors on the busiest page on
+    // the site, at the highest priority the browser has for a subresource.
+    // Barlow Condensed is still named in --twins-font-home-display as a
+    // fallback, which is what a fallback stack is for: a name, resolved
+    // locally if the visitor happens to have it. A preload cannot be that.
     echo '<link rel="preload" href="' . esc_url($base . '/lilita-one-regular.woff2') . '" as="font" type="font/woff2" crossorigin>';
-    foreach (array('barlow-condensed-extrabold.ttf', 'barlow-condensed-black.ttf') as $file) {
-        echo '<link rel="preload" href="' . esc_url($base . '/' . $file) . '" as="font" type="font/ttf" crossorigin>';
-    }
 }
 
 /**
