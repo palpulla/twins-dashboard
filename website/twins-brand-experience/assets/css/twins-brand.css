@@ -6279,3 +6279,33 @@ body.twins-brand-experience .twins-brand-service-cost-figure .twins-brand-servic
 body.twins-brand-experience .twins-brand-location-index .twins-brand-market-grid {
   grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
 }
+
+/* --- One word that was wider than a phone -------------------------------- */
+/* Found by the geometry sweep, and pre-existing: /garage-weatherstripping-repair/
+   scrolled sideways at 390 (477px of document in a 390px viewport) on the
+   release before this branch too. The display h1 sets `overflow-wrap: normal`
+   with `hyphens: auto`, and "Weatherstripping" is 449px of Lilita One at the
+   48px this clamp lands on at 390 - wider than the whole column - so with no
+   hyphenation dictionary in play there is nowhere for it to go.
+
+   The fix is scoped to phone widths and to the display headings only: below
+   700px a word that cannot fit its column is allowed to break rather than push
+   the page sideways. Desktop typography is untouched, and so is every heading
+   whose longest word already fits, which is all of them but this one.
+
+   `anywhere`, not `break-word`, and that distinction is the whole fix. Both
+   break the same glyphs, but only `anywhere` is allowed to shrink the box's
+   min-content size. The heading sits in a grid item whose automatic minimum is
+   min-content, so under `break-word` the column was still sized to the unbroken
+   449px word and the page kept scrolling with the break rule applied. */
+@media (max-width: 700px) {
+  body.twins-brand-experience :is(
+    .twins-brand-service-hero,
+    .twins-brand-editorial-hero,
+    .twins-brand-page-hero,
+    .twins-brand-blog-hero,
+    .twins-brand-careers-hero
+  ) h1 {
+    overflow-wrap: anywhere;
+  }
+}
