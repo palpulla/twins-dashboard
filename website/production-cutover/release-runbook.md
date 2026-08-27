@@ -49,11 +49,16 @@ and the build sequence. Summary:
       301 the once-published ones → `/blog/`. Required, not optional —
       `redirect_guess` is ON (redirect-plan standing caveat), so a pruned URL
       without a 301 gets guessed to a wrong slug.
-- [ ] Create the 3 missing service-page WP pages so they render instead of
-      breaking: `/garage-door-repair/`, `/garage-door-tune-up/`,
-      `/protection-plans/`. Finding 1 was a missing-page permalink guess, NOT a
-      WPCode shim (see redirect-plan.md correction) — creating the pages is the
-      fix; no shim retirement needed.
+- [ ] Create the 2 missing service-page WP pages so they render instead of
+      breaking: `/garage-door-repair/` and `/garage-door-tune-up/`. Finding 1
+      was a missing-page permalink guess, NOT a WPCode shim (see
+      redirect-plan.md correction) — creating the pages is the fix; no shim
+      retirement needed.
+- [ ] Do NOT create `/protection-plans/`. It was the third page on this list
+      until 2026-08-27, when it was retired into `/maintenance-plans/`; it now
+      takes the Finding 4 redirect instead, and a backing page would re-create
+      the duplicate the retirement removed. `/maintenance-plans/` must exist and
+      must NOT redirect.
 - [ ] Remove OTTO / Search Atlas per `otto-removal-runbook.md` (delete the
       plugin, revoke Search Atlas, clean residue) so its client-side overlay
       does not override the new site's titles/meta/schema/redirects.

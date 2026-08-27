@@ -99,9 +99,11 @@ Check only when every box in A–D is green:
 On GO, the ordered execution (from the runbooks, all owner-authorized) is:
 1. Host inventory → generate `production-runtime.json`; apply the un-seal; build
    the production package; `check:packages`.
-2. On production: create the 3 service pages (`/garage-door-repair/`,
-   `/garage-door-tune-up/`, `/protection-plans/`), execute redirect Findings 3/4,
-   remove OTTO.
+2. On production: create the 2 service pages (`/garage-door-repair/`,
+   `/garage-door-tune-up/`), execute redirect Findings 3/4, remove OTTO.
+   `/protection-plans/` was the third of these until 2026-08-27, when it was
+   retired into `/maintenance-plans/`. Do NOT create it: it now needs the
+   Finding 4 redirect, and a backing page would re-create the duplicate.
 3. Deploy the production package (production transaction); flush cache.
 4. Immediate verification (release-runbook step 5); watch week one.
 

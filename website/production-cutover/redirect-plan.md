@@ -108,6 +108,37 @@ point it at `/ky/garage-door-repair/`. Indianapolis sources point at
 | Pruned blog posts (69 — see `blog-prune-list.md`) | `/blog/` | Demoted during revamp; 16 off-topic + 2 junk + 51 superseded |
 | `/madison-garage-door-repair/` | keep as-is | Live SEO page; do NOT redirect (campaign-preserve) |
 | Off-topic blog posts (HVAC, paint, energy, etc.) | `/blog/` | Now enumerated in `blog-prune-list.md` (the 16 off-topic of the 69); no longer a separate pending item |
+| `/protection-plans/` (+ `/wi/`, `/il/` copies) | `/maintenance-plans/` | Owner decision 2026-08-27: the TwinShield duplicate is retired, `/maintenance-plans/` is canonical and keeps its URL. Staging already 301s these in `twins_overhaul_redirect_retired_plan_page()`; production needs the same. **Do NOT redirect `/maintenance-plans/`** — it is the target |
+| `/wi/maintenance-plans/` | `/maintenance-plans/` | Chain to collapse, see the note below. Currently two hops on staging |
+
+### Note: the retired plan page, and the one chain that survives
+
+`/protection-plans/` was retired into `/maintenance-plans/` on 2026-08-27
+(page 7725 on blog 1, plus the `/wi/` and `/il/` copies). Both pages were
+titled "TwinShield Protection Plan"; the retired one carried a paraphrased
+subset of the same program figures, so nothing of value moved.
+
+On staging the redirect lives in the overhaul package
+(`twins_overhaul_redirect_retired_plan_page()` in `renderers.php`,
+`template_redirect` priority 0, 301, target resolved through
+`network_home_url()` so the WI and IL copies reach the main-site page).
+Kentucky is excluded on purpose: blog 3 is a retired market and every
+front-end request there already 301s to `/`.
+
+One chain survives on staging and should NOT be reproduced in production. The
+legacy map in `twins-staging-safety.php` still resolves
+`/wi/maintenance-plans/` (a path that has never existed as a page) to
+`/wi/protection-plans/`, which the retirement then resolves to
+`/maintenance-plans/`. Two hops, terminating correctly. It was not collapsed
+because that plugin is a deploy **verify-prerequisite**, not a deployed file
+(see `ce035720`), so the fix is a manual host edit rather than a release. In
+production, point `/wi/maintenance-plans/` straight at `/maintenance-plans/`.
+
+Cutover check for this route, per the standing caveat: `/protection-plans/`,
+`/wi/protection-plans/` and `/il/protection-plans/` must each land on
+`/maintenance-plans/` in exactly one hop, and `/maintenance-plans/` itself must
+return 200 with no redirect at all. A 200 on a retired plan URL means the
+redirect did not fire and the 404 guess did.
 
 ## Finding 5: keep-list
 
@@ -120,10 +151,14 @@ product redirects carry live hits; keep.
 1. Update the chain targets (Finding 3) in Rank Math.
 2. Add the new redirects (Finding 4), including the pruned blog posts
    (`blog-prune-list.md`).
-3. Create the 3 missing service pages — `/garage-door-repair/`,
-   `/garage-door-tune-up/`, `/protection-plans/` — so they render instead of
-   being guessed elsewhere (Finding 1 was a missing page, NOT a WPCode shim; no
-   shim retirement is needed).
+3. Create the 2 missing service pages — `/garage-door-repair/` and
+   `/garage-door-tune-up/` — so they render instead of being guessed elsewhere
+   (Finding 1 was a missing page, NOT a WPCode shim; no shim retirement is
+   needed). `/protection-plans/` was the third of these and is no longer
+   created: it was retired into `/maintenance-plans/` on 2026-08-27, so it
+   needs the Finding 4 redirect instead of a backing page. A backing page there
+   would re-create the duplicate. `/maintenance-plans/` must exist and must not
+   redirect.
 4. Crawl every source, every retired/pruned URL, and every new-registry URL:
    assert exactly one hop to the INTENDED target, no loops, no 404s. Per the
    standing caveat, a 200 or an unexpected target on a retired URL is a failure —
