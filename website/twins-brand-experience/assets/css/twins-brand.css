@@ -5693,6 +5693,42 @@ body.twins-brand-experience .twins-brand-home-offer > span[aria-hidden="true"] {
     overflow-wrap: anywhere;
     hyphens: auto;
   }
+  /* THE ONE MID-WORD BREAK THE 2026-08-27 SWEEP LEFT. At 320 the homepage
+     showcase panel read "Springs, ca- / bles, rollers," -- a hyphenated split
+     in a 34px display heading.
+
+     It is NOT the overflow case the rule above was written for. That rule's
+     own note is right that `overflow-wrap` only breaks a word which would
+     otherwise overflow, but `hyphens: auto` has no such condition, and
+     `:where(h1, h2, h3) { text-wrap: balance }` (line 282) asks the browser to
+     even the ragged edge. Balance plus auto-hyphenation is free to hyphenate a
+     word that fits perfectly well, and that is what happened here.
+
+     Measured at 320 and at 360, across the nine rendered pages and every
+     h1/h2/h3, the number of display words wider than their own box is ZERO,
+     and inside this component the widest word is "Wisconsin" at 154px in a
+     216px box. So nothing here needs a hyphen to fit, and `hyphens: manual`
+     costs nothing: the uppercase heroes are unaffected either way, because
+     Chrome does not hyphenate text that `text-transform: uppercase` produced
+     (measured -- see the size-step note further down this file).
+
+     Scoped to this component rather than applied to the rule above on purpose.
+     The rule above also protects the location pages, whose "HOMEOWNERS."
+     min-content overflow is what motivated it, and those pages are not
+     renderable through the portable preview harness. `overflow-wrap: anywhere`
+     stays inherited here as the hard no-horizontal-scroll net.
+
+     `.twins-brand-page` IS LOAD-BEARING IN THIS SELECTOR, and it is not
+     decoration. `:is()` takes the specificity of its MOST specific argument,
+     and the rule above lists `.twins-location-proof-list li span`, so that
+     rule scores (0,2,3) -- not the (0,1,2) its `h3` argument suggests. The
+     obvious `body.twins-brand-experience .twins-brand-service-copy h3` is
+     (0,2,2) and silently loses; it was written that way first and measured
+     computing `hyphens: auto` anyway. The wrapper class carries this to
+     (0,3,2). Do not "simplify" it back. */
+  body.twins-brand-experience .twins-brand-page .twins-brand-service-copy h3 {
+    hyphens: manual;
+  }
 }
 
 /* 3. Two colour pairs that were never readable, both caused by a rule losing the
