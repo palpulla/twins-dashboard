@@ -4139,16 +4139,49 @@ body.twins-brand-experience .twins-brand-review-proof .twins-brand-kicker {
     var(--twins-stile-dark),
     repeating-linear-gradient(180deg, rgba(255,255,255,.028) 0 1px, transparent 1px 44px);
 }
+/* THE ONE BAND ON THE SITE WHOSE GROUND PAINTED NOTHING, and the cause is
+   layer order, not alpha. This rule always declared the full door -- a seam,
+   the light leaking under a shut door, a 230px stile and a 44px steel course.
+   It just declared the OPAQUE base gradient as background layer 3, and in CSS
+   the first background-image is the topmost, so an opaque slab sat directly on
+   top of the stile and the course and hid both completely.
+
+   Measured on the rendered band with every child hidden, sampling one row
+   across the full 1440: the family's own CLOSING band
+   (.twins-brand-final-cta on a service page, same five layers, same alphas)
+   shows its stiles at x = 230, 460, 691, 921, 1152 and 1382, delta ~16 of 255,
+   and its 44px courses down the column. This band showed ZERO marks on the row
+   and a luminance range of 11 -- a bare vertical gradient. At 4x contrast boost
+   it is still bare. The difference between the two rules is one layer: the
+   family band's third layer is the translucent --twins-steel-wash; this one's
+   was opaque.
+
+   The fix moves the base to the BOTTOM of the stack and changes nothing else.
+   No colour moves: the base gradient is the same three stops in the same
+   places, so the band's ramp is identical, and the stile and course now paint
+   over it at exactly the alphas the vocabulary already specified -- the same
+   ones the service band has been shipping.
+
+   DELIBERATELY NOT APPLIED TO THE OTHER FOUR HOME NAVY SCENES, which have the
+   same buried-door bug. Rendered with the fix, company-story and review-proof
+   would carry a 230px stile and a 44px course over the 72px gold graph grid
+   their ::before already paints, and service-showcase and why-scene would
+   carry them over a 135-degree hatch: three overlapping patterns, which is
+   busy, and neither the grid nor the hatch is door vocabulary. That is a
+   homepage design decision about which pattern wins, not a layer-order bug,
+   and it is written up rather than taken here. This scene is the only one of
+   the five with no ::before pattern at all, so revealing its own door is the
+   whole texture rather than a third layer on top of two. */
 .twins-brand-home .twins-brand-closing-scene {          /* darkest, with light leaking under a shut door */
-  background-repeat: no-repeat, no-repeat, no-repeat, repeat, repeat;
-  background-size: 100% 6px, 100% 4px, 100% 100%, var(--twins-stile) 100%, 100% 44px;
+  background-repeat: no-repeat, no-repeat, repeat, repeat, no-repeat;
+  background-size: 100% 6px, 100% 4px, var(--twins-stile) 100%, 100% 44px, 100% 100%;
   background-position: 0 0, 0 100%, 0 0, 0 0, 0 0;
   background-image:
     var(--twins-seam-dark),
     linear-gradient(180deg, rgba(255,198,65,.16) 0 2px, rgba(255,198,65,.06) 2px 4px),
-    linear-gradient(180deg, var(--twins-steel-lo) 0, var(--twins-navy-950) 62%, #061a33 100%),
     var(--twins-stile-dark),
-    repeating-linear-gradient(180deg, rgba(255,255,255,.028) 0 1px, transparent 1px 44px);
+    repeating-linear-gradient(180deg, rgba(255,255,255,.028) 0 1px, transparent 1px 44px),
+    linear-gradient(180deg, var(--twins-steel-lo) 0, var(--twins-navy-950) 62%, #061a33 100%);
 }
 
 /* Layered brand mark behind the two largest navy bands. Good Golly gets its
