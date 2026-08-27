@@ -6446,6 +6446,40 @@ body.twins-brand-experience .twins-brand-location-index .twins-brand-market-grid
    min-content size. The heading sits in a grid item whose automatic minimum is
    min-content, so under `break-word` the column was still sized to the unbroken
    449px word and the page kept scrolling with the break rule applied. */
+/* 2026-08-27. `anywhere` stopped the page scrolling sideways and left a typo
+   on the hero: at 390 the h1 read "WEATHERSTRI / PPING REPAIR", and at 320
+   the reviews h1 read "CUSTOMER / S" with a single letter alone on a line.
+   The note above hoped "hyphens:auto gives the break a hyphen wherever the
+   document declares a language". Measured in this Chromium AND in installed
+   Google Chrome, at lang="en":
+
+     extraordinary      150px box, scrollWidth 150 -> hyphenated
+     EXTRAORDINARY      150px box, scrollWidth 344 -> NOT hyphenated
+     customers          150px box, scrollWidth 150 -> hyphenated
+     CUSTOMERS          150px box, scrollWidth 255 -> NOT hyphenated
+     weatherstripping   150px box, scrollWidth 150 -> hyphenated
+
+   THE FINDING: Chrome does not hyphenate text that `text-transform:
+   uppercase` produced. Every hero h1 in this file is uppercase, so on a hero
+   `overflow-wrap: anywhere` can only ever produce a raw mid-word split. The
+   two homepage display headings the same sweep flagged at 320 -- "Springs,
+   ca-bles" and "The no-sur-prises plan." -- are NOT uppercase, so the browser
+   hyphenated them properly; they are correct typography and are left alone.
+
+   THE FIX IS A SIZE STEP, because for an uppercase heading it is the only one
+   left. The cap is not a taste number: it is the column width divided by the
+   width, in ems, of the longest word the family actually sets. Measured in
+   Lilita One uppercase: "WEATHERSTRIPPING" is 9.355em and "CUSTOMERS" is
+   5.529em, so the denominators are those plus about 2% of slack. The column
+   at these widths is the viewport less two shell gutters, so the cap is
+   written against the container contract rather than a magic constant.
+
+   `min()`, so the cap can only ever make a heading smaller, and only on the
+   widths where the word does not fit: it starts biting at 517px for the
+   service hero and at 350px for the page hero, and every wider phone and
+   tablet renders exactly as it did. `overflow-wrap: anywhere` stays under it
+   as the net that keeps the hard no-horizontal-scroll rule true for content
+   longer than anything measured here. */
 @media (max-width: 700px) {
   body.twins-brand-experience :is(
     .twins-brand-service-hero,
@@ -6455,6 +6489,21 @@ body.twins-brand-experience .twins-brand-location-index .twins-brand-market-grid
     .twins-brand-careers-hero
   ) h1 {
     overflow-wrap: anywhere;
+  }
+  body.twins-brand-experience :is(
+    .twins-brand-service-hero,
+    .twins-brand-editorial-hero
+  ) h1 {
+    font-size: min(3rem, calc((100vw - 2 * var(--twins-shell-gutter)) / 9.55));
+  }
+  body.twins-brand-experience .twins-brand-blog-hero h1 {
+    font-size: min(2.6rem, calc((100vw - 2 * var(--twins-shell-gutter)) / 9.55));
+  }
+  body.twins-brand-experience :is(
+    .twins-brand-page-hero,
+    .twins-brand-careers-hero
+  ) h1 {
+    font-size: min(3.2rem, calc((100vw - 2 * var(--twins-shell-gutter)) / 5.65));
   }
 }
 
