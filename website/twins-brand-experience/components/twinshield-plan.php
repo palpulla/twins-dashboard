@@ -13,9 +13,11 @@ declare(strict_types=1);
  * outside the approved program set throws instead of rendering. A page that
  * has no program record renders exactly as it did before.
  *
- * The thin `plans` block in templates/service.php is untouched and still
- * serves /protection-plans/; this is a second, richer block that only the
- * paths listed in the program config receive.
+ * This is the only plan block on the site. The thin `plans` block in
+ * templates/service.php served /protection-plans/ until that page was retired
+ * into /maintenance-plans/ on 2026-08-27; PageContentRegistry now refuses a
+ * `plans` array on every path, so that branch has no input and this block is
+ * what a reader sees. Only the paths listed in the program config receive it.
  */
 
 /**

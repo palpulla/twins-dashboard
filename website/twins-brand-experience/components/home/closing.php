@@ -5,28 +5,16 @@
     <h2 id="twins-brand-membership-title">TwinShield. The no-surprises plan.</h2>
     <p>Wisconsin is hard on garage doors. Springs snap on the coldest morning of the year, and openers quit the week you need them most. TwinShield is our maintenance membership: a trained tech inspects, lubricates, tightens, and tests your whole system on a schedule, so small problems stay small.</p>
     <?php
-    // DO NOT "swap back" to $homeRoutes['protection-plans']. The note this
-    // replaces said /protection-plans/ did not exist yet and to point here
-    // only until it did. It exists now (production-cutover/page-signoff.md,
-    // page 7725) and swapping would make this CTA WORSE, which is the opposite
-    // of what that note predicted.
+    // /maintenance-plans/ is the plan page. There is no other one to point at.
     //
-    // Verified 2026-08-27 by rendering both paths through the real template
-    // stack: /maintenance-plans/ carries the full TwinShield block from
-    // components/twinshield-plan.php -- the tier row, the comparison table,
-    // the equipment credit and the limitations panel -- because
-    // config/twinshield-program.php registers that path and only that path.
-    // /protection-plans/ gets the thin `plans` list out of templates/service.php
-    // and nothing else. Rendered marker counts: maintenance-plans has 1
-    // twinshield block and 0 thin blocks; protection-plans has 0 and 1.
-    //
-    // So this CTA already points at the better page, the nav item labelled
-    // "Protection Plan" points at the same one, and the duplicate that needs a
-    // decision is /protection-plans/ itself. That decision is not a homepage
-    // edit: the path is pinned in src/PageContentRegistry.php (BESPOKE_PATHS,
-    // FALLBACK_TITLES and MEMBERSHIP_PATH), in three PHP harnesses and one
-    // contract test, in the staging route table for all four markets, and in
-    // the cutover sign-off. See the branch report for the redirect hazard.
+    // There were two until 2026-08-27: /protection-plans/ carried a thin,
+    // paraphrased `plans` list and this page carried the full TwinShield block
+    // from components/twinshield-plan.php. The owner made /maintenance-plans/
+    // canonical (the URL people search) and retired the duplicate, so
+    // $homeRoutes no longer has a 'protection-plans' key to swap back to and
+    // the retired path 302s here from every market. This CTA and the nav item
+    // labelled "Protection Plan" both resolve through the 'maintenance-plans'
+    // route key, which is the only plan route that exists.
     ?>
     <a class="twins-brand-cta" href="<?= htmlspecialchars($homeRoutes['maintenance-plans'], ENT_QUOTES, 'UTF-8') ?>">See Plan Details</a>
   </div>

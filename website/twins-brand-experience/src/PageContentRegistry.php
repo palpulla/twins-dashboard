@@ -40,7 +40,6 @@ final class PageContentRegistry
         '/garage-door-tune-up/',
         '/maintenance-plans/',
         '/property-management-services/',
-        '/protection-plans/',
     ];
 
     private const FALLBACK_TITLES = [
@@ -50,8 +49,7 @@ final class PageContentRegistry
         '/garage-weatherstripping-repair/' => 'Weatherstripping Repair',
         '/garage-door-tune-up/' => 'Garage Door Tune-Up',
         '/property-management-services/' => 'Property Management Services',
-        '/maintenance-plans/' => 'Maintenance Plans',
-        '/protection-plans/' => 'TwinShield Protection Plan',
+        '/maintenance-plans/' => 'TwinShield Protection Plan',
     ];
 
     private const LINK_ROUTES = [
@@ -109,31 +107,6 @@ final class PageContentRegistry
         [3425, 4400],
         [2625, 4400],
         [50, 100],
-    ];
-
-    /**
-     * The membership page is the one page that publishes program rates.
-     * Service prices elsewhere are historical ranges from price-ranges.json;
-     * membership rates are fixed program figures.
-     */
-    private const MEMBERSHIP_PATH = '/protection-plans/';
-
-    /** Exact plan names, permitted as proper nouns rather than claims. */
-    private const MEMBERSHIP_PLAN_NAMES = [
-        'TwinShield Core - Essential Care',
-        'TwinShield Priority - Best Value',
-        'TwinShield Premier - Maximum Care',
-    ];
-
-    /**
-     * Every currency amount the membership page may publish, pinned to the
-     * approved program so a stale or mistyped rate fails closed here instead
-     * of reaching a customer. Tier order: Core, Priority, Premier.
-     */
-    private const MEMBERSHIP_RATES = [
-        '12.99', '149', '155.88', '38.97', '37.25', '150',
-        '18.99', '199', '227.88', '79.76', '69.65', '300',
-        '24.99', '279', '299.88', '149.94', '139.50', '500',
     ];
 
     private array $records;
@@ -262,14 +235,34 @@ final class PageContentRegistry
             throw new \InvalidArgumentException('A safety module is registered outside the fixed tension pages.');
         }
 
-        $publishesRates = $path === self::MEMBERSHIP_PATH;
-        if ($publishesRates) {
-            $this->nestedList($record['plans'], 3, 3, ['option', 'tradeoff'], [
-                'option' => [1, 100],
-                'tradeoff' => [1, 400],
-            ], 'plans');
-        } elseif ($record['plans'] !== null) {
-            throw new \InvalidArgumentException('Plan tiers are registered outside the membership page.');
+        // No page-content record publishes program rates.
+        //
+        // Until 2026-08-27 exactly one could: MEMBERSHIP_PATH named
+        // /protection-plans/, and only that record was permitted a `plans`
+        // array, checked against a MEMBERSHIP_RATES allowlist. That page has
+        // been retired into /maintenance-plans/, which carries the real tiers
+        // from config/twinshield-program.php through
+        // components/twinshield-plan.php: a verbatim transcription of the
+        // Housecall Pro plan templates, where this `plans` array was a
+        // paraphrase of a subset of them.
+        //
+        // The guarantee "only one page may publish plan rates" did not leave
+        // with those constants. It moved, and it got stricter:
+        //   - config/twinshield-program.php is keyed by page path, and
+        //     tests/contracts/twinshield-program.test.cjs asserts that key set
+        //     is exactly ['/maintenance-plans/'], so the path itself is
+        //     pinned, not merely how many there are;
+        //   - twins_brand_twinshield_assert() re-checks every published amount
+        //     against TWINS_TWINSHIELD_RATES, the same eighteen figures this
+        //     class used to hold, and throws instead of rendering on drift.
+        //
+        // So the rule here is now unconditional. `plans` stays in the record
+        // shape, always null, and templates/service.php keeps its null gate:
+        // the key is the thing a future record would reach for, and it must
+        // fail closed at the registry rather than quietly render a second,
+        // thinner plan block beside the real one.
+        if ($record['plans'] !== null) {
+            throw new \InvalidArgumentException('Plan tiers no longer belong in page content.');
         }
 
         if (!is_string($record['reviewTag']) || !in_array($record['reviewTag'], self::REVIEW_TAGS, true)) {
@@ -310,16 +303,13 @@ final class PageContentRegistry
 
         $values = $this->flattenValues($record);
         $customerText = implode("\n", $values);
-        $claimText = $publishesRates
-            ? str_replace(self::MEMBERSHIP_PLAN_NAMES, '', $customerText)
-            : $customerText;
         if (
             preg_match('/\(\d{3}\)\s*\d{3}-\d{4}/', $customerText)
             || preg_match('/\b(?:Wisconsin|Kentucky|Illinois|Madison|Milwaukee|Rockford|Lexington)\b/i', $customerText)
             || preg_match('/\x{2013}|\x{2014}/u', $customerText)
             || preg_match('/24\s*\/\s*7|\b365\b|\blifetime\b/i', $customerText)
-            || preg_match('/#1|number one|No\.\s*1|top-rated/i', $claimText)
-            || preg_match('/\bbest\b/i', $claimText)
+            || preg_match('/#1|number one|No\.\s*1|top-rated/i', $customerText)
+            || preg_match('/\bbest\b/i', $customerText)
             || preg_match('/\b(?:warrant(?:y|ies)|guaranteed?)\b/i', $customerText)
             || preg_match('/\b(?:certified|certification|years in business)\b/i', $customerText)
             || preg_match('/replace (?:the )?spring yourself|DIY spring/i', $customerText)
@@ -327,15 +317,15 @@ final class PageContentRegistry
         ) {
             throw new \InvalidArgumentException('A fixed page-content record contains prohibited copy.');
         }
-        $this->assertApprovedAmounts($customerText, $publishesRates);
+        $this->assertApprovedAmounts($customerText);
     }
 
     /**
      * Every published dollar amount must trace to an approved source: the
-     * price-ranges.json figures and the two offers on service pages, or the
-     * pinned program rates on the membership page.
+     * price-ranges.json figures plus the two approved offers. Program rates
+     * are not page content and are validated in components/twinshield-plan.php.
      */
-    private function assertApprovedAmounts(string $customerText, bool $publishesRates): void
+    private function assertApprovedAmounts(string $customerText): void
     {
         if (preg_match('/\bUSD\b|\d+\s*(?:-|to)\s*\d+\s*dollars?/i', $customerText) === 1) {
             throw new \InvalidArgumentException('A published amount uses an unapproved currency form.');
@@ -343,7 +333,7 @@ final class PageContentRegistry
         if (preg_match_all('/\$(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/', $customerText, $amounts) === false) {
             throw new \InvalidArgumentException('A published amount could not be read.');
         }
-        $approved = $publishesRates ? self::MEMBERSHIP_RATES : self::APPROVED_SERVICE_AMOUNTS;
+        $approved = self::APPROVED_SERVICE_AMOUNTS;
         foreach ($amounts[1] as $amount) {
             if (in_array($amount, $approved, true)) {
                 continue;

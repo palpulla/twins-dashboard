@@ -8,7 +8,11 @@ declare(strict_types=1);
  * every market prefix, so no city, state, or phone literal appears here; the
  * template supplies the market phone and NAP. Every dollar figure traces to
  * docs/marketing/website-rebuild/data/price-ranges.json (completed HCP jobs,
- * last 24 months) or, on the membership page, the approved TwinShield program.
+ * last 24 months) plus the two approved offers. No record publishes TwinShield
+ * program rates: the retired /protection-plans/ record carried a paraphrased
+ * `plans` array, and the real tiers now live on /maintenance-plans/, rendered
+ * from config/twinshield-program.php, which is the verbatim transcription of
+ * docs/marketing/website-rebuild/data/twinshield-plans.json.
  * The guarantee line is template-owned and rendered verbatim on every page.
  */
 return [
@@ -705,80 +709,6 @@ return [
         'links' => [
             ['label' => 'Garage Door Repair', 'route' => 'repair'],
             ['label' => 'Garage Door Installation', 'route' => 'installation'],
-            ['label' => 'Emergency Garage Door Service', 'route' => 'emergency-service'],
-            ['label' => 'All Garage Door Services', 'route' => 'services'],
-        ],
-    ],
-    '/protection-plans/' => [
-        'h1' => 'TwinShield Protection Plans',
-        'directAnswer' => 'TwinShield is our 12-month garage-door membership in three tiers. Core is $12.99 a month or $149 once, Priority is $18.99 a month or $199 once, and Premier is $24.99 a month or $279 once. Every tier includes 10% off the qualifying repair you enroll on, a tune-up, repair savings, and equipment credit.',
-        'answerFacts' => [
-            'cost' => 'Core $12.99, Priority $18.99, Premier $24.99 a month',
-            'timing' => 'A fixed 12-month membership, paid annually or in 12 monthly payments',
-            'call' => 'Ask about TwinShield when booking a repair or tune-up',
-        ],
-        'priceRange' => null,
-        'warningSigns' => [
-            'You want ongoing care for the door and opener plus savings on repairs instead of booking visits one at a time.',
-            'You want to build equipment credit toward a future door or opener purchase.',
-            'You are comparing a membership against just calling us when something breaks.',
-            'You enrolled on a repair and want to make the 10% enrollment savings count.',
-        ],
-        'process' => [
-            'Call the number shown and ask about TwinShield Core, Priority, or Premier.',
-            'Pick a tier and a payment option: one annual payment, or 12 automatic monthly payments for the fixed 12-month term. Monthly billing is a payment schedule, not a cancel-anytime plan.',
-            'Enroll on a qualifying repair and that job gets 10% off. You sign the membership acknowledgment at enrollment.',
-            'Use your included tune-up visits and member savings during the term. Our office verifies equipment credit before it is applied.',
-        ],
-        'costParagraphs' => [
-            'Core is $12.99 a month or $149 once. Priority is $18.99 a month or $199 once. Premier is $24.99 a month or $279 once.',
-            'Monthly billing means 12 payments across the fixed term: $155.88 for Core, $227.88 for Priority, and $299.88 for Premier. The annual option totals less than twelve monthly payments.',
-        ],
-        'safety' => null,
-        // Membership tiers. The service template renders these as pricing cards
-        // by splitting each tradeoff into a price line and benefits on the
-        // first ' - ' delimiter. The middle tier is the recommended one and
-        // gets the badge by position.
-        'plans' => [
-            [
-                'option' => 'TwinShield Core - Essential Care',
-                'tradeoff' => '$12.99/mo or $149/yr - 1 tune-up and safety inspection, 5% off future qualifying repairs, 50% off future standard service-call fees, and equipment credit of 25 cents per dollar in eligible membership payments, up to $150.',
-            ],
-            [
-                'option' => 'TwinShield Priority - Best Value',
-                'tradeoff' => '$18.99/mo or $199/yr - 1 tune-up and safety inspection, priority scheduling subject to availability, 7.5% off future qualifying repairs, 1 standard service-call fee waived then 50% off additional, and equipment credit of 35 cents per dollar, up to $300.',
-            ],
-            [
-                'option' => 'TwinShield Premier - Maximum Care',
-                'tradeoff' => '$24.99/mo or $279/yr - 2 tune-ups and safety inspections, highest scheduling priority subject to availability, 10% off future qualifying repairs, 1 service-call fee waived then 50% off additional, an opener surge-protection benefit, and equipment credit of 50 cents per dollar, up to $500.',
-            ],
-        ],
-        'reviewTag' => 'general',
-        'faqs' => [
-            [
-                'question' => 'Is the monthly option month-to-month?',
-                'answer' => 'No. TwinShield is a fixed 12-month membership. Monthly billing means 12 automatic monthly payments for that term; it is not a month-to-month or cancel-anytime plan.',
-            ],
-            [
-                'question' => 'How much does TwinShield cost?',
-                'answer' => 'Core is $12.99 a month or $149 once. Priority is $18.99 a month or $199 once. Premier is $24.99 a month or $279 once. Monthly billing means 12 payments across the fixed term: $155.88 for Core, $227.88 for Priority, and $299.88 for Premier. The annual option totals less than twelve monthly payments.',
-            ],
-            [
-                'question' => 'How does equipment credit work?',
-                'answer' => 'Core earns 25 cents, Priority 35 cents, and Premier 50 cents for every dollar in eligible membership payments received, up to $150, $300, and $500. Twelve monthly Core payments earn $38.97, or $37.25 on the annual option. Priority earns $79.76 or $69.65. Premier earns $149.94 or $139.50. Failed, refunded, or charged-back payments earn nothing, and our office verifies the exact balance before it is quoted or applied.',
-            ],
-            [
-                'question' => 'Does TwinShield cover every repair for free?',
-                'answer' => 'No. TwinShield is a maintenance-and-savings membership. It is not insurance and not a promise of free repairs or free replacement equipment. Each tier provides the specific maintenance, discount, scheduling, service-call, and equipment-credit benefits listed, governed by the TwinShield Membership Agreement.',
-            ],
-            [
-                'question' => 'How is TwinShield different from a maintenance plan?',
-                'answer' => 'The maintenance plan is about scheduled tune-up visits. TwinShield adds repair discounts, service-call savings, scheduling priority on higher tiers, and equipment credit. Ask us to compare the two for your door.',
-            ],
-        ],
-        'links' => [
-            ['label' => 'Maintenance Plans', 'route' => 'maintenance-plans'],
-            ['label' => 'Garage Door Repair', 'route' => 'repair'],
             ['label' => 'Emergency Garage Door Service', 'route' => 'emergency-service'],
             ['label' => 'All Garage Door Services', 'route' => 'services'],
         ],

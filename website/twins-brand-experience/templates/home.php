@@ -28,7 +28,6 @@ $homeRoutes = [
     'garage-doors' => $experience->route('garage-doors', $marketKey),
     'door-builder' => $experience->route('door-builder', $marketKey),
     'maintenance-plans' => $experience->route('maintenance-plans', $marketKey),
-    'protection-plans' => $experience->route('protection-plans', $marketKey),
     'financing' => $experience->route('financing', $marketKey),
     'faqs' => $experience->route('faqs', $marketKey),
 ];

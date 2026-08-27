@@ -168,6 +168,26 @@ try {
     $closed = false;
     try { $pageRegistry->resolve('/wi/not-a-service/', 'Ignored'); } catch (DomainException $expected) { $closed = true; }
     $expect($closed, 'unknown page-content route did not fail closed');
+    // /protection-plans/ was retired into /maintenance-plans/ on 2026-08-27.
+    // It left BESPOKE_PATHS and FALLBACK_TITLES together, so the registry
+    // refuses it outright rather than serving a generic stub: a stub would be
+    // a second, thinner plan page, which is the thing being retired. Every
+    // market prefix resolves the same way, because normalizePath strips it.
+    foreach (['/protection-plans/', '/wi/protection-plans/', '/il/protection-plans/'] as $retiredPath) {
+        $closed = false;
+        try { $pageRegistry->resolve($retiredPath, 'Ignored'); } catch (DomainException $expected) { $closed = true; }
+        $expect($closed, 'the retired plan route still resolves: ' . $retiredPath);
+    }
+    // And no record may reintroduce plan tiers, on any path.
+    $replantedRecords = $pageRecords;
+    $replantedRecords['/maintenance-plans/']['plans'] = [
+        ['option' => 'TwinShield Core', 'tradeoff' => '$12.99/mo or $149/yr - tiers belong to the program config'],
+        ['option' => 'TwinShield Priority', 'tradeoff' => '$18.99/mo or $199/yr - tiers belong to the program config'],
+        ['option' => 'TwinShield Premier', 'tradeoff' => '$24.99/mo or $279/yr - tiers belong to the program config'],
+    ];
+    $closed = false;
+    try { new Twins\BrandExperience\PageContentRegistry($replantedRecords); } catch (InvalidArgumentException $expected) { $closed = true; }
+    $expect($closed, 'page content accepted plan tiers after they were retired');
     $malformedPageRecords = $pageRecords;
     unset($malformedPageRecords['/garage-door-repair/']['safety']);
     $closed = false;
@@ -334,29 +354,40 @@ PHP;
     $expect($experience->applicationAdapter() === $applications, 'application adapter facade drifted');
     $expect($experience->markets() === $registry, 'market registry facade drifted');
 
-    // The membership page renders its tiers as pricing cards from the real
-    // service template and page-content config (not the fixture root). The stub
-    // route adapter returns exactly the normalized context it was built with, so
-    // each render gets its own experience seeded with that page's context.
+    // The plan page renders its tiers from the real service template and the
+    // real config (not the fixture root). The stub route adapter returns
+    // exactly the normalized context it was built with, so each render gets
+    // its own experience seeded with that page's context.
+    //
+    // This used to render /protection-plans/ and assert the thin pricing cards
+    // out of page content. That page was retired into /maintenance-plans/ on
+    // 2026-08-27, so the assertion is now the real block: the tier row from
+    // config/twinshield-program.php, with the thin block proved absent so the
+    // two can never both appear again.
     $membershipRoot = dirname($argv[1]);
-    $membershipContext = ['environment' => 'staging', 'market' => 'wi', 'path' => '/protection-plans/', 'title' => 'TwinShield Protection Plans'];
+    $membershipContext = ['environment' => 'staging', 'market' => 'wi', 'path' => '/maintenance-plans/', 'title' => 'TwinShield Protection Plan'];
     [$membershipExperience] = $makeExperience($membershipContext, $membershipRoot);
     $membershipHtml = $membershipExperience->renderService($membershipContext);
-    $expect(strpos($membershipHtml, 'twins-brand-membership-grid') !== false, 'membership page must render the pricing grid');
-    $expect(substr_count($membershipHtml, 'class="twins-brand-membership-card') === 3, 'membership page must render exactly three pricing cards');
-    $expect(substr_count($membershipHtml, 'twins-brand-membership-badge') === 1, 'membership page must show exactly one Recommended badge');
-    $expect(substr_count($membershipHtml, 'twins-brand-membership-cta') === 3, 'each membership tier needs a call-to-action');
-    foreach (['$12.99/mo or $149/yr', '$18.99/mo or $199/yr', '$24.99/mo or $279/yr'] as $membershipPrice) {
-        $expect(strpos($membershipHtml, $membershipPrice) !== false, 'membership pricing lost ' . $membershipPrice);
+    $expect(strpos($membershipHtml, 'twins-brand-twinshield-tiers') !== false, 'the plan page must render the TwinShield tier row');
+    $expect(substr_count($membershipHtml, '<article class="twins-brand-twinshield-card') === 3, 'the plan page must render exactly three tier cards');
+    $expect(substr_count($membershipHtml, 'twins-brand-twinshield-card--lead') === 1, 'the plan page must feature exactly one tier');
+    $expect(substr_count($membershipHtml, 'twins-brand-twinshield-card__cta') === 3, 'each tier needs a call-to-action');
+    foreach ([
+        '$12.99 a month for 12 months, $155.88 total, or $149 paid once.',
+        '$18.99 a month for 12 months, $227.88 total, or $199 paid once.',
+        '$24.99 a month for 12 months, $299.88 total, or $279 paid once.',
+    ] as $membershipPrice) {
+        $expect(strpos($membershipHtml, htmlspecialchars($membershipPrice, ENT_QUOTES, 'UTF-8')) !== false, 'plan pricing lost ' . $membershipPrice);
     }
-    $expect(strpos($membershipHtml, '$12.99/mo or $149/yr - ') === false, 'membership card leaked the raw price/benefit delimiter');
+    $expect(strpos($membershipHtml, 'twins-brand-membership-card') === false, 'the retired thin plan block rendered beside the real one');
     $genericContext = ['environment' => 'staging', 'market' => 'wi', 'path' => '/garage-door-repair/', 'title' => 'Garage Door Repair'];
     [$genericExperience] = $makeExperience($genericContext, $membershipRoot);
     $genericService = $genericExperience->renderService($genericContext);
     $expect(strpos($genericService, 'twins-brand-service-signs') !== false, 'non-membership service page must render the warning-signs section');
     $expect(strpos($genericService, 'twins-brand-service-cost') !== false, 'non-membership service page must render the cost section');
     $expect(strpos($genericService, 'Done Right, or We Make It Right.') !== false, 'service page lost the verbatim guarantee');
-    $expect(strpos($genericService, 'twins-brand-membership-grid') === false, 'non-membership service page must not render pricing cards');
+    $expect(strpos($genericService, 'twins-brand-membership-grid') === false, 'non-plan service page must not render thin pricing cards');
+    $expect(strpos($genericService, 'twins-brand-twinshield') === false, 'the TwinShield block leaked off its one registered path');
 
     $homePath = $fixtureRoot . '/templates/home.php';
     $throwingTemplate = '<?php echo "LEAKED-TEMPLATE-BYTES"; throw new RuntimeException("fixture template failure");';

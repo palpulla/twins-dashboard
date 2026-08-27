@@ -113,14 +113,16 @@ $expect(strpos($weatherService, 'twins-brand-membership-card') === false, 'membe
 $expect(strpos($weatherService, '"minPrice"') === false, 'weatherstripping schema invented a price range');
 $expect(strpos($weatherService, 'least expensive repairs') !== false, 'weatherstripping page lost its approved cost framing');
 
-$membershipContext = ['environment' => 'staging', 'market' => 'main', 'path' => '/protection-plans/', 'title' => 'TwinShield Protection Plans'];
-$membershipService = $make($membershipContext)->renderService($membershipContext);
-$expect(substr_count($membershipService, 'twins-brand-membership-card') >= 3, 'membership page must render three plan cards');
-$expect(strpos($membershipService, 'twins-brand-membership-card--featured') !== false, 'membership page lost the recommended tier');
-$expect(strpos($membershipService, '$12.99/mo or $149/yr') !== false, 'membership card lost the Core price line');
-$expect(strpos($membershipService, 'Ask about Core') !== false, 'membership card lost the tier CTA');
-$expect(strpos($membershipService, 'twins-brand-service-safety') === false, 'the safety module leaked onto the membership page');
-$expect(strpos($membershipService, 'twins-brand-twinshield') === false, 'the TwinShield program block leaked onto a page outside its own config');
+// /protection-plans/ was retired into /maintenance-plans/ on 2026-08-27. The
+// registry refuses the path outright (it left BESPOKE_PATHS and
+// FALLBACK_TITLES together, so there is no generic stub either), which is what
+// makes the host-side redirect the only way that URL can resolve.
+foreach (['/protection-plans/', '/wi/protection-plans/', '/il/protection-plans/'] as $retiredPath) {
+    $retiredContext = ['environment' => 'staging', 'market' => 'main', 'path' => $retiredPath, 'title' => 'TwinShield Protection Plans'];
+    $refused = false;
+    try { $make($retiredContext)->renderService($retiredContext); } catch (DomainException $expected) { $refused = true; }
+    $expect($refused, 'the retired plan route still rendered: ' . $retiredPath);
+}
 
 // The TwinShield Protection Plan page: the three tiers, both payment options,
 // the comparison table on the house scroll rail, the equipment credit worked
@@ -182,7 +184,7 @@ foreach (['main', 'wi', 'ky', 'il-preview'] as $marketKey) {
         '/garage-door-repair/', '/garage-door-installation/', '/garage-door-spring-repair/',
         '/garage-door-opener-repair/', '/emergency-garage-services/', '/garage-door-services/',
         '/garage-door-cable-repair/', '/garage-door-openers/', '/garage-weatherstripping-repair/',
-        '/garage-door-tune-up/', '/maintenance-plans/', '/property-management-services/', '/protection-plans/',
+        '/garage-door-tune-up/', '/maintenance-plans/', '/property-management-services/',
     ] as $servicePath) {
         $context = ['environment' => 'staging', 'market' => $marketKey, 'path' => $servicePath, 'title' => 'Fixture'];
         $rendered = $make($context)->renderService($context);

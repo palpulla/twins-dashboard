@@ -262,7 +262,7 @@ SVG . $svgClose;
 SVG . $svgClose;
     }
 
-    if ($path === '/maintenance-plans/' || $path === '/protection-plans/') {
+    if ($path === '/maintenance-plans/') {
         // The TwinShield badge: a shield over the door it covers.
         return $svgOpen . <<<'SVG'
 <svg viewBox="0 0 300 340" focusable="false">

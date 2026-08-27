@@ -100,7 +100,6 @@ final class RendererHarnessRouteAdapter implements Twins\BrandExperience\RouteAd
         'cable-repair' => '/garage-door-cable-repair/',
         'weatherstripping' => '/garage-weatherstripping-repair/',
         'maintenance-plans' => '/maintenance-plans/',
-        'protection-plans' => '/protection-plans/',
         'property-management' => '/property-management-services/',
         'openers' => '/garage-door-openers/',
         'service-area' => '/locations/',
@@ -624,17 +623,38 @@ $expect(strpos($weatherService, 'twins-brand-membership-card') === false, 'membe
 $expect(strpos($weatherService, '"minPrice"') === false, 'weatherstripping schema invented a price range');
 $expect(strpos($weatherService, 'least expensive repairs') !== false, 'weatherstripping page lost its approved cost framing');
 
+// The one plan page. /protection-plans/ was retired into it on 2026-08-27, so
+// the tiers here are the real ones from config/twinshield-program.php and the
+// thin page-content block that served the retired page renders nowhere.
 $membershipService = $stagingExperience->renderService([
     'environment' => 'staging',
     'market' => 'main',
-    'path' => '/protection-plans/',
-    'title' => 'TwinShield Protection Plans',
+    'path' => '/maintenance-plans/',
+    'title' => 'TwinShield Protection Plan',
 ]);
-$expect(substr_count($membershipService, 'twins-brand-membership-card') >= 3, 'membership page must render three plan cards');
-$expect(strpos($membershipService, 'twins-brand-membership-card--featured') !== false, 'membership page lost the recommended tier');
-$expect(strpos($membershipService, '$12.99/mo or $149/yr') !== false, 'membership card lost the Core price line');
-$expect(strpos($membershipService, 'Ask about Core') !== false, 'membership card lost the tier CTA');
-$expect(strpos($membershipService, 'twins-brand-service-safety') === false, 'the safety module leaked onto the membership page');
+$expect(substr_count($membershipService, '<article class="twins-brand-twinshield-card') === 3, 'the plan page must render three tier cards');
+$expect(substr_count($membershipService, 'twins-brand-twinshield-card--lead') === 1, 'the plan page lost its featured tier');
+$expect(strpos($membershipService, htmlspecialchars('$12.99 a month for 12 months, $155.88 total, or $149 paid once.', ENT_QUOTES, 'UTF-8')) !== false, 'the plan page lost the Core terms line');
+$expect(strpos($membershipService, 'Ask about Core') !== false, 'the plan page lost the tier CTA');
+$expect(strpos($membershipService, 'twins-brand-membership-card') === false, 'the retired thin plan block rendered beside the real one');
+$expect(strpos($membershipService, 'twins-brand-service-safety') === false, 'the safety module leaked onto the plan page');
+
+// And the retired path itself no longer resolves through the registry, on any
+// market prefix: the host redirect is the only way that URL can answer.
+foreach (['/protection-plans/', '/wi/protection-plans/', '/il/protection-plans/'] as $retiredPlanPath) {
+    $refusedPlanPath = false;
+    try {
+        $stagingExperience->renderService([
+            'environment' => 'staging',
+            'market' => 'main',
+            'path' => $retiredPlanPath,
+            'title' => 'TwinShield Protection Plans',
+        ]);
+    } catch (DomainException $expected) {
+        $refusedPlanPath = true;
+    }
+    $expect($refusedPlanPath, 'the retired plan route still rendered: ' . $retiredPlanPath);
+}
 
 $madisonLocation = $stagingExperience->renderEditorial([
     'environment' => 'staging',

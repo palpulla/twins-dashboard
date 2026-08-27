@@ -18,7 +18,6 @@ const routes = [
   '/garage-door-tune-up/',
   '/maintenance-plans/',
   '/property-management-services/',
-  '/protection-plans/',
 ];
 const requiredKeys = [
   'h1',
@@ -40,21 +39,12 @@ const safetyRoutes = [
   '/garage-door-cable-repair/',
   '/emergency-garage-services/',
 ];
-// The membership page publishes fixed program rates; every other page may
-// publish only figures from data/price-ranges.json plus the two approved
-// offers ($0 service call with repair, $49 tune-up). Both sets are pinned so
-// a stale figure fails here, not live.
-const membershipRoute = '/protection-plans/';
-const membershipRates = new Set([
-  '12.99', '149', '155.88', '38.97', '37.25', '150',
-  '18.99', '199', '227.88', '79.76', '69.65', '300',
-  '24.99', '279', '299.88', '149.94', '139.50', '500',
-]);
-const planNames = [
-  'TwinShield Core - Essential Care',
-  'TwinShield Priority - Best Value',
-  'TwinShield Premier - Maximum Care',
-];
+// No record publishes program rates. /protection-plans/ was the one that
+// could, and it was retired into /maintenance-plans/ on 2026-08-27; the real
+// tiers are pinned by twinshield-program.test.cjs, which also asserts that
+// exactly one page path carries them. Every record here may publish only
+// figures from data/price-ranges.json plus the two approved offers ($0 service
+// call with repair, $49 tune-up), so a stale figure fails here, not live.
 // p20/p80 pairs from docs/marketing/website-rebuild/data/price-ranges.json
 // (generated 2026-08-18 from completed HCP jobs, last 24 months). The docs
 // tree is not checked out everywhere, so the approved figures are pinned here
@@ -104,7 +94,7 @@ function customerValues(block) {
   return [...block.matchAll(/=>\s*'((?:\\'|[^'])*)'/g)].map(match => unescapePhp(match[1]));
 }
 
-test('fixed page-content config contains exactly thirteen approved-copy service records', () => {
+test('fixed page-content config contains exactly twelve approved-copy service records', () => {
   const source = read('config/page-content.php');
   const keys = [...source.matchAll(/^ {4}'(\/[^']+\/)'\s*=>\s*\[/gm)].map(match => match[1]);
   assert.deepEqual(keys, routes);
@@ -128,9 +118,7 @@ test('fixed page-content config contains exactly thirteen approved-copy service 
     } else {
       assert.match(block, /'safety'\s*=>\s*null/, `${route} must not carry a safety module`);
     }
-    if (route !== membershipRoute) {
-      assert.match(block, /'plans'\s*=>\s*null/, `${route} must not carry plan tiers`);
-    }
+    assert.match(block, /'plans'\s*=>\s*null/, `${route} must not carry plan tiers`);
 
     const linkRoutes = [...block.matchAll(/'route'\s*=>\s*'([a-z-]+)'/g)].map(match => match[1]);
     assert.ok(linkRoutes.length >= 2 && linkRoutes.length <= 4, `${route} related-services count`);
@@ -152,10 +140,10 @@ test('fixed page-content config contains exactly thirteen approved-copy service 
   assert.ok(!values.includes(guarantee), 'the guarantee line is template-owned, not record copy');
 
   const blocks = recordBlocks(source);
-  // Every published figure on a non-membership page traces to
-  // data/price-ranges.json or an approved offer.
+  // Every published figure traces to data/price-ranges.json or an approved
+  // offer. There is no longer a page exempt from this: the membership rates
+  // left page content with /protection-plans/.
   for (const [route, block] of blocks) {
-    if (route === membershipRoute) continue;
     for (const amount of customerValues(block).join('\n').matchAll(/\$(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/g)) {
       assert.ok(
         approvedServiceAmounts.has(amount[1].replace(/,/g, '')),
@@ -163,34 +151,16 @@ test('fixed page-content config contains exactly thirteen approved-copy service 
       );
     }
   }
-  const quoteText = [...blocks]
-    .filter(([route]) => route !== membershipRoute)
-    .flatMap(([, block]) => customerValues(block))
-    .join('\n');
-  assert.doesNotMatch(quoteText, /\bbest\b/i, 'service pages carry no superlative');
+  assert.doesNotMatch(values, /\bbest\b/i, 'service pages carry no superlative');
+  assert.doesNotMatch(values, /\bUSD\b/i, 'published amounts use one currency form');
 
-  const membership = customerValues(blocks.get(membershipRoute)).join('\n');
-  for (const amount of membership.matchAll(/\$(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/g)) {
-    assert.ok(membershipRates.has(amount[1].replace(/,/g, '')), `unapproved published rate $${amount[1]}`);
-  }
-  assert.doesNotMatch(membership, /\bUSD\b/i, 'published rates use one currency form');
-  assert.doesNotMatch(
-    planNames.reduce((text, name) => text.split(name).join(''), membership),
-    /\bbest\b/i,
-    'best appears only inside the exact plan name',
-  );
-  for (const rate of ['12.99', '149', '18.99', '199', '24.99', '279']) {
-    assert.ok(membership.includes(`$${rate}`), `membership page omits the $${rate} rate`);
-  }
-
-  // The service template renders the membership tiers as pricing cards by
-  // splitting each tradeoff into a price line and benefits on the first
-  // " - " delimiter. Pin that structure so the parse in templates/service.php
-  // cannot silently break.
-  const membershipTradeoffs = [...blocks.get(membershipRoute).matchAll(/'tradeoff'\s*=>\s*'((?:\\'|[^'])*)'/g)].map(m => unescapePhp(m[1]));
-  assert.equal(membershipTradeoffs.length, 3, 'membership page has three plan tiers');
-  for (const tradeoff of membershipTradeoffs) {
-    assert.match(tradeoff, /^\$\d[\d.]*\/mo or \$\d+\/yr - \S/, 'each tier leads with "$price/mo or $price/yr - " then benefits');
+  // The retired page is gone from the config, and no record may reintroduce a
+  // plan tier through the back door: no plan name, no per-tier price line, and
+  // no `tradeoff` key anywhere in page content.
+  assert.doesNotMatch(source, /^ {4}'\/protection-plans\/'\s*=>/m, 'the retired route still has a page-content record');
+  assert.doesNotMatch(source, /'tradeoff'/, 'plan tiers are no longer page content');
+  for (const rate of ['12.99', '155.88', '18.99', '227.88', '24.99', '299.88']) {
+    assert.ok(!source.includes(`$${rate}`), `page content republishes the $${rate} program rate`);
   }
 });
 
