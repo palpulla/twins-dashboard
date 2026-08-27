@@ -47,7 +47,7 @@ final class RendererHarnessAssetResolver implements Twins\BrandExperience\AssetR
         'nicholas-portrait-original' => '/team/nicholas-roccaforte.jpeg',
         'nicholas-portrait-480w' => '/team/nicholas-roccaforte-480w.webp',
         'nicholas-portrait-768w' => '/team/nicholas-roccaforte-768w.webp',
-        'nicholas-portrait-1066w' => '/team/nicholas-roccaforte-1066w.webp',
+        'nicholas-portrait-900w' => '/team/nicholas-roccaforte-900w.webp',
         'door-builder-before-after' => '/door-builder/twins-before-after-install.webp',
         'opener-6690l' => '/openers/liftmaster-6690l.png',
         'opener-98022' => '/openers/liftmaster-98022.png',

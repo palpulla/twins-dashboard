@@ -54,7 +54,7 @@ final class StagingAssetResolver implements AssetResolver
         'nicholas-portrait-original' => 'assets/images/team/nicholas-roccaforte.jpeg',
         'nicholas-portrait-480w' => 'assets/images/team/nicholas-roccaforte-480w.webp',
         'nicholas-portrait-768w' => 'assets/images/team/nicholas-roccaforte-768w.webp',
-        'nicholas-portrait-1066w' => 'assets/images/team/nicholas-roccaforte-1066w.webp',
+        'nicholas-portrait-900w' => 'assets/images/team/nicholas-roccaforte-900w.webp',
         'door-builder-before-after' => 'assets/images/door-builder/twins-before-after-install.webp',
         'opener-6690l' => 'assets/images/openers/liftmaster-6690l.png',
         'opener-6690l-remote' => 'assets/images/openers/liftmaster-l993m-remote.jpg',

@@ -37,6 +37,12 @@ test('owned originals remain exact and every derivative is manifested', () => {
       assert.equal(digest(derivative.path), derivative.sha256);
       assert.equal(derivative.mime, 'image/webp');
       assert.ok(derivative.width > 0 && derivative.height > 0);
+      // A derivative's filename is a public claim: it is the asset key the
+      // adapters map and the descriptor the srcset advertises. It must be the
+      // width the file actually is. nicholas-roccaforte-1066w.webp was 900x1600
+      // -- sharp's withoutEnlargement clamped a 1066 request to a 900px source
+      // and the name kept the request. This pin is why that cannot recur.
+      assert.match(derivative.path, new RegExp(`-${derivative.width}w\\.webp$`), derivative.path);
     }
   }
 });

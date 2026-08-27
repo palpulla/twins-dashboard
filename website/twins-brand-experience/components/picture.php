@@ -46,7 +46,7 @@ $pictures = [
     ],
     'nicholas-portrait' => [
         'original' => 'nicholas-portrait-original',
-        'sources' => ['nicholas-portrait-480w 480w', 'nicholas-portrait-768w 768w', 'nicholas-portrait-1066w 900w'],
+        'sources' => ['nicholas-portrait-480w 480w', 'nicholas-portrait-768w 768w', 'nicholas-portrait-900w 900w'],
         'width' => 900,
         'height' => 1600,
         'alt' => 'Twins Garage Doors technician Nicholas Roccaforte',

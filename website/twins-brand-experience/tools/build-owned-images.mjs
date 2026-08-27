@@ -40,6 +40,16 @@ const doorBuilderSpec = {
 };
 
 const sha256 = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
+/* A derivative is named for the width it IS, never for the width it was asked
+   for. `resize({ withoutEnlargement: true })` clamps a request to the source's
+   own width, so asking a 900x1600 portrait for 1066 produced a 900px file
+   called nicholas-roccaforte-1066w.webp: a filename, an asset key and a srcset
+   descriptor all claiming a resolution that does not exist. Taking the name
+   from the produced metadata makes the manifest, the srcset and the file agree
+   by construction, and it stays correct if a larger source is dropped in
+   later. Two requested widths clamping to the same produced width would now
+   collide on one filename, so that fails closed instead of silently
+   overwriting. */
 const outputName = (original, width) => original.replace(/\.(jpeg|png)$/i, `-${width}w.webp`);
 
 const assets = [];
@@ -47,11 +57,15 @@ for (const spec of specs) {
   const originalBytes = await fs.readFile(path.join(root, spec.original));
   const originalMeta = await sharp(originalBytes).metadata();
   const derivatives = [];
+  const claimed = new Set();
   for (const width of spec.widths) {
-    const relative = outputName(spec.original, width);
-    const absolute = path.join(root, relative);
     const generatedBytes = await sharp(originalBytes).rotate().resize({ width, withoutEnlargement: true })
       .webp({ quality: 82, effort: 6, smartSubsample: true }).toBuffer();
+    const generatedMeta = await sharp(generatedBytes).metadata();
+    const relative = outputName(spec.original, generatedMeta.width);
+    if (claimed.has(relative)) throw new Error(`Derivative width collision: ${relative}`);
+    claimed.add(relative);
+    const absolute = path.join(root, relative);
     let bytes = generatedBytes;
     if (check) {
       const committedBytes = await fs.readFile(absolute);
@@ -62,6 +76,7 @@ for (const spec of specs) {
     }
     const meta = await sharp(bytes).metadata();
     if (meta.format !== 'webp') throw new Error(`Derivative MIME drift: ${relative}`);
+    if (!relative.endsWith(`-${meta.width}w.webp`)) throw new Error(`Derivative name does not match its width: ${relative}`);
     derivatives.push({ path: relative, sha256: sha256(bytes), mime: 'image/webp', width: meta.width, height: meta.height });
   }
   assets.push({
