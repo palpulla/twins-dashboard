@@ -6150,14 +6150,27 @@ body.twins-brand-experience :is(
    `--ordered` already marks its own boundary with a 2px #cbd5e1 top rule, and
    `--gallery` is a wall of reference photographs. Both stay flat, so the
    catalog now alternates: linen, plain, linen. */
-body.twins-brand-experience :is(
-  .twins-location-page .twins-location-local-proof,
+/* THE CATALOG GROUND IS GATED ON THE ROUTE, not only on the template class,
+   and that is a change, not a restatement. It used to key off
+   `.twins-brand-catalog-page` alone while every catalog BASE colour in
+   twins-brand-families.css keys off `body.twins-brand-route-catalog-preserve`.
+   The two agree today only because `catalog-preserve` is the one
+   classification that reaches renderCatalog() -- verified in
+   staging-safety/mu-plugins/twins-staging-overhaul/renderers.php, where that
+   is the only branch that calls it. A second catalog classification would
+   emit `body.twins-brand-route-catalog-new`, lose the #F3F6FA base, and keep
+   this ground: navy overlays on an untinted surface, with the section's own
+   dark and ordered variants unstyled around them.
+   Requiring both means the ground can only ever paint where the base colour
+   it was measured against also paints. A future catalog route gets a plain
+   untinted section, which is a coherent default, and whoever adds that route
+   opts in here and in the families sheet together. */
+body.twins-brand-experience.twins-brand-route-catalog-preserve
   .twins-brand-catalog-page .twins-brand-catalog-section:not(
     .twins-brand-catalog-section--dark,
     .twins-brand-catalog-section--closing,
     .twins-brand-catalog-section--ordered,
-    .twins-brand-catalog-section--gallery)
-) {
+    .twins-brand-catalog-section--gallery) {
   background-repeat: no-repeat, repeat;
   background-position: 0 0, 0 0;
   background-size: 100% 4px, var(--twins-stile) 100%;
@@ -6177,16 +6190,14 @@ body.twins-brand-experience :is(
    pass only because its stile was one hairline. It takes the rebuilt STILE,
    which carries it to 89.8% modal with its tightest pair at 5.27:1, and it
    still does not take the course. */
-body.twins-brand-experience .twins-location-page .twins-location-local-proof {
-  background-repeat: no-repeat, no-repeat, repeat, repeat;
-  background-position: 0 0, 0 100%, 0 0, 0 0;
-  background-size: 100% 4px, 100% 26px, 100% var(--twins-course), var(--twins-stile) 100%;
-  background-image:
-    var(--twins-seam),
-    var(--twins-course-linen-foot),
-    var(--twins-course-linen),
-    var(--twins-stile-linen);
-}
+/* `.twins-location-local-proof` used to be overridden here with the full three
+   direction stack, and the override never applied: the `:is()` group above it
+   resolved to (0,4,1) against this rule's (0,3,1), so specificity beat source
+   order and the band rendered with a seam and a stile and no course on all 35
+   city pages. Measured before this change: 2 background layers, sized
+   `100% 4px, 230.4px 100%`. It is a white reading surface, so it belongs in
+   the white-surfaces group below with the other five rather than in a rule
+   that cannot win. */
 
 /* --- COIL --------------------------------------------------------------- */
 /* The gold ribbons carry NO ground, and that is the decision, not an omission.
@@ -6337,7 +6348,8 @@ body.twins-brand-experience :is(
   .twins-brand-editorial-page .twins-brand-editorial-body,
   .twins-brand-careers-page .twins-brand-careers-application,
   .twins-brand-contact-page .twins-brand-contact-quote,
-  .twins-location-page .twins-location-neighbors
+  .twins-location-page .twins-location-neighbors,
+  .twins-location-page .twins-location-local-proof
 ) {
   background-repeat: no-repeat, no-repeat, repeat, repeat;
   background-position: 0 0, 0 100%, 0 0, 0 0;
