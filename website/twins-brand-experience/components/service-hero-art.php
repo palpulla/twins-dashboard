@@ -5,6 +5,27 @@ declare(strict_types=1);
  * Decorative hero artwork for service pages: an animated rendition of the
  * part each page is about, or real product photography for the openers page.
  * Returns '' for pages without a matching part.
+ *
+ * THE TWO LABELS ON THE SPRING ART ARE NOT A CONTRAST DEFECT, and this note
+ * exists because they have been reported as one. An automated pass read the
+ * <text> elements' inherited CSS `color` -- white, because the hero band is
+ * navy -- and reported "TWINS GARAGE" as white on gold at 1.39:1. SVG does not
+ * paint with `color`. It paints with `fill`, and `color` on an <svg><text> is
+ * inert unless something asks for `currentColor`; nothing here does.
+ *
+ * Measured 2026-08-27 from rendered pixels at 2x, with the glyphs hidden to
+ * sample the ground under them, at four phases of the twinsSpringFlex
+ * animation (-0s, -0.85s, -1.7s, -2.55s), identical at every phase:
+ *
+ *   "TWINS GARAGE"  fill rgb(28,36,48)   worst ground rgb(192,148,44)  5.59:1
+ *   "218 X 2 X 32"  fill rgb(232,229,218) worst ground rgb(66,69,75)   7.62:1
+ *
+ * The worst ground is the coil pattern's dark stripe, not the flat gold, so
+ * 5.59:1 is the floor rather than the average. Both clear the 4.5 body floor,
+ * and the art carries no reading obligation anyway: the wrapper is
+ * aria-hidden="true" and the svg is focusable="false", so the labels convey
+ * nothing that is not also in the page copy. Decorative AND legible; there is
+ * nothing here to restyle.
  */
 function twins_brand_service_hero_art(string $path, $experience): string
 {
