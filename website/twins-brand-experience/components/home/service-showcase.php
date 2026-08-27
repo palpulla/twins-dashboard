@@ -20,7 +20,16 @@
           $pictureFallbackLogicalKey = 'crew-fleet';
           $sizes = '(max-width: 768px) 100vw, 52vw';
           $class = 'twins-brand-service-image';
-          $loading = 'lazy';
+          /* The stage opens on panel 0 and JS never shows any other panel until
+             the first rotation, so panel 0 is not a lazy image -- it is THE
+             image of this section. Left lazy it was observed painting an empty
+             navy stage on staging. `auto` rather than `high`: this band is
+             thousands of pixels below the fold and must not take bytes from
+             the hero. Panels 1 to 3 stay lazy, and stay correct: JS sets
+             `display: none` on every inactive panel, so their images are never
+             fetched until a rotation actually reveals them. */
+          $loading = $index === 0 ? 'eager' : 'lazy';
+          $fetchPriority = 'auto';
           require dirname(__DIR__) . '/picture.php';
           ?>
           <div class="twins-brand-service-copy">

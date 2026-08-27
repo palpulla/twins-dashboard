@@ -438,10 +438,35 @@
       tablist.removeAttribute('hidden');
       controls.removeAttribute('hidden');
       container.dataset.enhanced = 'true';
+      /* THE ROTATION USED TO REVEAL AN EMPTY STAGE. Every inactive panel is
+         `display: none`, so its lazy photo never intersects anything and is
+         never fetched; the first auto-rotation therefore un-hid a panel whose
+         image request had not been issued yet, and on a slow host the stage
+         painted as a bare navy rectangle until it arrived. Measured with a
+         1500ms image delay: at the instant panel 1 was revealed its image
+         reported complete=false and naturalWidth=0, and the request was issued
+         only at that moment.
+         The markup stays honest -- panels 1 to 3 ship `loading="lazy"`, and a
+         visitor who never reaches this section never downloads them. They are
+         promoted to eager exactly once, the first time the section is actually
+         on screen, using the observer this carousel already owns. By the time
+         the 5s rotation fires, the next photo is in the cache. */
+      let warmed = false;
+      const warmPanelImages = () => {
+        if (warmed) return;
+        warmed = true;
+        panels.forEach(panel => {
+          panel.querySelectorAll('img[loading="lazy"]').forEach(image => { image.loading = 'eager'; });
+        });
+      };
       const visibilityReady = createVisibilityPause(
         container,
-        visible => setPause('viewport', !visible),
+        visible => {
+          if (visible) warmPanelImages();
+          setPause('viewport', !visible);
+        },
       );
+      if (!visibilityReady) warmPanelImages();
       if (visibilityReady) {
         document.addEventListener('visibilitychange', syncTimer);
         reducedMotion.addEventListener?.('change', syncTimer);

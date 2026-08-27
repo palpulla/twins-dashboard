@@ -63,6 +63,22 @@ $pictures = [
 $requestedFallbackKey = $pictureFallbackLogicalKey ?? null;
 unset($pictureFallbackLogicalKey);
 
+/* EAGER AND HIGH USED TO BE THE SAME DECISION, and they are not. A hero
+   portrait wants both: load it now and claim the LCP slot. A panel that is
+   simply the one the page opens on wants only the first half -- it must be in
+   the picture when its section arrives, and it must not compete with the hero
+   for the first bytes on the wire. `$fetchPriority` splits the pair. It is
+   consumed like every other picture input so it cannot leak into the next
+   require, and the only two values it accepts are the two the platform has. */
+$requestedFetchPriority = $fetchPriority ?? null;
+unset($fetchPriority);
+if ($requestedFetchPriority !== null && !in_array($requestedFetchPriority, ['high', 'auto'], true)) {
+    throw new DomainException('Picture fetch priority is outside the fixed boundary.');
+}
+$pictureLoadingAttributes = $loading === 'eager'
+    ? ($requestedFetchPriority === 'auto' ? ' decoding="async"' : ' fetchpriority="high"')
+    : ' decoding="async"';
+
 $resolvePicture = static function (string $key) use ($experience, $pictures): array {
     if (!isset($pictures[$key])) {
         throw new DomainException('Unknown picture key.');
@@ -95,5 +111,5 @@ try {
   <?php if ($srcset !== []): ?>
     <source type="image/webp" srcset="<?= htmlspecialchars(implode(', ', $srcset), ENT_QUOTES, 'UTF-8') ?>" sizes="<?= htmlspecialchars($sizes, ENT_QUOTES, 'UTF-8') ?>">
   <?php endif; ?>
-  <img src="<?= htmlspecialchars($resolvedSrc, ENT_QUOTES, 'UTF-8') ?>" width="<?= (int) $picture['width'] ?>" height="<?= (int) $picture['height'] ?>" alt="<?= htmlspecialchars($picture['alt'], ENT_QUOTES, 'UTF-8') ?>" class="<?= htmlspecialchars($class, ENT_QUOTES, 'UTF-8') ?>" loading="<?= htmlspecialchars($loading, ENT_QUOTES, 'UTF-8') ?>"<?= $loading === 'eager' ? ' fetchpriority="high"' : ' decoding="async"' ?>>
+  <img src="<?= htmlspecialchars($resolvedSrc, ENT_QUOTES, 'UTF-8') ?>" width="<?= (int) $picture['width'] ?>" height="<?= (int) $picture['height'] ?>" alt="<?= htmlspecialchars($picture['alt'], ENT_QUOTES, 'UTF-8') ?>" class="<?= htmlspecialchars($class, ENT_QUOTES, 'UTF-8') ?>" loading="<?= htmlspecialchars($loading, ENT_QUOTES, 'UTF-8') ?>"<?= $pictureLoadingAttributes ?>>
 </picture>
