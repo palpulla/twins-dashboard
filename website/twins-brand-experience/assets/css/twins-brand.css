@@ -6000,7 +6000,10 @@ body.twins-brand-experience :is(
   .twins-brand-editorial-page .twins-brand-editorial-answer,
   .twins-brand-team-page .twins-brand-team-crew-members,
   .twins-brand-careers-page .twins-brand-careers-roles,
-  .twins-brand-contact-page .twins-brand-contact-markets
+  .twins-brand-contact-page .twins-brand-contact-markets,
+  /* The city FAQ band was already here; its service-page twin is the same
+     component on the same cream and was the only one of the pair left flat. */
+  .twins-brand-service-page .twins-brand-faq
 ) {
   background-repeat: no-repeat, no-repeat, repeat, repeat, no-repeat;
   background-position: 0 0, 0 0, 0 0, 0 0, 0 100%;
@@ -6164,3 +6167,115 @@ body.twins-brand-experience .twins-brand-hero-art__truck {
 @keyframes twinsWrenchTurn { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(4deg); } }
 @keyframes twinsShieldGuard { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.035); } }
 @keyframes twinsBayLift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+
+/* ===== THE DEAD COLUMNS AND THE LAST PLAIN BANDS ===========================
+   Owner report 2026-08-26: "bland white background... need texture or semi
+   transparent stuff.. do this across the board these are just examples." His
+   example was the service page's WHAT IT COSTS block, which was two faults in
+   one band: no ground, and a 68ch copy column in a 1264px shell with the entire
+   right half empty. Measured across every family at 1440, the ink in that band
+   stopped at 51-53% of the shell, and the FAQ band on all 13 service pages and
+   all 35 city pages stopped at 62%.
+
+   The r41 pass deliberately left the long reading surfaces plain. That decision
+   is now overruled for the white ones, and only for the white ones: LINEN is
+   the ground it wrote for exactly this - a 4px seam and the stile pitch at a
+   third of the panel alpha, structure rather than decoration. RHYTHM still
+   holds: process and reviews stay plain on a service page, the one navy contact
+   slab stays plain, the gold ribbons stay flat, and nothing here reaches inside
+   a .twins-l10-* card, the popup dialog or a TwinShield tier card. */
+
+/* --- LINEN on the white reading surfaces --------------------------------- */
+body.twins-brand-experience :is(
+  .twins-brand-service-page .twins-brand-service-cost,
+  .twins-brand-editorial-page .twins-brand-editorial-body,
+  .twins-brand-careers-page .twins-brand-careers-application,
+  .twins-brand-contact-page .twins-brand-contact-quote,
+  .twins-location-page .twins-location-neighbors
+) {
+  background-repeat: no-repeat, repeat;
+  background-position: 0 0, 0 0;
+  background-size: 100% 4px, var(--twins-stile) 100%;
+  background-image:
+    var(--twins-seam),
+    var(--twins-stile-linen);
+}
+
+/* --- WHAT IT COSTS: the copy keeps its measure, the price takes the half --- */
+@media (min-width: 1200px) {
+  body.twins-brand-experience .twins-brand-service-cost--with-figure {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
+    align-items: start;
+    column-gap: clamp(40px, 5vw, 92px);
+  }
+  body.twins-brand-experience .twins-brand-service-cost--with-figure .twins-brand-section-heading {
+    grid-column: 1 / -1;
+  }
+  /* No range to show: the second column would be a hole, so there is no second
+     column. The copy sets in two columns instead, each one narrower than
+     --twins-measure, so the line length gets shorter rather than longer. */
+  body.twins-brand-experience .twins-brand-service-cost--copy-only .twins-brand-service-cost-copy {
+    max-width: none;
+    display: block;
+    columns: 30rem 2;
+    column-gap: clamp(40px, 5vw, 92px);
+  }
+  body.twins-brand-experience .twins-brand-service-cost--copy-only .twins-brand-service-cost-copy p {
+    margin: 0 0 14px;
+    break-inside: avoid;
+  }
+}
+body.twins-brand-experience .twins-brand-service-cost-figure {
+  margin-top: 24px;
+  padding: clamp(24px, 2.6vw, 38px);
+  color: var(--twins-white);
+  background: var(--twins-navy-950);
+  border: 3px solid var(--twins-navy-950);
+  border-radius: var(--twins-card-radius);
+  box-shadow: var(--twins-card-lift);
+}
+/* Stacked, not wrapped. "$575 to $1,225" does not fit one line in a 400px card
+   at display scale, and letting flex wrap it left "to" stranded on the end of
+   the first line. As a ladder the two figures read as the two ends of a range,
+   which is what they are. */
+body.twins-brand-experience .twins-brand-service-cost-figure .twins-brand-service-cost-range {
+  display: grid;
+  justify-items: start;
+  gap: 2px;
+  margin: 0;
+  color: var(--twins-white);
+  font-size: clamp(2.4rem, 4vw, 3.6rem);
+  line-height: 1;
+}
+/* Gold on navy-950, not on white. The old rule put gold-strong on white for the
+   word "to"; inside the card the accent finally has a ground that carries it. */
+body.twins-brand-experience .twins-brand-service-cost-figure .twins-brand-service-cost-range span {
+  color: var(--twins-gold);
+  font-size: .42em;
+  letter-spacing: .06em;
+}
+
+/* --- THE FAQ BAND: heading left, accordion right ------------------------- */
+/* 820px of accordion in a 1264px shell left 62% ink on 48 pages. The heading
+   moves into its own column and the list takes the rest; the answers inside
+   keep `max-width: var(--twins-measure)`, so no line of copy gets longer.
+   Padding is untouched - the city pages run their own gutter contract on this
+   same section (--twins-location-gutter) and this must not reach it. */
+@media (min-width: 1200px) {
+  body.twins-brand-experience .twins-brand-faq {
+    display: grid;
+    grid-template-columns: minmax(300px, 410px) minmax(0, 1fr);
+    align-items: start;
+    column-gap: clamp(40px, 5vw, 80px);
+  }
+  body.twins-brand-experience .twins-brand-faq .twins-brand-faq-list {
+    max-width: none;
+    margin-top: 0;
+  }
+}
+
+/* --- The two-card market grid stops leaving a third of the row empty ----- */
+body.twins-brand-experience .twins-brand-location-index .twins-brand-market-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
+}

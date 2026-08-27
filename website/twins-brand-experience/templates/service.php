@@ -269,23 +269,38 @@ if ($serviceNap !== null && $servicePath !== '') {
     </aside>
   </section>
 
-  <section class="twins-brand-service-cost" aria-labelledby="twins-brand-service-cost-title">
+  <?php
+    // THE DEAD COLUMN THE OWNER POINTED AT. "What it costs" ran a 68ch copy
+    // column down the left of a 1264px shell with the whole right half empty,
+    // and the price range - the one number a reader came for - sat above the
+    // copy at body scale. The range is now the right-hand figure, which is both
+    // the fix for the empty half and the right emphasis.
+    //
+    // Four of the thirteen service pages carry no range (services, weather-
+    // stripping, property management, protection plans). Rather than invent a
+    // filler for them, those sections drop the second column entirely and let
+    // the cost copy set in two measure-capped columns instead. Same section,
+    // two honest shapes, no fabricated figure.
+  ?>
+  <section class="twins-brand-service-cost<?= $servicePriceRange !== null ? ' twins-brand-service-cost--with-figure' : ' twins-brand-service-cost--copy-only' ?>" aria-labelledby="twins-brand-service-cost-title">
     <div class="twins-brand-section-heading">
       <span class="twins-brand-kicker">Real prices from completed jobs</span>
       <h2 id="twins-brand-service-cost-title">What it costs</h2>
     </div>
-    <?php if ($servicePriceRange !== null): ?>
-      <p class="twins-brand-service-cost-range" aria-label="Typical price range">
-        $<?= htmlspecialchars(number_format($servicePriceRange['min']), ENT_QUOTES, 'UTF-8') ?>
-        <span>to</span>
-        $<?= htmlspecialchars(number_format($servicePriceRange['max']), ENT_QUOTES, 'UTF-8') ?>
-      </p>
-    <?php endif; ?>
     <div class="twins-brand-service-cost-copy">
       <?php foreach ($pageContent['costParagraphs'] as $serviceCostParagraph): ?>
         <p><?= htmlspecialchars($serviceCostParagraph, ENT_QUOTES, 'UTF-8') ?></p>
       <?php endforeach; ?>
     </div>
+    <?php if ($servicePriceRange !== null): ?>
+      <aside class="twins-brand-service-cost-figure">
+        <p class="twins-brand-service-cost-range" aria-label="Typical price range">
+          $<?= htmlspecialchars(number_format($servicePriceRange['min']), ENT_QUOTES, 'UTF-8') ?>
+          <span>to</span>
+          $<?= htmlspecialchars(number_format($servicePriceRange['max']), ENT_QUOTES, 'UTF-8') ?>
+        </p>
+      </aside>
+    <?php endif; ?>
   </section>
 
   <?php if ($serviceSafety !== null): ?>
