@@ -36,7 +36,7 @@ $homeTeamMembers = [
   >
     <div class="twins-brand-home-team-track">
       <?php foreach ($homeTeamMembers as $teamMember): ?>
-        <article class="twins-brand-home-team-person">
+        <article class="twins-brand-home-team-person" data-person="<?= htmlspecialchars(strtolower(explode(' ', $teamMember['name'])[0]), ENT_QUOTES, 'UTF-8') ?>">
           <div class="twins-brand-home-team-media">
             <?php if (is_string($teamMember['picture'])): ?>
               <?php

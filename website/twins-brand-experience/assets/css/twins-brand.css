@@ -138,6 +138,30 @@ body.twins-brand-experience {
     linear-gradient(90deg, rgba(7,28,56,.05) 0 1px, rgba(255,255,255,.45) 1px 3px, transparent 3px);
   --twins-stile-linen:
     linear-gradient(90deg, rgba(7,28,56,.045) 0 1px, rgba(255,255,255,.55) 1px 3px, transparent 3px);
+  /* The course LINEN was missing, and its absence is why the ground did not
+     exist. Measured from the r44 render with every glyph hidden, a LINEN band
+     was 99.1% of its pixels exactly rgb(255,255,255): the stile is a 1px mark
+     on a 230px pitch, so a 1264px reading band carried five hairlines and
+     nothing else. PANEL reads because it has both directions -- a 118px course
+     under a 230px stile is what makes a flat surface read as a door rather
+     than as ruled paper. This is that course at white-safe alpha.
+
+     The white highlight PANEL uses (`--twins-panel-course`) cannot appear
+     here: a white line on white is nothing. The mark has to be the navy, so
+     the alphas are set from the contrast budget instead of by eye, and then
+     measured back off the render rather than trusted.
+
+     Slate #5A6875 on white is 6.09:1. The mark that matters is not the course
+     and not the stile but the 1px by 2px point where they cross, because that
+     is the darkest pixel a line of body copy can ever sit on. Measured off the
+     composited render, .062 put that crossing at rgb(229,231,234) and the pair
+     at 4.62:1 -- passing, but 2.7% of headroom over the floor on a project
+     that has shipped a contrast regression from exactly this kind of margin.
+     At .052 the crossing measures rgb(232,234,236) and the pair 5.14:1, and
+     the difference between the two is not visible on the page. The safer
+     number is the one in the file. */
+  --twins-course-linen:
+    linear-gradient(180deg, rgba(7,28,56,.052) 0 1px, rgba(7,28,56,.022) 1px 2px, transparent 2px);
   --twins-under-door:
     linear-gradient(180deg, rgba(255,198,65,.16) 0 2px, rgba(255,198,65,.06) 2px 4px);
   /* There is no coil token any more, and that is the finding, not an oversight.
@@ -3818,6 +3842,32 @@ body.twins-brand-experience .twins-brand-review-proof .twins-brand-kicker {
   display: block;
   object-fit: cover;
 }
+/* Crop focus, per portrait. These are real photos taken on real jobs, not
+   studio headshots, so the subject is rarely in the middle of the frame: a
+   centred cover-crop into the roster's circle landed on the truck lettering
+   behind Charles and on the van's painted mascots behind Maurice, which read
+   as "a truck and a cartoon" in the row of faces (owner, 2026-08-26). The
+   photos are right; the framing was not. Percentages are the face centre in
+   each source image. */
+/* Charles and Maurice are small in wide frames, so repositioning alone still
+   showed more truck than tech: both also take a zoom, anchored on the face. */
+.twins-brand-home-team-person[data-person="charles"] .twins-brand-home-team-photo {
+  object-position: 21% 34%;
+  transform: scale(1.95);
+  transform-origin: 21% 34%;
+}
+.twins-brand-home-team-person[data-person="maurice"] .twins-brand-home-team-photo {
+  object-position: 57% 33%;
+  transform: scale(1.55);
+  transform-origin: 57% 33%;
+}
+/* The shared hover lift multiplies the per-portrait zoom, so restate it. */
+.twins-brand-home-team-person[data-person="charles"]:is(:hover, :focus-within) .twins-brand-home-team-photo { transform: scale(2.03); }
+.twins-brand-home-team-person[data-person="maurice"]:is(:hover, :focus-within) .twins-brand-home-team-photo { transform: scale(1.61); }
+.twins-brand-home-team-person[data-person="nicholas"] .twins-brand-home-team-photo { object-position: 50% 30%; }
+.twins-brand-home-team-person[data-person="daniel"] .twins-brand-home-team-photo { object-position: 50% 26%; }
+.twins-brand-home-team-person[data-person="tal"] .twins-brand-home-team-photo { object-position: 50% 24%; }
+
 .twins-brand-home-team-person h3 {
   margin: 14px 4px 4px;
   color: var(--twins-navy-950);
@@ -6041,6 +6091,23 @@ body.twins-brand-experience :is(
     var(--twins-seam),
     var(--twins-stile-linen);
 }
+/* The course goes on the white bands and stops at the catalog door. Every
+   `--twins-course-linen` alpha in this file is set from a white base; the
+   catalog family sets its own #F2F6FA sections, and on that darker base a
+   course crossing a stile composites to rgb(220,225,232), which measured
+   4.71:1 against the slate body copy on those sections -- passing, but the
+   tightest pair in the site and tighter than it was before the course existed
+   (5.12:1). The catalog was never the bland surface in the report either: it
+   is a wall of door photography. It keeps the stile it already had. */
+body.twins-brand-experience .twins-location-page .twins-location-local-proof {
+  background-repeat: no-repeat, repeat, repeat;
+  background-position: 0 0, 0 0, 0 0;
+  background-size: 100% 4px, 100% var(--twins-course), var(--twins-stile) 100%;
+  background-image:
+    var(--twins-seam),
+    var(--twins-course-linen),
+    var(--twins-stile-linen);
+}
 
 /* --- COIL --------------------------------------------------------------- */
 /* The gold ribbons carry NO ground, and that is the decision, not an omission.
@@ -6193,11 +6260,12 @@ body.twins-brand-experience :is(
   .twins-brand-contact-page .twins-brand-contact-quote,
   .twins-location-page .twins-location-neighbors
 ) {
-  background-repeat: no-repeat, repeat;
-  background-position: 0 0, 0 0;
-  background-size: 100% 4px, var(--twins-stile) 100%;
+  background-repeat: no-repeat, repeat, repeat;
+  background-position: 0 0, 0 0, 0 0;
+  background-size: 100% 4px, 100% var(--twins-course), var(--twins-stile) 100%;
   background-image:
     var(--twins-seam),
+    var(--twins-course-linen),
     var(--twins-stile-linen);
 }
 
@@ -6307,5 +6375,133 @@ body.twins-brand-experience .twins-brand-location-index .twins-brand-market-grid
     .twins-brand-careers-hero
   ) h1 {
     overflow-wrap: anywhere;
+  }
+}
+
+/* ===== THE GHOST — "semi transparent stuff" on the white reading bands =====
+   Design review 2026-08-26, measured, not judged by eye. The r44 pass answered
+   the owner's "bland white background" by putting LINEN on the long white
+   reading surfaces. Rendered at 1440 with every glyph set to `transparent` and
+   the whole band sampled, LINEN measured 99.1% of its pixels exactly
+   rgb(255,255,255), and `.twins-brand-service-reviews` measured 100.0%. The
+   ground was in the stylesheet and not in the picture: one 1px stile on a
+   230px pitch is five hairlines across a 1264px band. Adding the missing
+   course took a LINEN band to 97.5% white. Hairlines cannot make a white band
+   read as anything but white, and that is the finding.
+
+   What the owner actually asked for is already in this file. The homepage
+   closes on `.twins-brand-why-scene::after` / `.twins-brand-closing-scene::after`:
+   the Twins mark, grayscale, `opacity: .07`, `z-index: -1`, sized off the
+   viewport and hung off the right edge. That is the ghost he approved on the
+   popup and the newsletter, and it is the "semi transparent stuff" in his
+   report. This block is that same treatment, moved onto the white bands, at
+   the alpha white needs rather than the alpha navy needs.
+
+   WHERE IT GOES. Only into space that has no text in it. Every rule below is
+   gated at >= 1200px, because the empty right half only exists at those
+   widths -- below 1200 the copy uses the whole shell and there is nothing to
+   fill. The ghost is sized and positioned to the void, never across the
+   measure, so it composites with nothing and cannot move a contrast pair. That
+   is also why it is `::before` with `z-index: -1` under `isolation: isolate`:
+   it paints above the band's own background and below every line of type.
+
+   MOTION. None. DECORATIVE. `pointer-events: none`, no content, no ARIA. */
+
+@media (min-width: 1200px) {
+  /* --- The service page's review band ------------------------------------
+     Its heading row is ~240px tall with the right 970px empty, and the band
+     under it was the one measured at 100.0% pure white. It takes LINEN like
+     its neighbours, and the mascot stands in the void the heading leaves.
+     RHYTHM still holds: `.twins-brand-service-process` above it stays plain,
+     so a service page keeps a plain white band. */
+  body.twins-brand-experience .twins-brand-service-page .twins-brand-service-reviews,
+  body.twins-brand-experience .twins-brand-editorial-page
+    .twins-brand-editorial-body:not(.twins-brand-article-body) {
+    position: relative;
+    isolation: isolate;
+  }
+  body.twins-brand-experience .twins-brand-service-page .twins-brand-service-reviews::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    right: var(--twins-content-shell);
+    top: clamp(10px, 1.4vw, 26px);
+    width: min(300px, 24%);
+    height: clamp(210px, 17vw, 268px);
+    background: url('../images/brand/twin-right.png') no-repeat right bottom / contain;
+    opacity: .11;
+    filter: grayscale(1);
+    pointer-events: none;
+  }
+
+  /* --- The editorial body on the trust and article families --------------
+     This one is a centred `--twins-measure` column: at 1440 it uses 692px of
+     a 1440px shell and leaves 374px dead on each side. The measure is correct
+     and does not widen. The right margin takes the mark instead, hung off the
+     shell rail the same way the homepage hangs it off the viewport.
+
+     `:not(.twins-brand-article-body)` is a measured exclusion, not a taste
+     call. An article body is the same component on a wider column: at 1440 a
+     trust body sets to x=1066 and an article body to x=1150, and the mark
+     starts at x=1109. Forcing the ghost to solid magenta and then testing
+     every painted line box at twelve widths from 1200 to 2560 found 31
+     overlaps, all of them article paragraphs and none anywhere else. Text over
+     the mark is the one thing this treatment must never do, so the family
+     whose column reaches it does not get it. Articles keep the ground, their
+     own hero photograph and their cream services band. */
+  body.twins-brand-experience .twins-brand-editorial-page
+    .twins-brand-editorial-body:not(.twins-brand-article-body)::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    right: max(0px, calc(var(--twins-content-shell) - 2vw));
+    top: 50%;
+    /* The width is derived from the free margin, not guessed: half the shell
+       minus half the measure is the gap the centred column leaves, and 56px of
+       it stays empty so the mark never crowds the last word on a line. At 1200
+       that resolves to a 198px mark starting 52px clear of the copy; at 2560
+       the 300px cap takes over. The magenta overlap test above is what proved
+       the earlier fixed `min(300px, 22%)` reached the copy at exactly 1200. */
+    width: min(300px, calc(50% - var(--twins-measure) / 2 - 56px));
+    aspect-ratio: 1 / 1;
+    translate: 0 -50%;
+    background: url('../images/brand/twins-logo.png') no-repeat center / contain;
+    opacity: .085;
+    filter: grayscale(1);
+    pointer-events: none;
+  }
+}
+
+/* --- The review band joins the ground system ----------------------------- */
+/* Kept outside the media query: the ground is a background, not a layout, and
+   it should read the same at 390 as it does at 1440. */
+body.twins-brand-experience .twins-brand-service-page .twins-brand-service-reviews {
+  background-repeat: no-repeat, repeat, repeat;
+  background-position: 0 0, 0 0, 0 0;
+  background-size: 100% 4px, 100% var(--twins-course), var(--twins-stile) 100%;
+  background-image:
+    var(--twins-seam),
+    var(--twins-course-linen),
+    var(--twins-stile-linen);
+}
+
+/* --- /locations/: the chips come up beside the heading -------------------- */
+/* The last right-half void the sweep found outside a service page. The service
+   band on the area index set a three-line display heading in the left 440px
+   and left the right 1000px empty for 470px of height before the chip row
+   started underneath it. The FAQ band on the same family already pairs a
+   heading with its content in two columns; this is that pattern, not a new one.
+   The heading keeps its own `max-width: 720px`, so nothing about the type
+   changes -- only where the chips sit. */
+@media (min-width: 1200px) {
+  body.twins-brand-experience .twins-brand-location-index .twins-brand-editorial-services {
+    display: grid;
+    grid-template-columns: minmax(0, 8fr) minmax(0, 11fr);
+    align-items: start;
+    column-gap: clamp(40px, 5vw, 88px);
+  }
+  body.twins-brand-experience .twins-brand-location-index .twins-brand-editorial-services
+    .twins-brand-section-heading {
+    margin-bottom: 0;
   }
 }
