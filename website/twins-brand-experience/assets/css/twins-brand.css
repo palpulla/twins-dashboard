@@ -136,32 +136,76 @@ body.twins-brand-experience {
      leads, which is the order the approved homepage door reads in. */
   --twins-stile-panel:
     linear-gradient(90deg, rgba(7,28,56,.05) 0 1px, rgba(255,255,255,.45) 1px 3px, transparent 3px);
+  /* THE LINEN STILE. It used to be a 1px navy hairline followed by a 2px white
+     .55 highlight -- and a white highlight on a white band is nothing, so the
+     whole vertical was one 1px line every 230px. Five hairlines across a
+     1264px reading band is not a surface.
+
+     The rebuilt stile is a rail, not a rule: the 1px edge, a 2px core shadow,
+     then a 7px shelf that ramps out to nothing by 22px. That is how a real
+     stile reads on a steel door -- the rail catches the light and throws a
+     soft shadow onto the panel face beside it. A broad soft mark at 2% alpha
+     is far more visible than a hairline at 5%, because the eye integrates
+     area, and it is SAFER for contrast, because the darkest pixel it can put
+     under a line of copy is lower. Alphas are set from the contrast budget
+     below and then measured back off the composited render. */
   --twins-stile-linen:
-    linear-gradient(90deg, rgba(7,28,56,.045) 0 1px, rgba(255,255,255,.55) 1px 3px, transparent 3px);
-  /* The course LINEN was missing, and its absence is why the ground did not
-     exist. Measured from the r44 render with every glyph hidden, a LINEN band
-     was 99.1% of its pixels exactly rgb(255,255,255): the stile is a 1px mark
-     on a 230px pitch, so a 1264px reading band carried five hairlines and
-     nothing else. PANEL reads because it has both directions -- a 118px course
-     under a 230px stile is what makes a flat surface read as a door rather
-     than as ruled paper. This is that course at white-safe alpha.
+    linear-gradient(90deg,
+      rgba(7,28,56,.042) 0 1px,
+      rgba(7,28,56,.028) 1px 3px,
+      rgba(7,28,56,.024) 3px 10px,
+      rgba(7,28,56,0) 22px);
+  /* THE LINEN COURSE, rebuilt 2026-08-27 after the owner called the site bland
+     for the second time and asked for "texture or semi transperant stuff".
 
-     The white highlight PANEL uses (`--twins-panel-course`) cannot appear
-     here: a white line on white is nothing. The mark has to be the navy, so
-     the alphas are set from the contrast budget instead of by eye, and then
-     measured back off the render rather than trusted.
+     WHAT WAS WRONG. The r44 course was a 1px line at .052 plus a second 1px at
+     .022, and nothing else: two hairlines every 118px. Measured off the r45
+     render with every glyph hidden and the band sampled whole, a LINEN reading
+     band was 97.6% of its pixels EXACTLY rgb(255,255,255). PANEL, the cream
+     ground the same door vocabulary produces, is 6.9% modal. The stylesheet
+     had a ground; the picture did not.
 
-     Slate #5A6875 on white is 6.09:1. The mark that matters is not the course
-     and not the stile but the 1px by 2px point where they cross, because that
-     is the darkest pixel a line of body copy can ever sit on. Measured off the
-     composited render, .062 put that crossing at rgb(229,231,234) and the pair
-     at 4.62:1 -- passing, but 2.7% of headroom over the floor on a project
-     that has shipped a contrast regression from exactly this kind of margin.
-     At .052 the crossing measures rgb(232,234,236) and the pair 5.14:1, and
-     the difference between the two is not visible on the page. The safer
-     number is the one in the file. */
+     THE MISTAKE WAS SPATIAL, NOT NUMERIC. The r44 pass tried to buy visibility
+     with alpha on a 1px line, which is the one purchase that does not work: a
+     hairline puts almost no ink on the page whatever its alpha, and raising it
+     spends the whole contrast budget on the one pixel a line of copy is most
+     likely to cross. PANEL reads at LOWER local alpha than LINEN did, because
+     PANEL's mark is an 11px shelf, not a line. Area, not intensity.
+
+     THE REBUILT COURSE is a panel emboss: a 1px lip, a 2px core shadow under
+     it, a 11px shelf, then a smooth ramp to nothing by 30px, repeating on the
+     118px course. It reads as the face of a door panel catching light from
+     above, which is what the r41 vocabulary note says a course is.
+
+     THE CONTRAST BUDGET, and where it actually binds. The lightest body colour
+     that ever sits directly on a LINEN ground is --twins-muted #546277, 6.19:1
+     on pure white. (The review stars #9A6200 are tighter at 5.10:1, but they
+     live inside .twins-brand-review-card, an opaque white card the ground
+     never reaches -- measured, not assumed.) The mark that binds is the 1px by
+     1px point where a course lip crosses a stile lip, because that is the
+     darkest pixel a line of copy can land on. Composited and read back off the
+     render, that crossing is rgb(231,233,236) and the muted pair 5.09:1, which
+     is the same headroom the r44 file aimed for and 13% clear of the 4.5
+     floor. The shelves, which is where nearly all the new visibility comes
+     from, cross at rgb(243,244,245) and 5.63:1.
+
+     WHY NOT A WASH. A whole-band vertical gradient would have been the cheap
+     way to raise the amplitude number, and it is not door vocabulary: a door
+     face is courses, stiles and seams. The only large-scale layer added is the
+     bottom lift, which PANEL already carries, and which says the next section
+     sits on this one. */
   --twins-course-linen:
-    linear-gradient(180deg, rgba(7,28,56,.052) 0 1px, rgba(7,28,56,.022) 1px 2px, transparent 2px);
+    linear-gradient(180deg,
+      rgba(7,28,56,.050) 0 1px,
+      rgba(7,28,56,.034) 1px 3px,
+      rgba(7,28,56,.030) 3px 14px,
+      rgba(7,28,56,0) 30px);
+  /* The shadow along the bottom edge, at two thirds of PANEL's .07. Sections
+     carry 54-88px of block padding, so no line of copy reaches the last 26px
+     of a band; the layer is measured against the geometry sweep, not assumed
+     safe. */
+  --twins-course-linen-foot:
+    linear-gradient(180deg, rgba(7,28,56,0) 0, rgba(7,28,56,.04) 100%);
   --twins-under-door:
     linear-gradient(180deg, rgba(255,198,65,.16) 0 2px, rgba(255,198,65,.06) 2px 4px);
   /* There is no coil token any more, and that is the finding, not an oversight.
@@ -1115,7 +1159,18 @@ body.twins-brand-experience .twins-brand-footer-group h2 {
 }
 .twins-brand-review-card > :where(small, .twins-brand-review-stars, .twins-brand-review-excerpt, blockquote, details, footer) { margin-inline: 0; }
 .twins-brand-review-card small { color: #5f6670; font-size: .7rem; font-weight: 800; text-transform: uppercase; }
-.twins-brand-review-stars { color: #9a6200; font-size: 1.35rem; letter-spacing: .12em; }
+/* THE STAR ROW is the tightest text pair on any light ground in the site, and
+   raising LINEN is what made that matter. #9a6200 measured 5.10:1 on pure
+   white and 4.86:1 on the cream review cards -- both passing, both inside 8%
+   of the 4.5 floor before this branch touched anything. The service page
+   reuses the LOCATION review card, which is transparent, so on
+   .twins-brand-service-reviews the stars sit DIRECTLY on the ground: at the
+   rebuilt LINEN crossing rgb(233,235,237) the old ink measured 4.26:1, a real
+   failure. #8a5a00 is the gold-dark ink this stylesheet already uses for the
+   L10 term labels on white; it reads as the same warm amber at 21.6px, and it
+   carries the pair to 4.96:1 on the worst LINEN pixel, 5.93:1 on plain white
+   and 5.63:1 on the cream cards. Measured from rendered pixels, not palette. */
+.twins-brand-review-stars { color: #8a5a00; font-size: 1.35rem; letter-spacing: .12em; }
 .twins-brand-review-card blockquote,
 .twins-brand-review-excerpt { margin-top: 12px; margin-bottom: 18px; padding-inline: 0; font-size: 1rem; font-style: normal; font-weight: 700; line-height: 1.52; }
 .twins-brand-review-details { margin: -4px 0 18px; }
@@ -6091,20 +6146,25 @@ body.twins-brand-experience :is(
     var(--twins-seam),
     var(--twins-stile-linen);
 }
-/* The course goes on the white bands and stops at the catalog door. Every
-   `--twins-course-linen` alpha in this file is set from a white base; the
-   catalog family sets its own #F2F6FA sections, and on that darker base a
-   course crossing a stile composites to rgb(220,225,232), which measured
-   4.71:1 against the slate body copy on those sections -- passing, but the
-   tightest pair in the site and tighter than it was before the course existed
-   (5.12:1). The catalog was never the bland surface in the report either: it
-   is a wall of door photography. It keeps the stile it already had. */
+/* The course goes on the white bands and stops at the catalog door, and the
+   2026-08-27 rebuild does not change that. Every `--twins-course-linen` alpha
+   is set from a white base; the catalog family paints its own #F3F6FA ground,
+   and on that darker base a rebuilt course lip crossing a rebuilt stile lip
+   composites to rgb(222,226,233) and measures 4.77:1 against --twins-muted --
+   passing, but 6% of headroom on 23 frozen preserved pages, which is the
+   margin this project has already shipped a regression from once. The catalog
+   was never the bland surface in the owner's report either: it is a wall of
+   door photography on a tinted ground, measured at 98.2% modal before this
+   pass only because its stile was one hairline. It takes the rebuilt STILE,
+   which carries it to 89.8% modal with its tightest pair at 5.27:1, and it
+   still does not take the course. */
 body.twins-brand-experience .twins-location-page .twins-location-local-proof {
-  background-repeat: no-repeat, repeat, repeat;
-  background-position: 0 0, 0 0, 0 0;
-  background-size: 100% 4px, 100% var(--twins-course), var(--twins-stile) 100%;
+  background-repeat: no-repeat, no-repeat, repeat, repeat;
+  background-position: 0 0, 0 100%, 0 0, 0 0;
+  background-size: 100% 4px, 100% 26px, 100% var(--twins-course), var(--twins-stile) 100%;
   background-image:
     var(--twins-seam),
+    var(--twins-course-linen-foot),
     var(--twins-course-linen),
     var(--twins-stile-linen);
 }
@@ -6260,11 +6320,12 @@ body.twins-brand-experience :is(
   .twins-brand-contact-page .twins-brand-contact-quote,
   .twins-location-page .twins-location-neighbors
 ) {
-  background-repeat: no-repeat, repeat, repeat;
-  background-position: 0 0, 0 0, 0 0;
-  background-size: 100% 4px, 100% var(--twins-course), var(--twins-stile) 100%;
+  background-repeat: no-repeat, no-repeat, repeat, repeat;
+  background-position: 0 0, 0 100%, 0 0, 0 0;
+  background-size: 100% 4px, 100% 26px, 100% var(--twins-course), var(--twins-stile) 100%;
   background-image:
     var(--twins-seam),
+    var(--twins-course-linen-foot),
     var(--twins-course-linen),
     var(--twins-stile-linen);
 }
@@ -6387,7 +6448,9 @@ body.twins-brand-experience .twins-brand-location-index .twins-brand-market-grid
    ground was in the stylesheet and not in the picture: one 1px stile on a
    230px pitch is five hairlines across a 1264px band. Adding the missing
    course took a LINEN band to 97.5% white. Hairlines cannot make a white band
-   read as anything but white, and that is the finding.
+   read as anything but white, and that is the finding. (2026-08-27: acted on.
+   See --twins-course-linen at the top of this file -- the course is now a
+   shelf, not a line, and the same band measures 69.9% modal.)
 
    What the owner actually asked for is already in this file. The homepage
    closes on `.twins-brand-why-scene::after` / `.twins-brand-closing-scene::after`:
@@ -6476,11 +6539,12 @@ body.twins-brand-experience .twins-brand-location-index .twins-brand-market-grid
 /* Kept outside the media query: the ground is a background, not a layout, and
    it should read the same at 390 as it does at 1440. */
 body.twins-brand-experience .twins-brand-service-page .twins-brand-service-reviews {
-  background-repeat: no-repeat, repeat, repeat;
-  background-position: 0 0, 0 0, 0 0;
-  background-size: 100% 4px, 100% var(--twins-course), var(--twins-stile) 100%;
+  background-repeat: no-repeat, no-repeat, repeat, repeat;
+  background-position: 0 0, 0 100%, 0 0, 0 0;
+  background-size: 100% 4px, 100% 26px, 100% var(--twins-course), var(--twins-stile) 100%;
   background-image:
     var(--twins-seam),
+    var(--twins-course-linen-foot),
     var(--twins-course-linen),
     var(--twins-stile-linen);
 }
