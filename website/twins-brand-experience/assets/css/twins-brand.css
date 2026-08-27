@@ -3929,12 +3929,31 @@ body.twins-brand-experience .twins-brand-review-proof .twins-brand-kicker {
   font-size: 22px;
   line-height: 1;
 }
-.twins-brand-home-team-role {
+/* THE ROLE IS A LABEL, AND IT WAS BEING SET AS BODY COPY. This rule asks for
+   13px/1.3, and never got it: `.twins-brand-home [data-home-scene] p` is
+   specificity (0,2,1) against this rule's (0,1,0), so every role in the roster
+   rendered at clamp(17px, 1.35vw, 20px) with 1.58 leading -- 19.44px at 1440.
+   In a 158px text box that is what broke "Field Operations Manager" and
+   "Customer Service Representative" onto three lines and left "CEO" alone on
+   its own line under "Co-Founder and". It also inverted the hierarchy: the
+   role was set within 3px of the 22px name above it.
+
+   The scope selector restates the same intent at a specificity that wins
+   (0,3,0). The scale is not new -- it is the label scale /our-team/ already
+   uses for these exact strings. `text-wrap: balance` is what stops a
+   two-line role stranding one short word: it splits the line evenly instead,
+   and browsers without it simply keep today's greedy break.
+
+   NO TITLE IS EDITED HERE. These are real people's job titles and they are
+   byte-identical in components/home/why-doors.php; the per-portrait crop focus
+   committed in 306dfe86 is untouched. */
+.twins-brand-home [data-home-scene] .twins-brand-home-team-role {
   margin: 0 4px;
   color: var(--twins-navy-800);
   font-size: 13px;
   font-weight: 900;
-  line-height: 1.3;
+  line-height: 1.32;
+  text-wrap: balance;
 }
 .twins-brand-character-stage { position: relative; display: inline-grid; isolation: isolate; margin-top: 12px; }
 .twins-brand-character-stage img { position: absolute; right: clamp(-28px, -2.4vw, 0px); bottom: 8px; z-index: -1; width: 72px; height: auto; pointer-events: none; }
