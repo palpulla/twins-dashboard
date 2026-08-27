@@ -893,9 +893,36 @@ body.twins-brand-experience .twins-brand-market-menu-panel small {
    remaining document with scrollWidth > clientWidth. */
 .twins-brand-crew-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 28px; margin-top: 34px; }
 .twins-brand-crew-grid .twins-brand-person-card { display: flex; flex-direction: column; margin: 0; padding: 0; color: var(--twins-ink); background: var(--twins-white); border: 3px solid var(--twins-navy-950); border-radius: 14px; box-shadow: 8px 9px 0 var(--twins-gold); overflow: hidden; }
-.twins-brand-person-media { position: relative; aspect-ratio: 4 / 5; background: var(--twins-navy-900); }
+.twins-brand-person-media { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: var(--twins-navy-900); }
 .twins-brand-person-media img,
 .twins-brand-person-media .twins-brand-door-avatar { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; object-position: 50% 18%; }
+/* THE SAME FINDING AS THE HOME ROSTER, ON THE PAGE THAT IS ABOUT THE CREW.
+   r45 gave the home roster circles a per-portrait focus so they "frame faces,
+   not trucks and cartoons". The /our-team/ cards were left on one blanket
+   `50% 18%`, and one portrait cannot survive it: Charles Rue's source is
+   1600x1322 with Charles standing at the left of a branded van, so a 4/5
+   cover crop centred at 50% throws away Charles and keeps the van lettering.
+   Rendered side by side with Daniel and Tal, whose portraits are centred and
+   read correctly, his card looked like a mistake.
+   Repositioning alone is not enough and the roster already knows why: Charles
+   is small in a wide frame, so a 1.21 source in a 0.8 box leaves 66% of the
+   source width visible and he still reads as a photograph of a van. This is
+   the r45 roster treatment for this exact photograph, reused rather than
+   re-invented -- same focus, same zoom, same origin. Rendered against 1, 1.5,
+   1.95 and 2.2, the approved 1.95 is also the value that matches the head size
+   Daniel and Tal set in the same row, and it does not upscale: at 1.95 the
+   visible source is 542px wide inside a 420px box.
+   `overflow: hidden` moves onto the shared media frame because that is what a
+   media frame does, and it is what `.twins-brand-home-team-media` already
+   does. Nothing else in this card overflows it, so the rule is a floor.
+   Every other portrait reads correctly on the shared value and is deliberately
+   untouched, and the home roster's own object-position rules are a different
+   selector, byte-identical to r45. */
+.twins-brand-person-card[data-person="charles"] .twins-brand-person-photo {
+  object-position: 21% 34%;
+  transform: scale(1.95);
+  transform-origin: 21% 34%;
+}
 .twins-brand-person-body { display: flex; flex: 1; flex-direction: column; gap: 4px; padding: 22px 24px 26px; }
 .twins-brand-crew-grid .twins-brand-person-card h3 { margin: 0; color: var(--twins-navy-950); font-size: 1.9rem; text-transform: uppercase; }
 .twins-brand-crew-grid .twins-brand-person-card p { color: var(--twins-ink); }

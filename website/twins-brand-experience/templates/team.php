@@ -52,7 +52,12 @@ $teamMembers = [
     [
         'name' => 'Nicholas Roccaforte',
         'role' => 'Technician',
-        'picture' => null,
+        // Nicholas has an owned, provenanced portrait -- the same one the home
+        // roster shows -- and this page is the page about the crew. r11 swapped
+        // him to the initials stand-in when the cards were equalised, before
+        // the per-person crop focus existed; with that in place the reason is
+        // gone, and the reviews name him more than anyone.
+        'picture' => 'nicholas-portrait',
         'initials' => 'NR',
         'paras' => [
             'Hi, I am Nicholas with Twins Garage Doors. I take pride in being straightforward, easy to work with, and delivering real results. My goal is to make sure every customer ends up with a safe, reliable, and properly functioning garage door.',
@@ -103,7 +108,7 @@ $teamPromises = [
     </div>
     <div class="twins-brand-crew-grid">
       <?php foreach ($teamMembers as $teamMember): ?>
-        <article class="twins-brand-person-card">
+        <article class="twins-brand-person-card" data-person="<?= htmlspecialchars(strtolower(explode(' ', $teamMember['name'])[0]), ENT_QUOTES, 'UTF-8') ?>">
           <div class="twins-brand-person-media">
             <?php if (is_string($teamMember['picture'])): ?>
               <?php
