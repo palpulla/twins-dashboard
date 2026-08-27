@@ -68,6 +68,33 @@ $nearbyLinks = array_values(array_filter(
     $cityLinks,
     static fn(array $item): bool => !in_array($item[1], $featuredRouteKeys, true)
 ));
+
+// "Find your local Twins team" on the main index offered two cards, WISCONSIN
+// and ILLINOIS, for the same reason /contact-us/ did: it looped the market
+// registry. A heading that says "team" has to list the teams, and there are
+// three of them, two inside one market. Same source as the contact chooser and
+// as the header menu: labels from $twinsNavMetroTree, everything else from the
+// metroLines in config/markets.php.
+//
+// The card still points at the metro's market front door. City routes are
+// market-scoped and the main index has none of them, which is the same
+// degradation the metro tree already documents; the alternative is four route
+// tables' worth of cross-market city keys for one link.
+$indexTeams = [];
+foreach ($experience->markets()->selectable($environment) as $indexMarketKey => $indexMarket) {
+    if ($indexMarketKey === 'main') {
+        continue;
+    }
+    $indexLines = $indexMarket['metroLines'] ?? [['key' => $indexMarketKey, 'label' => $indexMarket['label']]];
+    foreach ($indexLines as $indexLine) {
+        $indexLineKey = (string) ($indexLine['key'] ?? $indexMarketKey);
+        $indexTeams[] = [
+            'label' => $twinsNavMetroTree[$indexLineKey]['label'] ?? $indexLine['label'],
+            'routeKey' => $indexMarketKey,
+            'preview' => $indexMarket['preview'] === true,
+        ];
+    }
+}
 ?>
 <div id="twins-overhaul-main" class="twins-brand-page twins-brand-editorial-page twins-brand-location-index">
   <header class="twins-brand-editorial-hero" aria-labelledby="twins-brand-location-index-title">
@@ -92,10 +119,9 @@ $nearbyLinks = array_values(array_filter(
         <h2 id="twins-brand-location-index-areas-title"><?= htmlspecialchars($copy['areasTitle'], ENT_QUOTES, 'UTF-8') ?></h2>
       </div>
       <div class="twins-brand-market-grid">
-        <?php foreach ($experience->markets()->selectable($environment) as $availableMarketKey => $availableMarket): ?>
-          <?php if ($availableMarketKey === 'main') continue; ?>
-          <a class="twins-brand-market-card<?= $availableMarket['preview'] === true ? ' twins-brand-market-card--preview' : '' ?>" href="<?= htmlspecialchars($experience->route($availableMarketKey, $marketKey), ENT_QUOTES, 'UTF-8') ?>">
-            <strong><?= htmlspecialchars($availableMarket['label'], ENT_QUOTES, 'UTF-8') ?></strong>
+        <?php foreach ($indexTeams as $indexTeam): ?>
+          <a class="twins-brand-market-card<?= $indexTeam['preview'] ? ' twins-brand-market-card--preview' : '' ?>" href="<?= htmlspecialchars($experience->route($indexTeam['routeKey'], $marketKey), ENT_QUOTES, 'UTF-8') ?>">
+            <strong><?= htmlspecialchars($indexTeam['label'], ENT_QUOTES, 'UTF-8') ?></strong>
             <span>View local service areas</span>
           </a>
         <?php endforeach; ?>
