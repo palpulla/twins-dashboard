@@ -222,6 +222,34 @@
       sync();
     };
 
+    /* THE ROSTER REVEALED FACES IT HAD NOT FETCHED, and it is the same defect
+       the service showcase carries a note about further down this file. The
+       rail is a horizontal scroller: at 1440 only four of the seven crew cards
+       are inside the viewport, and at 390 only three. Every crew photograph
+       ships `loading="lazy"`, and a card clipped by the rail never intersects
+       the viewport, so its request is never issued. Measured with the roster
+       scrolled into view and settled: at 1440 the fifth card (Nicholas)
+       reported complete=false, naturalWidth=0; at 390 the fourth and fifth
+       (Maurice, Nicholas) both did. Pressing "next" then un-hid a card whose
+       image had not been asked for, so the circle painted as an empty cream
+       arch until it arrived.
+
+       The markup stays honest -- all five photographs ship lazy, and a visitor
+       who never scrolls to the crew never downloads any of them. They are
+       promoted to eager exactly once, the first time the rail is actually on
+       screen, through the same observer helper the showcase uses. Eager here
+       is not a preload: the section sits thousands of pixels down the page,
+       and by the time it is on screen the hero has long finished. */
+    let rosterWarmed = false;
+    const warmRosterImages = () => {
+      if (rosterWarmed) return;
+      rosterWarmed = true;
+      roster.querySelectorAll('img[loading="lazy"]').forEach(image => { image.loading = 'eager'; });
+    };
+    if (!createVisibilityPause(roster, visible => { if (visible) warmRosterImages(); })) {
+      warmRosterImages();
+    }
+
     previous.addEventListener('click', () => nudge(-1));
     next.addEventListener('click', () => nudge(1));
     roster.addEventListener('scroll', sync, { passive: true });
