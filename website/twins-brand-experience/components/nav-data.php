@@ -18,11 +18,21 @@ $twinsNavServiceCatalog = [
     ['Property Management', 'property-management'],
     ['Emergency Service', 'emergency-service'],
 ];
+// A per-market statement of what that market's route table carries, because
+// route() is fail-closed: a key listed here that the table lacks is a fatal,
+// not a dead link. WI and IL genuinely had no 'maintenance-plans' route when
+// this list was written (0c7d4dc2, 2026-07-17), so leaving it out was correct
+// then. The r30 host capture (603a097f, 2026-08-18) gave both markets the
+// shared main-site '/maintenance-plans/' and this list was never updated, so
+// the plan page kept its homepage CTA in every market while the WI and IL
+// headers offered no way in at all. Kentucky routes to its own
+// '/ky/maintenance-plans/'; IL omits 'spring-repair' on purpose, its route
+// points at the same page as 'repair'.
 $twinsNavServiceAvailability = [
     'main' => ['services', 'repair', 'installation', 'spring-repair', 'opener-repair', 'cable-repair', 'weatherstripping', 'maintenance-plans', 'property-management', 'emergency-service'],
-    'wi' => ['services', 'repair', 'installation', 'spring-repair', 'opener-repair', 'cable-repair', 'weatherstripping', 'property-management', 'emergency-service'],
+    'wi' => ['services', 'repair', 'installation', 'spring-repair', 'opener-repair', 'cable-repair', 'weatherstripping', 'maintenance-plans', 'property-management', 'emergency-service'],
     'ky' => ['services', 'repair', 'installation', 'spring-repair', 'opener-repair', 'cable-repair', 'maintenance-plans', 'emergency-service'],
-    'il-preview' => ['services', 'repair', 'installation', 'opener-repair', 'emergency-service'],
+    'il-preview' => ['services', 'repair', 'installation', 'opener-repair', 'maintenance-plans', 'emergency-service'],
 ];
 $twinsNavAllowedServices = $twinsNavServiceAvailability[$marketKey] ?? $twinsNavServiceAvailability['main'];
 $serviceItems = array_values(array_filter(
