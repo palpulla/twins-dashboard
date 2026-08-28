@@ -39,6 +39,66 @@ test('portable navigation exposes the dedicated repair route in every market', (
   assert.match(rendererHarness, /'repair'\s*=>\s*'\/garage-door-repair\/'/);
 });
 
+// The service menu drifted once and nobody noticed for nine days.
+// $twinsNavServiceAvailability is a hand-written statement of what each
+// market's route table carries; route() is fail-closed, so a key listed there
+// that the table lacks throws on render and any test catches it immediately.
+// The silent direction is the other one: the r30 host capture (603a097f) gave
+// wi and il-preview a 'maintenance-plans' route, the list was not updated, and
+// the Protection Plan page stayed reachable from the homepage CTA while the
+// Wisconsin header offered no way in. Nothing failed, because a menu that is
+// missing an item renders perfectly. This pins both directions.
+test('every market advertises exactly the services its own route table carries', () => {
+  const navData = read('website/twins-brand-experience/components/nav-data.php');
+  const adapter = read('website/staging-safety/mu-plugins/twins-staging-overhaul/adapters/BrandStagingAdapters.php');
+
+  const slice = (source, opening) => {
+    const start = source.indexOf(opening);
+    assert.notEqual(start, -1, `${opening} is missing`);
+    return source.slice(start, source.indexOf('\n];', start));
+  };
+
+  const catalog = [...slice(navData, '$twinsNavServiceCatalog = [')
+    .matchAll(/\['[^']*',\s*'([^']+)'\]/g)].map(match => match[1]);
+  assert.equal(catalog.length > 0, true, 'the service catalog is empty');
+
+  const availabilityBlock = slice(navData, '$twinsNavServiceAvailability = [');
+
+  // il-preview's 'spring-repair' route points at /il/garage-door-repair/, the
+  // same page as 'repair', so Illinois withholds it on purpose rather than
+  // listing one page twice. Any other divergence is drift, not a decision.
+  const withheld = new Set(['il-preview\u0000spring-repair']);
+
+  for (const market of ['main', 'wi', 'ky', 'il-preview']) {
+    const listed = [...(availabilityBlock.match(new RegExp(`'${market}' => \\[([^\\]]*)\\]`)) ?? [])[1]
+      .matchAll(/'([^']+)'/g)].map(match => match[1]);
+    assert.equal(listed.length > 0, true, `${market} advertises no services at all`);
+
+    const routeBlock = slice(adapter, `        '${market}' => [`);
+
+    for (const key of catalog) {
+      const routed = routeBlock.includes(`'${key}' =>`);
+      const advertised = listed.includes(key);
+      if (!routed) {
+        assert.equal(advertised, false,
+          `${market} advertises '${key}', which its route table does not carry: route() throws on render`);
+        continue;
+      }
+      if (withheld.has(`${market}\u0000${key}`)) {
+        assert.equal(advertised, false, `${market} now advertises '${key}'; drop it from the withheld set`);
+        continue;
+      }
+      assert.equal(advertised, true,
+        `${market} routes '${key}' but no menu offers it: the page is live and unreachable from the chrome`);
+    }
+
+    for (const key of listed) {
+      assert.equal(catalog.includes(key), true,
+        `${market} advertises '${key}', which is not in $twinsNavServiceCatalog and so renders nothing`);
+    }
+  }
+});
+
 test('context-aware labels keep Illinois anchors truthful and qualify the Wisconsin cost guide', () => {
   const experience = read('website/twins-brand-experience/src/Experience.php');
   const service = read('website/twins-brand-experience/templates/service.php');
